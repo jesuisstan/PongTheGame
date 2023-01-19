@@ -32,7 +32,7 @@ services:
 
   api:
     container_name: api
-    image: node:19-alpine3.16
+    image: node:18.13-alpine3.16
   #  build: ./backend
     ports:
       - "3080:3080"
@@ -44,13 +44,13 @@ services:
 
   client:
     container_name: client
-    image: node:19-alpine3.16
+    image: node:18.13-alpine3.16
     build: ./frontend
     ports:
       - 3000:3000
     networks:
       - transcendance
-    stdin_open: true
+    # stdin_open: true
     volumes:
       - ./frontend:/app
       - /app/node_modules
