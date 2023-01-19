@@ -50,7 +50,7 @@ services:
       - 3000:3000
     networks:
       - transcendance
-    # stdin_open: true
+    stdin_open: true
     volumes:
       - ./frontend:/app
       - /app/node_modules
