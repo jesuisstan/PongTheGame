@@ -32,19 +32,20 @@ services:
 
   api:
     container_name: api
-    image: node:18.13-alpine3.16
-  #  build: ./backend
+    image: node
+    build: ./backend
     ports:
       - "3080:3080"
     networks:
       - transcendance
-    # volumes:
-    #   - /app
-    command: "npm start"
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    # command: "npm start"
 
   client:
     container_name: client
-    image: node:18.13-alpine3.16
+    image: node
     build: ./frontend
     ports:
       - 3000:3000

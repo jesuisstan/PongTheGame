@@ -9,6 +9,4 @@ RUN npm install
 
 COPY ./ ./
 
-RUN npm run start
-
-ENTRYPOINT ["node", "server.js"]
+ENTRYPOINT ["npm", "run", "start"]
