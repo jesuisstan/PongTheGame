@@ -1,0 +1,52 @@
+.App {
+  text-align: center;
+}
+
+.active {
+  color: palegreen;
+  text-decoration: none;
+}
+
+h1, h2 {
+  /*font-size: 90px;*/
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+/*button {*/
+/*  padding: 15px;*/
+/*  font-size: 30px;*/
+/*  border-radius: 5px;*/
+/*  border: 0;*/
+/*  margin: 20px;*/
+/*  cursor: pointer;*/
+/*}*/
+
+a {
+  color: lightgrey;
+  font-size: 21px;
+}
+
+a:hover {
+  color: lightgoldenrodyellow;
+}
+
+nav {
+  position: sticky;
+  top: 5px;
+  background-color: rgba(0, 1, 2, 0.4);
+  padding: 5px;
+}
+
+nav a {
+  margin: 42px;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
