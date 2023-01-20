@@ -1,4 +1,4 @@
-version: '3.9'
+version: '3.3'
 
 networks:
   transcendance:
@@ -38,9 +38,10 @@ services:
       - "3080:3080"
     networks:
       - transcendance
-    # volumes:
-    #   - /app
-    command: "npm start"
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    # command: "npm start"
 
   client:
     container_name: client
@@ -50,7 +51,7 @@ services:
       - 3000:3000
     networks:
       - transcendance
-    stdin_open: true
+    # stdin_open: true
     volumes:
       - ./frontend:/app
       - /app/node_modules
