@@ -1,0 +1,37 @@
+import './Login.css'
+
+const Login = () => {
+  const googleAuth = () => {
+    window.open("http://localhost:5000/auth/google", "_self");
+  };
+  
+  const ecole42Auth = () => {
+    window.open("http://localhost:5000/auth/42", "_self");
+  };
+  
+  return (
+    <div className="login">
+      <h1 className="loginTitle">Choose Login Method</h1>
+      <div className="wrapper">
+        <div className="left">
+          <div className="loginButton google" onClick={googleAuth}>
+            <img src={require('../../assets/google.png')} alt="" className="icon" />
+            Google
+          </div>
+        </div>
+        <div className="center">
+          <div className="line" />
+          <div className="or">OR</div>
+        </div>
+        <div className="right">
+          <div className="loginButton ecole" onClick={ecole42Auth}>
+            <img src={require('../../assets/ecole42.png')} alt="" className="icon" />
+            Ecole 42
+            </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default Login

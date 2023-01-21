@@ -7,6 +7,11 @@
   text-decoration: none;
 }
 
+.image {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
 h1, h2 {
   /*font-size: 90px;*/
   margin-top: 20px;
