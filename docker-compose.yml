@@ -32,25 +32,27 @@ services:
 
   api:
     container_name: api
-    image: node:18.13.0-alpine3.16
+    depends_on:
+      - database
     build: ./backend
     ports:
-      - "3080:3080"
+      - 3080:3080
     networks:
       - transcendance
     volumes:
-      - ./backend:/app
-      - /app/node_modules
+      - ./backend:/app-backend
+    env_file:
+      - .env
+    restart: unless-stopped
 
   client:
     container_name: client
-    image: node:18.13.0-alpine3.16
     build: ./frontend
     ports:
       - 3000:3000
     networks:
       - transcendance
-    # stdin_open: true
     volumes:
-      - ./frontend:/app
-      - /app/node_modules
+      - ./frontend:/app-frontend
+    # stdin_open: true
+    restart: unless-stopped

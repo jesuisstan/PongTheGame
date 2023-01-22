@@ -1,14 +1,14 @@
-FROM node:18.13-alpine3.16
+FROM node:18.13.0-alpine3.16
 
-# Working directory inside the container
-WORKDIR /app
+# Creating a working directory inside the container
+WORKDIR /app-backend
 
-COPY package*.json ./
+RUN yarn install && yarn global add nodemon
 
-RUN npm install
+# Copying our files to the container
+COPY . .
 
-COPY ./ ./
-
-RUN npm run start
-
-ENTRYPOINT [ "node", "server.js" ]
+# Run server.js with nodemon instead of node (auto refresh)
+# ENTRYPOINT  yarn install && yarn add nodemon && nodemon server
+ENTRYPOINT nodemon server
+ 

@@ -1,13 +1,9 @@
 FROM node:18.13.0-alpine3.16
 
-# Working directory inside the container
-WORKDIR /app
+# Creating a working directory inside the container
+WORKDIR /app-frontend
 
-COPY package*.json ./
+# Copying our files to the container
+COPY . .
 
-RUN npm install -g npm@latest
-RUN npm install
-
-COPY ./ ./
-
-ENTRYPOINT ["npm", "run", "start"]
+ENTRYPOINT npm install -g npm@latest && npm install && npm run start
