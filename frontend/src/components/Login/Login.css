@@ -53,6 +53,9 @@
 .ecole{
   background-color: rgb(0, 186, 188);
 }
+.github{
+  background-color: #24292f;
+}
 
 .icon{
   width: 21px;
@@ -97,5 +100,5 @@
   display: flex;
   align-items: center;
   border-radius: 21px;
-  background-color: rgba(26, 25, 25, 0.5);
+  background-color: rgba(115, 110, 110, 0.15);
 }

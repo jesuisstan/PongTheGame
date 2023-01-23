@@ -18,14 +18,15 @@ h1, h2 {
   margin-bottom: 20px;
 }
 
-/*button {*/
-/*  padding: 15px;*/
-/*  font-size: 30px;*/
-/*  border-radius: 5px;*/
-/*  border: 0;*/
-/*  margin: 20px;*/
-/*  cursor: pointer;*/
-/*}*/
+.log {
+  padding: 11px;
+  font-size: 21px;
+  border-radius: 5px;
+  border: 0;
+  background-color: #df4930;
+  margin: 20px;
+  cursor: pointer;
+}
 
 a {
   color: lightgrey;

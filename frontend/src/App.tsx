@@ -1,4 +1,4 @@
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import {BrowserRouter, Routes, Route, Navigate} from "react-router-dom";
 import Home from "./components/Home";
 import Login from "./components/Login/Login";
@@ -9,14 +9,28 @@ import NotFound from "./components/NotFound";
 import MainLayout from "./layouts/MainLayout";
 import './App.css';
 
+const url = "http://localhost:5000/auth/getuser";
+
 function App() {
   const [user, setUser] = useState(null);
+  
+  useEffect(() => {
+    fetch(url)
+      .then(res => res.json())
+      .then(res => setUser(res))
+      .catch(err => {
+        console.log(err)
+      })
+  }, [])
 
+  user ? console.log("user issss") : console.log("no user")
+  console.log(user)
+  
   return (
       <BrowserRouter>
         <div className="App">
           <Routes>
-            <Route path="/" element={<MainLayout />}>
+            <Route path="/" element={<MainLayout user={user}/>}>
               <Route index={true} element={<Home />} />
               <Route path="login" element={<Login />} />
               <Route path="chat" element={user ? <Chat /> : <Navigate to="/login" />} />
