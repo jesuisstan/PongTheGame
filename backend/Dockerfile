@@ -6,10 +6,6 @@ WORKDIR /app-backend
 # nodemon isn't copied to the container when not installed globally
 RUN yarn install && yarn global add nodemon
 
-# Copying our files to the container
-COPY . .
-
-# Run server.js with nodemon instead of node (auto refresh)
 # ENTRYPOINT  yarn install && yarn add nodemon && nodemon server
 ENTRYPOINT nodemon server
  
