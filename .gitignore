@@ -1,2 +1,4 @@
 .env
 /private
+*/node_modules
+/build
