@@ -1,0 +1,9 @@
+.authButton {
+  padding: 5px;
+  font-size: 16px;
+  border-radius: 5px;
+  border: 0;
+  background-color: rgba(152, 251, 152, 0.21);
+  margin: 20px;
+  cursor: pointer;
+}
