@@ -1,12 +1,12 @@
 import {useEffect, useState} from "react";
 import {BrowserRouter, Routes, Route, Navigate} from "react-router-dom";
 import Home from "./components/Home";
-import Login from "./components/Login/Login";
+import Login from "./components/login/Login";
 import Game from "./components/game/Game";
 import Chat from "./components/chat/Chat";
 import Dashboard from "./components/dashboard/Dashboard";
 import NotFound from "./components/NotFound";
-import MainLayout from "./layouts/MainLayout";
+import MainLayout from "./components/layouts/MainLayout";
 import './App.css';
 
 const url = "http://localhost:5000/auth/getuser";
@@ -23,9 +23,9 @@ function App() {
       })
   }, [])
 
-  user ? console.log("user issss") : console.log("no user")
+  user ? console.log('user logged in') : console.log("no user")
   console.log(user)
-  
+
   return (
       <BrowserRouter>
         <div className="App">
