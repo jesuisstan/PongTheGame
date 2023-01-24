@@ -11,7 +11,7 @@ import MainLayout from "./components/layouts/MainLayout";
 import './App.css';
 import {User} from "./types/User";
 
-const url = "http://localhost:5000/auth/getuser";
+const url = "http://localhost:3080/auth/getuser";
 
 function App() {
   const [user, setUser] = useState(null);

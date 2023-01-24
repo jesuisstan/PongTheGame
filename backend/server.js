@@ -23,6 +23,6 @@ app.use(
 
 app.use("/", authRoute);
 
-app.listen("5000", () => {
+app.listen("3080", () => {
   console.log("Server is running!");
 });
