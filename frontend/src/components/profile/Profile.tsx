@@ -1,10 +1,9 @@
-import Button from "../UI/Button";
-
 const Profile = () => {
   return (
     <>
-      <h1>Authentication zone</h1>
-      <Button />
+      <h1>Profile page</h1>
+      {/*<Button />*/}
+      <img className='image' src={require('../../assets/defaultUser.png')} alt="HTML" width="200" height="200" />
     </>
   )
 }
