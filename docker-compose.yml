@@ -1,5 +1,5 @@
 networks:
-  transcendance:
+  transcendence:
 
 services:
 
@@ -10,7 +10,7 @@ services:
   #   container_name: nginx
   #   image: nginx:1.23.3
   #   networks:
-  #     - transcendance
+  #     - transcendence
   #   ports:
   #     - 443:443
   #   restart: unless-stopped
@@ -32,7 +32,7 @@ services:
     env_file:
       - .env
     networks:
-      - transcendance
+      - transcendence
     volumes:
       - ./${FRONTEND_NAME}:/app-${FRONTEND_NAME}
     restart: unless-stopped
@@ -47,7 +47,7 @@ services:
     volumes:
       - ./database:/var/lib/postgresql/data
     networks:
-      - transcendance
+      - transcendence
     restart: unless-stopped
 
   backend:
@@ -66,7 +66,7 @@ services:
     env_file:
       - .env
     networks:
-      - transcendance
+      - transcendence
     volumes:
       - ./${BACKEND_NAME}:/app-${BACKEND_NAME}
     # stdin_open: true

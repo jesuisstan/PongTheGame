@@ -3,10 +3,8 @@
   "version": "1.0.0",
   "author": "",
   "description": "",
-  "main": "server.js",
-
+  "main": "main.ts",
   "keywords": [],
-  "author": "",
   "license": "ISC",
   "dependencies": {
     "axios": "^1.2.3",
@@ -21,7 +19,6 @@
     "passport-google-oauth20": "^2.0.0"
   },
   "private": true,
-  "license": "UNLICENSED",
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
@@ -36,16 +33,14 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
-  "dependencies": {
+  "devDependencies": {
     "@nestjs/common": "^9.0.0",
     "@nestjs/config": "^2.2.0",
     "@nestjs/core": "^9.0.0",
     "@nestjs/platform-express": "^9.0.0",
     "dotenv": "^16.0.3",
     "reflect-metadata": "^0.1.13",
-    "rxjs": "^7.2.0"
-  },
-  "devDependencies": {
+    "rxjs": "^7.2.0",
     "@nestjs/cli": "^9.0.0",
     "@nestjs/schematics": "^9.0.0",
     "@nestjs/testing": "^9.0.0",
