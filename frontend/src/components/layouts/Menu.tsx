@@ -4,7 +4,7 @@ import "./Menu.css"
 const Menu = ({user} : any) => {
   const authenticate = () => {
     if (user) {
-      window.open("http://localhost:5000/auth/logout", "_self")
+      window.open("http://localhost:3080/auth/logout", "_self")
     } else {
       window.open("http://localhost:3000/login", "_self");
     }

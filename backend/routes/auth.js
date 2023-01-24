@@ -30,7 +30,7 @@ passport.use(
     {
       clientID: GOOGLE_CLIENT_ID,
       clientSecret: GOOGLE_CLIENT_SECRET,
-      callbackURL: "/auth/google/callback",
+      callbackURL: "http://localhost:3080/auth/google/callback",
     },
     function (accessToken, refreshToken, profile, cb) {
       console.log(chalk.blue(JSON.stringify(profile)))
@@ -41,7 +41,7 @@ passport.use(
 passport.use(new FortyTwoStrategy({
       clientID: FORTYTWO_APP_ID,
       clientSecret: FORTYTWO_APP_SECRET,
-      callbackURL: "http://localhost:5000/auth/42/callback",
+      callbackURL: "http://localhost:3080/auth/42/callback",
     },
     function (accessToken, refreshToken, profile, cb) {
       console.log(chalk.blue(JSON.stringify(profile)))
@@ -53,7 +53,7 @@ passport.use(new FortyTwoStrategy({
 passport.use(new GitHubStrategy({
     clientID: GITHUB_CLIENT_ID,
     clientSecret: GITHUB_CLIENT_SECRET,
-    callbackURL: "http://localhost:5000/auth/github/callback",
+    callbackURL: "http://localhost:3080/auth/github/callback",
   },
   function (accessToken, refreshToken, profile, cb) {
     console.log(chalk.blue(JSON.stringify(profile)))

@@ -2,15 +2,15 @@ import './Login.css'
 
 const Login = () => {
   const google = () => {
-    window.open("http://localhost:5000/auth/google", "_self");
+    window.open("http://localhost:3080/auth/google", "_self");
   };
 
   const ecole42Auth = () => {
-    window.open("http://localhost:5000/auth/42", "_self");
+    window.open("http://localhost:3080/auth/42", "_self");
   };
   
   const github = () => {
-    window.open("http://localhost:5000/auth/github", "_self");
+    window.open("http://localhost:3080/auth/github", "_self");
   };
   
   return (
