@@ -5,7 +5,7 @@ const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const FortyTwoStrategy = require('passport-42').Strategy;
 const GitHubStrategy = require('passport-github2').Strategy;
 
-const CLIENT_URL = "http://localhost:3000/";
+const CLIENT_URL = "http://localhost:3000";
 
 const GOOGLE_CLIENT_ID = "629983254497-5jcucfp16tu0h1mf4u1aujru405r0aar.apps.googleusercontent.com";
 const GOOGLE_CLIENT_SECRET = "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";
@@ -41,15 +41,7 @@ passport.use(
 passport.use(new FortyTwoStrategy({
       clientID: FORTYTWO_APP_ID,
       clientSecret: FORTYTWO_APP_SECRET,
-      callbackURL: "http://localhost:5000/auth/42/callback/",
-      profileFields: {
-        'id': function (obj) { return String(obj.id); },
-        'username': 'login',
-        'displayName': 'displayname',
-        'name.familyName': 'last_name',
-        'name.givenName': 'first_name',
-        'photos.0.value': 'image_url'
-      }
+      callbackURL: "http://localhost:5000/auth/42/callback",
     },
     function (accessToken, refreshToken, profile, cb) {
       console.log(chalk.blue(JSON.stringify(profile)))
@@ -61,7 +53,7 @@ passport.use(new FortyTwoStrategy({
 passport.use(new GitHubStrategy({
     clientID: GITHUB_CLIENT_ID,
     clientSecret: GITHUB_CLIENT_SECRET,
-    callbackURL: "http://localhost:5000/auth/github/callback/",
+    callbackURL: "http://localhost:5000/auth/github/callback",
   },
   function (accessToken, refreshToken, profile, cb) {
     console.log(chalk.blue(JSON.stringify(profile)))
@@ -77,7 +69,7 @@ router.get("/auth/getuser", (req, res) => {
 router.get("/auth/logout", (req, res) => {
   req.logout();
   user = null
-  res.redirect(`${CLIENT_URL}login`);
+  res.redirect(`${CLIENT_URL}/login`);
   console.log("after logout")
   console.log(user)
 });
@@ -87,20 +79,20 @@ router.get("/auth/google",
 
 router.get(
   "/auth/google/callback",
-  passport.authenticate('google', { failureRedirect: '/auth/login/failed' }),
+  passport.authenticate('google', { failureRedirect: '/auth/login' }),
   function(req, res) {
     // Successful authentication, redirect home.
-    res.redirect(CLIENT_URL);
+    res.redirect(`${CLIENT_URL}/profile`);
   });
 
 router.get('/auth/42',
   passport.authenticate('42'));
 
 router.get('/auth/42/callback',
-  passport.authenticate('42', { failureRedirect: '/auth/login/failed' }),
+  passport.authenticate('42', { failureRedirect: '/auth/login' }),
   function(req, res) {
     // Successful authentication, redirect home.
-    res.redirect(CLIENT_URL);
+    res.redirect(`${CLIENT_URL}/profile`);
   });
 
 router.get('/auth/github',
@@ -110,7 +102,7 @@ router.get('/auth/github/callback',
   passport.authenticate('github', { failureRedirect: '/auth/login' }),
   function(req, res) {
     // Successful authentication, redirect home.
-    res.redirect(CLIENT_URL);
+    res.redirect(`${CLIENT_URL}/profile`);
   });
 
 module.exports = router
