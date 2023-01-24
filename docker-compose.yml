@@ -29,6 +29,8 @@ services:
     # Ports should always be strings
     ports:
       - "${FRONTEND_PORT}:${FRONTEND_PORT}"
+    env_file:
+      - .env
     networks:
       - transcendance
     volumes:
@@ -61,6 +63,8 @@ services:
             && yarn run start:dev"
     ports:
       - "${BACKEND_PORT}:${BACKEND_PORT}"
+    env_file:
+      - .env
     networks:
       - transcendance
     volumes:
