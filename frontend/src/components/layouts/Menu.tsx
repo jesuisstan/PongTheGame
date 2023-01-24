@@ -1,5 +1,6 @@
-import {NavLink} from "react-router-dom";
+import {NavLink} from "react-router-dom"
 import "./Menu.css"
+const _ = require('lodash')
 
 const Menu = ({user} : any) => {
   const authenticate = () => {
@@ -21,7 +22,7 @@ const Menu = ({user} : any) => {
                  className="authButton"
                  onClick={authenticate}
         >
-          {user ? 'Logout' : 'Login'}
+          {!_.isEmpty(user) ? 'Logout' : 'Login'}
         </NavLink>
       </nav>
     </div>
