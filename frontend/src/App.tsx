@@ -1,13 +1,15 @@
 import {useEffect, useState} from "react";
 import {BrowserRouter, Routes, Route, Navigate} from "react-router-dom";
 import Home from "./components/Home";
-import Login from "./components/login/Login";
+import Login from "./components/profile/Login";
 import Game from "./components/game/Game";
 import Chat from "./components/chat/Chat";
 import Dashboard from "./components/dashboard/Dashboard";
+import Profile from "./components/profile/Profile";
 import NotFound from "./components/NotFound";
 import MainLayout from "./components/layouts/MainLayout";
 import './App.css';
+import {User} from "./types/User";
 
 const url = "http://localhost:5000/auth/getuser";
 
@@ -36,6 +38,7 @@ function App() {
               <Route path="chat" element={user ? <Chat /> : <Navigate to="/login" />} />
               <Route path="game" element={user ? <Game /> : <Navigate to="/login" />} />
               <Route path="dashboard" element={user ? <Dashboard /> : <Navigate to="/login" />} />
+              <Route path="profile" element={<Profile />} />
               <Route path="*" element={<NotFound />} />
             </Route>
           </Routes>
