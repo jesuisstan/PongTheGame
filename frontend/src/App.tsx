@@ -10,11 +10,12 @@ import NotFound from "./components/NotFound";
 import MainLayout from "./components/layouts/MainLayout";
 import './App.css';
 import {User} from "./types/User";
+const _ = require('lodash');
 
 const url = "http://localhost:3080/auth/getuser";
 
 function App() {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState({});
   
   useEffect(() => {
     fetch(url)
@@ -25,7 +26,7 @@ function App() {
       })
   }, [])
 
-  user ? console.log('user logged in') : console.log("no user")
+  !_.isEmpty(user) ? console.log('user logged in') : console.log("no user")
   console.log(user)
 
   return (
@@ -35,9 +36,9 @@ function App() {
             <Route path="/" element={<MainLayout user={user}/>}>
               <Route index={true} element={<Home />} />
               <Route path="login" element={<Login />} />
-              <Route path="chat" element={user ? <Chat /> : <Navigate to="/login" />} />
-              <Route path="game" element={user ? <Game /> : <Navigate to="/login" />} />
-              <Route path="dashboard" element={user ? <Dashboard /> : <Navigate to="/login" />} />
+              <Route path="chat" element={!_.isEmpty(user) ? <Chat /> : <Navigate to="/login" />} />
+              <Route path="game" element={!_.isEmpty(user) ? <Game /> : <Navigate to="/login" />} />
+              <Route path="dashboard" element={!_.isEmpty(user) ? <Dashboard /> : <Navigate to="/login" />} />
               <Route path="profile" element={<Profile />} />
               <Route path="*" element={<NotFound />} />
             </Route>
