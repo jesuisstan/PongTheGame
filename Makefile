@@ -1,7 +1,6 @@
-# include .env
-# export
-
-COMPOSE = sudo docker-compose
+# ENV		= --env-file
+COMPOSE = docker-compose
+# COMPOSE = sudo docker-compose
 
 .PHONY: all build up clean fclean re
 
@@ -25,6 +24,7 @@ clean:
 
 # Clean and delete all unused volumes, containers, networks and images
 fclean: clean
-	sudo docker system prune --volumes --all --force 2> /dev/null
+	docker system prune --volumes --all --force 2> /dev/null
+	# sudo docker system prune --volumes --all --force 2> /dev/null
 
 re: fclean all

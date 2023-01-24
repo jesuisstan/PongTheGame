@@ -1,7 +1,5 @@
-version: '3.3'
-
 networks:
-  transcendance:
+  transcendence:
 
 services:
 
@@ -12,47 +10,65 @@ services:
   #   container_name: nginx
   #   image: nginx:1.23.3
   #   networks:
-  #     - transcendance
+  #     - transcendence
   #   ports:
   #     - 443:443
   #   restart: unless-stopped
+
+  frontend:
+    container_name: ${FRONTEND_NAME}
+    image: ${NODE_VERSION}
+    stdin_open: true
+    tty: true
+
+    working_dir: /app-${FRONTEND_NAME}
+    # Install project dependencies,, then run front
+    command: >
+            sh -cx "npm install
+            && npm run start"
+    # Ports should always be strings
+    ports:
+      - "${FRONTEND_PORT}:${FRONTEND_PORT}"
+    env_file:
+      - .env
+    networks:
+      - transcendence
+    volumes:
+      - ./${FRONTEND_NAME}:/app-${FRONTEND_NAME}
+    restart: unless-stopped
 
   database:
     container_name: postgres
     image: postgres:15.1
     ports:
-      - 5432:5432
-    volumes:
-      - ./postgres:/var/lib/postgresql/data
-    networks:
-      - transcendance
+      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
     env_file:
       - .env
+    volumes:
+      - ./database:/var/lib/postgresql/data
+    networks:
+      - transcendence
     restart: unless-stopped
 
-  api:
-    container_name: api
-    image: node:18.13.0-alpine3.16
-  #  build: ./backend
+  backend:
+    depends_on:
+      - database
+    container_name: ${BACKEND_NAME}
+    image: ${NODE_VERSION}
+    working_dir: /app-${BACKEND_NAME}
+    # install project dependencies,
+    # then run in dev mode
+    command: >
+            sh -cx "yarn install
+            && yarn run start:dev"
     ports:
-      - "3080:3080"
+      - "${BACKEND_PORT}:${BACKEND_PORT}"
+    env_file:
+      - .env
     networks:
-      - transcendance
+      - transcendence
     volumes:
-      - ./backend:/app
-      - /app/node_modules
-    # command: "npm start"
-
-  client:
-    container_name: client
-    image: node:18.13.0-alpine3.16
-    build: ./frontend
-    ports:
-      - 3000:3000
-    networks:
-      - transcendance
+      - ./${BACKEND_NAME}:/app-${BACKEND_NAME}
     # stdin_open: true
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
-
+    # tty: true
+    restart: unless-stopped
