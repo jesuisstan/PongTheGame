@@ -1,6 +1,4 @@
-# include .env
-# export
-
+# ENV		= --env-file
 COMPOSE = sudo docker-compose
 
 .PHONY: all build up clean fclean re
