@@ -7,11 +7,15 @@ import * as passport from 'passport';
 import { AppModule } from './app.module';
 import { deserializeUser, serializeUser } from './auth/42/auth42.serializer';
 import { Config } from './config.interface';
+import { PrismaService } from './prisma.service';
 import { convertTime } from "./utils/time";
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   const config = app.get(ConfigService<Config>);
+  const prisma = app.get(PrismaService);
+
+  await prisma.enableShutdownHooks(app);
 
   passport.serializeUser(serializeUser);
   passport.deserializeUser(deserializeUser);
@@ -32,6 +36,7 @@ async function bootstrap() {
   app.use(session);
   app.use(passport.initialize());
   app.use(passport.session());
+
   await app.listen(port);
 }
 

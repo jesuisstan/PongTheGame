@@ -8,6 +8,7 @@
   "license": "ISC",
   "dependencies": {
     "@nestjs/passport": "^9.0.0",
+    "@prisma/client": "4.9.0",
     "axios": "^1.2.3",
     "chalk": "^4.1.2",
     "cookie-session": "^1.4.0",
