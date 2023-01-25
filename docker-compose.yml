@@ -51,10 +51,17 @@ services:
     networks:
       - transcendence
     restart: unless-stopped
+    healthcheck:
+      test: pg_isready -U ${POSTGRES_USER}
+      interval: 10s
+      timeout: 2s
+      retries: 25
+      start_period: 2s
 
   backend:
     depends_on:
-      - database
+      database:
+        condition: service_healthy
     container_name: ${BACKEND_NAME}
     image: ${NODE_VERSION}
     working_dir: /app-${BACKEND_NAME}
@@ -62,7 +69,8 @@ services:
     # then run in dev mode
     command: >
             sh -cx "yarn install
-            && yarn run start:dev"
+            && yarn prisma db push
+            && yarn run start:debug"
     ports:
       - "${BACKEND_PORT}:${BACKEND_PORT}"
     env_file:
