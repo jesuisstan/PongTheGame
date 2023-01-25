@@ -702,6 +702,11 @@
     tslib "2.4.1"
     uuid "9.0.0"
 
+"@nestjs/passport@^9.0.0":
+  version "9.0.0"
+  resolved "https://registry.yarnpkg.com/@nestjs/passport/-/passport-9.0.0.tgz#0571bb08f8043456bc6df44cd4f59ca5f10c9b9f"
+  integrity sha512-Gnh8n1wzFPOLSS/94X1sUP4IRAoXTgG4odl7/AO5h+uwscEGXxJFercrZfqdAwkWhqkKWbsntM3j5mRy/6ZQDA==
+
 "@nestjs/platform-express@^9.0.0":
   version "9.2.1"
   resolved "https://registry.yarnpkg.com/@nestjs/platform-express/-/platform-express-9.2.1.tgz#74b88a531239eaee3fe23af2f2912ebef313866f"
@@ -760,6 +765,23 @@
     chalk "^4.1.0"
     consola "^2.15.0"
     node-fetch "^2.6.1"
+
+"@prisma/client@4.9.0":
+  version "4.9.0"
+  resolved "https://registry.yarnpkg.com/@prisma/client/-/client-4.9.0.tgz#4a4068f3540732ea5723c008d49ed684d20f9340"
+  integrity sha512-bz6QARw54sWcbyR1lLnF2QHvRW5R/Jxnbbmwh3u+969vUKXtBkXgSgjDA85nji31ZBlf7+FrHDy5x+5ydGyQDg==
+  dependencies:
+    "@prisma/engines-version" "4.9.0-42.ceb5c99003b99c9ee2c1d2e618e359c14aef2ea5"
+
+"@prisma/engines-version@4.9.0-42.ceb5c99003b99c9ee2c1d2e618e359c14aef2ea5":
+  version "4.9.0-42.ceb5c99003b99c9ee2c1d2e618e359c14aef2ea5"
+  resolved "https://registry.yarnpkg.com/@prisma/engines-version/-/engines-version-4.9.0-42.ceb5c99003b99c9ee2c1d2e618e359c14aef2ea5.tgz#9d817a5779fc05b107eb02f63d197ad296d60b3c"
+  integrity sha512-M16aibbxi/FhW7z1sJCX8u+0DriyQYY5AyeTH7plQm9MLnURoiyn3CZBqAyIoQ+Z1pS77usCIibYJWSgleBMBA==
+
+"@prisma/engines@4.9.0":
+  version "4.9.0"
+  resolved "https://registry.yarnpkg.com/@prisma/engines/-/engines-4.9.0.tgz#05a1411964e047c1bc43f777c7a1c69f86a2a26c"
+  integrity sha512-t1pt0Gsp+HcgPJrHFc+d/ZSAaKKWar2G/iakrE07yeKPNavDP3iVKPpfXP22OTCHZUWf7OelwKJxQgKAm5hkgw==
 
 "@sinclair/typebox@^0.24.1":
   version "0.24.51"
@@ -888,6 +910,23 @@
     "@types/qs" "*"
     "@types/range-parser" "*"
 
+"@types/express-session@^1.17.5":
+  version "1.17.5"
+  resolved "https://registry.yarnpkg.com/@types/express-session/-/express-session-1.17.5.tgz#13f48852b4aa60ff595835faeb4b4dda0ba0866e"
+  integrity sha512-l0DhkvNVfyUPEEis8fcwbd46VptfA/jmMwHfob2TfDMf3HyPLiB9mKD71LXhz5TMUobODXPD27zXSwtFQLHm+w==
+  dependencies:
+    "@types/express" "*"
+
+"@types/express@*":
+  version "4.17.16"
+  resolved "https://registry.yarnpkg.com/@types/express/-/express-4.17.16.tgz#986caf0b4b850611254505355daa24e1b8323de8"
+  integrity sha512-LkKpqRZ7zqXJuvoELakaFYuETHjZkSol8EV6cNnyishutDBCCdv6+dsKPbKkCcIk57qRphOLY5sEgClw1bO3gA==
+  dependencies:
+    "@types/body-parser" "*"
+    "@types/express-serve-static-core" "^4.17.31"
+    "@types/qs" "*"
+    "@types/serve-static" "*"
+
 "@types/express@^4.17.13":
   version "4.17.15"
   resolved "https://registry.yarnpkg.com/@types/express/-/express-4.17.15.tgz#9290e983ec8b054b65a5abccb610411953d417ff"
@@ -924,10 +963,10 @@
   dependencies:
     "@types/istanbul-lib-report" "*"
 
-"@types/jest@29.2.4":
-  version "29.2.4"
-  resolved "https://registry.yarnpkg.com/@types/jest/-/jest-29.2.4.tgz#9c155c4b81c9570dbd183eb8604aa0ae80ba5a5b"
-  integrity sha512-PipFB04k2qTRPePduVLTRiPzQfvMeLwUN3Z21hsAKaB/W9IIzgB2pizCL466ftJlcyZqnHoC9ZHpxLGl3fS86A==
+"@types/jest@^29.2.6":
+  version "29.2.6"
+  resolved "https://registry.yarnpkg.com/@types/jest/-/jest-29.2.6.tgz#1d43c8e533463d0437edef30b2d45d5aa3d95b0a"
+  integrity sha512-XEUC/Tgw3uMh6Ho8GkUtQ2lPhY5Fmgyp3TdlkTJs1W9VgNxs+Ow/x3Elh8lHQKqCbZL0AubQuqWjHVT033Hhrw==
   dependencies:
     expect "^29.0.0"
     pretty-format "^29.0.0"
@@ -947,10 +986,33 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-18.11.18.tgz#8dfb97f0da23c2293e554c5a50d61ef134d7697f"
   integrity sha512-DHQpWGjyQKSHj3ebjFI/wRKcqQcdR+MoFBygntYOZytCqNfkd2ZC4ARDJ2DQqhjH5p85Nnd3jhUJIXrszFX/JA==
 
+"@types/oauth@*":
+  version "0.9.1"
+  resolved "https://registry.yarnpkg.com/@types/oauth/-/oauth-0.9.1.tgz#e17221e7f7936b0459ae7d006255dff61adca305"
+  integrity sha512-a1iY62/a3yhZ7qH7cNUsxoI3U/0Fe9+RnuFrpTKr+0WVOzbKlSLojShCKe20aOD1Sppv+i8Zlq0pLDuTJnwS4A==
+  dependencies:
+    "@types/node" "*"
+
 "@types/parse-json@^4.0.0":
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/@types/parse-json/-/parse-json-4.0.0.tgz#2f8bb441434d163b35fb8ffdccd7138927ffb8c0"
   integrity sha512-//oorEZjL6sbPcKUaCdIGlIUeH26mgzimjBB77G6XRgnDl/L5wOnpyBGRe/Mmf5CVW3PwEBE1NjiMZ/ssFh4wA==
+
+"@types/passport-oauth2@^1.4.11":
+  version "1.4.11"
+  resolved "https://registry.yarnpkg.com/@types/passport-oauth2/-/passport-oauth2-1.4.11.tgz#fbca527ecb44258774d17bcb251630c321515fa9"
+  integrity sha512-KUNwmGhe/3xPbjkzkPwwcPmyFwfyiSgtV1qOrPBLaU4i4q9GSCdAOyCbkFG0gUxAyEmYwqo9OAF/rjPjJ6ImdA==
+  dependencies:
+    "@types/express" "*"
+    "@types/oauth" "*"
+    "@types/passport" "*"
+
+"@types/passport@*":
+  version "1.0.11"
+  resolved "https://registry.yarnpkg.com/@types/passport/-/passport-1.0.11.tgz#d046b41e28b280f4e7994614fb976e9b449cb7c6"
+  integrity sha512-pz1cx9ptZvozyGKKKIPLcVDVHwae4hrH5d6g5J+DkMRRjR3cVETb4jMabhXAUbg3Ov7T22nFHEgaK2jj+5CBpw==
+  dependencies:
+    "@types/express" "*"
 
 "@types/prettier@^2.1.5":
   version "2.7.2"
@@ -1807,6 +1869,11 @@ cookie-signature@1.0.6:
   resolved "https://registry.yarnpkg.com/cookie-signature/-/cookie-signature-1.0.6.tgz#e303a882b342cc3ee8ca513a79999734dab3ae2c"
   integrity sha512-QADzlaHc8icV8I7vbaJXJwod9HWYp8uCqf1xa4OfNu1T7JVxQIrUgOWtHdNDtPiywmFbiS12VjotIXLrKM3orQ==
 
+cookie@0.4.2:
+  version "0.4.2"
+  resolved "https://registry.yarnpkg.com/cookie/-/cookie-0.4.2.tgz#0e41f24de5ecf317947c82fc789e06a884824432"
+  integrity sha512-aSWTXFzaKWkvHO1Ny/s+ePFpvKsPnjc551iI41v3ny/ow6tBG5Vd+FuqGNhh1LxOmVzOlGUriIlOaokOvhaStA==
+
 cookie@0.5.0:
   version "0.5.0"
   resolved "https://registry.yarnpkg.com/cookie/-/cookie-0.5.0.tgz#d1f5d71adec6558c58f389987c366aa47e994f8b"
@@ -2231,6 +2298,20 @@ expect@^29.0.0, expect@^29.3.1:
     jest-matcher-utils "^29.3.1"
     jest-message-util "^29.3.1"
     jest-util "^29.3.1"
+
+express-session@^1.17.3:
+  version "1.17.3"
+  resolved "https://registry.yarnpkg.com/express-session/-/express-session-1.17.3.tgz#14b997a15ed43e5949cb1d073725675dd2777f36"
+  integrity sha512-4+otWXlShYlG1Ma+2Jnn+xgKUZTMJ5QD3YvfilX3AcocOAbIkVylSWEklzALe/+Pu4qV6TYBj5GwOBFfdKqLBw==
+  dependencies:
+    cookie "0.4.2"
+    cookie-signature "1.0.6"
+    debug "2.6.9"
+    depd "~2.0.0"
+    on-headers "~1.0.2"
+    parseurl "~1.3.3"
+    safe-buffer "5.2.1"
+    uid-safe "~2.1.5"
 
 express@4.18.2, express@^4.17.1:
   version "4.18.2"
@@ -3764,7 +3845,7 @@ passport-google-oauth20@^2.0.0:
   dependencies:
     passport-oauth2 "1.x.x"
 
-passport-oauth2@1.x.x, passport-oauth2@^1.4.0:
+passport-oauth2@1.x.x, passport-oauth2@^1.4.0, passport-oauth2@^1.6.1:
   version "1.6.1"
   resolved "https://registry.yarnpkg.com/passport-oauth2/-/passport-oauth2-1.6.1.tgz#c5aee8f849ce8bd436c7f81d904a3cd1666f181b"
   integrity sha512-ZbV43Hq9d/SBSYQ22GOiglFsjsD1YY/qdiptA+8ej+9C1dL1TVB+mBE5kDH/D4AJo50+2i8f4bx0vg4/yDDZCQ==
@@ -3881,6 +3962,13 @@ pretty-format@^29.0.0, pretty-format@^29.3.1:
     ansi-styles "^5.0.0"
     react-is "^18.0.0"
 
+prisma@^4.9.0:
+  version "4.9.0"
+  resolved "https://registry.yarnpkg.com/prisma/-/prisma-4.9.0.tgz#295954b2a89cd35a0e6bcf66b2b036dbf80c75ee"
+  integrity sha512-bS96oZ5oDFXYgoF2l7PJ3Mp1wWWfLOo8B/jAfbA2Pn0Wm5Z/owBHzaMQKS3i1CzVBDWWPVnOohmbJmjvkcHS5w==
+  dependencies:
+    "@prisma/engines" "4.9.0"
+
 process-nextick-args@~2.0.0:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/process-nextick-args/-/process-nextick-args-2.0.1.tgz#7820d9b16120cc55ca9ae7792680ae7dba6d7fe2"
@@ -3931,6 +4019,11 @@ queue-microtask@^1.2.2:
   version "1.2.3"
   resolved "https://registry.yarnpkg.com/queue-microtask/-/queue-microtask-1.2.3.tgz#4929228bbc724dfac43e0efb058caf7b6cfb6243"
   integrity sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==
+
+random-bytes@~1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/random-bytes/-/random-bytes-1.0.0.tgz#4f68a1dc0ae58bd3fb95848c30324db75d64360b"
+  integrity sha512-iv7LhNVO047HzYR3InF6pUcUsPQiHTM1Qal51DcGSuZFBil1aBBWG5eHPNek7bvILMaYJ/8RU1e8w1AMdHmLQQ==
 
 randombytes@^2.1.0:
   version "2.1.0"
@@ -4595,6 +4688,13 @@ typescript@4.9.4, typescript@^4.7.4:
   version "4.9.4"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.9.4.tgz#a2a3d2756c079abda241d75f149df9d561091e78"
   integrity sha512-Uz+dTXYzxXXbsFpM86Wh3dKCxrQqUcVMxwU54orwlJjOpO3ao8L7j5lH+dWfTwgCwIuM9GQ2kvVotzYJMXTBZg==
+
+uid-safe@~2.1.5:
+  version "2.1.5"
+  resolved "https://registry.yarnpkg.com/uid-safe/-/uid-safe-2.1.5.tgz#2b3d5c7240e8fc2e58f8aa269e5ee49c0857bd3a"
+  integrity sha512-KPHm4VL5dDXKz01UuEd88Df+KzynaohSL9fBh096KWAxSKZQDI2uBrVqtvRM4rwrIrRRKsdLNML/lnaaVSRioA==
+  dependencies:
+    random-bytes "~1.0.0"
 
 uid2@0.0.x:
   version "0.0.4"
