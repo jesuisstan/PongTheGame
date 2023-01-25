@@ -6,11 +6,12 @@ import * as ExpressSession from "express-session";
 import * as passport from 'passport';
 import { AppModule } from './app.module';
 import { deserializeUser, serializeUser } from './auth/42/auth42.serializer';
+import { Config } from './config.interface';
 import { convertTime } from "./utils/time";
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
-  const configService = app.get(ConfigService);
+  const configService = app.get(ConfigService<Config>);
 
   passport.serializeUser(serializeUser);
   passport.deserializeUser(deserializeUser);
@@ -31,8 +32,8 @@ async function bootstrap() {
   app.use(passport.initialize());
   app.use(passport.session());
 
-  const port = configService.get<string>('BACKEND_PORT');
-  await app.listen(port || '');
+  const port = configService.getOrThrow('BACKEND_PORT');
+  await app.listen(port);
 }
 
 function makeSession() {
