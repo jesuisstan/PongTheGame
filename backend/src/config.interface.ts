@@ -4,4 +4,5 @@ export interface Config {
 	"42_CALLBACK_URL": string;
 
 	"BACKEND_PORT": string;
+	"SESSION_SECRET": string;
 }

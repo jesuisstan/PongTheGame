@@ -11,10 +11,13 @@ import { convertTime } from "./utils/time";
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
-  const configService = app.get(ConfigService<Config>);
+  const config = app.get(ConfigService<Config>);
 
   passport.serializeUser(serializeUser);
   passport.deserializeUser(deserializeUser);
+
+  const session = makeSession(config.getOrThrow("SESSION_SECRET"));
+  const port = config.getOrThrow('BACKEND_PORT');
 
   app.enableCors({
     origin: [
@@ -26,21 +29,17 @@ async function bootstrap() {
     credentials: true,
   });
 
-  const session = makeSession();
-
   app.use(session);
   app.use(passport.initialize());
   app.use(passport.session());
-
-  const port = configService.getOrThrow('BACKEND_PORT');
   await app.listen(port);
 }
 
-function makeSession() {
+function makeSession(secret: string) {
   return ExpressSession({
     resave: false,
     saveUninitialized: false,
-    secret: "hello world", // TODO use config
+    secret: secret,
     cookie: {
       maxAge: convertTime({ days: 3 }),
       sameSite: "lax",
