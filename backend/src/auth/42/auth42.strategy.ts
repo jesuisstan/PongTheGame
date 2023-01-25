@@ -1,10 +1,10 @@
-import { Injectable } from "@nestjs/common"
+import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { PassportStrategy } from "@nestjs/passport"
-import { Strategy, StrategyOptions } from "passport-oauth2"
+import { PassportStrategy } from "@nestjs/passport";
+import { Strategy, StrategyOptions } from "passport-42";
 
 @Injectable()
-export class IntraStrategy extends PassportStrategy(Strategy, "42") {
+export class Auth42Strategy extends PassportStrategy(Strategy, "42") {
 	constructor(readonly config: ConfigService<Record<string, string>>) {
 		super({
 			authorizationURL: "https://api.intra.42.fr/oauth/authorize",
@@ -16,7 +16,11 @@ export class IntraStrategy extends PassportStrategy(Strategy, "42") {
 		} as StrategyOptions);
 	}
 
+	// TODO
 	async validate(accessToken: string, refreshToken: string, profile: any) {
+		delete profile._raw;
+		delete profile._json
 		console.log(profile);
+		return profile;
 	}
 }
