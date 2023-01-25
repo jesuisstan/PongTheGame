@@ -1,5 +1,6 @@
 import { Controller, Get, Req, Res, UnauthorizedException, UseGuards } from "@nestjs/common";
 import { Request, Response } from "express";
+import { AuthGuard } from "../auth.guard";
 import { Auth42Guard } from "./auth42.guard";
 
 const CLIENT_URL = "http://localhost:3000";
@@ -32,7 +33,7 @@ export class Auth42Controller {
 	}
 
 	@Get("getuser")
-	// @UseGuards(AuthGuard)
+	@UseGuards(AuthGuard)
 	async profile(@Req() req: Request) {
 		if (req.user !== undefined)
 			return req.user;
