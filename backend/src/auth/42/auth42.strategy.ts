@@ -21,7 +21,6 @@ export class Auth42Strategy extends PassportStrategy(Strategy, "42") {
 	async validate(accessToken: string, refreshToken: string, profile: any) {
 		delete profile._raw;
 		delete profile._json
-		console.log(profile);
 		return profile;
 	}
 }

@@ -1,4 +1,4 @@
-import { Controller, Get, Req, Res, UseGuards } from "@nestjs/common";
+import { Controller, Get, Req, Res, UnauthorizedException, UseGuards } from "@nestjs/common";
 import { Request, Response } from "express";
 import { Auth42Guard } from "./auth42.guard";
 
@@ -20,13 +20,24 @@ export class Auth42Controller {
 	}
 
 	@Get("logout")
-	async logout(@Res() res: Response) {
-		// TODO log user out
-		return res.redirect(`${CLIENT_URL}/login`);
+	async logout(@Req() req: Request, @Res() res: Response) {
+		await new Promise<void>(function (resolve, reject) {
+			req.session.destroy(function (err) {
+				if (err) {
+					return reject(err);
+				}
+				return resolve();
+			});
+		});
+
+		return res.clearCookie("connect.sid").redirect(`${CLIENT_URL}/login`);
 	}
 
 	@Get("getuser")
+	// @UseGuards(AuthGuard)
 	async profile(@Req() req: Request) {
-		return req.user;
+		if (req.user !== undefined)
+			return req.user;
+		throw new UnauthorizedException();
 	}
 }
