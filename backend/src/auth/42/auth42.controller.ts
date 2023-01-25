@@ -9,9 +9,7 @@ export class Auth42Controller {
 
 	@Get("42")
 	@UseGuards(Auth42Guard)
-	async login() {
-
-	}
+	async login() { }
 
 	@Get("42/callback")
 	@UseGuards(Auth42Guard)
