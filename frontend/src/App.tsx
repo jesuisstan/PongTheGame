@@ -16,9 +16,9 @@ const url = "http://localhost:3080/auth/getuser";
 
 function App() {
   const [user, setUser] = useState({});
-  
+
   useEffect(() => {
-    fetch(url)
+    fetch(url, { credentials: "include" })
       .then(res => res.json())
       .then(res => setUser(res))
       .catch(err => {
