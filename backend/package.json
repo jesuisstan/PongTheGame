@@ -9,15 +9,10 @@
   "dependencies": {
     "@nestjs/passport": "^9.0.0",
     "@prisma/client": "4.9.0",
-    "axios": "^1.2.3",
-    "chalk": "^4.1.2",
-    "cookie-session": "^1.4.0",
-    "cors": "^2.8.5",
     "express": "^4.17.1",
     "express-session": "^1.17.3",
     "passport": "^0.5.0",
     "passport-42": "^1.2.6",
-    "passport-facebook": "^3.0.0",
     "passport-github2": "^0.1.12",
     "passport-google-oauth20": "^2.0.0",
     "passport-oauth2": "^1.6.1"
