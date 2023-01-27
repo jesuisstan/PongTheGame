@@ -13,6 +13,6 @@ import { UserModule } from './user/user.module';
     AuthModule,
     UserModule,
   ],
-  providers: [PrismaService]
+  providers: [PrismaService],
 })
-export class AppModule { }
+export class AppModule {}

@@ -2,13 +2,13 @@ import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 // import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import * as ExpressSession from "express-session";
+import * as ExpressSession from 'express-session';
 import * as passport from 'passport';
 import { AppModule } from './app.module';
 import { deserializeUser, serializeUser } from './auth/42/auth42.serializer';
 import { Config } from './config.interface';
 import { PrismaService } from './prisma.service';
-import { convertTime } from "./utils/time";
+import { convertTime } from './utils/time';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -20,16 +20,16 @@ async function bootstrap() {
   passport.serializeUser(serializeUser);
   passport.deserializeUser(deserializeUser);
 
-  const session = makeSession(config.getOrThrow("SESSION_SECRET"));
+  const session = makeSession(config.getOrThrow('SESSION_SECRET'));
   const port = config.getOrThrow('BACKEND_PORT');
 
   app.enableCors({
     origin: [
-      "http://localhost:3000/*",
-      "http://localhost:3080/*",
-      "https://api.intra.42.fr/*",
+      'http://localhost:3000/*',
+      'http://localhost:3080/*',
+      'https://api.intra.42.fr/*',
     ],
-    methods: "GET,POST,PUT,DELETE",
+    methods: 'GET,POST,PUT,DELETE',
     credentials: true,
   });
 
@@ -47,9 +47,9 @@ function makeSession(secret: string) {
     secret: secret,
     cookie: {
       maxAge: convertTime({ days: 3 }),
-      sameSite: "lax",
+      sameSite: 'lax',
       secure: false,
-      path: "/",
+      path: '/',
     },
   });
 }
