@@ -4,7 +4,7 @@ import {
   Req,
   Res,
   UnauthorizedException,
-  UseGuards,
+  UseGuards
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { AuthGuard } from '../auth.guard';
@@ -18,6 +18,7 @@ export class Auth42Controller {
   @UseGuards(Auth42Guard)
   async login() {
     //
+    console.log("Hello world!");
   }
 
   @Get('42/callback')
