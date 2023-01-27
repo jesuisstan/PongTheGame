@@ -81,6 +81,10 @@ services:
       - transcendence
     volumes:
       - ./${BACKEND_NAME}:/app-${BACKEND_NAME}
+      - backend_node_modules:/app-${BACKEND_NAME}/node_modules/
     # stdin_open: true
     # tty: true
     restart: unless-stopped
+
+volumes:
+  backend_node_modules: {}
