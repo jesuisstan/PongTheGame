@@ -24,7 +24,7 @@ export class Auth42Controller {
   @Get('42/callback')
   @UseGuards(Auth42Guard)
   async callback(@Res() res: Response) {
-    return res.redirect(`${CLIENT_URL}/profile`);
+    return res.redirect(`${CLIENT_URL}/loginsuccess`);
   }
 
   @Get('logout')

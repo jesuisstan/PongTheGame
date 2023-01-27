@@ -16,7 +16,7 @@
   justify-content: center;
 }
 
-.loginButton{
+.loginButton {
   width: 142px;
   padding: 15px 25px;
   border-radius: 5px;
@@ -33,7 +33,7 @@
   color: black;
 }
 
-.right{
+.right {
   padding-left: 42px;
   flex: 1;
   display: flex;
@@ -50,7 +50,7 @@
   color: whitesmoke;
 }
 
-.center{
+.center {
   height: 100%;
   display: flex;
   align-items: center;
@@ -58,7 +58,7 @@
   position: relative;
 }
 
-.line{
+.line {
   width: 1px;
   height: 75%;
   background-color: whitesmoke;
@@ -71,20 +71,23 @@
   z-index: -1;
 }
 
-.google{
+.google {
   background-color: #df4930;
 }
-.ecole{
+.ecole {
   background-color: rgb(0, 186, 188);
 }
-.github{
+.github {
   background-color: #24292f;
 }
+.logged {
+  background-color: whitesmoke;
+  color: black;
+  font-size: 142%;
+}
 
-.icon{
+.icon {
   width: 21px;
   height: 21px;
   margin-right: 20px;
 }
-
-

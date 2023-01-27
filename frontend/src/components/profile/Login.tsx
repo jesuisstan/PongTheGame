@@ -1,4 +1,4 @@
-import './Login.css'
+import "./Login.css";
 
 const Login = () => {
   const google = () => {
@@ -8,11 +8,11 @@ const Login = () => {
   const ecole42Auth = () => {
     window.open("http://localhost:3080/auth/42", "_self");
   };
-  
+
   const github = () => {
     window.open("http://localhost:3080/auth/github", "_self");
   };
-  
+
   return (
     <div className="login">
       <div className="wrapper">
@@ -22,23 +22,35 @@ const Login = () => {
         </div>
         <div className="right">
           <div className="loginButton google" onClick={google}>
-            <img src={require('../../assets/google.png')} alt="" className="icon" />
+            <img
+              src={require("../../assets/google.png")}
+              alt=""
+              className="icon"
+            />
             Google
           </div>
-  
+
           <div className="loginButton github" onClick={github}>
-            <img src={require('../../assets/github.png')} alt="" className="icon" />
+            <img
+              src={require("../../assets/github.png")}
+              alt=""
+              className="icon"
+            />
             Github
           </div>
-          
+
           <div className="loginButton ecole" onClick={ecole42Auth}>
-            <img src={require('../../assets/ecole42.png')} alt="" className="icon" />
+            <img
+              src={require("../../assets/ecole42.png")}
+              alt=""
+              className="icon"
+            />
             Ecole 42
           </div>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;
