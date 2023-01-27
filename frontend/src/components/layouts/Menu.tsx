@@ -1,7 +1,7 @@
 import {NavLink} from "react-router-dom"
 import "./Menu.css"
+import {User} from "../../types/User";
 const _ = require('lodash')
-
 const Menu = ({user} : any) => {
   const authenticate = () => {
     if (user) {
@@ -22,7 +22,7 @@ const Menu = ({user} : any) => {
                  className="authButton"
                  onClick={authenticate}
         >
-          {!_.isEmpty(user) ? 'Logout' : 'Login'}
+          {user.provider ? 'Logout' : 'Login'}
         </NavLink>
       </nav>
     </div>

@@ -1,9 +1,14 @@
-const Profile = () => {
+import './Profile.css'
+import {User} from "../../types/User";
+
+const Profile = ({user}: any) => {
   return (
     <>
       <h1>Profile page</h1>
-      {/*<Button />*/}
-      <img className='image' src={require('../../assets/defaultUser.png')} alt="HTML" width="200" height="200" />
+      <h2>{user.displayName}</h2>
+      <h2>{user.provider}</h2>
+      <h3>{user.id}</h3>
+      <img className='avatarBig' src={user.photos[0].value} alt='IMG' width="150" height="150" />
     </>
   )
 }
