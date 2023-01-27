@@ -1,7 +1,6 @@
 export type User = {
-  userId: number
-  username: string
+  id: number
   displayName: string
-  image: string
-  email: string
+  photos: [{}]
+  provider: string
 }

@@ -15,20 +15,34 @@ const _ = require('lodash');
 const url = "http://localhost:3080/auth/getuser";
 
 function App() {
-  const [user, setUser] = useState({});
-
+  const [user, setUser] = useState<User>({
+    id: -1,
+    displayName: '',
+    photos: [{}],
+    provider: ''
+  });
+  
   useEffect(() => {
-    fetch(url, { credentials: "include" })
+    fetch(url)
       .then(res => res.json())
-      .then(res => setUser(res))
+      .then(res => {
+        let {id, displayName, photos, provider} = res
+        let temp:User = {id, displayName, photos, provider}
+        setUser(temp)
+      })
       .catch(err => {
         console.log(err)
       })
   }, [])
 
-  !_.isEmpty(user) ? console.log('user logged in') : console.log("no user")
+  user.provider ? console.log('user logged in') : console.log("no user")
+  
+  console.log(user.id)
+  console.log(user.displayName)
+  console.log(user.photos)
+  console.log(user.provider)
   console.log(user)
-
+  
   return (
       <BrowserRouter>
         <div className="App">
@@ -36,10 +50,10 @@ function App() {
             <Route path="/" element={<MainLayout user={user}/>}>
               <Route index={true} element={<Home />} />
               <Route path="login" element={<Login />} />
-              <Route path="chat" element={!_.isEmpty(user) ? <Chat /> : <Navigate to="/login" />} />
-              <Route path="game" element={!_.isEmpty(user) ? <Game /> : <Navigate to="/login" />} />
-              <Route path="dashboard" element={!_.isEmpty(user) ? <Dashboard /> : <Navigate to="/login" />} />
-              <Route path="profile" element={<Profile />} />
+              <Route path="chat" element={user.provider ? <Chat /> : <Navigate to="/login" />} />
+              <Route path="game" element={user.provider ? <Game /> : <Navigate to="/login" />} />
+              <Route path="dashboard" element={user.provider ? <Dashboard /> : <Navigate to="/login" />} />
+              <Route path="profile" element={<Profile user={user}/>} />
               <Route path="*" element={<NotFound />} />
             </Route>
           </Routes>
