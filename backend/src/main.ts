@@ -24,12 +24,7 @@ async function bootstrap() {
   const port = config.getOrThrow('BACKEND_PORT');
 
   app.enableCors({
-    origin: [
-      'http://localhost:3000/*',
-      'http://localhost:3080/*',
-      'https://api.intra.42.fr/*',
-    ],
-    methods: 'GET,POST,PUT,DELETE',
+    origin: true,
     credentials: true,
   });
 
