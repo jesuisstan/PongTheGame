@@ -9,6 +9,7 @@
   "dependencies": {
     "@nestjs/passport": "^9.0.0",
     "@prisma/client": "4.9.0",
+    "@quixo3/prisma-session-store": "^3.1.10",
     "express": "^4.17.1",
     "express-session": "^1.17.3",
     "passport": "^0.5.0",
