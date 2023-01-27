@@ -1,0 +1,24 @@
+{
+	"folders": [
+		{
+			"path": ".",
+			"name": "(root)"
+		},
+		{
+			"path": "./backend"
+		},
+		{
+			"path": "./frontend"
+		}
+	],
+	"settings": {
+		"jest.disabledWorkspaceFolders": [
+			"."
+		],
+		"files.exclude": {
+			"backend": true,
+			"frontend": true,
+			"database": true,
+		}
+	}
+}
