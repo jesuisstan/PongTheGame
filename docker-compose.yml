@@ -47,7 +47,7 @@ services:
       POSTGRES_USER: $POSTGRES_USER
       POSTGRES_PORT: $POSTGRES_PORT
     volumes:
-      - ./database:/var/lib/postgresql/data
+      - db:/var/lib/postgresql/data
     networks:
       - transcendence
     restart: unless-stopped
@@ -91,4 +91,5 @@ services:
     restart: unless-stopped
 
 volumes:
+  db: {}
   backend_node_modules: {}

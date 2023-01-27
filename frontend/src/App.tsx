@@ -18,17 +18,16 @@ function App() {
   const [user, setUser] = useState<User>({
     id: -1,
     displayName: '',
-    photos: [{}],
-    provider: ''
+    avatar: '',
+    provider: '',
+    username: 'marvin'
   });
   
   useEffect(() => {
-    fetch(url)
+    fetch(url, { credentials: "include" })
       .then(res => res.json())
       .then(res => {
-        let {id, displayName, photos, provider} = res
-        let temp:User = {id, displayName, photos, provider}
-        setUser(temp)
+        setUser(res)
       })
       .catch(err => {
         console.log(err)
@@ -39,7 +38,8 @@ function App() {
   
   console.log(user.id)
   console.log(user.displayName)
-  console.log(user.photos)
+  console.log(user.avatar)
+  console.log(user.username)
   console.log(user.provider)
   console.log(user)
   

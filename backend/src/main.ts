@@ -9,6 +9,7 @@ import { Config } from './config.interface';
 import { PrismaService } from './prisma.service';
 import { convertTime } from './utils/time';
 
+
 const {
   POSTGRES_USER,
   POSTGRES_PASSWORD,

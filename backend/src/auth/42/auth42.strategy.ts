@@ -14,6 +14,13 @@ export class Auth42Strategy extends PassportStrategy(Strategy, '42') {
       clientSecret: config.getOrThrow('42_CLIENT_SECRET'),
       callbackURL: config.getOrThrow('42_CALLBACK_URL'),
       state: true,
+      profileFields: {
+        'id': function (obj) { return String(obj.id); },
+        'displayName': 'displayname',
+        'username': 'login',
+        'avatar': 'image.link',
+        'provider': 'provider'
+      }
     } as StrategyOptions);
   }
 

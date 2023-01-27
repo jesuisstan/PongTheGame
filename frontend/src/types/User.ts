@@ -1,6 +1,7 @@
 export type User = {
   id: number
   displayName: string
-  photos: [{}]
+  username: string
+  avatar: string
   provider: string
 }
