@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma, User } from '@prisma/client';
 import { PrismaService } from 'src/prisma.service';
 
 type Find<T> = Promise<T | null>;
@@ -8,19 +7,42 @@ type Find<T> = Promise<T | null>;
 export class UserService {
   constructor(private readonly prisma: PrismaService) {}
 
-  private async findOne(where: Prisma.UserWhereUniqueInput) {
-    return this.prisma.user.findUnique({ where });
+  async findUserById(id: number) {
+    return this.prisma.user.findUnique({
+      where: { id },
+      select: {
+        avatar: true,
+        id: true,
+        intraUser: true,
+        nickname: true,
+      },
+    });
   }
 
-  async findUserById(id: number): Find<User> {
-    return this.findOne({ id });
-  }
-
-  async findUserByNickname(nickname: string): Find<User> {
-    return this.findOne({ nickname });
+  async findUserByNickname(nickname: string) {
+    return this.prisma.user.findUnique({
+      where: { nickname },
+      select: {
+        avatar: true,
+        id: true,
+        intraUser: true,
+        nickname: true,
+      },
+    });
   }
 
   async findUserByIntraId(id: number) {
-    return this.findOne({ intra_id: id });
+    const intraUser = await this.prisma.intraUser.findUnique({
+      where: { intraId: id },
+      select: {
+        intraId: true,
+        login: true,
+        user: {
+          include: { intraUser: true },
+        },
+      },
+    });
+
+    return intraUser?.user ?? null;
   }
 }

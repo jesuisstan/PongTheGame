@@ -9,8 +9,49 @@ datasource db {
 }
 
 model User {
-  id       Int    @id // primary key
-  nickname String @unique
+  id       Int     @id // primary key
+  nickname String  @unique
+  avatar   String?
 
-  intra_id Int @unique
+  // IntraUser
+  intraUserId Int?       @unique
+  intraUser   IntraUser?
+
+  // MatchEntry
+  matchEntries MatchEntry[]
+}
+
+model IntraUser {
+  intraId Int    @unique
+  login   String @unique
+
+  user User? @relation(fields: [intraId], references: [intraUserId])
+
+  @@id([intraId])
+}
+
+model MatchEntry {
+  id    Int @id
+  score Int
+
+  // User
+  userId Int
+  user   User @relation(fields: [userId], references: [id])
+
+  matchId Int
+  Match   Match @relation(fields: [matchId], references: [id])
+}
+
+model Match {
+  id        Int          @id
+  entries   MatchEntry[]
+  state     MatchState
+  startDate DateTime?
+  endDate   DateTime?
+}
+
+enum MatchState {
+  Scheduled
+  Started
+  Finished
 }
