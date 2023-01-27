@@ -10,6 +10,15 @@ import { Config } from './config.interface';
 import { PrismaService } from './prisma.service';
 import { convertTime } from './utils/time';
 
+const {
+  POSTGRES_USER,
+  POSTGRES_PASSWORD,
+  POSTGRES_PORT,
+  POSTGRES_HOST = 'localhost',
+} = process.env;
+
+process.env.DATABASE_URL ??= `postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/pong?schema=public`;
+
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   const config = app.get(ConfigService<Config>);
