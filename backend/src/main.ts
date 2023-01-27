@@ -2,13 +2,13 @@ import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 // import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { PrismaSessionStore } from '@quixo3/prisma-session-store';
 import * as ExpressSession from 'express-session';
 import * as passport from 'passport';
 import { AppModule } from './app.module';
 import { Config } from './config.interface';
 import { PrismaService } from './prisma.service';
 import { convertTime } from './utils/time';
-
 
 const {
   POSTGRES_USER,
@@ -26,7 +26,19 @@ async function bootstrap() {
 
   await prisma.enableShutdownHooks(app);
 
-  const session = makeSession(config.getOrThrow('SESSION_SECRET'));
+  const session = ExpressSession({
+    resave: false,
+    saveUninitialized: false,
+    secret: config.getOrThrow('SESSION_SECRET'),
+    cookie: {
+      maxAge: convertTime({ days: 3 }),
+      sameSite: 'lax',
+      secure: false,
+      path: '/',
+    },
+    store: new PrismaSessionStore(prisma, {}),
+  });
+
   const port = config.getOrThrow('BACKEND_PORT');
 
   app.enableCors({
@@ -41,18 +53,6 @@ async function bootstrap() {
   await app.listen(port);
 }
 
-function makeSession(secret: string) {
-  return ExpressSession({
-    resave: false,
-    saveUninitialized: false,
-    secret: secret,
-    cookie: {
-      maxAge: convertTime({ days: 3 }),
-      sameSite: 'lax',
-      secure: false,
-      path: '/',
-    },
-  });
-}
+function makeSession(secret: string) {}
 
 bootstrap();
