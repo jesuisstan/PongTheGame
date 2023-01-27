@@ -8,7 +8,7 @@ const Profile = ({user}: any) => {
       <h2>{user.displayName}</h2>
       <h2>{user.provider}</h2>
       <h3>{user.id}</h3>
-      <img className='avatarBig' src={user.photos[0].value} alt='IMG' width="150" height="150" />
+      <img className='avatarBig' src={user.avatar} alt='IMG' width="150" height="150" />
     </>
   )
 }
