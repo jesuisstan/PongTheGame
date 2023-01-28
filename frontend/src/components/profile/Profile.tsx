@@ -2,8 +2,10 @@ import './Profile.css';
 import { User } from '../../types/User';
 
 const Profile = ({ user }: any) => {
-  return (
-    <>
+  return !user.provider ? (
+    <h1>No user logged in</h1>
+  ) : (
+    <div>
       <h1>Profile page</h1>
       <h2>{user.displayName}</h2>
       <h2>{user.provider}</h2>
@@ -15,7 +17,7 @@ const Profile = ({ user }: any) => {
         width="150"
         height="150"
       />
-    </>
+    </div>
   );
 };
 
