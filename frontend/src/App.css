@@ -12,7 +12,8 @@ a:hover {
   color: lightgoldenrodyellow;
 }
 
-h1, h2 {
+h1,
+h2 {
   margin-top: 20px;
   margin-bottom: 20px;
 }
@@ -20,8 +21,10 @@ h1, h2 {
 nav {
   position: sticky;
   top: 5px;
-  background-color: rgba(0, 1, 2, 0.4);
+  background-color: rgba(0, 0, 0, 0.75);
   padding: 5px;
+  display: flex;
+  align-items: center;
 }
 
 nav a {
@@ -34,8 +37,9 @@ nav a {
 }
 
 .active {
-  color: palegreen;
+  color: rgb(26, 117, 208);
   font-weight: bold;
+  text-decoration: underline;
 }
 
 @keyframes App-logo-spin {
