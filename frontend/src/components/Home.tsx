@@ -6,7 +6,7 @@ const Home = () => {
       {/*<Button />*/}
       <img
         className="image"
-        src={require("../assets/pongScreen.png")}
+        src={require('../assets/pongScreen.png')}
         alt="HTML"
         width="405"
         height="255"

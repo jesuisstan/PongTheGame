@@ -5,9 +5,8 @@
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-  'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-  sans-serif;
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
   color: whitesmoke;
-  background: linear-gradient(to bottom right, darkslategrey, black ) fixed;
+  background: linear-gradient(to bottom right, black, #4fc3f7, black) fixed;
 }
-

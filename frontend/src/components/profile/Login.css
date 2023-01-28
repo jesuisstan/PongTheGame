@@ -1,11 +1,11 @@
 .wrapper {
   width: 550px;
   height: 350px;
-  box-shadow: 0px 5px 33px -21px rgb(0, 252, 181);
+  box-shadow: 0px 5px 33px -21px rgb(255, 255, 255);
   display: flex;
   align-items: center;
   border-radius: 21px;
-  background-color: rgba(115, 110, 110, 0.15);
+  background-color: rgba(0, 0, 0, 0.55);
 }
 
 .login {
@@ -29,7 +29,7 @@
 }
 
 .loginButton:hover {
-  background-color: palegreen;
+  background-color: rgb(26, 117, 208);
   color: black;
 }
 

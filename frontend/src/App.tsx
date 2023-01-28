@@ -10,7 +10,6 @@ import NotFound from './components/NotFound';
 import MainLayout from './components/layouts/MainLayout';
 import { User } from './types/User';
 import './App.css';
-import LoginSuccess from "./components/profile/LoginSuccess";
 
 const url = 'http://localhost:3080/auth/getuser';
 
@@ -34,8 +33,8 @@ function App() {
       });
   }, []);
 
-  user.provider ? console.log('user logged in') : console.log("no user")
-  console.log(user)
+  user.provider ? console.log('user logged in') : console.log('no user');
+  console.log(user);
 
   return (
     <BrowserRouter>
@@ -57,7 +56,6 @@ function App() {
               element={user.provider ? <Dashboard /> : <Navigate to="/login" />}
             />
             <Route path="profile" element={<Profile user={user} />} />
-            <Route path="loginsuccess" element={<LoginSuccess />} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>

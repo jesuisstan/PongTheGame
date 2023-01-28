@@ -1,16 +1,16 @@
-import "./Login.css";
+import './Login.css';
 
 const Login = () => {
   const google = () => {
-    window.open("http://localhost:3080/auth/google", "_self");
+    window.open('http://localhost:3080/auth/google', '_self');
   };
 
   const ecole42Auth = () => {
-    window.open("http://localhost:3080/auth/42", "_self");
+    window.open('http://localhost:3080/auth/42', '_self');
   };
 
   const github = () => {
-    window.open("http://localhost:3080/auth/github", "_self");
+    window.open('http://localhost:3080/auth/github', '_self');
   };
 
   return (
@@ -23,7 +23,7 @@ const Login = () => {
         <div className="right">
           <div className="loginButton google" onClick={google}>
             <img
-              src={require("../../assets/google.png")}
+              src={require('../../assets/google.png')}
               alt=""
               className="icon"
             />
@@ -32,7 +32,7 @@ const Login = () => {
 
           <div className="loginButton github" onClick={github}>
             <img
-              src={require("../../assets/github.png")}
+              src={require('../../assets/github.png')}
               alt=""
               className="icon"
             />
@@ -41,7 +41,7 @@ const Login = () => {
 
           <div className="loginButton ecole" onClick={ecole42Auth}>
             <img
-              src={require("../../assets/ecole42.png")}
+              src={require('../../assets/ecole42.png')}
               alt=""
               className="icon"
             />

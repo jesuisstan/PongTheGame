@@ -1,5 +1,5 @@
-import "./Profile.css";
-import { User } from "../../types/User";
+import './Profile.css';
+import { User } from '../../types/User';
 
 const Profile = ({ user }: any) => {
   return (
