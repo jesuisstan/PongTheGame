@@ -2,33 +2,20 @@
   text-align: center;
 }
 
-a {
-  color: lightgrey;
-  font-size: 21px;
-  text-decoration: none;
-}
-
-a:hover {
-  color: lightgoldenrodyellow;
-}
-
 h1,
 h2 {
   margin-top: 20px;
   margin-bottom: 20px;
 }
 
-nav {
-  position: sticky;
-  top: 5px;
-  background-color: rgba(0, 0, 0, 0.75);
-  padding: 5px;
-  display: flex;
-  align-items: center;
+a {
+  color: whitesmoke;
+  font-size: 19px;
+  text-decoration: none;
 }
 
-nav a {
-  margin: 42px;
+a:hover {
+  color: #dada63;
 }
 
 .image {

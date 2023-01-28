@@ -1,5 +1,6 @@
 import { NavLink } from 'react-router-dom';
 import Button from '@mui/material/Button';
+import Avatar from '@mui/material/Avatar';
 import styles from './Menu.module.css';
 
 const Menu = ({ user }: any) => {
@@ -13,17 +14,25 @@ const Menu = ({ user }: any) => {
 
   return (
     <div>
-      <nav>
+      <nav className={styles.navigate}>
         <div className={styles.right}>
-          <NavLink to=".">Home</NavLink>
-          <NavLink to="chat">Chat</NavLink>
-          <NavLink to="game">Game</NavLink>
-          <NavLink to="dashboard">Dashboard</NavLink>
+          <Button variant="text">
+            <NavLink to=".">Home</NavLink>
+          </Button>
+          <Button variant="text">
+            <NavLink to="chat">Chat</NavLink>
+          </Button>
+          <Button variant="text">
+            <NavLink to="game">Game</NavLink>
+          </Button>
         </div>
         <div className={styles.left}>
-          <Button>mini profile</Button>
           <Button variant="contained" onClick={authenticate}>
             {user.provider ? 'Logout' : 'Login'}
+          </Button>
+          <Avatar alt="" src={user.avatar}></Avatar>
+          <Button variant="text">
+            <NavLink to="profile">Profile</NavLink>
           </Button>
         </div>
       </nav>

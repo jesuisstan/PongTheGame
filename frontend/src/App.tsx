@@ -4,7 +4,6 @@ import Home from './components/Home';
 import Login from './components/profile/Login';
 import Game from './components/game/Game';
 import Chat from './components/chat/Chat';
-import Dashboard from './components/dashboard/Dashboard';
 import Profile from './components/profile/Profile';
 import NotFound from './components/NotFound';
 import MainLayout from './components/layouts/MainLayout';
@@ -50,10 +49,6 @@ function App() {
             <Route
               path="game"
               element={user.provider ? <Game /> : <Navigate to="/login" />}
-            />
-            <Route
-              path="dashboard"
-              element={user.provider ? <Dashboard /> : <Navigate to="/login" />}
             />
             <Route path="profile" element={<Profile user={user} />} />
             <Route path="*" element={<NotFound />} />
