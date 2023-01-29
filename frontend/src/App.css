@@ -15,7 +15,8 @@ a {
 }
 
 a:hover {
-  color: #dada63;
+  color: #f95877;
+  /*color: #dada63;*/
 }
 
 .image {
@@ -24,7 +25,7 @@ a:hover {
 }
 
 .active {
-  color: rgb(26, 117, 208);
+  color: rgb(73, 153, 233);
   font-weight: bold;
   text-decoration: underline;
 }
