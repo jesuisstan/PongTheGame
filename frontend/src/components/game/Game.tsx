@@ -1,5 +1,5 @@
 const Game = () => {
-  return <h1>The game itself</h1>
-}
+  return <h1>The game itself</h1>;
+};
 
-export default Game
+export default Game;

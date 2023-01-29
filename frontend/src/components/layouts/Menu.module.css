@@ -1,0 +1,25 @@
+.navigate {
+  position: sticky;
+  background-color: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+}
+
+.right {
+  padding-left: 42px;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  justify-content: flex-start;
+  gap: 42px;
+}
+
+.left {
+  padding-right: 42px;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  justify-content: flex-end;
+  gap: 42px;
+}
