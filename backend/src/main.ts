@@ -53,6 +53,4 @@ async function bootstrap() {
   await app.listen(port);
 }
 
-function makeSession(secret: string) {}
-
 bootstrap();
