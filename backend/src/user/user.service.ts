@@ -1,8 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 
-type Find<T> = Promise<T | null>;
-
 @Injectable()
 export class UserService {
   constructor(private readonly prisma: PrismaService) {}
