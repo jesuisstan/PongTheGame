@@ -1,5 +1,5 @@
 import { Outlet } from 'react-router-dom';
-import Menu from './Menu';
+import Menu from './NaviBar';
 
 const MainLayout = ({ user }: any) => {
   return (

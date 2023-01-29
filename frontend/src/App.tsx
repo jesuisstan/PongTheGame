@@ -18,7 +18,7 @@ function App() {
     displayName: '',
     avatar: '',
     provider: '',
-    username: 'marvin',
+    username: ''
   });
 
   useEffect(() => {

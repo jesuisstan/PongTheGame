@@ -6,8 +6,101 @@
 }
 
 .avatarBig {
-  width: 142px;
-  height: 142px;
-  border-radius: 11%;
+  width: 242px;
+  height: 242px;
+  border-radius: 50%;
   object-fit: cover;
+}
+
+.wrapper {
+  width: 550px;
+  height: 350px;
+  box-shadow: 0px 5px 33px -21px rgb(255, 255, 255);
+  display: flex;
+  align-items: center;
+  border-radius: 21px;
+  background-color: rgba(0, 0, 0, 0.55);
+}
+
+.profileCard {
+  height: calc(100vh - 50px);
+  display: flex;
+  align-items: center;
+  margin-left: 42px
+}
+
+.loginButton {
+  width: 142px;
+  padding: 15px 25px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  font-weight: bold;
+  margin-bottom: 10px;
+  margin-top: 10px;
+  cursor: pointer;
+}
+
+.loginButton:hover {
+  background-color: rgb(26, 117, 208);
+  color: black;
+}
+
+.right {
+  padding-left: 42px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: left;
+}
+
+.left {
+  font-size: 28px;
+  flex: 1;
+  padding: 15px 25px;
+  font-weight: bold;
+  color: whitesmoke;
+}
+
+.center {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.line {
+  width: 1px;
+  height: 75%;
+  background-color: whitesmoke;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  z-index: -1;
+}
+
+.google {
+  background-color: #df4930;
+}
+.ecole {
+  background-color: rgb(0, 186, 188);
+}
+.github {
+  background-color: #24292f;
+}
+.logged {
+  background-color: whitesmoke;
+  color: black;
+  font-size: 142%;
+}
+
+.icon {
+  width: 21px;
+  height: 21px;
+  margin-right: 20px;
 }
