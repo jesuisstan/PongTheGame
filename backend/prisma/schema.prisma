@@ -55,3 +55,11 @@ enum MatchState {
   Started
   Finished
 }
+
+// https://www.npmjs.com/package/@quixo3/prisma-session-store#Model
+model Session {
+  id        String   @id
+  sid       String   @unique
+  data      String
+  expiresAt DateTime
+}
