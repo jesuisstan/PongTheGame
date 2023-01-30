@@ -26,7 +26,7 @@ export class Auth42Strategy extends PassportStrategy(Strategy, '42') {
     } as StrategyOptions);
   }
 
-  // TODO
+  // TODO sync with database
   async validate(accessToken: string, refreshToken: string, profile: any) {
     delete profile._raw;
     delete profile._json;
