@@ -16,6 +16,9 @@ export class GithubStrategy extends PassportStrategy(Strategy, 'github') {
 
   // TODO sync with database
   async validate(accessToken: string, refreshToken: string, profile: any) {
+    delete profile._raw;
+    delete profile._json;
+    console.log(profile);
     return profile;
   }
 }
