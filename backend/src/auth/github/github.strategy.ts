@@ -1,17 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
-import { Strategy, StrategyOptions } from 'passport-42';
+import { Strategy, StrategyOptions } from 'passport-github2';
 import { Config } from 'src/config.interface';
 
 @Injectable()
-export class Auth42Strategy extends PassportStrategy(Strategy, '42') {
+export class GithubStrategy extends PassportStrategy(Strategy, 'github') {
   constructor(readonly config: ConfigService<Config>) {
     super({
-      clientID: config.getOrThrow('42_CLIENT_ID'),
-      clientSecret: config.getOrThrow('42_CLIENT_SECRET'),
-      callbackURL: config.getOrThrow('42_CALLBACK_URL'),
-      state: true,
+      clientID: config.getOrThrow('GITHUB_CLIENT_ID'),
+      clientSecret: config.getOrThrow('GITHUB_CLIENT_SECRET'),
+      callbackURL: config.getOrThrow('GITHUB_CALLBACK_URL'),
     } as StrategyOptions);
   }
 

@@ -1,20 +1,20 @@
 import { Controller, Get, Res, UseGuards } from '@nestjs/common';
 import { Response } from 'express';
-import { Auth42Guard } from 'src/auth/42/auth42.guard';
+import { GithubGuard } from 'src/auth/github/github.guard';
 
 // TODO use config
 const CLIENT_URL = 'http://localhost:3000';
 
-@Controller('/auth/42')
-export class Auth42Controller {
+@Controller('/auth/github')
+export class GithubController {
   @Get('/')
-  @UseGuards(Auth42Guard)
+  @UseGuards(GithubGuard)
   async login() {
-    // never reached
+    return 'hello';
   }
 
   @Get('/callback')
-  @UseGuards(Auth42Guard)
+  @UseGuards(GithubGuard)
   async callback(@Res() res: Response) {
     return res.redirect(`${CLIENT_URL}/profile`);
   }
