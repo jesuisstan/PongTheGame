@@ -25,6 +25,10 @@ function App() {
     fetch(url, { credentials: 'include' })
       .then((res) => res.json())
       .then((res) => {
+        console.log("res has");
+        console.log(res);
+
+        
         setUser(res);
       })
       .catch((err) => {

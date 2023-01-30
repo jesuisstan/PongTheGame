@@ -7,7 +7,7 @@ import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
-import styles from './NaviBar.module.css';
+import styles from './MenuBar.module.css';
 
 const MenuBar = ({ user }: any) => {
   const authenticate = () => {
@@ -57,7 +57,7 @@ const MenuBar = ({ user }: any) => {
               </IconButton>
             </Tooltip>
             <Menu
-              sx={{ mt: '45px' }}
+              sx={{ mt: '42px' }}
               id="menu-appbar"
               anchorEl={anchorElUser}
               anchorOrigin={{
@@ -74,6 +74,7 @@ const MenuBar = ({ user }: any) => {
             >
               <MenuItem onClick={handleCloseUserMenu}>
                 <Button
+                  variant="contained"
                   onClick={(event) => (window.location.href = '/profile')}
                 >
                   Profile
@@ -81,13 +82,14 @@ const MenuBar = ({ user }: any) => {
               </MenuItem>
               <MenuItem onClick={handleCloseUserMenu}>
                 <Button
+                  variant="contained"
                   onClick={(event) => (window.location.href = '/match_history')}
                 >
                   History
                 </Button>
               </MenuItem>
               <MenuItem onClick={handleCloseUserMenu}>
-                <Button onClick={authenticate}>
+                <Button variant="contained" onClick={authenticate}>
                   {user.provider ? 'Logout' : 'Login'}
                 </Button>
               </MenuItem>
