@@ -30,7 +30,7 @@ const MenuBar = ({ user }: any) => {
 
   return (
     <div>
-      <nav className={styles.navigate}>
+      <nav className={styles.navibar}>
         <div className={styles.left}>
           <img
             src={require('../../assets/gameLogo.png')}
