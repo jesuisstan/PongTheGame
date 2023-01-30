@@ -785,7 +785,7 @@
 
 "@quixo3/prisma-session-store@^3.1.10":
   version "3.1.10"
-  resolved "https://registry.yarnpkg.com/@quixo3/prisma-session-store/-/prisma-session-store-3.1.10.tgz#8c9d84b1d4fe32fbd359cafb0f5297b3bf63a3ff"
+  resolved "https://registry.npmjs.org/@quixo3/prisma-session-store/-/prisma-session-store-3.1.10.tgz"
   integrity sha512-PRb6woSz5jC/IvRZ+fxDnBcbBikEG2DN+scysjgD3PBveXMjVZEak5ortz8NjkCjCE280UEGssVsOL2HKOyGfA==
   dependencies:
     cuid "^2.1.8"
@@ -994,7 +994,7 @@
 
 "@types/passport-github2@^1.2.5":
   version "1.2.5"
-  resolved "https://registry.yarnpkg.com/@types/passport-github2/-/passport-github2-1.2.5.tgz#79064e213ff33ca0a9d21af3da09a3230fac8099"
+  resolved "https://registry.npmjs.org/@types/passport-github2/-/passport-github2-1.2.5.tgz"
   integrity sha512-+WLyrd8JPsCxroK34EjegR0j3FMxp6wqB9cw/sRCFkWT9qic1dymAn021gr336EpyjzdhjUd2KKrqyxvdFSvOA==
   dependencies:
     "@types/express" "*"
@@ -1899,7 +1899,7 @@ cross-spawn@^7.0.0, cross-spawn@^7.0.2, cross-spawn@^7.0.3:
 
 cuid@^2.1.8:
   version "2.1.8"
-  resolved "https://registry.yarnpkg.com/cuid/-/cuid-2.1.8.tgz#cbb88f954171e0d5747606c0139fb65c5101eac0"
+  resolved "https://registry.npmjs.org/cuid/-/cuid-2.1.8.tgz"
   integrity sha512-xiEMER6E7TlTPnDxrM4eRiC6TRgjNX9xzEZ5U/Se2YJKr7Mq4pJn/2XEHjl3STcSh96GmkHPcBXLES8M29wyyg==
 
 debug@2.6.9:
@@ -3786,7 +3786,7 @@ passport-42@^1.2.6:
 
 passport-github2@^0.1.12:
   version "0.1.12"
-  resolved "https://registry.yarnpkg.com/passport-github2/-/passport-github2-0.1.12.tgz#a72ebff4fa52a35bc2c71122dcf470d1116f772c"
+  resolved "https://registry.npmjs.org/passport-github2/-/passport-github2-0.1.12.tgz"
   integrity sha512-3nPUCc7ttF/3HSP/k9sAXjz3SkGv5Nki84I05kSQPo01Jqq1NzJACgMblCK0fGcv9pKCG/KXU3AJRDGLqHLoIw==
   dependencies:
     passport-oauth2 "1.x.x"
@@ -4500,7 +4500,7 @@ tree-kill@1.2.2:
 
 ts-dedent@^2.2.0:
   version "2.2.0"
-  resolved "https://registry.yarnpkg.com/ts-dedent/-/ts-dedent-2.2.0.tgz#39e4bd297cd036292ae2394eb3412be63f563bb5"
+  resolved "https://registry.npmjs.org/ts-dedent/-/ts-dedent-2.2.0.tgz"
   integrity sha512-q5W7tVM71e2xjHZTlgfTDoPF/SmqKG5hddq9SzR49CH2hayqRKJtQ4mtRlSxKaJlR/+9rEM+mnBHf7I2/BQcpQ==
 
 ts-jest@29.0.3:
@@ -4605,7 +4605,7 @@ type-fest@^0.21.3:
 
 type-fest@^2.5.2:
   version "2.19.0"
-  resolved "https://registry.yarnpkg.com/type-fest/-/type-fest-2.19.0.tgz#88068015bb33036a598b952e55e9311a60fd3a9b"
+  resolved "https://registry.npmjs.org/type-fest/-/type-fest-2.19.0.tgz"
   integrity sha512-RAH822pAdBgcNMAfWnCBU3CFZcfZ/i1eZjwFU/dsLKumyuuP3niueg2UAukXYF0E2AAoc82ZSSf9J0WQBinzHA==
 
 type-is@^1.6.4, type-is@~1.6.18:

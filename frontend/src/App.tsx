@@ -16,7 +16,7 @@ function App() {
   const [user, setUser] = useState<User>({
     id: -1,
     displayName: '',
-    photos: [{}],
+    avatar: '',
     provider: '',
     username: ''
   });

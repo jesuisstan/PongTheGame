@@ -1,10 +1,10 @@
 import { Outlet } from 'react-router-dom';
-import Menu from './NaviBar';
+import MenuBar from './MenuBar';
 
 const MainLayout = ({ user }: any) => {
   return (
     <div>
-      <Menu user={user} />
+      <MenuBar user={user} />
       <Outlet />
     </div>
   );

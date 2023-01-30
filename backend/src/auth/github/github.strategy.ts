@@ -23,8 +23,8 @@ export class GithubStrategy extends PassportStrategy(Strategy, 'github') {
       id: function (obj: any) {
         return String(obj.id);
       },
-      displayName: 'displayname',
-      username: 'login',
+      displayName: 'displayName',
+      username: 'username',
       avatar: 'photos.0.value',
       provider: 'provider',
     });

@@ -2,6 +2,6 @@ export type User = {
   id: number;
   displayName: string;
   username: string;
-  photos: [{}];
+  avatar: string;
   provider: string;
 };
