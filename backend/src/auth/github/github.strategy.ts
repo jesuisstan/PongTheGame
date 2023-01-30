@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
+import { parse as parseProfile } from 'passport-42/lib/profile';
 import { Strategy, StrategyOptions } from 'passport-github2';
 import { Config } from 'src/config.interface';
 
@@ -18,6 +19,14 @@ export class GithubStrategy extends PassportStrategy(Strategy, 'github') {
   async validate(accessToken: string, refreshToken: string, profile: any) {
     delete profile._raw;
     delete profile._json;
-    return profile;
+    return parseProfile(profile, {
+      id: function (obj: any) {
+        return String(obj.id);
+      },
+      displayName: 'displayname',
+      username: 'login',
+      avatar: 'photos.0.value',
+      provider: 'provider',
+    });
   }
 }
