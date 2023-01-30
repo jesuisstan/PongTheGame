@@ -16,7 +16,7 @@ function App() {
   const [user, setUser] = useState<User>({
     id: -1,
     displayName: '',
-    avatar: '',
+    photos: [{}],
     provider: '',
     username: ''
   });
@@ -25,6 +25,10 @@ function App() {
     fetch(url, { credentials: 'include' })
       .then((res) => res.json())
       .then((res) => {
+        console.log("res has");
+        console.log(res);
+
+        
         setUser(res);
       })
       .catch((err) => {

@@ -8,7 +8,7 @@ const Profile = ({ user }: any) => {
   ) : (
     <div className="profileCard">
       <div className="left">
-        <img className="avatarBig" src={user.avatar} alt="IMG" />
+        <img className="avatarBig" src={user.photos[0].value} alt="IMG" />
       </div>
       <div className="center">
         <div className="line" />
