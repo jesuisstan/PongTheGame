@@ -1,7 +1,7 @@
 export interface Config {
-  '42_CLIENT_ID': string;
-  '42_CLIENT_SECRET': string;
-  '42_CALLBACK_URL': string;
+  INTRA42_CLIENT_ID: string;
+  INTRA42_CLIENT_SECRET: string;
+  INTRA42_CALLBACK_URL: string;
 
   GITHUB_CLIENT_ID: string;
   GITHUB_CLIENT_SECRET: string;

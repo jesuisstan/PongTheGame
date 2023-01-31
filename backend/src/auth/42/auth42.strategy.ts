@@ -8,9 +8,9 @@ import { Config } from 'src/config.interface';
 export class Auth42Strategy extends PassportStrategy(Strategy, '42') {
   constructor(readonly config: ConfigService<Config>) {
     super({
-      clientID: config.getOrThrow('42_CLIENT_ID'),
-      clientSecret: config.getOrThrow('42_CLIENT_SECRET'),
-      callbackURL: config.getOrThrow('42_CALLBACK_URL'),
+      clientID: config.getOrThrow('INTRA42_CLIENT_ID'),
+      clientSecret: config.getOrThrow('INTRA42_CLIENT_SECRET'),
+      callbackURL: config.getOrThrow('INTRA42_CALLBACK_URL'),
       state: true,
       profileFields: {
         id: function (obj: any) {
