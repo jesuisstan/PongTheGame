@@ -10,7 +10,7 @@ import {
   UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { SessionUser } from 'src/decorator/session-user.decorator';
@@ -27,6 +27,9 @@ export class MatchController {
 
   @Get('/mine')
   @ApiTags('Matches')
+  @ApiOperation({
+    summary: 'Get the match history for the current user',
+  })
   @UseGuards(AuthGuard)
   async mine(@SessionUser() user: User) {
     return this.matches.getMatchHistory(user, 0, 50); //TODO change skip/take
@@ -34,6 +37,9 @@ export class MatchController {
 
   @Get('/:id')
   @ApiTags('Matches')
+  @ApiOperation({
+    summary: 'Get a match by its id',
+  })
   @UseGuards(AuthGuard)
   async getMatchById(@Param('id', ParseIntPipe) id: number) {
     const match = await this.matches.getMatchById(id);
@@ -44,6 +50,9 @@ export class MatchController {
 
   @Post('/')
   @ApiTags('Matches')
+  @ApiOperation({
+    summary: 'Create a new match that opposes two users',
+  })
   @UseGuards(AuthGuard)
   async createMatch(@Body(ValidationPipe) body: CreateMatchDTO) {
     const { user1: userId1, user2: userId2 } = body;
