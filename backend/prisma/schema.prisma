@@ -39,7 +39,7 @@ model MatchEntry {
   user   User @relation(fields: [userId], references: [id])
 
   matchId Int
-  Match   Match @relation(fields: [matchId], references: [id])
+  match   Match @relation(fields: [matchId], references: [id])
 }
 
 model Match {
