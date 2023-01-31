@@ -1,7 +1,6 @@
+import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
-// import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { PrismaSessionStore } from '@quixo3/prisma-session-store';
 import * as ExpressSession from 'express-session';
