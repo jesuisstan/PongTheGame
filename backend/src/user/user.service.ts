@@ -11,7 +11,7 @@ export class UserService {
       select: {
         avatar: true,
         id: true,
-        intraUser: true,
+        profile: true,
         nickname: true,
       },
     });
@@ -23,24 +23,32 @@ export class UserService {
       select: {
         avatar: true,
         id: true,
-        intraUser: true,
+        profile: true,
         nickname: true,
       },
     });
   }
 
-  async findUserByIntraId(id: number) {
-    const intraUser = await this.prisma.intraUser.findUnique({
-      where: { intraId: id },
+  async findUserByProfileId(provider: string, profileId: string) {
+    const profile = await this.prisma.profile.findUnique({
+      where: {
+        profileId_provider: {
+          profileId,
+          provider,
+        },
+      },
       select: {
-        intraId: true,
-        login: true,
         user: {
-          include: { intraUser: true },
+          select: {
+            avatar: true,
+            id: true,
+            nickname: true,
+            profile: true,
+          },
         },
       },
     });
 
-    return intraUser?.user ?? null;
+    return profile?.user ?? null;
   }
 }

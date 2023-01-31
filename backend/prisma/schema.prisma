@@ -13,22 +13,32 @@ model User {
   nickname String  @unique
   avatar   String?
 
-  // IntraUser
-  intraUserId Int?       @unique
-  intraUser   IntraUser?
+  // OAuth2 profile
+  profile         Profile @relation(fields: [profileId, profileProvider], references: [profileId, provider])
+  profileId       String
+  profileProvider String
 
   // MatchEntry
   matchEntries MatchEntry[]
+
+  @@unique([profileId, profileProvider])
 }
 
-model IntraUser {
-  intraId Int    @unique
-  login   String @unique
+model Profile {
+  profileId   String
+  provider    String
+  displayName String
+  username    String?
+  photos      String[]
 
-  user User? @relation(fields: [intraId], references: [intraUserId])
+  user User?
 
-  @@id([intraId])
+  @@id([profileId, provider])
 }
+
+// model GithubUser {
+//   user User?
+// }
 
 model MatchEntry {
   id    Int @id @default(autoincrement())
