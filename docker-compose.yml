@@ -36,7 +36,7 @@ services:
 
   database:
     container_name: postgres
-    image: postgres:15.1
+    image: postgres:15.1-alpine
     ports:
       - "${POSTGRES_PORT}:${POSTGRES_PORT}"
     environment:
@@ -74,11 +74,20 @@ services:
     env_file:
       - .env
     environment:
+      BACKEND_PORT: ${BACKEND_PORT}
+      FRONTEND_PORT: ${BACKEND_PORT}
+      SESSION_SECRET: ${SESSION_SECRET}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_HOST: database
       POSTGRES_PORT: ${POSTGRES_PORT}
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST:-database}:${POSTGRES_PORT}/pong?schema=public
+      INTRA42_CLIENT_ID: ${INTRA42_CLIENT_ID}
+      INTRA42_CLIENT_SECRET: ${INTRA42_CLIENT_SECRET}
+      INTRA42_CALLBACK_URL: ${INTRA42_CALLBACK_URL}
+      GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID}
+      GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
+      GITHUB_CALLBACK_URL: ${GITHUB_CALLBACK_URL}
     networks:
       - transcendence
     volumes:

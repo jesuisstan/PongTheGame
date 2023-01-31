@@ -9,29 +9,25 @@ datasource db {
 }
 
 model User {
-  id       Int     @id // primary key
-  nickname String  @unique
-  avatar   String?
-
-  // IntraUser
-  intraUserId Int?       @unique
-  intraUser   IntraUser?
+  id        Int     @id @default(autoincrement()) // primary key
+  nickname  String? @unique
+  username  String
+  avatar    String?
+  profileId String
+  provider  String
 
   // MatchEntry
   matchEntries MatchEntry[]
+
+  @@unique([profileId, provider])
 }
 
-model IntraUser {
-  intraId Int    @unique
-  login   String @unique
-
-  user User? @relation(fields: [intraId], references: [intraUserId])
-
-  @@id([intraId])
-}
+// model GithubUser {
+//   user User?
+// }
 
 model MatchEntry {
-  id    Int @id
+  id    Int @id @default(autoincrement())
   score Int
 
   // User
@@ -39,11 +35,11 @@ model MatchEntry {
   user   User @relation(fields: [userId], references: [id])
 
   matchId Int
-  Match   Match @relation(fields: [matchId], references: [id])
+  match   Match @relation(fields: [matchId], references: [id])
 }
 
 model Match {
-  id        Int          @id
+  id        Int          @id @default(autoincrement())
   entries   MatchEntry[]
   state     MatchState
   startDate DateTime?

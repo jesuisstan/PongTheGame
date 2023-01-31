@@ -2,7 +2,8 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { StatusController } from 'src/status/status.controller';
 import { AuthModule } from './auth/auth.module';
-import { PrismaService } from './prisma.service';
+import { MatchModule } from './match/match.module';
+import { PrismaModule } from './prisma/prisma.module';
 import { UserModule } from './user/user.module';
 
 @Module({
@@ -13,8 +14,10 @@ import { UserModule } from './user/user.module';
     }),
     AuthModule,
     UserModule,
+    MatchModule,
+    PrismaModule,
   ],
-  providers: [PrismaService],
+  providers: [],
   controllers: [StatusController],
 })
 export class AppModule {}

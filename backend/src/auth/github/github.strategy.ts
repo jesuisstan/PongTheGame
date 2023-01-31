@@ -1,13 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
-import { parse as parseProfile } from 'passport-42/lib/profile';
+import { Profile } from 'passport';
 import { Strategy, StrategyOptions } from 'passport-github2';
 import { Config } from 'src/config.interface';
+import { SessionService } from '../session/session.service';
 
 @Injectable()
 export class GithubStrategy extends PassportStrategy(Strategy, 'github') {
-  constructor(readonly config: ConfigService<Config>) {
+  constructor(
+    readonly config: ConfigService<Config>,
+    private readonly auth: SessionService,
+  ) {
     super({
       clientID: config.getOrThrow('GITHUB_CLIENT_ID'),
       clientSecret: config.getOrThrow('GITHUB_CLIENT_SECRET'),
@@ -15,18 +19,7 @@ export class GithubStrategy extends PassportStrategy(Strategy, 'github') {
     } as StrategyOptions);
   }
 
-  // TODO sync with database
-  async validate(accessToken: string, refreshToken: string, profile: any) {
-    delete profile._raw;
-    delete profile._json;
-    return parseProfile(profile, {
-      id: function (obj: any) {
-        return String(obj.id);
-      },
-      displayName: 'displayName',
-      username: 'username',
-      avatar: 'photos.0.value',
-      provider: 'provider',
-    });
+  async validate(accessToken: string, refreshToken: string, profile: Profile) {
+    return this.auth.validateUser(profile);
   }
 }
