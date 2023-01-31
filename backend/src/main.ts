@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 // import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { PrismaSessionStore } from '@quixo3/prisma-session-store';
 import * as ExpressSession from 'express-session';
 import * as passport from 'passport';
@@ -26,6 +27,35 @@ async function bootstrap() {
 
   await prisma.enableShutdownHooks(app);
 
+  setupSwagger(app);
+  setupSession(app, config, prisma);
+
+  app.enableCors({
+    origin: true,
+    credentials: true,
+  });
+
+  await app.listen(config.getOrThrow('BACKEND_PORT'));
+}
+
+function setupSwagger(app: NestExpressApplication) {
+  const swaggerConfig = new DocumentBuilder()
+    .setTitle('ft_transcendence')
+    .setDescription('The ft_transcendence API description')
+    .setVersion('1.0')
+    .addTag('test')
+    .build();
+
+  const swagger = SwaggerModule.createDocument(app, swaggerConfig);
+
+  SwaggerModule.setup('swagger', app, swagger);
+}
+
+function setupSession(
+  app: NestExpressApplication,
+  config: ConfigService<Config>,
+  prisma: PrismaService,
+) {
   const session = ExpressSession({
     resave: false,
     saveUninitialized: false,
@@ -39,18 +69,9 @@ async function bootstrap() {
     store: new PrismaSessionStore(prisma, {}),
   });
 
-  const port = config.getOrThrow('BACKEND_PORT');
-
-  app.enableCors({
-    origin: true,
-    credentials: true,
-  });
-
   app.use(session);
   app.use(passport.initialize());
   app.use(passport.session());
-
-  await app.listen(port);
 }
 
 bootstrap();
