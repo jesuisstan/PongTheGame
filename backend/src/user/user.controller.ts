@@ -23,18 +23,8 @@ export class UserController {
       },
     },
   })
-  async getUserById(
-    @Param('id', new ParseIntPipe({ errorHttpStatusCode: 400 })) id: number,
-  ) {
+  async getUserById(@Param('id', ParseIntPipe) id: number) {
     const user = await this.users.findUserById(id);
-
-    if (user === null) throw new NotFoundException();
-    return user;
-  }
-
-  @Get('/:nickname')
-  async getUserByNickname(@Param('nickname') nickname: string) {
-    const user = await this.users.findUserByNickname(nickname);
 
     if (user === null) throw new NotFoundException();
     return user;

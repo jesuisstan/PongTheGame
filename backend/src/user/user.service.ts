@@ -77,4 +77,31 @@ export class UserService {
       },
     });
   }
+
+  async findUsersById(...ids: number[]): Promise<(User | null)[]> {
+    const users = await this.prisma.user.findMany({
+      where: {
+        id: {
+          in: ids,
+        },
+        // NOT: {
+        //   nickname: null,
+        // },
+      },
+      select: {
+        avatar: true,
+        id: true,
+        profileId: true,
+        provider: true,
+        nickname: true,
+        username: true,
+      },
+    });
+
+    console.log(users);
+
+    return ids.map((id) => {
+      return users.find((user) => user.id == id) ?? null;
+    });
+  }
 }
