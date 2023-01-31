@@ -5,7 +5,7 @@ import {
   Param,
   ParseIntPipe,
 } from '@nestjs/common';
-import { ApiOperation } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { UserService } from './user.service';
 
 @Controller('/user')
@@ -23,6 +23,7 @@ export class UserController {
       },
     },
   })
+  @ApiTags('Users')
   async getUserById(@Param('id', ParseIntPipe) id: number) {
     const user = await this.users.findUserById(id);
 

@@ -6,6 +6,7 @@ import {
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { Request, Response } from 'express';
 import { AuthGuard } from 'src/auth/auth.guard';
 
@@ -15,6 +16,7 @@ const CLIENT_URL = 'http://localhost:3000';
 @Controller('/auth')
 export class AuthController {
   @Get('logout')
+  @ApiTags('Authentication')
   async logout(@Req() req: Request, @Res() res: Response) {
     await new Promise<void>(function (resolve, reject) {
       req.session.destroy(function (err) {
@@ -28,6 +30,7 @@ export class AuthController {
   }
 
   @Get('getuser')
+  @ApiTags('Authentication')
   @UseGuards(AuthGuard)
   async profile(@Req() req: Request) {
     if (req.user !== undefined) return req.user;
