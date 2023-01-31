@@ -9,7 +9,7 @@ datasource db {
 }
 
 model User {
-  id       Int     @id // primary key
+  id       Int     @id @default(autoincrement()) // primary key
   nickname String  @unique
   avatar   String?
 
@@ -31,7 +31,7 @@ model IntraUser {
 }
 
 model MatchEntry {
-  id    Int @id
+  id    Int @id @default(autoincrement())
   score Int
 
   // User
@@ -43,7 +43,7 @@ model MatchEntry {
 }
 
 model Match {
-  id        Int          @id
+  id        Int          @id @default(autoincrement())
   entries   MatchEntry[]
   state     MatchState
   startDate DateTime?
