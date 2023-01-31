@@ -7,7 +7,7 @@ import * as ExpressSession from 'express-session';
 import * as passport from 'passport';
 import { AppModule } from './app.module';
 import { Config } from './config.interface';
-import { PrismaService } from './prisma.service';
+import { PrismaService } from './prisma/prisma.service';
 import { convertTime } from './utils/time';
 
 const {
