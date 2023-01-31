@@ -9,31 +9,16 @@ datasource db {
 }
 
 model User {
-  id       Int     @id @default(autoincrement()) // primary key
-  nickname String  @unique
-  avatar   String?
-
-  // OAuth2 profile
-  profile         Profile @relation(fields: [profileId, profileProvider], references: [profileId, provider])
-  profileId       String
-  profileProvider String
+  id        Int     @id @default(autoincrement()) // primary key
+  nickname  String  @unique
+  avatar    String?
+  profileId String
+  provider  String
 
   // MatchEntry
   matchEntries MatchEntry[]
 
-  @@unique([profileId, profileProvider])
-}
-
-model Profile {
-  profileId   String
-  provider    String
-  displayName String
-  username    String?
-  photos      String[]
-
-  user User?
-
-  @@id([profileId, provider])
+  @@unique([profileId, provider])
 }
 
 // model GithubUser {
