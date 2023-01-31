@@ -49,48 +49,28 @@ export class UserService {
         nickname: true,
         profileId: true,
         provider: true,
+        username: true,
       },
     });
-
-    // const profile = await this.prisma.user.findUnique({
-    //   where: {
-    //     profileId_provider: {
-    //       profileId,
-    //       provider,
-    //     },
-    //   },
-    //   select: {
-    //     user: {
-    //       select: {
-    //         avatar: true,
-    //         id: true,
-    //         nickname: true,
-    //         profile: true,
-    //         profileId: true,
-    //         profileProvider: true,
-    //       },
-    //     },
-    //   },
-    // });
-    // return profile?.user ?? null;
   }
 
   async createUser(
     profileId: string,
     provider: string,
-    displayName: string,
+    username: string,
     avatar: string | null,
   ): Promise<User> {
     return this.prisma.user.create({
       data: {
-        nickname: displayName,
         profileId,
+        username,
         provider,
         avatar,
       },
       select: {
         avatar: true,
         id: true,
+        username: true,
         nickname: true,
         profileId: true,
         provider: true,

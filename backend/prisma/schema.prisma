@@ -10,7 +10,8 @@ datasource db {
 
 model User {
   id        Int     @id @default(autoincrement()) // primary key
-  nickname  String  @unique
+  nickname  String? @unique
+  username  String
   avatar    String?
   profileId String
   provider  String
