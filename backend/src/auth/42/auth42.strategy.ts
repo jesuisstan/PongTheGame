@@ -1,26 +1,39 @@
-import { Injectable } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
-import { PassportStrategy } from "@nestjs/passport";
-import { Strategy, StrategyOptions } from "passport-42";
-import { Config } from "src/config.interface";
+import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { PassportStrategy } from '@nestjs/passport';
+import { Profile } from 'passport';
+import { Strategy, StrategyOptions } from 'passport-42';
+import { Config } from 'src/config.interface';
+import { SessionService } from '../session/session.service';
 
 @Injectable()
-export class Auth42Strategy extends PassportStrategy(Strategy, "42") {
-	constructor(readonly config: ConfigService<Config>) {
-		super({
-			authorizationURL: "https://api.intra.42.fr/oauth/authorize",
-			tokenURL: "https://api.intra.42.fr/oauth/token",
-			clientID: config.getOrThrow("42_CLIENT_ID"),
-			clientSecret: config.getOrThrow("42_CLIENT_SECRET"),
-			callbackURL: config.getOrThrow("42_CALLBACK_URL"),
-			state: true,
-		} as StrategyOptions);
-	}
+export class Auth42Strategy extends PassportStrategy(Strategy, '42') {
+  constructor(
+    readonly config: ConfigService<Config>,
+    private readonly auth: SessionService,
+  ) {
+    super({
+      clientID: config.getOrThrow('INTRA42_CLIENT_ID'),
+      clientSecret: config.getOrThrow('INTRA42_CLIENT_SECRET'),
+      callbackURL: config.getOrThrow('INTRA42_CALLBACK_URL'),
+      state: true,
+      profileFields: {
+        id: function (obj) {
+          return String(obj.id);
+        },
+        username: 'login',
+        displayName: 'displayname',
+        'name.familyName': 'last_name',
+        'name.givenName': 'first_name',
+        profileUrl: 'url',
+        'emails.0.value': 'email',
+        'phoneNumbers.0.value': 'phone',
+        'photos.0.value': 'image.link',
+      },
+    } as StrategyOptions);
+  }
 
-	// TODO
-	async validate(accessToken: string, refreshToken: string, profile: any) {
-		delete profile._raw;
-		delete profile._json
-		return profile;
-	}
+  async validate(accessToken: string, refreshToken: string, profile: Profile) {
+    return this.auth.validateUser(profile);
+  }
 }

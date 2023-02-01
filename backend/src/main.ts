@@ -1,13 +1,23 @@
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { ConfigService } from '@nestjs/config';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { PrismaSessionStore } from '@quixo3/prisma-session-store';
 import * as ExpressSession from 'express-session';
 import * as passport from 'passport';
 import { AppModule } from './app.module';
-import { deserializeUser, serializeUser } from './auth/42/auth42.serializer';
 import { Config } from './config.interface';
-import { PrismaService } from './prisma.service';
+import { PrismaService } from './prisma/prisma.service';
 import { convertTime } from './utils/time';
+
+const {
+  POSTGRES_USER,
+  POSTGRES_PASSWORD,
+  POSTGRES_PORT,
+  POSTGRES_HOST = 'localhost',
+} = process.env;
+
+process.env.DATABASE_URL ??= `postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/pong?schema=public`;
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -16,41 +26,51 @@ async function bootstrap() {
 
   await prisma.enableShutdownHooks(app);
 
-  passport.serializeUser(serializeUser);
-  passport.deserializeUser(deserializeUser);
-
-  const session = makeSession(config.getOrThrow('SESSION_SECRET'));
-  const port = config.getOrThrow('BACKEND_PORT');
+  setupSwagger(app);
+  setupSession(app, config, prisma);
 
   app.enableCors({
-    origin: [
-      'http://localhost:3000/*',
-      'http://localhost:3080/*',
-      'https://api.intra.42.fr/*',
-    ],
-    methods: 'GET,POST,PUT,DELETE',
+    origin: true,
     credentials: true,
   });
 
-  app.use(session);
-  app.use(passport.initialize());
-  app.use(passport.session());
-
-  await app.listen(port);
+  await app.listen(config.getOrThrow('BACKEND_PORT'));
 }
 
-function makeSession(secret: string) {
-  return ExpressSession({
+function setupSwagger(app: NestExpressApplication) {
+  const swaggerConfig = new DocumentBuilder()
+    .setTitle('ft_transcendence')
+    .setDescription('The ft_transcendence API description')
+    .setVersion('1.0')
+    .addTag('test')
+    .build();
+
+  const swagger = SwaggerModule.createDocument(app, swaggerConfig);
+
+  SwaggerModule.setup('swagger', app, swagger);
+}
+
+function setupSession(
+  app: NestExpressApplication,
+  config: ConfigService<Config>,
+  prisma: PrismaService,
+) {
+  const session = ExpressSession({
     resave: false,
     saveUninitialized: false,
-    secret: secret,
+    secret: config.getOrThrow('SESSION_SECRET'),
     cookie: {
       maxAge: convertTime({ days: 3 }),
       sameSite: 'lax',
       secure: false,
       path: '/',
     },
+    store: new PrismaSessionStore(prisma, {}),
   });
+
+  app.use(session);
+  app.use(passport.initialize());
+  app.use(passport.session());
 }
 
 bootstrap();

@@ -1,6 +1,3 @@
-networks:
-  transcendence:
-
 services:
 
   # proxy:
@@ -39,7 +36,7 @@ services:
 
   database:
     container_name: postgres
-    image: postgres:15.1
+    image: postgres:15.1-alpine
     ports:
       - "${POSTGRES_PORT}:${POSTGRES_PORT}"
     environment:
@@ -47,7 +44,7 @@ services:
       POSTGRES_USER: $POSTGRES_USER
       POSTGRES_PORT: $POSTGRES_PORT
     volumes:
-      - ./database:/var/lib/postgresql/data
+      - db:/var/lib/postgresql/data
     networks:
       - transcendence
     restart: unless-stopped
@@ -68,7 +65,8 @@ services:
     # install project dependencies,
     # then run in dev mode
     command: >
-            sh -cx "yarn install
+            sh -cx "apk add --no-cache curl
+            && yarn install
             && yarn prisma db push
             && yarn run start:debug"
     ports:
@@ -76,11 +74,50 @@ services:
     env_file:
       - .env
     environment:
-      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database:${POSTGRES_PORT}/pong?schema=public
+      BACKEND_PORT: ${BACKEND_PORT}
+      FRONTEND_PORT: ${BACKEND_PORT}
+      SESSION_SECRET: ${SESSION_SECRET}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_HOST: database
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST:-database}:${POSTGRES_PORT}/pong?schema=public
+      INTRA42_CLIENT_ID: ${INTRA42_CLIENT_ID}
+      INTRA42_CLIENT_SECRET: ${INTRA42_CLIENT_SECRET}
+      INTRA42_CALLBACK_URL: ${INTRA42_CALLBACK_URL}
+      GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID}
+      GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
+      GITHUB_CALLBACK_URL: ${GITHUB_CALLBACK_URL}
     networks:
       - transcendence
     volumes:
       - ./${BACKEND_NAME}:/app-${BACKEND_NAME}
+      - backend_node_modules:/app-${BACKEND_NAME}/node_modules/
     # stdin_open: true
     # tty: true
     restart: unless-stopped
+    healthcheck:
+      test: curl -fsSL http://localhost:${BACKEND_PORT}/healthcheck
+      interval: 3s
+      timeout: 1s
+      retries: 30
+      start_period: 0s
+
+  controller:
+    container_name: health_controller
+    image: hello-world
+    restart: 'no'
+    networks:
+      - transcendence
+    depends_on:
+      backend:
+        condition: service_healthy
+      database:
+        condition: service_healthy
+
+volumes:
+  db: {}
+  backend_node_modules: {}
+
+networks:
+  transcendence:

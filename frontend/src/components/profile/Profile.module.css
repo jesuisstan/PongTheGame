@@ -1,0 +1,109 @@
+.avatarSmall {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.avatarBig {
+  width: 242px;
+  height: 242px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.profileCard {
+  height: calc(100vh - 50px);
+  align-self: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+}
+
+.box1 {
+  width: 300px;
+  height: 300px;
+  box-shadow: 0px 5px 33px -21px whitesmoke;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.50);
+  flex-direction: column;
+}
+
+.box2 {
+  width: 300px;
+  height: 300px;
+  box-shadow: 0px 5px 33px -21px whitesmoke;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.50);
+  flex-direction: column;
+  gap: 10px;
+}
+
+.box3 {
+  width: 300px;
+  height: 300px;
+  box-shadow: 0px 5px 33px -21px whitesmoke;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.50);
+  flex-direction: column;
+  gap: 10px;
+}
+
+.box4 {
+  width: 300px;
+  height: 300px;
+  box-shadow: 0px 5px 33px -21px whitesmoke;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.50);
+  flex-direction: column;
+  gap: 10px;
+}
+
+.left {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  font-size: 21px;
+  color: whitesmoke;
+  align-items: flex-end;
+}
+
+.right {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  font-size: 21px;
+  color: whitesmoke;
+  align-items: flex-start;
+}
+
+.center {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.line {
+  width: 1px;
+  height: 75%;
+  background-color: whitesmoke;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  z-index: -1;
+}
+
