@@ -11,7 +11,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { User } from '@prisma/client';
-import { AuthGuard } from 'src/auth/auth.guard';
+import { IsAuthenticatedGuard } from 'src/auth/auth.guard';
 import { SessionUser } from 'src/decorator/session-user.decorator';
 import { UserService } from 'src/user/user.service';
 import { CreateMatchDTO } from './dto/createMatch.dto';
@@ -25,13 +25,13 @@ export class MatchController {
   ) {}
 
   @Get('/mine')
-  @UseGuards(AuthGuard)
+  @UseGuards(IsAuthenticatedGuard)
   async mine(@SessionUser() user: User) {
     return this.matches.getMatchHistory(user, 0, 50); //TODO change skip/take
   }
 
   @Get('/:id')
-  @UseGuards(AuthGuard)
+  @UseGuards(IsAuthenticatedGuard)
   async getMatchById(@Param('id', ParseIntPipe) id: number) {
     const match = await this.matches.getMatchById(id);
 
@@ -40,7 +40,7 @@ export class MatchController {
   }
 
   @Post('/')
-  @UseGuards(AuthGuard)
+  @UseGuards(IsAuthenticatedGuard)
   async createMatch(@Body(ValidationPipe) body: CreateMatchDTO) {
     const { user1: userId1, user2: userId2 } = body;
 
