@@ -1,16 +1,12 @@
 import styles from './Login.module.css';
 
 const Login = () => {
-  const google = () => {
-    window.open('http://localhost:3080/auth/google', '_self');
-  };
-
   const ecole42Auth = () => {
-    window.open('http://localhost:3080/auth/42', '_self');
+    window.location.href = 'http://localhost:3080/auth/42';
   };
 
   const github = () => {
-    window.open('http://localhost:3080/auth/github', '_self');
+    window.location.href = 'http://localhost:3080/auth/github';
   };
 
   return (

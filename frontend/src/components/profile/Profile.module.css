@@ -1,17 +1,3 @@
-.avatarSmall {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-.avatarBig {
-  width: 242px;
-  height: 242px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
 .profileCard {
   height: calc(100vh - 50px);
   align-self: center;
@@ -19,6 +5,14 @@
   align-items: center;
   justify-content: center;
   flex-direction: row;
+
+}
+
+.avatarBig {
+  width: 242px;
+  height: 242px;
+  border-radius: 50%;
+  object-fit: cover;
 }
 
 .box1 {
@@ -30,6 +24,8 @@
   justify-content: center;
   background-color: rgba(0, 0, 0, 0.50);
   flex-direction: column;
+  gap: 21px;
+  object-fit: cover;
 }
 
 .box2 {
@@ -41,7 +37,7 @@
   justify-content: center;
   background-color: rgba(0, 0, 0, 0.50);
   flex-direction: column;
-  gap: 10px;
+  gap: 21px;
 }
 
 .box3 {
@@ -53,7 +49,7 @@
   justify-content: center;
   background-color: rgba(0, 0, 0, 0.50);
   flex-direction: column;
-  gap: 10px;
+  gap: 21px;
 }
 
 .box4 {
@@ -65,7 +61,7 @@
   justify-content: center;
   background-color: rgba(0, 0, 0, 0.50);
   flex-direction: column;
-  gap: 10px;
+  gap: 21px;
 }
 
 .left {

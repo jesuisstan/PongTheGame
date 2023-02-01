@@ -13,7 +13,8 @@ const Profile = ({ user }: any) => {
     <div className={styles.profileCard}>
       <div className={styles.left}>
         <div className={styles.box1}>
-          <img className={styles.avatarBig} src={user.avatar} alt="IMG" />
+          <Avatar alt="" src={user.avatar} sx={{ width: 200, height: 200 }} />
+          <Button variant="contained">Change avatar</Button>
         </div>
 
         <div className={styles.box2}>

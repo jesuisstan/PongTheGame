@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
@@ -10,11 +10,12 @@ import MenuItem from '@mui/material/MenuItem';
 import styles from './MenuBar.module.css';
 
 const MenuBar = ({ user }: any) => {
+  const navigate = useNavigate();
   const authenticate = () => {
     if (user.provider) {
-      window.open('http://localhost:3080/auth/logout', '_self');
+      window.location.href = 'http://localhost:3080/auth/logout';
     } else {
-      window.open('http://localhost:3000/login', '_self');
+      window.location.href = 'http://localhost:3000/login';
     }
   };
 
@@ -73,25 +74,17 @@ const MenuBar = ({ user }: any) => {
               onClose={handleCloseUserMenu}
             >
               <MenuItem onClick={handleCloseUserMenu}>
-                <Button
-                  variant="contained"
-                  onClick={(event) => (window.location.href = '/profile')}
-                >
-                  Profile
-                </Button>
+                <div onClick={(event) => navigate('/profile')}>Profile</div>
               </MenuItem>
               <MenuItem onClick={handleCloseUserMenu}>
-                <Button
-                  variant="contained"
-                  onClick={(event) => (window.location.href = '/match_history')}
-                >
+                <div onClick={(event) => navigate('/match_history')}>
                   History
-                </Button>
+                </div>
               </MenuItem>
               <MenuItem onClick={handleCloseUserMenu}>
-                <Button variant="contained" onClick={authenticate}>
+                <div onClick={authenticate}>
                   {user.provider ? 'Logout' : 'Login'}
-                </Button>
+                </div>
               </MenuItem>
             </Menu>
           </Box>
