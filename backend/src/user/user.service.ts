@@ -6,7 +6,7 @@ import { PrismaService } from '../prisma/prisma.service';
 export class UserService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findUserById(id: number) {
+  async findUserById(id: number): Promise<User | null> {
     return this.prisma.user.findUnique({
       where: { id },
       select: {
@@ -15,6 +15,7 @@ export class UserService {
         profileId: true,
         provider: true,
         nickname: true,
+        username: true,
       },
     });
   }
@@ -28,6 +29,7 @@ export class UserService {
         profileId: true,
         provider: true,
         nickname: true,
+        username: true,
       },
     });
   }
@@ -84,9 +86,6 @@ export class UserService {
         id: {
           in: ids,
         },
-        // NOT: {
-        //   nickname: null,
-        // },
       },
       select: {
         avatar: true,
@@ -98,10 +97,21 @@ export class UserService {
       },
     });
 
-    console.log(users);
-
     return ids.map((id) => {
       return users.find((user) => user.id == id) ?? null;
+    });
+  }
+
+  async setUserNickname(user: User, nickname: string): Promise<User> {
+    const { id } = user;
+
+    return this.prisma.user.update({
+      data: {
+        nickname,
+      },
+      where: {
+        id,
+      },
     });
   }
 }
