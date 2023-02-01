@@ -1,14 +1,16 @@
-import { User } from '../../types/User';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Rating from '@mui/material/Rating';
+import ChangeNickname from './ChangeNickname';
+import CreateNickname from './ChangeNickname';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import styles from './Profile.module.css';
 
 const Profile = ({ user }: any) => {
-  return !user.provider ? (
-    <h1>No user logged in</h1>
+  return !user.nickname ? (
+    <h1>Create nickname</h1>
+    //<CreateNickname user={user}> </CreateNickname>
   ) : (
     <div className={styles.profileCard}>
       <div className={styles.left}>
@@ -25,8 +27,9 @@ const Profile = ({ user }: any) => {
 
       <div className={styles.right}>
         <div className={styles.box3}>
-          <p>{user.displayName}</p>
-          <p>login: {user.username}</p>
+          <p>Player: {user.username}</p>
+          <p>Nickname: {user.nickname}</p>
+          <ChangeNickname />
         </div>
 
         <div className={styles.box4}>

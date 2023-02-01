@@ -8,14 +8,16 @@ import Profile from './components/profile/Profile';
 import NotFound from './components/NotFound';
 import MainLayout from './components/layouts/MainLayout';
 import { User } from './types/User';
+import CreateNickname from './components/profile/CreateNickname';
 import './App.css';
+import { render } from '@testing-library/react';
 
 const url = 'http://localhost:3080/auth/getuser';
 
 function App() {
   const [user, setUser] = useState<User>({
     id: -1,
-    displayName: '',
+    nickname: '',
     avatar: '',
     provider: '',
     username: ''
@@ -25,10 +27,6 @@ function App() {
     fetch(url, { credentials: 'include' })
       .then((res) => res.json())
       .then((res) => {
-        console.log("res has");
-        console.log(res);
-
-        
         setUser(res);
       })
       .catch((err) => {
