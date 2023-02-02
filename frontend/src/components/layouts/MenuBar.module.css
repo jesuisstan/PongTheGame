@@ -21,6 +21,7 @@
   display: flex;
   align-items: center;
   justify-content: flex-end;
+  gap: 21px;
 }
 
 .center {
@@ -34,4 +35,10 @@
 .logo {
   width: 189px;
   height: 42px;
+}
+
+.nickname {
+  color: whitesmoke;
+  font-size: 21px;
+  text-decoration: none;
 }
