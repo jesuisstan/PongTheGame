@@ -10,7 +10,7 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { ApiOperation } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 import { IsAuthenticatedGuard } from 'src/auth/auth.guard';
 import { SessionUser } from 'src/decorator/session-user.decorator';
@@ -32,6 +32,7 @@ export class UserController {
       },
     },
   })
+  @ApiTags('Users')
   async getUserById(@Param('id', ParseIntPipe) id: number) {
     const user = await this.users.findUserById(id);
 
