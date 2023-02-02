@@ -5,10 +5,10 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { PrismaSessionStore } from '@quixo3/prisma-session-store';
 import * as ExpressSession from 'express-session';
 import * as passport from 'passport';
-import { AppModule } from './app.module';
-import { Config } from './config.interface';
-import { PrismaService } from './prisma/prisma.service';
-import { convertTime } from './utils/time';
+import { AppModule } from 'src/app.module';
+import { Config } from 'src/config.interface';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { convertTime } from 'src/utils/time';
 
 const {
   POSTGRES_USER,
