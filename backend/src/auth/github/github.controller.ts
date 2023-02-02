@@ -7,10 +7,10 @@ import { GithubGuard } from 'src/auth/github/github.guard';
 const CLIENT_URL = 'http://localhost:3000';
 
 @Controller('/auth/github')
+@ApiTags('Authentication/Github')
 export class GithubController {
   @Get('/')
   @ApiOperation({ summary: 'Connect using the Github OAuth2 API' })
-  @ApiTags('Authentication/Github')
   @UseGuards(GithubGuard)
   async login() {
     return 'hello';
@@ -26,7 +26,6 @@ export class GithubController {
       },
     ],
   })
-  @ApiTags('Authentication/Github')
   @UseGuards(GithubGuard)
   async callback(@Res() res: Response) {
     return res.redirect(`${CLIENT_URL}/profile`);

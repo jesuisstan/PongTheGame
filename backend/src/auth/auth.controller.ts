@@ -10,11 +10,11 @@ import { UserService } from 'src/user/user.service';
 const CLIENT_URL = 'http://localhost:3000';
 
 @Controller('/auth')
+@ApiTags('Authentication')
 export class AuthController {
   constructor(private readonly users: UserService) {}
 
   @Get('logout')
-  @ApiTags('Authentication')
   @ApiOperation({
     summary:
       "Destroy (invalidate) the current user's session, remove the session cookie and redirect to {frontend}/login",
@@ -32,7 +32,6 @@ export class AuthController {
   }
 
   @Get('getuser')
-  @ApiTags('Authentication')
   @ApiOperation({ summary: "Returns the current user's data" })
   @UseGuards(IsAuthenticatedGuard)
   async profile(@SessionUser() user: User) {

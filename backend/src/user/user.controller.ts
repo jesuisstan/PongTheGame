@@ -18,6 +18,7 @@ import { SetNicknameDTO } from 'src/user/dto/setNickname.dto';
 import { UserService } from 'src/user/user.service';
 
 @Controller('/user')
+@ApiTags('Users')
 export class UserController {
   constructor(private readonly users: UserService) {}
 
@@ -32,7 +33,7 @@ export class UserController {
       },
     },
   })
-  @ApiTags('Users')
+  // @ApiTags('Users')
   async getUserById(@Param('id', ParseIntPipe) id: number) {
     const user = await this.users.findUserById(id);
 

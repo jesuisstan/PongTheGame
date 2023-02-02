@@ -19,6 +19,7 @@ import { MatchService } from 'src/match/match.service';
 import { UserService } from 'src/user/user.service';
 
 @Controller('/match')
+@ApiTags('Matches')
 export class MatchController {
   constructor(
     private readonly matches: MatchService,
@@ -27,7 +28,6 @@ export class MatchController {
 
   @Get('/mine')
   @UseGuards(IsAuthenticatedGuard)
-  @ApiTags('Matches')
   @ApiOperation({
     summary: 'Get the match history for the current user',
   })
@@ -37,7 +37,6 @@ export class MatchController {
 
   @Get('/:id')
   @UseGuards(IsAuthenticatedGuard)
-  @ApiTags('Matches')
   @ApiOperation({
     summary: 'Get a match by its id',
   })
@@ -50,7 +49,6 @@ export class MatchController {
 
   @Post('/')
   @UseGuards(IsAuthenticatedGuard)
-  @ApiTags('Matches')
   @ApiOperation({
     summary: 'Create a new match that opposes two users',
   })
