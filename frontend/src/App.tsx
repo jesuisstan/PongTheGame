@@ -10,25 +10,26 @@ import MainLayout from './components/layouts/MainLayout';
 import { User } from './types/User';
 import './App.css';
 
+
 const url = 'http://localhost:3080/auth/getuser';
 
 function App() {
   const [user, setUser] = useState<User>({
     id: -1,
-    displayName: '',
+    nickname: '',
     avatar: '',
     provider: '',
     username: ''
   });
 
+  const setNickname = (value: string) => {
+    setUser({...user, nickname: value })
+ }
+
   useEffect(() => {
     fetch(url, { credentials: 'include' })
       .then((res) => res.json())
       .then((res) => {
-        console.log("res has");
-        console.log(res);
-
-        
         setUser(res);
       })
       .catch((err) => {
@@ -45,7 +46,7 @@ function App() {
         <Routes>
           <Route path="/" element={<MainLayout user={user} />}>
             <Route index={true} element={<Home />} />
-            <Route path="login" element={<Login />} />
+            <Route path="login" element={<Login user={user}/>} />
             <Route
               path="chat"
               element={user.provider ? <Chat /> : <Navigate to="/login" />}
@@ -54,7 +55,7 @@ function App() {
               path="game"
               element={user.provider ? <Game /> : <Navigate to="/login" />}
             />
-            <Route path="profile" element={<Profile user={user} />} />
+            <Route path="profile" element={<Profile user={user} setNickname={setNickname}/>} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>

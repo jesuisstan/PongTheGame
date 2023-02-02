@@ -1,8 +1,11 @@
-.avatarSmall {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  object-fit: cover;
+.profileCard {
+  height: calc(100vh - 50px);
+  align-self: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+
 }
 
 .avatarBig {
@@ -12,15 +15,6 @@
   object-fit: cover;
 }
 
-.profileCard {
-  height: calc(100vh - 50px);
-  align-self: center;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: row;
-}
-
 .box1 {
   width: 300px;
   height: 300px;
@@ -28,8 +22,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: rgba(0, 0, 0, 0.50);
+  background-color: rgba(0, 0, 0, 0.42);
   flex-direction: column;
+  gap: 21px;
+  object-fit: cover;
 }
 
 .box2 {
@@ -39,9 +35,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: rgba(0, 0, 0, 0.50);
+  background-color: rgba(0, 0, 0, 0.42);
   flex-direction: column;
-  gap: 10px;
+  gap: 21px;
 }
 
 .box3 {
@@ -51,9 +47,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: rgba(0, 0, 0, 0.50);
+  background-color: rgba(0, 0, 0, 0.42);
   flex-direction: column;
-  gap: 10px;
+  gap: 21px;
 }
 
 .box4 {
@@ -63,9 +59,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: rgba(0, 0, 0, 0.50);
+  background-color: rgba(0, 0, 0, 0.42);
   flex-direction: column;
-  gap: 10px;
+  gap: 21px;
 }
 
 .left {
