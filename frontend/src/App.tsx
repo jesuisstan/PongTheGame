@@ -8,9 +8,8 @@ import Profile from './components/profile/Profile';
 import NotFound from './components/NotFound';
 import MainLayout from './components/layouts/MainLayout';
 import { User } from './types/User';
-import CreateNickname from './components/profile/CreateNickname';
 import './App.css';
-import { render } from '@testing-library/react';
+
 
 const url = 'http://localhost:3080/auth/getuser';
 
@@ -22,6 +21,10 @@ function App() {
     provider: '',
     username: ''
   });
+
+  const setNickname = (value: string) => {
+    setUser({...user, nickname: value })
+ }
 
   useEffect(() => {
     fetch(url, { credentials: 'include' })
@@ -43,7 +46,7 @@ function App() {
         <Routes>
           <Route path="/" element={<MainLayout user={user} />}>
             <Route index={true} element={<Home />} />
-            <Route path="login" element={<Login />} />
+            <Route path="login" element={<Login user={user}/>} />
             <Route
               path="chat"
               element={user.provider ? <Chat /> : <Navigate to="/login" />}
@@ -52,7 +55,7 @@ function App() {
               path="game"
               element={user.provider ? <Game /> : <Navigate to="/login" />}
             />
-            <Route path="profile" element={<Profile user={user} />} />
+            <Route path="profile" element={<Profile user={user} setNickname={setNickname}/>} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>

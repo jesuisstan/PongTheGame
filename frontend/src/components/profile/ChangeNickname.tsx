@@ -9,8 +9,17 @@ import Stack from '@mui/joy/Stack';
 import CreateIcon from '@mui/icons-material/Create';
 import Typography from '@mui/joy/Typography';
 
-const ChangeNickname = () => {
+const ChangeNickname = ({ user, setNickname }: any) => {
   const [open, setOpen] = useState(false);
+  const [text, setText] = useState('');
+
+  const handleSubmit = (event: any) => {
+    event.preventDefault();
+    if (text) setNickname(text);
+    setText('');
+    setOpen(false);
+  };
+
   return (
     <div>
       <Button
@@ -31,15 +40,17 @@ const ChangeNickname = () => {
             Changing your nickname
           </Typography>
           <form
-            onSubmit={(event) => {
-              event.preventDefault();
-              setOpen(false);
-            }}
+            onSubmit={handleSubmit}
           >
-            <Stack spacing={1}>
+            <Stack spacing={2}>
               <FormControl>
                 <FormLabel>New one</FormLabel>
-                <Input autoFocus required />
+                <Input
+                  autoFocus
+                  required
+                  value={text}
+                  onChange={(event) => setText(event.target.value)}
+                />
               </FormControl>
               <Button type="submit">Submit</Button>
             </Stack>

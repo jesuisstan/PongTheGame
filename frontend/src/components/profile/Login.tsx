@@ -1,6 +1,6 @@
 import styles from './Login.module.css';
 
-const Login = () => {
+const Login = ({ user }: any) => {
   const ecole42Auth = () => {
     window.location.href = 'http://localhost:3080/auth/42';
   };
@@ -9,7 +9,9 @@ const Login = () => {
     window.location.href = 'http://localhost:3080/auth/github';
   };
 
-  return (
+  return user.provider ? (
+    <h1>You have been already logged in</h1>
+  ) : (
     <div className={styles.loginCard}>
       <div className={styles.wrapper}>
         <div className={styles.left}>Choose your Login Method</div>
