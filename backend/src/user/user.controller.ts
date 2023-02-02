@@ -14,8 +14,8 @@ import { ApiOperation } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 import { IsAuthenticatedGuard } from 'src/auth/auth.guard';
 import { SessionUser } from 'src/decorator/session-user.decorator';
-import { SetNicknameDTO } from './dto/setNickname.dto';
-import { UserService } from './user.service';
+import { SetNicknameDTO } from 'src/user/dto/setNickname.dto';
+import { UserService } from 'src/user/user.service';
 
 @Controller('/user')
 export class UserController {
