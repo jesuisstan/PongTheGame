@@ -31,6 +31,7 @@ function App() {
       .then((res) => res.json())
       .then((res) => {
         setUser(res);
+        console.log("useEffect runs"); //todo
       })
       .catch((err) => {
         console.log(err);

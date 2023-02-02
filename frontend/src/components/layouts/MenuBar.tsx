@@ -51,6 +51,7 @@ const MenuBar = ({ user }: any) => {
           </Button>
         </div>
         <div className={styles.right}>
+          <div className={styles.nickname}>{user.nickname}</div>
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
@@ -73,10 +74,16 @@ const MenuBar = ({ user }: any) => {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              <MenuItem onClick={handleCloseUserMenu}>
+              <MenuItem
+                disabled={user.provider ? false : true}
+                onClick={handleCloseUserMenu}
+              >
                 <div onClick={(event) => navigate('/profile')}>Profile</div>
               </MenuItem>
-              <MenuItem onClick={handleCloseUserMenu}>
+              <MenuItem
+                disabled={user.provider ? false : true}
+                onClick={handleCloseUserMenu}
+              >
                 <div onClick={(event) => navigate('/match_history')}>
                   History
                 </div>
