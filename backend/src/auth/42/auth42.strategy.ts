@@ -3,8 +3,8 @@ import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { Profile } from 'passport';
 import { Strategy, StrategyOptions } from 'passport-42';
+import { SessionService } from 'src/auth/session/session.service';
 import { Config } from 'src/config.interface';
-import { SessionService } from '../session/session.service';
 
 @Injectable()
 export class Auth42Strategy extends PassportStrategy(Strategy, '42') {

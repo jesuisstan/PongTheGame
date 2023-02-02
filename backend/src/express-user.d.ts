@@ -4,6 +4,7 @@ export {};
 
 declare global {
   namespace Express {
-    export interface User extends Prisma.User {}
+    export interface User
+      extends Pick<Prisma.User, 'id' | 'profileId' | 'provider'> {}
   }
 }

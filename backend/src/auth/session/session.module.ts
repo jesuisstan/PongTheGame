@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
+import { SessionSerializer } from 'src/auth/session/session.serializer';
+import { SessionService } from 'src/auth/session/session.service';
 import { UserModule } from 'src/user/user.module';
-import { SessionSerializer } from './session.serializer';
-import { SessionService } from './session.service';
 
 @Module({
   providers: [SessionSerializer, SessionService],
