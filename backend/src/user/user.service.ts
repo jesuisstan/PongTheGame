@@ -16,6 +16,7 @@ export class UserService {
         provider: true,
         nickname: true,
         username: true,
+        role: true,
       },
     });
   }
@@ -52,6 +53,7 @@ export class UserService {
         profileId: true,
         provider: true,
         username: true,
+        role: true,
       },
     });
   }
@@ -76,6 +78,7 @@ export class UserService {
         nickname: true,
         profileId: true,
         provider: true,
+        role:true,
       },
     });
   }
@@ -94,6 +97,7 @@ export class UserService {
         provider: true,
         nickname: true,
         username: true,
+        role: true,
       },
     });
 
