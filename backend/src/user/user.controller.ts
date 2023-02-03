@@ -1,14 +1,24 @@
 import {
+  Body,
   Controller,
   Get,
   NotFoundException,
   Param,
   ParseIntPipe,
+  Patch,
+  UseGuards,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
-import { ApiOperation } from '@nestjs/swagger';
-import { UserService } from './user.service';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { User } from '@prisma/client';
+import { IsAuthenticatedGuard } from 'src/auth/auth.guard';
+import { SessionUser } from 'src/decorator/session-user.decorator';
+import { SetNicknameDTO } from 'src/user/dto/setNickname.dto';
+import { UserService } from 'src/user/user.service';
 
 @Controller('/user')
+@ApiTags('Users')
 export class UserController {
   constructor(private readonly users: UserService) {}
 
@@ -23,10 +33,23 @@ export class UserController {
       },
     },
   })
+  // @ApiTags('Users')
   async getUserById(@Param('id', ParseIntPipe) id: number) {
     const user = await this.users.findUserById(id);
 
     if (user === null) throw new NotFoundException();
     return user;
+  }
+
+  @Patch('/setnickname')
+  @ApiOperation({
+    summary: "Change a user's nickname",
+  })
+  @UseGuards(IsAuthenticatedGuard)
+  @UsePipes(ValidationPipe)
+  async setNickname(@SessionUser() user: User, @Body() dto: SetNicknameDTO) {
+    const { nickname } = dto;
+
+    return await this.users.setUserNickname(user, nickname);
   }
 }

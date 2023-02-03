@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { AuthModule } from 'src/auth/auth.module';
+import { MatchModule } from 'src/match/match.module';
+import { PrismaModule } from 'src/prisma/prisma.module';
 import { StatusController } from 'src/status/status.controller';
-import { AuthModule } from './auth/auth.module';
-import { MatchModule } from './match/match.module';
-import { PrismaModule } from './prisma/prisma.module';
-import { UserModule } from './user/user.module';
+import { UserModule } from 'src/user/user.module';
 
 @Module({
   imports: [

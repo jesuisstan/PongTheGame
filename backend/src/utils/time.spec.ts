@@ -1,4 +1,4 @@
-import { convertTime } from './time';
+import { convertTime } from 'src/utils/time';
 
 describe('Time utils', function () {
   describe('convertTime', function () {

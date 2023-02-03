@@ -1,5 +1,5 @@
 import { Controller, Get, Res, UseGuards } from '@nestjs/common';
-import { ApiOperation } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import { Auth42Guard } from 'src/auth/42/auth42.guard';
 
@@ -7,6 +7,7 @@ import { Auth42Guard } from 'src/auth/42/auth42.guard';
 const CLIENT_URL = 'http://localhost:3000';
 
 @Controller('/auth/42')
+@ApiTags('Authentication/42')
 export class Auth42Controller {
   @Get('/')
   @ApiOperation({ summary: 'Connect using the 42 OAuth2 API' })

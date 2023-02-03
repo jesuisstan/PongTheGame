@@ -1,5 +1,5 @@
 import { Controller, Get, Res, UseGuards } from '@nestjs/common';
-import { ApiOperation } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import { GithubGuard } from 'src/auth/github/github.guard';
 
@@ -7,6 +7,7 @@ import { GithubGuard } from 'src/auth/github/github.guard';
 const CLIENT_URL = 'http://localhost:3000';
 
 @Controller('/auth/github')
+@ApiTags('Authentication/Github')
 export class GithubController {
   @Get('/')
   @ApiOperation({ summary: 'Connect using the Github OAuth2 API' })

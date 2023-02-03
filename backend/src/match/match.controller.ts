@@ -10,14 +10,16 @@ import {
   UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { User } from '@prisma/client';
-import { AuthGuard } from 'src/auth/auth.guard';
+import { IsAuthenticatedGuard } from 'src/auth/auth.guard';
 import { SessionUser } from 'src/decorator/session-user.decorator';
+import { CreateMatchDTO } from 'src/match/dto/createMatch.dto';
+import { MatchService } from 'src/match/match.service';
 import { UserService } from 'src/user/user.service';
-import { CreateMatchDTO } from './dto/createMatch.dto';
-import { MatchService } from './match.service';
 
 @Controller('/match')
+@ApiTags('Matches')
 export class MatchController {
   constructor(
     private readonly matches: MatchService,
@@ -25,13 +27,19 @@ export class MatchController {
   ) {}
 
   @Get('/mine')
-  @UseGuards(AuthGuard)
+  @UseGuards(IsAuthenticatedGuard)
+  @ApiOperation({
+    summary: 'Get the match history for the current user',
+  })
   async mine(@SessionUser() user: User) {
     return this.matches.getMatchHistory(user, 0, 50); //TODO change skip/take
   }
 
   @Get('/:id')
-  @UseGuards(AuthGuard)
+  @UseGuards(IsAuthenticatedGuard)
+  @ApiOperation({
+    summary: 'Get a match by its id',
+  })
   async getMatchById(@Param('id', ParseIntPipe) id: number) {
     const match = await this.matches.getMatchById(id);
 
@@ -40,7 +48,10 @@ export class MatchController {
   }
 
   @Post('/')
-  @UseGuards(AuthGuard)
+  @UseGuards(IsAuthenticatedGuard)
+  @ApiOperation({
+    summary: 'Create a new match that opposes two users',
+  })
   async createMatch(@Body(ValidationPipe) body: CreateMatchDTO) {
     const { user1: userId1, user2: userId2 } = body;
 
