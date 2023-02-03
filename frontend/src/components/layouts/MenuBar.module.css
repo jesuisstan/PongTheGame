@@ -5,6 +5,7 @@
   align-items: center;
   justify-content: space-between;
   flex-direction: row;
+  z-index: 1;
 }
 
 .left {
