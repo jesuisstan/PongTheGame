@@ -7,66 +7,84 @@
 }
 
 .wrapper {
-  width: 521px;
-  height: 321px;
+  width: 450px;
+  height: 250px;
   box-shadow: 0px 5px 33px -21px whitesmoke;
   display: flex;
   align-items: center;
-  border-radius: 5px;
+  border-radius: 4px;
   background-color: rgba(0, 0, 0, 0.42);
 }
 
 .loginButtonEcole {
-  width: 142px;
-  padding: 15px 25px;
-  border-radius: 5px;
+  width: 112px;
+  height: 13px;
   display: flex;
   align-items: center;
-  font-weight: bold;
   margin-bottom: 10px;
   margin-top: 10px;
   cursor: pointer;
+  font-family: "Roboto","Helvetica","Arial",sans-serif;
+  font-weight: 500;
+  font-size: 0.875rem;
+  line-height: 1.75;
+  letter-spacing: 0.02857em;
+  text-transform: uppercase;
+  min-width: 64px;
+  border-radius: 4px;
+  padding: 13px 16px;
   background-color: rgba(0, 185, 188, 0.801);
 }
 
 .loginButtonEcole:hover {
-  background-color: rgb(0, 185, 188);
-  transform: scale(1.05);
+  background-color: rgba(253, 80, 135, 0.6);
+  transform: scale(1.04);
 }
 
 .loginButtonGithub {
-  width: 142px;
-  padding: 15px 25px;
-  border-radius: 5px;
+  width: 112px;
+  height: 13px;
   display: flex;
   align-items: center;
-  font-weight: bold;
   margin-bottom: 10px;
   margin-top: 10px;
   cursor: pointer;
+  font-family: "Roboto","Helvetica","Arial",sans-serif;
+  font-weight: 500;
+  font-size: 0.875rem;
+  line-height: 1.75;
+  letter-spacing: 0.02857em;
+  text-transform: uppercase;
+  min-width: 64px;
+  border-radius: 4px;
+  padding: 13px 16px;
   background-color: #24292fd0;
 }
 
 .loginButtonGithub:hover {
-  background-color: #24292f;
-  transform: scale(1.05);
+  background-color: rgba(253, 80, 135, 0.6);
+  transform: scale(1.04);
 }
 
 .left {
   display: flex;
   flex-direction: row;
   flex: 1;
-  padding: 15px 15px;
-  font-size: 28px;
-  font-weight: bold;
+  padding: 10px 10px;
   color: whitesmoke;
+  font-family: "Roboto","Helvetica","Arial",sans-serif;
+  font-weight: 500;
+  font-size: 1.2rem;
+  line-height: 1.75;
+  letter-spacing: 0.02857em;
+  text-transform: uppercase;
 }
 
 .right {
   display: flex;
   flex-direction: column;
   flex: 1;
-  padding: 15px 15px;
+  padding: 10px 10px;
   align-items: center;
 }
 

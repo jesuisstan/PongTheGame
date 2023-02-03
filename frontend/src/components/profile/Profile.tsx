@@ -6,7 +6,7 @@ import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
 import Button from '@mui/material/Button';
 import FormControl from '@mui/joy/FormControl';
 import FormLabel from '@mui/joy/FormLabel';
-import Input from '@mui/joy/Input';
+import TextField from '@mui/material/TextField';
 import Modal from '@mui/joy/Modal';
 import ModalDialog from '@mui/joy/ModalDialog';
 import Stack from '@mui/joy/Stack';
@@ -21,6 +21,17 @@ import ButtonPong from '../UI/ButtonPong';
 const Profile = ({ user, setNickname }: any) => {
   const [open, setOpen] = useState(true);
   const [text, setText] = useState('');
+  const [error, setError] = useState('');
+
+  const handleTextInput = (event: any) => {
+    const newValue = event.target.value;
+    if (!newValue.match(/[%<>\\$|/?* +^.()\[\]]/)) {
+      setError('');
+      setText(newValue);
+    } else {
+      setError('Forbidden: [ ] < >\ ^ $ % . \\ | / ? * + ( ) space');
+    }
+  };
 
   const handleSubmit = (event: any) => {
     event.preventDefault();
@@ -53,12 +64,18 @@ const Profile = ({ user, setNickname }: any) => {
           <form onSubmit={handleSubmit}>
             <Stack spacing={2}>
               <FormControl>
-                <FormLabel>New one</FormLabel>
-                <Input
+                <FormLabel>Original one (3 - 20 characters):</FormLabel>
+                <TextField
                   autoFocus
                   required
                   value={text}
-                  onChange={(event) => setText(event.target.value)}
+                  inputProps={{
+                    minLength: 3,
+                    maxLength: 20
+                  }}
+                  helperText={error} // error message
+                  error={!!error}
+                  onChange={handleTextInput}
                 />
               </FormControl>
               <Button type="submit">Submit</Button>

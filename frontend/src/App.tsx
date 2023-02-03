@@ -9,9 +9,9 @@ import NotFound from './components/NotFound';
 import MainLayout from './components/UI/MainLayout';
 import { User } from './types/User';
 import './App.css';
+import axios from 'axios';
 
-
-const url = 'http://localhost:3080/auth/getuser';
+const urlAuth = 'http://localhost:3080/auth/getuser';
 const urlSetNickname = 'http://localhost:3080/user/setnickname';
 
 function App() {
@@ -24,28 +24,26 @@ function App() {
   });
 
   const setNickname = (value: string) => {
-    //setUser({...user, nickname: value })
-    fetch(urlSetNickname, { method: 'PATCH' })
-      .then((res) => res.json())
-      .then((res) => {
-        //setUser(res);
-        console.log("nick setted"); //todo
-      })
-      .catch((err) => {
-        console.log(err);
-      });
- }
+    return axios
+      .patch(
+        urlSetNickname,
+        { nickname: value },
+        {
+          withCredentials: true,
+          headers: { 'Content-type': 'application/json; charset=UTF-8' }
+        }
+      )
+      .then(
+        (response) => setUser(response.data),
+        (error) => console.log(error)
+      );
+  };
 
   useEffect(() => {
-    fetch(url, { credentials: 'include' })
-      .then((res) => res.json())
-      .then((res) => {
-        setUser(res);
-        console.log("useEffect runs"); //todo
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    axios.get(urlAuth, { withCredentials: true }).then(
+      (response) => setUser(response.data),
+      (error) => console.log(error)
+    );
   }, []);
 
   user.provider ? console.log('user logged in') : console.log('no user');
@@ -57,7 +55,7 @@ function App() {
         <Routes>
           <Route path="/" element={<MainLayout user={user} />}>
             <Route index={true} element={<Home />} />
-            <Route path="login" element={<Login user={user}/>} />
+            <Route path="login" element={<Login user={user} />} />
             <Route
               path="chat"
               element={user.provider ? <Chat /> : <Navigate to="/login" />}
@@ -66,7 +64,10 @@ function App() {
               path="game"
               element={user.provider ? <Game /> : <Navigate to="/login" />}
             />
-            <Route path="profile" element={<Profile user={user} setNickname={setNickname}/>} />
+            <Route
+              path="profile"
+              element={<Profile user={user} setNickname={setNickname} />}
+            />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>

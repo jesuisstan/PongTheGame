@@ -2,17 +2,28 @@ import { useState } from 'react';
 import Button from '@mui/material/Button';
 import FormControl from '@mui/joy/FormControl';
 import FormLabel from '@mui/joy/FormLabel';
-import Input from '@mui/joy/Input';
 import Modal from '@mui/joy/Modal';
 import ModalDialog from '@mui/joy/ModalDialog';
 import Stack from '@mui/joy/Stack';
 import CreateIcon from '@mui/icons-material/Create';
 import Typography from '@mui/joy/Typography';
+import TextField from '@mui/material/TextField';
 import ButtonPong from '../UI/ButtonPong';
 
 const ChangeNickname = ({ user, setNickname }: any) => {
   const [open, setOpen] = useState(false);
   const [text, setText] = useState('');
+  const [error, setError] = useState('');
+
+  const handleTextInput = (event: any) => {
+    const newValue = event.target.value;
+    if (!newValue.match(/[%<>\\$|/?* +^.()\[\]]/)) {
+      setError('');
+      setText(newValue);
+    } else {
+      setError('Forbidden: [ ] < > ^ $ % . \\ | / ? * + ( ) space');
+    }
+  };
 
   const handleSubmit = (event: any) => {
     event.preventDefault();
@@ -40,12 +51,18 @@ const ChangeNickname = ({ user, setNickname }: any) => {
           <form onSubmit={handleSubmit}>
             <Stack spacing={2}>
               <FormControl>
-                <FormLabel>New one</FormLabel>
-                <Input
+                <FormLabel>New one (3 - 20 characters):</FormLabel>
+                <TextField
                   autoFocus
                   required
                   value={text}
-                  onChange={(event) => setText(event.target.value)}
+                  inputProps={{
+                    minLength: 3,
+                    maxLength: 20
+                  }}
+                  helperText={error} // error message
+                  error={!!error} // set to true to change the border/helperText color to red
+                  onChange={handleTextInput}
                 />
               </FormControl>
               <Button type="submit">Submit</Button>

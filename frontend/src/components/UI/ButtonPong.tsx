@@ -4,9 +4,10 @@ const ButtonPong = ({ text, endIcon, onClick }: any) => {
   return (
     <Button
       sx={{
-        backgroundColor: 'rgba(0, 0, 0, 0.50)',
-        ':hover': { backgroundColor: 'black' }
+        backgroundColor: 'black',
+        ':hover': { backgroundColor: 'rgba(253, 80, 135, 0.6)' }
       }}
+      size="medium"
       variant="contained"
       endIcon={endIcon}
       onClick={onClick}
