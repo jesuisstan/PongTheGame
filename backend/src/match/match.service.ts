@@ -68,8 +68,6 @@ export class MatchService {
     skip: number,
     take: number,
   ): Promise<Match[]> {
-    console.log('before');
-
     const matches = await this.prisma.match.findMany({
       where: {
         entries: {
@@ -92,8 +90,6 @@ export class MatchService {
       take,
       skip,
     });
-
-    console.log('after');
     return matches;
   }
 }
