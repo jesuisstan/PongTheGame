@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import Button from '@mui/joy/Button';
+import Button from '@mui/material/Button';
 import FormControl from '@mui/joy/FormControl';
 import FormLabel from '@mui/joy/FormLabel';
 import Input from '@mui/joy/Input';
@@ -8,6 +8,7 @@ import ModalDialog from '@mui/joy/ModalDialog';
 import Stack from '@mui/joy/Stack';
 import CreateIcon from '@mui/icons-material/Create';
 import Typography from '@mui/joy/Typography';
+import ButtonPong from '../UI/ButtonPong';
 
 const ChangeNickname = ({ user, setNickname }: any) => {
   const [open, setOpen] = useState(false);
@@ -22,14 +23,11 @@ const ChangeNickname = ({ user, setNickname }: any) => {
 
   return (
     <div>
-      <Button
-        variant="outlined"
-        color="neutral"
-        endDecorator={<CreateIcon />}
+      <ButtonPong
+        text="Change nickname"
+        endIcon={<CreateIcon />}
         onClick={() => setOpen(true)}
-      >
-        Change nickname
-      </Button>
+      />
 
       <Modal open={open} onClose={() => setOpen(false)}>
         <ModalDialog
@@ -39,9 +37,7 @@ const ChangeNickname = ({ user, setNickname }: any) => {
           <Typography id="basic-modal-dialog-title" component="h2">
             Changing your nickname
           </Typography>
-          <form
-            onSubmit={handleSubmit}
-          >
+          <form onSubmit={handleSubmit}>
             <Stack spacing={2}>
               <FormControl>
                 <FormLabel>New one</FormLabel>

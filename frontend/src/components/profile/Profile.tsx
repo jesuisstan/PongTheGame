@@ -3,7 +3,7 @@ import Avatar from '@mui/material/Avatar';
 import Rating from '@mui/material/Rating';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
-import Button from '@mui/joy/Button';
+import Button from '@mui/material/Button';
 import FormControl from '@mui/joy/FormControl';
 import FormLabel from '@mui/joy/FormLabel';
 import Input from '@mui/joy/Input';
@@ -16,6 +16,7 @@ import ListItem from '@mui/joy/ListItem';
 import Checkbox from '@mui/material/Checkbox';
 import ChangeNickname from './ChangeNickname';
 import styles from './Profile.module.css';
+import ButtonPong from '../UI/ButtonPong';
 
 const Profile = ({ user, setNickname }: any) => {
   const [open, setOpen] = useState(true);
@@ -71,10 +72,7 @@ const Profile = ({ user, setNickname }: any) => {
       <div className={styles.left}>
         <div className={styles.box1}>
           <Avatar alt="" src={user.avatar} sx={{ width: 200, height: 200 }} />
-         {/*<img src={user.avatar} className={styles.avatarBig} alt="" />*/}
-         <Button variant="outlined" endDecorator={<AddAPhotoIcon />}>
-            Change avatar
-          </Button>
+          <ButtonPong text="Change avatar" endIcon={<AddAPhotoIcon />} />
         </div>
 
         <div className={styles.box2}>
@@ -128,9 +126,7 @@ const Profile = ({ user, setNickname }: any) => {
           </Typography>
           <Typography component="legend">Rating</Typography>
           <Rating name="read-only" value={4} readOnly />
-          <Button variant="outlined" endDecorator={<ArrowForwardIosIcon />}>
-            Full stats
-          </Button>
+          <ButtonPong text="Full stats" endIcon={<ArrowForwardIosIcon />} />
         </div>
       </div>
     </div>

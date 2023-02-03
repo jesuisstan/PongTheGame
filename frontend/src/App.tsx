@@ -6,12 +6,13 @@ import Game from './components/game/Game';
 import Chat from './components/chat/Chat';
 import Profile from './components/profile/Profile';
 import NotFound from './components/NotFound';
-import MainLayout from './components/layouts/MainLayout';
+import MainLayout from './components/UI/MainLayout';
 import { User } from './types/User';
 import './App.css';
 
 
 const url = 'http://localhost:3080/auth/getuser';
+const urlSetNickname = 'http://localhost:3080/user/setnickname';
 
 function App() {
   const [user, setUser] = useState<User>({
@@ -23,7 +24,16 @@ function App() {
   });
 
   const setNickname = (value: string) => {
-    setUser({...user, nickname: value })
+    //setUser({...user, nickname: value })
+    fetch(urlSetNickname, { method: 'PATCH' })
+      .then((res) => res.json())
+      .then((res) => {
+        //setUser(res);
+        console.log("nick setted"); //todo
+      })
+      .catch((err) => {
+        console.log(err);
+      });
  }
 
   useEffect(() => {
