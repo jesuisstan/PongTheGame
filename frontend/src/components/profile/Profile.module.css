@@ -5,12 +5,11 @@
   align-items: center;
   justify-content: center;
   flex-direction: row;
-
 }
 
 .avatarBig {
-  width: 242px;
-  height: 242px;
+  width: 200px;
+  height: 200px;
   border-radius: 50%;
   object-fit: cover;
 }

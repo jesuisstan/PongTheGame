@@ -71,7 +71,8 @@ const Profile = ({ user, setNickname }: any) => {
       <div className={styles.left}>
         <div className={styles.box1}>
           <Avatar alt="" src={user.avatar} sx={{ width: 200, height: 200 }} />
-          <Button variant="outlined" endDecorator={<AddAPhotoIcon />}>
+         {/*<img src={user.avatar} className={styles.avatarBig} alt="" />*/}
+         <Button variant="outlined" endDecorator={<AddAPhotoIcon />}>
             Change avatar
           </Button>
         </div>
