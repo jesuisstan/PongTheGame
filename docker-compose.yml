@@ -19,7 +19,7 @@ services:
     tty: true
 
     working_dir: /app-${FRONTEND_NAME}
-    # Install project dependencies,, then run front
+    # Install project dependencies, then run front
     command: >
             sh -cx "npm install
             && npm run start"
@@ -84,9 +84,11 @@ services:
     healthcheck:
       test: curl -fsSL http://localhost:${BACKEND_PORT}/healthcheck
       interval: 10s
-      timeout: 15s
-      retries: 15
-      start_period: 10s
+      timeout: 30s
+      retries: 30
+      start_period: 0s
+      # timeout: 1s
+      # retries: 30
 
   controller:
     container_name: health_controller
