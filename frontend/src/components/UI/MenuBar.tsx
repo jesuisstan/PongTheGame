@@ -10,15 +10,6 @@ import MenuItem from '@mui/material/MenuItem';
 import styles from './MenuBar.module.css';
 
 const MenuBar = ({ user }: any) => {
-  const navigate = useNavigate();
-  const authenticate = () => {
-    if (user.provider) {
-      window.location.href = 'http://localhost:3080/auth/logout';
-    } else {
-      window.location.href = 'http://localhost:3000/login';
-    }
-  };
-
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
 
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -27,6 +18,16 @@ const MenuBar = ({ user }: any) => {
 
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
+  };
+
+  const navigate = useNavigate();
+
+  const authenticate = () => {
+    if (user.provider) {
+      window.location.href = 'http://localhost:3080/auth/logout';
+    } else {
+      window.location.href = 'http://localhost:3000/login';
+    }
   };
 
   return (
@@ -51,7 +52,6 @@ const MenuBar = ({ user }: any) => {
           </Button>
         </div>
         <div className={styles.right}>
-          <div className={styles.nickname}>{user.nickname}</div>
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
@@ -95,6 +95,7 @@ const MenuBar = ({ user }: any) => {
               </MenuItem>
             </Menu>
           </Box>
+          <div className={styles.nickname}>{user.nickname}</div>
         </div>
       </nav>
     </div>

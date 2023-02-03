@@ -3,10 +3,10 @@ import Avatar from '@mui/material/Avatar';
 import Rating from '@mui/material/Rating';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
-import Button from '@mui/joy/Button';
+import Button from '@mui/material/Button';
 import FormControl from '@mui/joy/FormControl';
 import FormLabel from '@mui/joy/FormLabel';
-import Input from '@mui/joy/Input';
+import TextField from '@mui/material/TextField';
 import Modal from '@mui/joy/Modal';
 import ModalDialog from '@mui/joy/ModalDialog';
 import Stack from '@mui/joy/Stack';
@@ -16,10 +16,22 @@ import ListItem from '@mui/joy/ListItem';
 import Checkbox from '@mui/material/Checkbox';
 import ChangeNickname from './ChangeNickname';
 import styles from './Profile.module.css';
+import ButtonPong from '../UI/ButtonPong';
 
 const Profile = ({ user, setNickname }: any) => {
   const [open, setOpen] = useState(true);
   const [text, setText] = useState('');
+  const [error, setError] = useState('');
+
+  const handleTextInput = (event: any) => {
+    const newValue = event.target.value;
+    if (!newValue.match(/[%<>\\$|/?* +^.()\[\]]/)) {
+      setError('');
+      setText(newValue);
+    } else {
+      setError('Forbidden: [ ] < >\ ^ $ % . \\ | / ? * + ( ) space');
+    }
+  };
 
   const handleSubmit = (event: any) => {
     event.preventDefault();
@@ -52,12 +64,18 @@ const Profile = ({ user, setNickname }: any) => {
           <form onSubmit={handleSubmit}>
             <Stack spacing={2}>
               <FormControl>
-                <FormLabel>New one</FormLabel>
-                <Input
+                <FormLabel>Original one (3 - 20 characters):</FormLabel>
+                <TextField
                   autoFocus
                   required
                   value={text}
-                  onChange={(event) => setText(event.target.value)}
+                  inputProps={{
+                    minLength: 3,
+                    maxLength: 20
+                  }}
+                  helperText={error} // error message
+                  error={!!error}
+                  onChange={handleTextInput}
                 />
               </FormControl>
               <Button type="submit">Submit</Button>
@@ -71,10 +89,7 @@ const Profile = ({ user, setNickname }: any) => {
       <div className={styles.left}>
         <div className={styles.box1}>
           <Avatar alt="" src={user.avatar} sx={{ width: 200, height: 200 }} />
-         {/*<img src={user.avatar} className={styles.avatarBig} alt="" />*/}
-         <Button variant="outlined" endDecorator={<AddAPhotoIcon />}>
-            Change avatar
-          </Button>
+          <ButtonPong text="Change avatar" endIcon={<AddAPhotoIcon />} />
         </div>
 
         <div className={styles.box2}>
@@ -128,9 +143,7 @@ const Profile = ({ user, setNickname }: any) => {
           </Typography>
           <Typography component="legend">Rating</Typography>
           <Rating name="read-only" value={4} readOnly />
-          <Button variant="outlined" endDecorator={<ArrowForwardIosIcon />}>
-            Full stats
-          </Button>
+          <ButtonPong text="Full stats" endIcon={<ArrowForwardIosIcon />} />
         </div>
       </div>
     </div>
