@@ -13,7 +13,7 @@
   display: flex;
   align-items: center;
   border-radius: 4px;
-  background-color: rgba(0, 0, 0, 0.42);
+  background-color: rgba(0, 0, 0, 0.35);
 }
 
 .loginButtonEcole {
@@ -38,7 +38,9 @@
 
 .loginButtonEcole:hover {
   background-color: rgba(253, 80, 135, 0.6);
+  color: black;
   transform: scale(1.04);
+  font-weight: bold;
 }
 
 .loginButtonGithub {
@@ -64,6 +66,8 @@
 .loginButtonGithub:hover {
   background-color: rgba(253, 80, 135, 0.6);
   transform: scale(1.04);
+  color: black;
+  font-weight: bold;
 }
 
 .left {
