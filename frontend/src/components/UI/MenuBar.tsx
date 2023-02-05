@@ -55,6 +55,7 @@ const MenuBar = ({ user }: any) => {
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                <div className={styles.nickname}>{user.nickname}</div>
                 <Avatar alt="" src={user.avatar} />
               </IconButton>
             </Tooltip>
@@ -95,7 +96,6 @@ const MenuBar = ({ user }: any) => {
               </MenuItem>
             </Menu>
           </Box>
-          <div className={styles.nickname}>{user.nickname}</div>
         </div>
       </nav>
     </div>

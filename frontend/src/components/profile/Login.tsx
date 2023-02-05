@@ -5,6 +5,7 @@ import styles from './Login.module.css';
 
 const Login = ({ user }: any) => {
   const navigate = useNavigate();
+
   const ecole42Auth = () => {
     window.location.href = 'http://localhost:3080/auth/42';
   };
@@ -16,9 +17,11 @@ const Login = ({ user }: any) => {
   return user.provider ? (
     <div>
       <h1>You have been already logged in</h1>
-      <ButtonPong text='Profile' endIcon={<ArrowForwardIosIcon />}
-      onClick={() => navigate('/profile')} />
-
+      <ButtonPong
+        text="Profile"
+        endIcon={<ArrowForwardIosIcon />}
+        onClick={() => navigate('/profile')}
+      />
     </div>
   ) : (
     <div className={styles.loginCard}>

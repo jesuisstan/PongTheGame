@@ -15,8 +15,8 @@ import List from '@mui/joy/List';
 import ListItem from '@mui/joy/ListItem';
 import Checkbox from '@mui/material/Checkbox';
 import ChangeNickname from './ChangeNickname';
-import styles from './Profile.module.css';
 import ButtonPong from '../UI/ButtonPong';
+import styles from './Profile.module.css';
 
 const Profile = ({ user, setNickname }: any) => {
   const [open, setOpen] = useState(true);
@@ -29,7 +29,7 @@ const Profile = ({ user, setNickname }: any) => {
       setError('');
       setText(newValue);
     } else {
-      setError('Forbidden: [ ] < >\ ^ $ % . \\ | / ? * + ( ) space');
+      setError('Forbidden: [ ] < > ^ $ % . \\ | / ? * + ( ) space');
     }
   };
 
@@ -59,7 +59,7 @@ const Profile = ({ user, setNickname }: any) => {
           sx={{ maxWidth: 500 }}
         >
           <Typography id="basic-modal-dialog-title" component="h2">
-            Create your nickname
+            Creating your nickname
           </Typography>
           <form onSubmit={handleSubmit}>
             <Stack spacing={2}>
@@ -87,13 +87,17 @@ const Profile = ({ user, setNickname }: any) => {
   ) : (
     <div className={styles.profileCard}>
       <div className={styles.left}>
-        <div className={styles.box1}>
-          <Avatar alt="" src={user.avatar} sx={{ width: 200, height: 200 }} />
-          <ButtonPong text="Change avatar" endIcon={<AddAPhotoIcon />} />
+        <div className={styles.box}>
+          <div className={styles.up}>
+            <Avatar alt="" src={user.avatar} sx={{ width: 200, height: 200 }} />
+          </div>
+          <div className={styles.bottom}>
+            <ButtonPong text="Change avatar" endIcon={<AddAPhotoIcon />} />
+          </div>
         </div>
 
-        <div className={styles.box2}>
-          <div>
+        <div className={styles.box}>
+          <div className={styles.up}>
             <Typography
               id="basic-list-demo"
               level="body3"
@@ -105,17 +109,20 @@ const Profile = ({ user, setNickname }: any) => {
             <List aria-labelledby="basic-list-demo">
               <ListItem>login method: {user.provider}</ListItem>
               <ListItem>
-                2-Step Verification:{' '}
+              2-Factor Authentication:{' '}
                 {<Checkbox onClick={enableTwoStepVerification} />}
               </ListItem>
             </List>
+          </div>
+          <div className={styles.bottom}>
+            <ButtonPong text="Enable 2FA" endIcon={<ArrowForwardIosIcon />} />
           </div>
         </div>
       </div>
 
       <div className={styles.right}>
-        <div className={styles.box3}>
-          <div>
+        <div className={styles.box}>
+          <div className={styles.up}>
             <Typography
               id="basic-list-demo"
               level="body3"
@@ -129,21 +136,27 @@ const Profile = ({ user, setNickname }: any) => {
               <ListItem>Nickname: {user.nickname}</ListItem>
             </List>
           </div>
-          <ChangeNickname user={user} setNickname={setNickname} />
+          <div className={styles.bottom}>
+            <ChangeNickname user={user} setNickname={setNickname} />
+          </div>
         </div>
 
-        <div className={styles.box4}>
-          <Typography
-            id="basic-list-demo"
-            level="body3"
-            textTransform="uppercase"
-            fontWeight="lg"
-          >
-            Briefs
-          </Typography>
-          <Typography component="legend">Rating</Typography>
-          <Rating name="read-only" value={4} readOnly />
-          <ButtonPong text="Full stats" endIcon={<ArrowForwardIosIcon />} />
+        <div className={styles.box}>
+          <div className={styles.up}>
+            <Typography
+              id="basic-list-demo"
+              level="body3"
+              textTransform="uppercase"
+              fontWeight="lg"
+            >
+              Briefs
+            </Typography>
+            <Typography component="legend">Rating</Typography>
+            <Rating name="read-only" value={4} readOnly />
+          </div>
+          <div className={styles.bottom}>
+            <ButtonPong text="Full stats" endIcon={<ArrowForwardIosIcon />} />
+          </div>
         </div>
       </div>
     </div>

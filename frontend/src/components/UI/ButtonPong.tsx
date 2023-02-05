@@ -1,16 +1,21 @@
 import Button from '@mui/material/Button';
 
-const ButtonPong = ({ text, endIcon, onClick }: any) => {
+const ButtonPong = ({ text, onClick, endIcon, startIcon }: any) => {
   return (
     <Button
       sx={{
         backgroundColor: 'black',
-        ':hover': { backgroundColor: 'rgba(253, 80, 135, 0.6)' }
+        ':hover': {
+          backgroundColor: 'rgba(253, 80, 135, 0.6)',
+          color: 'black',
+          fontWeight: 'Bold'
+        }
       }}
       size="medium"
       variant="contained"
-      endIcon={endIcon}
       onClick={onClick}
+      endIcon={endIcon}
+      startIcon={startIcon}
     >
       {text}
     </Button>
