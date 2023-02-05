@@ -3,11 +3,11 @@ import { IsNotEmpty, Length } from 'class-validator';
 
 export class SetNicknameDTO {
   @IsNotEmpty()
-  @Length(3, 32)
+  @Length(3, 20)
   @ApiProperty({
     default: '',
     minLength: 3,
-    maxLength: 32,
+    maxLength: 20,
   })
   nickname: string;
 }
