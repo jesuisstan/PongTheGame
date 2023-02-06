@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
@@ -10,7 +11,7 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 import { IsAuthenticatedGuard } from 'src/auth/auth.guard';
 import { SessionUser } from 'src/decorator/session-user.decorator';
@@ -33,7 +34,6 @@ export class UserController {
       },
     },
   })
-  // @ApiTags('Users')
   async getUserById(@Param('id', ParseIntPipe) id: number) {
     const user = await this.users.findUserById(id);
 
@@ -47,9 +47,19 @@ export class UserController {
   })
   @UseGuards(IsAuthenticatedGuard)
   @UsePipes(ValidationPipe)
-  async setNickname(@SessionUser() user: User, @Body() dto: SetNicknameDTO) {
+  @ApiBadRequestResponse({
+    description:
+      'The username is already taken, or the payload is not formatted well',
+  })
+  async setNickname(
+    @SessionUser() user: User,
+    @Body() dto: SetNicknameDTO,
+  ): Promise<User> {
     const { nickname } = dto;
+    const foundUser = await this.users.findUserByNickname(nickname);
 
+    if (foundUser !== null)
+      throw new BadRequestException('This nickname is already used');
     return await this.users.setUserNickname(user, nickname);
   }
 }
