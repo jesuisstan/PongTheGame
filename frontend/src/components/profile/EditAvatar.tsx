@@ -1,11 +1,11 @@
-import { useState } from 'react';
-import Button from '@mui/material/Button';
 import FormLabel from '@mui/joy/FormLabel';
 import Modal from '@mui/joy/Modal';
 import ModalDialog from '@mui/joy/ModalDialog';
 import Stack from '@mui/joy/Stack';
 import Typography from '@mui/joy/Typography';
+import Button from '@mui/material/Button';
 import axios from 'axios';
+import { useState } from 'react';
 import Swal from 'sweetalert2';
 
 const urlUploadAvatar = 'http://localhost:3080/avatar/upload';
@@ -36,13 +36,14 @@ const EditAvatar = ({ user, setAvatar, open, setOpen }: any) => {
   const handleSubmit = (event: any) => {
     event.preventDefault();
     let formData = new FormData();
-    formData.append('avatar', file!);
+    formData.append('file', file!);
 
     axios({
       url: 'http://localhost:3080/avatar/upload',
       method: 'POST',
       headers: { 'Content-type': 'multipart/form-data' },
-      data: formData
+      data: formData,
+      withCredentials: true
     }).then(
       (response) => {
         console.log(response.data);
