@@ -80,7 +80,7 @@ export class AchievementService {
 			return ;
 	}
 
-	async userAchievement(id : number) { // TODO add Promise state
+	async userAchievement(id : number) : Promise<{achievement :Achievement[]}> { 
 			const user = await this.prisma.user.findUnique({
 				where : {
 					id : id,
@@ -94,22 +94,20 @@ export class AchievementService {
 			return user;
 	}
 
-	async addToUser(userId : number, achievementId : number) { // TODO Add promise state
+	async addToUser(userId : number, achievementId : number) : Promise<Achievement | undefined> {
 		const userAchivement = await this.prisma.user.findUnique({
 			where : {
 				id : userId,
-			}, 
+			},
 			select : {
 				achievement : true,
-			}});
+			},
+			});
 		if (!userAchivement)
 			throw new ForbiddenException("User not found");// TODO modif not a forbidden exepction
-
-		// const title : string = userAchivement.achievement.find(Achievement => Achievement.id == achievementId).Title;
-		const title : any = userAchivement.achievement;
-		console.log(title);
-		// if (title)
-		// 	throw new ForbiddenException(`User already got the achivement '${title}'`,);// TODO modif not a forbidden exepction
+		const achievement : any = userAchivement.achievement.find(Achievement => (Achievement.id == achievementId));
+		if (achievement.Title)
+			throw new ForbiddenException(`User already got the achivement '${achievement.Title}'`,);// TODO modif not a forbidden exepction
 		
 		try {
 			const achievement : Achievement = await this.prisma.achievement.update({
@@ -128,6 +126,7 @@ export class AchievementService {
 						throw new ForbiddenException('Achivement not found',);// TODO modif not a forbidden exepction
 				}
 			}
+		return ;
 	}
 
 }

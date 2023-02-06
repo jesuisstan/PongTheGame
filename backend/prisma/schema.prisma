@@ -3,6 +3,11 @@ generator client {
   binaryTargets = ["native", "linux-musl"]
 }
 
+generator dbml {
+  projectDatabaseType = "PostgreSQL"
+  provider = "prisma-dbml-generator"
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
