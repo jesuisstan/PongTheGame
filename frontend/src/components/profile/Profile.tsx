@@ -10,10 +10,12 @@ import Checkbox from '@mui/material/Checkbox';
 import CreateIcon from '@mui/icons-material/Create';
 import ButtonPong from '../UI/ButtonPong';
 import EditNickname from './EditNickname';
+import EditAvatar from './EditAvatar';
 import styles from './Profile.module.css';
 
-const Profile = ({ user, setNickname }: any) => {
-  const [open, setOpen] = useState(false);
+const Profile = ({ user, setNickname, setAvatar }: any) => {
+  const [modalNicknameOpen, setModalNicknameOpen] = useState(false);
+  const [modalAvatarOpen, setModalAvatarOpen] = useState(false);
 
   const enableTwoStepVerification = () => {
     console.log('2-step Verif checkbox clicked');
@@ -24,7 +26,7 @@ const Profile = ({ user, setNickname }: any) => {
       user={user}
       setNickname={setNickname}
       open={true}
-      setOpen={setOpen}
+      setOpen={setModalNicknameOpen}
     />
   ) : (
     <div className={styles.profileCard}>
@@ -34,7 +36,17 @@ const Profile = ({ user, setNickname }: any) => {
             <Avatar alt="" src={user.avatar} sx={{ width: 200, height: 200 }} />
           </div>
           <div className={styles.bottom}>
-            <ButtonPong text="Change avatar" endIcon={<AddAPhotoIcon />} />
+            <ButtonPong
+              text="Change avatar"
+              endIcon={<AddAPhotoIcon />}
+              onClick={() => setModalAvatarOpen(true)}
+            />
+            <EditAvatar
+              user={user}
+              setAvatar={setAvatar}
+              open={modalAvatarOpen}
+              setOpen={setModalAvatarOpen}
+            />
           </div>
         </div>
 
@@ -83,13 +95,13 @@ const Profile = ({ user, setNickname }: any) => {
               <ButtonPong
                 text="Change nickname"
                 endIcon={<CreateIcon />}
-                onClick={() => setOpen(true)}
+                onClick={() => setModalNicknameOpen(true)}
               />
               <EditNickname
                 user={user}
                 setNickname={setNickname}
-                open={open}
-                setOpen={setOpen}
+                open={modalNicknameOpen}
+                setOpen={setModalNicknameOpen}
               />
             </div>
           </div>

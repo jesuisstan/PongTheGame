@@ -22,7 +22,7 @@ const EditNickname = ({ user, setNickname, open, setOpen }: any) => {
     }
   };
 
-  const handleSubmit = (event: any) => {
+  const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     if (text) setNickname(text);
     setText('');
@@ -33,6 +33,7 @@ const EditNickname = ({ user, setNickname, open, setOpen }: any) => {
   return (
     <div>
       <Modal
+        sx={{ color: 'black' }}
         open={open}
         onClose={() => {
           if (user.nickname) {
@@ -42,15 +43,21 @@ const EditNickname = ({ user, setNickname, open, setOpen }: any) => {
       >
         <ModalDialog
           aria-labelledby="basic-modal-dialog-title"
-          sx={{ maxWidth: 500 }}
+          sx={{ maxWidth: 500, color: 'black' }}
         >
-          <Typography id="basic-modal-dialog-title" component="h2">
+          <Typography
+            id="basic-modal-dialog-title"
+            component="h2"
+            sx={{ color: 'black' }}
+          >
             Modifying your nickname
           </Typography>
           <form onSubmit={handleSubmit}>
             <Stack spacing={2}>
               <FormControl>
-                <FormLabel>3 - 20 characters:</FormLabel>
+                <FormLabel sx={{ color: 'black' }}>
+                  3 - 20 characters:
+                </FormLabel>
                 <TextField
                   autoFocus
                   required
@@ -64,7 +71,18 @@ const EditNickname = ({ user, setNickname, open, setOpen }: any) => {
                   onChange={handleTextInput}
                 />
               </FormControl>
-              <Button type="submit" variant="outlined">
+              <Button
+                type="submit"
+                variant="outlined"
+                sx={{
+                  color: 'black',
+                  borderColor: 'black',
+                  ':hover': {
+                    borderColor: 'black',
+                    fontWeight: 'Bold'
+                  }
+                }}
+              >
                 Submit
               </Button>
             </Stack>
