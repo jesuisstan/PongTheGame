@@ -68,39 +68,6 @@ function App() {
       );
   };
 
-  const setAvatar = (value: File) => {
-    return axios
-      .post(
-        urlUploadAvatar,
-        value,
-        {
-          withCredentials: true,
-          headers: { 'Content-type': 'multipart/form-data' }
-        }
-      )
-      .then(
-        (response) => {
-          setUser(response.data);
-        },
-        (error) => {
-          console.log(error);
-          console.log(error.message);
-
-          Swal.fire({
-            showConfirmButton: false,
-            icon: 'error',
-            iconColor: '#fd5087',
-            width: 450,
-            title: 'Oops...',
-            text: 'Something went wrong',
-            showCloseButton: true,
-            color: 'whitesmoke',
-            background: 'black'
-          });
-        }
-      );
-  };
-
   useEffect(() => {
     axios.get(urlAuth, { withCredentials: true }).then(
       (response) => setUser(response.data),
@@ -132,7 +99,6 @@ function App() {
                 <Profile
                   user={user}
                   setNickname={setNickname}
-                  setAvatar={setAvatar}
                 />
               }
             />

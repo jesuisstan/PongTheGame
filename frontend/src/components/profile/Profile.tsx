@@ -13,7 +13,7 @@ import EditNickname from './EditNickname';
 import EditAvatar from './EditAvatar';
 import styles from './Profile.module.css';
 
-const Profile = ({ user, setNickname, setAvatar }: any) => {
+const Profile = ({ user, setNickname }: any) => {
   const [modalNicknameOpen, setModalNicknameOpen] = useState(false);
   const [modalAvatarOpen, setModalAvatarOpen] = useState(false);
 
@@ -43,7 +43,6 @@ const Profile = ({ user, setNickname, setAvatar }: any) => {
             />
             <EditAvatar
               user={user}
-              setAvatar={setAvatar}
               open={modalAvatarOpen}
               setOpen={setModalAvatarOpen}
             />
