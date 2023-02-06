@@ -2,16 +2,13 @@ import { useState } from 'react';
 import Button from '@mui/material/Button';
 import FormControl from '@mui/joy/FormControl';
 import FormLabel from '@mui/joy/FormLabel';
+import TextField from '@mui/material/TextField';
 import Modal from '@mui/joy/Modal';
 import ModalDialog from '@mui/joy/ModalDialog';
 import Stack from '@mui/joy/Stack';
-import CreateIcon from '@mui/icons-material/Create';
 import Typography from '@mui/joy/Typography';
-import TextField from '@mui/material/TextField';
-import ButtonPong from '../UI/ButtonPong';
 
-const ChangeNickname = ({ user, setNickname }: any) => {
-  const [open, setOpen] = useState(false);
+const EditNickname = ({ user, setNickname, open, setOpen }: any) => {
   const [text, setText] = useState('');
   const [error, setError] = useState('');
 
@@ -29,29 +26,31 @@ const ChangeNickname = ({ user, setNickname }: any) => {
     event.preventDefault();
     if (text) setNickname(text);
     setText('');
+    setError('');
     setOpen(false);
   };
 
   return (
     <div>
-      <ButtonPong
-        text="Change nickname"
-        endIcon={<CreateIcon />}
-        onClick={() => setOpen(true)}
-      />
-
-      <Modal open={open} onClose={() => setOpen(false)}>
+      <Modal
+        open={open}
+        onClose={() => {
+          if (user.nickname) {
+            setOpen(false);
+          }
+        }}
+      >
         <ModalDialog
           aria-labelledby="basic-modal-dialog-title"
           sx={{ maxWidth: 500 }}
         >
           <Typography id="basic-modal-dialog-title" component="h2">
-            Changing your nickname
+            Modifying your nickname
           </Typography>
           <form onSubmit={handleSubmit}>
             <Stack spacing={2}>
               <FormControl>
-                <FormLabel>New one (3 - 20 characters):</FormLabel>
+                <FormLabel>3 - 20 characters:</FormLabel>
                 <TextField
                   autoFocus
                   required
@@ -65,7 +64,9 @@ const ChangeNickname = ({ user, setNickname }: any) => {
                   onChange={handleTextInput}
                 />
               </FormControl>
-              <Button type="submit">Submit</Button>
+              <Button type="submit" variant="outlined">
+                Submit
+              </Button>
             </Stack>
           </form>
         </ModalDialog>
@@ -74,4 +75,4 @@ const ChangeNickname = ({ user, setNickname }: any) => {
   );
 };
 
-export default ChangeNickname;
+export default EditNickname;

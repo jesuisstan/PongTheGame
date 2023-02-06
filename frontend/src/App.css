@@ -45,3 +45,12 @@ a:hover {
     transform: rotate(360deg);
   }
 }
+
+.swal2-container.swal2-backdrop-show, .swal2-container.swal2-noanimation {
+  z-index: 11000;
+}
+
+body.swal2-shown > [aria-hidden="true"] {
+  transition: 0.1s filter;
+  filter: blur(2px);
+}
