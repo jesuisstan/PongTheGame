@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Controller,
   Logger,
   Post,
@@ -37,9 +38,10 @@ export class AvatarController {
     @UploadedFile('file') file: Express.Multer.File,
     @SessionUser() user: Express.User,
   ) {
+    if (file === undefined) throw new BadRequestException('no file given');
+
     const handle = await fs.open(path.join('avatars', user.id.toString()), 'w');
 
-    this.logger.debug(file);
     await handle.write(file.buffer);
     await handle.close();
   }
