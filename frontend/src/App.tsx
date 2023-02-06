@@ -14,6 +14,7 @@ import './App.css';
 
 const urlAuth = 'http://localhost:3080/auth/getuser';
 const urlSetNickname = 'http://localhost:3080/user/setnickname';
+const urlUploadAvatar = 'http://localhost:3080/avatar/upload'
 
 function App() {
   const [user, setUser] = useState<User>({
@@ -40,17 +41,29 @@ function App() {
         },
         (error) => {
           console.log(error);
-          Swal.fire({
-            showConfirmButton: false,
-            icon: 'error',
-            iconColor: '#fd5087',
-            width: 450,
-            title: 'Oops...',
-            text: 'This nickname is already used',
-            showCloseButton: true,
-            color: 'whitesmoke',
-            background: 'black'
-          });
+          error.request.status === 400
+            ? Swal.fire({
+                showConfirmButton: false,
+                icon: 'error',
+                iconColor: '#fd5087',
+                width: 450,
+                title: 'Oops...',
+                text: 'This nickname is already used',
+                showCloseButton: true,
+                color: 'whitesmoke',
+                background: 'black'
+              })
+            : Swal.fire({
+                showConfirmButton: false,
+                icon: 'error',
+                iconColor: '#fd5087',
+                width: 450,
+                title: 'Oops...',
+                text: 'Something went wrong',
+                showCloseButton: true,
+                color: 'whitesmoke',
+                background: 'black'
+              });
         }
       );
   };
@@ -82,7 +95,12 @@ function App() {
             />
             <Route
               path="profile"
-              element={<Profile user={user} setNickname={setNickname} />}
+              element={
+                <Profile
+                  user={user}
+                  setNickname={setNickname}
+                />
+              }
             />
             <Route path="*" element={<NotFound />} />
           </Route>
