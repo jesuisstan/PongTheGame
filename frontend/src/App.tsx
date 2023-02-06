@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import axios from 'axios';
+import Swal from 'sweetalert2';
 import Home from './components/Home';
 import Login from './components/profile/Login';
 import Game from './components/game/Game';
@@ -9,7 +11,6 @@ import NotFound from './components/NotFound';
 import MainLayout from './components/UI/MainLayout';
 import { User } from './types/User';
 import './App.css';
-import axios from 'axios';
 
 const urlAuth = 'http://localhost:3080/auth/getuser';
 const urlSetNickname = 'http://localhost:3080/user/setnickname';
@@ -34,8 +35,23 @@ function App() {
         }
       )
       .then(
-        (response) => setUser(response.data),
-        (error) => console.log(error)
+        (response) => {
+          setUser(response.data);
+        },
+        (error) => {
+          console.log(error);
+          Swal.fire({
+            showConfirmButton: false,
+            icon: 'error',
+            iconColor: '#fd5087',
+            width: 450,
+            title: 'Oops...',
+            text: 'This nickname is already used',
+            showCloseButton: true,
+            color: 'whitesmoke',
+            background: 'black'
+          });
+        }
       );
   };
 
