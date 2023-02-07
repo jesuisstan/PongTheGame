@@ -6,14 +6,21 @@ import Modal from '@mui/joy/Modal';
 import ModalDialog from '@mui/joy/ModalDialog';
 import Stack from '@mui/joy/Stack';
 import Typography from '@mui/joy/Typography';
-import Button from '@mui/material/Button';
 import LoadingButton from '@mui/lab/LoadingButton';
 import SaveIcon from '@mui/icons-material/Save';
 
 const urlUploadAvatar = 'http://localhost:3080/avatar/upload';
 
+const modalDialogStyle = {
+  maxWidth: 500,
+  border: '0px solid #000',
+  bgcolor: '#f5f5f5a6',
+  borderRadius: '4px'
+};
+
 const EditAvatar = ({ user, open, setOpen }: any) => {
   const [file, setFile] = useState<File>();
+  const [load, setLoad] = useState(false);
 
   const handleInput = (event: React.FormEvent) => {
     const files = (event.target as HTMLInputElement).files;
@@ -28,30 +35,57 @@ const EditAvatar = ({ user, open, setOpen }: any) => {
     let formData = new FormData();
     formData.append('file', file!);
 
-    axios
-      .post(urlUploadAvatar, formData, {
-        withCredentials: true,
-        headers: { 'Content-type': 'multipart/form-data' }
-      })
-      .then(
-        (response) => {
-          console.log('new avatar uploaded');
-        },
-        (error) => {
-          console.log(error.message);
-          Swal.fire({
-            showConfirmButton: false,
-            icon: 'error',
-            iconColor: '#fd5087',
-            width: 450,
-            title: 'Oops...',
-            text: 'Something went wrong',
-            showCloseButton: true,
-            color: 'whitesmoke',
-            background: 'black'
-          });
-        }
-      );
+    const getData = async (formData: FormData) => {
+      setLoad(true);
+      try {
+        const res = await axios.post(urlUploadAvatar, formData, {
+          withCredentials: true,
+          headers: { 'Content-type': 'multipart/form-data' }
+        });
+      } catch (error) {
+        console.log(error);
+        Swal.fire({
+          showConfirmButton: false,
+          icon: 'error',
+          iconColor: '#fd5087',
+          width: 450,
+          title: 'Oops...',
+          text: 'Something went wrong',
+          showCloseButton: true,
+          color: 'whitesmoke',
+          background: 'black'
+        });
+      }
+      setLoad(false);
+      console.log('new avatar uploaded');
+      setTimeout(() => setOpen(false), 442);
+    };
+    getData(formData);
+
+    //axios
+    //  .post(urlUploadAvatar, formData, {
+    //    withCredentials: true,
+    //    headers: { 'Content-type': 'multipart/form-data' }
+    //  })
+    //  .then(
+    //    (response) => {
+    //      console.log('new avatar uploaded');
+    //    },
+    //    (error) => {
+    //      console.log(error.message);
+    //      Swal.fire({
+    //        showConfirmButton: false,
+    //        icon: 'error',
+    //        iconColor: '#fd5087',
+    //        width: 450,
+    //        title: 'Oops...',
+    //        text: 'Something went wrong',
+    //        showCloseButton: true,
+    //        color: 'whitesmoke',
+    //        background: 'black'
+    //      });
+    //    }
+    //  );
 
     //axios({
     //  url: 'http://localhost:3080/avatar/upload',
@@ -78,8 +112,7 @@ const EditAvatar = ({ user, open, setOpen }: any) => {
     //    });
     //  }
     //);
-    setFile(undefined); //todo
-    setOpen(false);
+    setFile(undefined);
   };
 
   return (
@@ -95,7 +128,7 @@ const EditAvatar = ({ user, open, setOpen }: any) => {
       >
         <ModalDialog
           aria-labelledby="basic-modal-dialog-title"
-          sx={{ maxWidth: 500 }}
+          sx={modalDialogStyle}
         >
           <Typography
             id="basic-modal-dialog-title"
@@ -106,7 +139,7 @@ const EditAvatar = ({ user, open, setOpen }: any) => {
           </Typography>
           <form onSubmit={handleSubmit}>
             <Stack spacing={2}>
-              <FormLabel sx={{ color: 'black' }}>Max file size ...:</FormLabel>
+              <FormLabel sx={{ color: 'black' }}>Max file size ...</FormLabel>
               <input
                 required
                 type="file"
@@ -115,30 +148,15 @@ const EditAvatar = ({ user, open, setOpen }: any) => {
                 accept="image/*,.png,.jpg,.gif,.web"
                 onChange={handleInput}
               />
-              <Button
+              <LoadingButton
                 type="submit"
-                variant="outlined"
-                sx={{
-                  color: 'black',
-                  borderColor: 'black',
-                  ':hover': {
-                    borderColor: 'black',
-                    fontWeight: 'Bold'
-                  }
-                }}
+                loading={load}
+                startIcon={<SaveIcon />}
+                variant="contained"
+                color="inherit"
               >
                 Submit
-              </Button>
-
-              {/*<LoadingButton
-                type="submit"
-                loading
-                loadingPosition="start"
-                startIcon={<SaveIcon />}
-                variant="outlined"
-              >
-                Save
-              </LoadingButton>*/}
+              </LoadingButton>
             </Stack>
           </form>
         </ModalDialog>

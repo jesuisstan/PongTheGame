@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import Button from '@mui/material/Button';
+import LoadingButton from '@mui/lab/LoadingButton';
+import SaveIcon from '@mui/icons-material/Save';
 import FormControl from '@mui/joy/FormControl';
 import FormLabel from '@mui/joy/FormLabel';
 import TextField from '@mui/material/TextField';
@@ -7,6 +8,13 @@ import Modal from '@mui/joy/Modal';
 import ModalDialog from '@mui/joy/ModalDialog';
 import Stack from '@mui/joy/Stack';
 import Typography from '@mui/joy/Typography';
+
+const modalDialogStyle = {
+  maxWidth: 500,
+  border: '0px solid #000',
+  bgcolor: '#f5f5f5a6',
+  borderRadius: '4px'
+};
 
 const EditNickname = ({ user, setNickname, open, setOpen }: any) => {
   const [text, setText] = useState('');
@@ -43,7 +51,7 @@ const EditNickname = ({ user, setNickname, open, setOpen }: any) => {
       >
         <ModalDialog
           aria-labelledby="basic-modal-dialog-title"
-          sx={{ maxWidth: 500, color: 'black' }}
+          sx={modalDialogStyle}
         >
           <Typography
             id="basic-modal-dialog-title"
@@ -71,20 +79,14 @@ const EditNickname = ({ user, setNickname, open, setOpen }: any) => {
                   onChange={handleTextInput}
                 />
               </FormControl>
-              <Button
+              <LoadingButton
                 type="submit"
-                variant="outlined"
-                sx={{
-                  color: 'black',
-                  borderColor: 'black',
-                  ':hover': {
-                    borderColor: 'black',
-                    fontWeight: 'Bold'
-                  }
-                }}
+                startIcon={<SaveIcon />}
+                variant="contained"
+                color="inherit"
               >
                 Submit
-              </Button>
+              </LoadingButton>
             </Stack>
           </form>
         </ModalDialog>

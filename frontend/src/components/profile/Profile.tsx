@@ -60,7 +60,7 @@ const Profile = ({ user, setNickname }: any) => {
               Auth
             </Typography>
             <List aria-labelledby="basic-list-demo">
-              <ListItem>login method: {user.provider}</ListItem>
+              <ListItem>Login method: {user.provider}</ListItem>
               <ListItem>
                 2-Factor Authentication:{' '}
                 {<Checkbox onClick={enableTwoStepVerification} />}
