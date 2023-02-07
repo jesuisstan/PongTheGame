@@ -14,7 +14,6 @@ import './App.css';
 
 const urlAuth = 'http://localhost:3080/auth/getuser';
 const urlSetNickname = 'http://localhost:3080/user/setnickname';
-const urlUploadAvatar = 'http://localhost:3080/avatar/upload'
 
 function App() {
   const [user, setUser] = useState<User>({
@@ -95,12 +94,7 @@ function App() {
             />
             <Route
               path="profile"
-              element={
-                <Profile
-                  user={user}
-                  setNickname={setNickname}
-                />
-              }
+              element={<Profile user={user} setNickname={setNickname} />}
             />
             <Route path="*" element={<NotFound />} />
           </Route>
