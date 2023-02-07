@@ -1,7 +1,7 @@
 import { IsNotEmpty, IsString } from "class-validator";
 import { ApiProperty } from '@nestjs/swagger';
 
-export class AchievementDTO { // MEMO Modif this for future constraint
+export class AchievementDTO {
 
 	@IsString()
 	@IsNotEmpty()

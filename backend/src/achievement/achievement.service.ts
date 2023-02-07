@@ -8,7 +8,7 @@ import { AchievementDTO } from './dto/achievement.dto';
 export class AchievementService {
 	constructor (private prisma: PrismaService) {}
 
-	async allAchievement() { // TODO add Promise state
+	async allAchievement() : Promise<{ id: number; Name: string; Description: string; }[]>{
 		const all_achievement = this.prisma.achievement.findMany({
 			select :{
 				id : true,
@@ -42,7 +42,7 @@ export class AchievementService {
 		}
 	}
 
-	async updateAchievement(achId : number, data : AchievementDTO) { // TODO add Promise state
+	async updateAchievement(achId : number, data : AchievementDTO) : Promise<void> {
 		try {
 			await this.prisma.achievement.update({
 				where : {

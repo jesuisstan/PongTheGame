@@ -1,8 +1,6 @@
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { Role } from '@prisma/client';
 
-// MEMO Expection filter dans le catch mettre les exceptions qui doit filtre
-// MEMO Queryfailed error
 @Injectable()
 export class RolesGuard implements CanActivate {
   constructor() {}

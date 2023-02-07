@@ -2,9 +2,9 @@ import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 import { Request, Response } from 'express';
-import { IsAuthenticatedGuard } from 'src/auth/auth.guard';
-import { SessionUser } from 'src/decorator/session-user.decorator';
-import { UserService } from 'src/user/user.service';
+import { IsAuthenticatedGuard } from './auth.guard';
+import { SessionUser } from '../decorator/session-user.decorator';
+import { UserService } from '../user/user.service';
 
 // TODO use config
 const CLIENT_URL = 'http://localhost:3000';

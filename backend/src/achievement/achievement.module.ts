@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AchievementService } from './achievement.service';
 import { AchievementController } from './achievement.controller';
-import { PrismaModule } from 'src/prisma/prisma.module';
+import { PrismaModule } from '../prisma/prisma.module';
 
 @Module({
   providers: [AchievementService],

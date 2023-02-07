@@ -12,11 +12,11 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { User } from '@prisma/client';
-import { IsAuthenticatedGuard } from 'src/auth/auth.guard';
-import { SessionUser } from 'src/decorator/session-user.decorator';
-import { CreateMatchDTO } from 'src/match/dto/createMatch.dto';
-import { MatchService } from 'src/match/match.service';
-import { UserService } from 'src/user/user.service';
+import { IsAuthenticatedGuard } from '../auth/auth.guard';
+import { SessionUser } from '../decorator/session-user.decorator';
+import { CreateMatchDTO } from '../match/dto/createMatch.dto';
+import { MatchService } from './match.service';
+import { UserService } from '../user/user.service';
 
 @Controller('/match')
 @ApiTags('Matches')

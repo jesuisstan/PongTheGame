@@ -2,8 +2,8 @@ import { Body, Controller, Delete, HttpCode, HttpStatus, Param, ParseIntPipe, Pa
 import { AchievementService } from './achievement.service';
 import { AchievementDTO } from './dto/achievement.dto';
 import { ApiOperation, ApiTags, DocumentBuilder } from '@nestjs/swagger';
-import { IsAdmin } from './guard';
-import { IsAuthenticatedGuard } from 'src/auth/auth.guard';
+import { IsAdmin } from './guard/isadmin.guard';
+import { IsAuthenticatedGuard } from '../auth/auth.guard';
 
 const options = new DocumentBuilder().addSecurity('basic', {
 	type: 'http',

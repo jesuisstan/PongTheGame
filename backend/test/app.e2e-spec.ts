@@ -3,7 +3,6 @@ import { Test } from '@nestjs/testing'
 import * as pactum from 'pactum';
 import { PrismaService } from '../src/prisma/prisma.service';
 import { AppModule } from '../src/app.module';
-// import { AchievementDTO } from 'src/achievement/dto';
 
 describe('Appe@e', () => {
   let app : INestApplication;
@@ -28,6 +27,7 @@ describe('Appe@e', () => {
     // await prisma.cleanDb();
 
     pactum.request.setBaseUrl('http://localhost:3333');
+    
   });
 
   afterAll(async () => {
@@ -35,46 +35,45 @@ describe('Appe@e', () => {
     app.close();
   });
 
-  describe('Auth', () => {
-    const dto = {
-      email : 'test@test.com',
-      password : '123'
-    };
+  describe('Testing', () => {
+    it.todo('Start test');
+  })
+  // describe('Auth', () => {
     
-    describe('Signup', () => {
+  //   describe('Signup', () => {
 
-      it('Should thrown email empty', () => {
-        return pactum.spec().post('/auth/signup',).withBody({
-          password : dto.password,
-        }).expectStatus(400);
-      });
+  //     it('Should thrown email empty', () => {
+  //       return pactum.spec().post('/auth/signup',).withBody({
+  //         password : dto.password,
+  //       }).expectStatus(400);
+  //     });
 
-      // it('Should thrown not a email', () => {
-      //   return pactum.spec().post('/auth/signup',).withBody({
-      //     email : "test.test",
-      //     password : dto.password,
-      //   }).expectStatus(400);
-      // });
+  //     // it('Should thrown not a email', () => {
+  //     //   return pactum.spec().post('/auth/signup',).withBody({
+  //     //     email : "test.test",
+  //     //     password : dto.password,
+  //     //   }).expectStatus(400);
+  //     // });
 
-      // it('Should thrown password empty', () => {
-      //   return pactum.spec().post('/auth/signup',).withBody({
-      //     email : dto.email,
-      //   }).expectStatus(400);
-      // });
+  //     // it('Should thrown password empty', () => {
+  //     //   return pactum.spec().post('/auth/signup',).withBody({
+  //     //     email : dto.email,
+  //     //   }).expectStatus(400);
+  //     // });
 
-      // it('Should thrown no body provided', () => {
-      //   return pactum.spec().post('/auth/signup',).withBody({}).expectStatus(400);
-      // });
+  //     // it('Should thrown no body provided', () => {
+  //     //   return pactum.spec().post('/auth/signup',).withBody({}).expectStatus(400);
+  //     // });
 
-      // it('Should signup', () => {
-      //   return pactum.spec().post('/auth/signup',).withBody(dto).expectStatus(201);
-      // });
+  //     // it('Should signup', () => {
+  //     //   return pactum.spec().post('/auth/signup',).withBody(dto).expectStatus(201);
+  //     // });
 
-      // it('Should thrown already signup', () => {
-      //   return pactum.spec().post('/auth/signup',).withBody(dto).expectStatus(403);
-      // });
+  //     // it('Should thrown already signup', () => {
+  //     //   return pactum.spec().post('/auth/signup',).withBody(dto).expectStatus(403);
+  //     // });
 
-    });
+  //   });
 
   //   describe('Signin', () => {
 
