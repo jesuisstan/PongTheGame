@@ -12,10 +12,10 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { User } from '@prisma/client';
-import { IsAuthenticatedGuard } from '../auth/auth.guard';
-import { SessionUser } from '../decorator/session-user.decorator';
-import { SetNicknameDTO } from '../user/dto/setNickname.dto';
-import { UserService } from '../user/user.service';
+import { IsAuthenticatedGuard } from 'src/auth/auth.guard';
+import { SessionUser } from 'src/decorator/session-user.decorator';
+import { SetNicknameDTO } from 'src/user/dto/setNickname.dto';
+import { UserService } from 'src/user/user.service';
 
 @Controller('/user')
 @ApiTags('Users')

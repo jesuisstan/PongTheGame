@@ -31,4 +31,4 @@ re: fclean all
 
 # Launch prisma studio
 prisma-studio:
-	docker exec -it back sh -c 'yarn prisma studio'
+	docker exec -it backend sh -c 'yarn prisma studio'

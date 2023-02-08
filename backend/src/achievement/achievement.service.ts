@@ -1,8 +1,8 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { Achievement } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
-import { PrismaService } from '../prisma/prisma.service';
-import { AchievementDTO } from './dto/achievement.dto';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { AchievementDTO } from 'src/achievement/dto/achievement.dto';
 
 @Injectable()
 export class AchievementService {

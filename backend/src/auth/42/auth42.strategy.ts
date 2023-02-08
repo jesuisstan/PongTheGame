@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { Profile } from 'passport';
 import { Strategy, StrategyOptions } from 'passport-42';
-import { SessionService } from '../session/session.service';
+import { SessionService } from 'src/auth/session/session.service';
 import { Config } from 'src/config.interface';
 
 @Injectable()

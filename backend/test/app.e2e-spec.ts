@@ -1,8 +1,8 @@
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test } from '@nestjs/testing'
 import * as pactum from 'pactum';
-import { PrismaService } from '../src/prisma/prisma.service';
-import { AppModule } from '../src/app.module';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { AppModule } from 'src/app.module';
 
 describe('Appe@e', () => {
   let app : INestApplication;

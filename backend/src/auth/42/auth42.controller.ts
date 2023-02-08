@@ -1,7 +1,7 @@
 import { Controller, Get, Res, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
-import { Auth42Guard } from './auth42.guard';
+import { Auth42Guard } from 'src/auth/42/auth42.guard';
 
 // TODO use config
 const CLIENT_URL = 'http://localhost:3000';

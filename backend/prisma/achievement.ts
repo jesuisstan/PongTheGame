@@ -15,7 +15,7 @@ export async function insert_achievement(){
 		{Name : "ModUser", Title : "use 2 differents Game mod", Description : "Play 2 game mod differents"}, // MEMO Not sur to keep it
 		{Name : "FriendOfMaurice", Title : "Get One Friend", Description : "get at leats one Friend"},
 		{Name : "Super Popstart", Title : "More Friends", Description : "Get 42 Friends"},
-		{Name : "I See U", Title : "Be Admin", Description : "The dark side is not for everyone."},
+		{Name : "I See U", Title : "Be Admin", Description : "The dark side is not for everyone."}, // Give only if with the request
 		{Name : "Collector", Title : "Achievements everywhere", Description : "Get 10 achievements"},
 		{Name : "I'm your Father", Title : "Achievements everywhere * 2", Description : "Get 20 Achievement"},
 		// {Name : "", Title : "", Description : ""},

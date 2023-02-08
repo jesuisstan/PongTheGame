@@ -1,7 +1,7 @@
 import { Controller, Get, Res, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
-import { GithubGuard } from './github.guard';
+import { GithubGuard } from 'src/auth/github/github.guard';
 
 // TODO use config
 const CLIENT_URL = 'http://localhost:3000';

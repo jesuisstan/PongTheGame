@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { Profile } from 'passport';
-import { UserService } from '../../user/user.service';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class SessionService {
