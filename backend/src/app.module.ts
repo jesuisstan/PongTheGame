@@ -24,7 +24,7 @@ import { UserModule } from 'src/user/user.module';
       imports: [ConfigModule],
       inject: [ConfigService<Config>],
       useFactory: async (config: ConfigService<Config>) => ({
-        secret: config.getOrThrow('JWT_SECRET'),
+        secretOrPrivateKey: config.getOrThrow('JWT_SECRET'),
       }),
     }),
   ],
