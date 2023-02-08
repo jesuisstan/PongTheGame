@@ -10,7 +10,7 @@ import Typography from '@mui/joy/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
 import SaveIcon from '@mui/icons-material/Save';
 
-const urlUploadAvatar = 'http://localhost:3080/avatar/upload';
+const URL_UPLOAD_AVATAR = 'http://localhost:3080/avatar/upload';
 
 const modalDialogStyle = {
   maxWidth: 500,
@@ -40,7 +40,7 @@ const EditAvatar = ({ user, open, setOpen }: any) => {
     const uploadAvatar = async (formData: FormData) => {
       setLoad(true);
       try {
-        const res = await axios.post(urlUploadAvatar, formData, {
+        const res = await axios.post(URL_UPLOAD_AVATAR, formData, {
           withCredentials: true,
           headers: { 'Content-type': 'multipart/form-data' }
         });
@@ -67,7 +67,7 @@ const EditAvatar = ({ user, open, setOpen }: any) => {
     uploadAvatar(formData);
 
     //axios
-    //  .post(urlUploadAvatar, formData, {
+    //  .post(URL_UPLOAD_AVATAR, formData, {
     //    withCredentials: true,
     //    headers: { 'Content-type': 'multipart/form-data' }
     //  })
@@ -125,7 +125,7 @@ const EditAvatar = ({ user, open, setOpen }: any) => {
         sx={{ color: 'black' }}
         open={open}
         onClose={(event, reason) => {
-          if (reason && reason == 'backdropClick') return;
+          if (event && reason == 'backdropClick') return;
           if (user.avatar) {
             setOpen(false);
           }

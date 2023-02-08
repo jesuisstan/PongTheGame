@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import axios from 'axios';
+import Swal from 'sweetalert2';
 import LoadingButton from '@mui/lab/LoadingButton';
 import SaveIcon from '@mui/icons-material/Save';
 import FormControl from '@mui/joy/FormControl';
@@ -10,6 +12,8 @@ import ModalClose from '@mui/joy/ModalClose';
 import Stack from '@mui/joy/Stack';
 import Typography from '@mui/joy/Typography';
 
+const URL_SET_NICKNAME = 'http://localhost:3080/user/setnickname';
+
 const modalDialogStyle = {
   maxWidth: 500,
   border: '0px solid #000',
@@ -17,7 +21,7 @@ const modalDialogStyle = {
   borderRadius: '4px'
 };
 
-const EditNickname = ({ user, setNickname, open, setOpen }: any) => {
+const EditNickname = ({ user, setUser, open, setOpen }: any) => {
   const [text, setText] = useState('');
   const [error, setError] = useState('');
   const [load, setLoad] = useState(false);
@@ -33,6 +37,49 @@ const EditNickname = ({ user, setNickname, open, setOpen }: any) => {
     }
   };
 
+  const setNickname = (value: string) => {
+    return axios
+      .patch(
+        URL_SET_NICKNAME,
+        { nickname: value },
+        {
+          withCredentials: true,
+          headers: { 'Content-type': 'application/json; charset=UTF-8' }
+        }
+      )
+      .then(
+        (response) => {
+          setUser(response.data);
+        },
+        (error) => {
+          console.log(error);
+          error.request.status === 400
+            ? Swal.fire({
+                showConfirmButton: false,
+                icon: 'error',
+                iconColor: '#fd5087',
+                width: 450,
+                title: 'Oops...',
+                text: 'This nickname is already used',
+                showCloseButton: true,
+                color: 'whitesmoke',
+                background: 'black'
+              })
+            : Swal.fire({
+                showConfirmButton: false,
+                icon: 'error',
+                iconColor: '#fd5087',
+                width: 450,
+                title: 'Oops...',
+                text: 'Something went wrong',
+                showCloseButton: true,
+                color: 'whitesmoke',
+                background: 'black'
+              });
+        }
+      );
+  };
+
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     if (text) {
@@ -40,7 +87,6 @@ const EditNickname = ({ user, setNickname, open, setOpen }: any) => {
       await setNickname(text);
       setLoad(false);
       setButtonText('Done ✔️');
-      console.log('nickname changed');
     }
     setText('');
     setError('');
@@ -54,7 +100,7 @@ const EditNickname = ({ user, setNickname, open, setOpen }: any) => {
         sx={{ color: 'black' }}
         open={open}
         onClose={(event, reason) => {
-          if (reason && reason == 'backdropClick') return;
+          if (event && reason == 'backdropClick') return;
           if (user.nickname) {
             setOpen(false);
           }

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import Home from './components/Home'
+import Home from './components/Home';
 import Login from './components/profile/Login';
 import Game from './components/game/Game';
 import Chat from './components/chat/Chat';
@@ -12,8 +12,7 @@ import MainLayout from './components/UI/MainLayout';
 import { User } from './types/User';
 import './App.css';
 
-const urlAuth = 'http://localhost:3080/auth/getuser';
-const urlSetNickname = 'http://localhost:3080/user/setnickname';
+const URL_AUTH = 'http://localhost:3080/auth/getuser';
 
 function App() {
   const [user, setUser] = useState<User>({
@@ -24,51 +23,8 @@ function App() {
     username: ''
   });
 
-  const setNickname = (value: string) => {
-    return axios
-      .patch(
-        urlSetNickname,
-        { nickname: value },
-        {
-          withCredentials: true,
-          headers: { 'Content-type': 'application/json; charset=UTF-8' }
-        }
-      )
-      .then(
-        (response) => {
-          setUser(response.data);
-        },
-        (error) => {
-          console.log(error);
-          error.request.status === 400
-            ? Swal.fire({
-                showConfirmButton: false,
-                icon: 'error',
-                iconColor: '#fd5087',
-                width: 450,
-                title: 'Oops...',
-                text: 'This nickname is already used',
-                showCloseButton: true,
-                color: 'whitesmoke',
-                background: 'black'
-              })
-            : Swal.fire({
-                showConfirmButton: false,
-                icon: 'error',
-                iconColor: '#fd5087',
-                width: 450,
-                title: 'Oops...',
-                text: 'Something went wrong',
-                showCloseButton: true,
-                color: 'whitesmoke',
-                background: 'black'
-              });
-        }
-      );
-  };
-
   useEffect(() => {
-    axios.get(urlAuth, { withCredentials: true }).then(
+    axios.get(URL_AUTH, { withCredentials: true }).then(
       (response) => setUser(response.data),
       (error) => console.log(error)
     );
@@ -94,7 +50,7 @@ function App() {
             />
             <Route
               path="profile"
-              element={<Profile user={user} setNickname={setNickname} />}
+              element={<Profile user={user} setUser={setUser} />}
             />
             <Route path="*" element={<NotFound />} />
           </Route>
