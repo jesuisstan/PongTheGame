@@ -4,6 +4,7 @@ import Swal from 'sweetalert2';
 import FormLabel from '@mui/joy/FormLabel';
 import Modal from '@mui/joy/Modal';
 import ModalDialog from '@mui/joy/ModalDialog';
+import ModalClose from '@mui/joy/ModalClose';
 import Stack from '@mui/joy/Stack';
 import Typography from '@mui/joy/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
@@ -21,6 +22,7 @@ const modalDialogStyle = {
 const EditAvatar = ({ user, open, setOpen }: any) => {
   const [file, setFile] = useState<File>();
   const [load, setLoad] = useState(false);
+  const [buttonText, setButtonText] = useState('Submit');
 
   const handleInput = (event: React.FormEvent) => {
     const files = (event.target as HTMLInputElement).files;
@@ -35,7 +37,7 @@ const EditAvatar = ({ user, open, setOpen }: any) => {
     let formData = new FormData();
     formData.append('file', file!);
 
-    const getData = async (formData: FormData) => {
+    const uploadAvatar = async (formData: FormData) => {
       setLoad(true);
       try {
         const res = await axios.post(urlUploadAvatar, formData, {
@@ -57,10 +59,12 @@ const EditAvatar = ({ user, open, setOpen }: any) => {
         });
       }
       setLoad(false);
+      setButtonText('Done ✔️');
       console.log('new avatar uploaded');
       setTimeout(() => setOpen(false), 442);
+      setTimeout(() => setButtonText('Submit'), 442);
     };
-    getData(formData);
+    uploadAvatar(formData);
 
     //axios
     //  .post(urlUploadAvatar, formData, {
@@ -120,7 +124,8 @@ const EditAvatar = ({ user, open, setOpen }: any) => {
       <Modal
         sx={{ color: 'black' }}
         open={open}
-        onClose={() => {
+        onClose={(event, reason) => {
+          if (reason && reason == 'backdropClick') return;
           if (user.avatar) {
             setOpen(false);
           }
@@ -130,6 +135,7 @@ const EditAvatar = ({ user, open, setOpen }: any) => {
           aria-labelledby="basic-modal-dialog-title"
           sx={modalDialogStyle}
         >
+          <ModalClose />
           <Typography
             id="basic-modal-dialog-title"
             component="h2"
@@ -155,7 +161,7 @@ const EditAvatar = ({ user, open, setOpen }: any) => {
                 variant="contained"
                 color="inherit"
               >
-                Submit
+                {buttonText}
               </LoadingButton>
             </Stack>
           </form>

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import Home from './components/Home';
+import Home from './components/Home'
 import Login from './components/profile/Login';
 import Game from './components/game/Game';
 import Chat from './components/chat/Chat';
