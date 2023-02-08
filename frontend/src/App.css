@@ -1,5 +1,6 @@
 .App {
   text-align: center;
+  margin-top: 44px;
 }
 
 h1,
@@ -35,15 +36,6 @@ a:hover {
   color: rgb(37, 120, 204);
   font-weight: bold;
   text-decoration: underline;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
 }
 
 .swal2-container.swal2-backdrop-show, .swal2-container.swal2-noanimation {
