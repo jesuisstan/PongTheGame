@@ -74,9 +74,12 @@ const Chat = ({ user }: any) => {
   // to the backend, as a createMessage event
   const onFormSubmit = (e: any) => {
     e.preventDefault()
-    socket.emit('createMessage', { author: username, data: MessageText})
-    // Reset input field value once sent
-    setMessageText('')
+    if (MessageText)
+    {
+      socket.emit('createMessage', { author: username, data: MessageText})
+      // Reset input field value once sent
+      setMessageText('')
+    }
   }
 
   return (
