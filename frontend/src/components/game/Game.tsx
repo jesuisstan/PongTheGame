@@ -2,7 +2,7 @@
 
 const Game = () => {
   return (
-    <div>
+    <div className='baseCard'>
       <h1>The game itself</h1>
     </div>
   );
