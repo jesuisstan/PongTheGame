@@ -10,7 +10,7 @@ import MainLayout from './components/layouts/MainLayout';
 import { User } from './types/User';
 import './App.css';
 
-const url = 'http://localhost:3080/auth/getuser';
+const url = 'http://localhost:' + process.env.REACT_APP_BACKEND_PORT + '/auth/getuser';
 
 function App() {
   const [user, setUser] = useState<User>({

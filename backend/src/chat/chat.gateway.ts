@@ -9,9 +9,10 @@ import { Socket, Server } from 'socket.io';
 import { ChatService } from './chat.service';
 import { CreateMessageDto } from './dto/create-message.dto';
 
+// Allow requests from the frontend port
 @WebSocketGateway({
   cors: {
-    origin: ['http://localhost:3000'],
+    origin: ['http://localhost:' + process.env.FRONTEND_PORT],
   },
 })
 export class ChatGateway {
@@ -22,12 +23,11 @@ export class ChatGateway {
 
   @SubscribeMessage('createMessage')
   async create(@MessageBody() body: CreateMessageDto) {
+    // Create a message object using the create method from chat.service
     const message = await this.chatService.create(body);
     console.log('message emitted: ' + body);
-
+    // Broadcast received message to all users
     this.server.emit('createMessage', message);
-
-    return message;
   }
 
   @SubscribeMessage('findAllMessages')
