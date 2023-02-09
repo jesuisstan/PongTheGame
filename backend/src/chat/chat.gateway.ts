@@ -49,7 +49,6 @@ export class ChatGateway {
     @ConnectedSocket() client: Socket,
   ) {
     const userName = await this.chatService.getClientNameById(client.id);
-
-    client.broadcast.emit('typing', { userName, isTyping });
+    client.broadcast.emit('typingMessage', { userName, isTyping });
   }
 }
