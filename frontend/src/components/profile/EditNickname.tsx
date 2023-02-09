@@ -12,8 +12,6 @@ import ModalClose from '@mui/joy/ModalClose';
 import Stack from '@mui/joy/Stack';
 import Typography from '@mui/joy/Typography';
 
-const URL_SET_NICKNAME = 'http://localhost:3080/user/setnickname';
-
 const modalDialogStyle = {
   maxWidth: 500,
   border: '0px solid #000',
@@ -70,7 +68,7 @@ const EditNickname = ({ user, setUser, open, setOpen }: any) => {
   const setNickname = (value: string) => {
     return axios
       .patch(
-        URL_SET_NICKNAME,
+        String(process.env.REACT_APP_URL_SET_NICKNAME),
         { nickname: value },
         {
           withCredentials: true,

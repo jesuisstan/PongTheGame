@@ -1,17 +1,15 @@
 import { useNavigate } from 'react-router-dom';
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import ButtonPong from '../UI/ButtonPong';
 import styles from './Login.module.css';
 
 const Login = ({ user }: any) => {
   const navigate = useNavigate();
 
   const ecole42Auth = () => {
-    window.location.href = 'http://localhost:3080/auth/42';
+    window.location.href = String(process.env.REACT_APP_URL_AUTH_42);
   };
 
   const github = () => {
-    window.location.href = 'http://localhost:3080/auth/github';
+    window.location.href = String(process.env.REACT_APP_URL_AUTH_GITHUB);
   };
 
   return (
