@@ -11,8 +11,6 @@ import MainLayout from './components/UI/MainLayout';
 import { User } from './types/User';
 import './App.css';
 
-const URL_AUTH = 'http://localhost:3080/auth/getuser';
-
 function App() {
   const [user, setUser] = useState<User>({
     id: -1,
@@ -23,7 +21,7 @@ function App() {
   });
 
   useEffect(() => {
-    axios.get(URL_AUTH, { withCredentials: true }).then(
+    axios.get(String(process.env.REACT_APP_URL_AUTH), { withCredentials: true }).then(
       (response) => setUser(response.data),
       (error) => console.log(error)
     );

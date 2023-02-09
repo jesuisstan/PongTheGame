@@ -10,8 +10,6 @@ import Typography from '@mui/joy/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
 import SaveIcon from '@mui/icons-material/Save';
 
-const URL_UPLOAD_AVATAR = 'http://localhost:3080/avatar/upload';
-
 const modalDialogStyle = {
   maxWidth: 500,
   border: '0px solid #000',
@@ -40,7 +38,7 @@ const EditAvatar = ({ user, open, setOpen }: any) => {
     const uploadAvatar = async (formData: FormData) => {
       setLoad(true);
       try {
-        const res = await axios.post(URL_UPLOAD_AVATAR, formData, {
+        const res = await axios.post(String(process.env.REACT_APP_URL_UPLOAD_AVATAR), formData, {
           withCredentials: true,
           headers: { 'Content-type': 'multipart/form-data' }
         });
