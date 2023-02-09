@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import axios from 'axios';
-import Home from './components/Home';
+import Home from './components/pages/Home';
 import Login from './components/profile/Login';
 import Game from './components/game/Game';
 import Chat from './components/chat/Chat';
 import Profile from './components/profile/Profile';
-import NotFound from './components/NotFound';
+import NotFound from './components/pages/NotFound';
 import MainLayout from './components/UI/MainLayout';
 import { User } from './types/User';
 import './App.css';
@@ -21,10 +21,12 @@ function App() {
   });
 
   useEffect(() => {
-    axios.get(String(process.env.REACT_APP_URL_AUTH), { withCredentials: true }).then(
-      (response) => setUser(response.data),
-      (error) => console.log(error)
-    );
+    axios
+      .get(String(process.env.REACT_APP_URL_AUTH), { withCredentials: true })
+      .then(
+        (response) => setUser(response.data),
+        (error) => console.log(error)
+      );
   }, []);
 
   user.provider ? console.log('user logged in') : console.log('no user');
