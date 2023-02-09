@@ -7,8 +7,11 @@
   "keywords": [],
   "license": "ISC",
   "dependencies": {
+    "@nestjs/mapped-types": "*",
     "@nestjs/passport": "^9.0.0",
+    "@nestjs/platform-socket.io": "9.2.1",
     "@nestjs/swagger": "^6.1.4",
+    "@nestjs/websockets": "9.2.1",
     "@prisma/client": "4.9.0",
     "@quixo3/prisma-session-store": "^3.1.10",
     "class-transformer": "^0.5.1",
@@ -38,7 +41,7 @@
   },
   "devDependencies": {
     "@nestjs/cli": "^9.0.0",
-    "@nestjs/common": "^9.0.0",
+    "@nestjs/common": "^9.3.2",
     "@nestjs/config": "^2.2.0",
     "@nestjs/core": "^9.0.0",
     "@nestjs/platform-express": "^9.0.0",
@@ -50,6 +53,7 @@
     "@types/node": "18.11.18",
     "@types/passport-github2": "^1.2.5",
     "@types/passport-oauth2": "^1.4.11",
+    "@types/socket.io": "^3.0.2",
     "@types/supertest": "^2.0.11",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "@typescript-eslint/parser": "^5.0.0",

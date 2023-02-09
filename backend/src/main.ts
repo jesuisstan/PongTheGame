@@ -9,6 +9,7 @@ import { AppModule } from './app.module';
 import { Config } from './config.interface';
 import { PrismaService } from './prisma/prisma.service';
 import { convertTime } from './utils/time';
+import { SocketAdapter } from './chat/socketAdapter';
 
 const {
   POSTGRES_USER,
@@ -33,6 +34,8 @@ async function bootstrap() {
     origin: true,
     credentials: true,
   });
+
+  app.useWebSocketAdapter(new SocketAdapter(app));
 
   await app.listen(config.getOrThrow('BACKEND_PORT'));
 }

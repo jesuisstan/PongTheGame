@@ -48,7 +48,7 @@ function App() {
             <Route path="login" element={<Login />} />
             <Route
               path="chat"
-              element={user.provider ? <Chat /> : <Navigate to="/login" />}
+              element={user.provider ? <Chat user={user} /> : <Navigate to="/login" />}
             />
             <Route
               path="game"
