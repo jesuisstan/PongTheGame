@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import axios from 'axios';
-import Swal from 'sweetalert2';
 import Home from './components/Home';
 import Login from './components/profile/Login';
 import Game from './components/game/Game';
@@ -39,7 +38,16 @@ function App() {
         <Routes>
           <Route path="/" element={<MainLayout user={user} />}>
             <Route index={true} element={<Home />} />
-            <Route path="login" element={<Login user={user} />} />
+            <Route
+              path="login"
+              element={
+                !user.provider ? (
+                  <Login user={user} />
+                ) : (
+                  <Navigate to="/profile" />
+                )
+              }
+            />
             <Route
               path="chat"
               element={user.provider ? <Chat /> : <Navigate to="/login" />}
@@ -50,7 +58,13 @@ function App() {
             />
             <Route
               path="profile"
-              element={<Profile user={user} setUser={setUser} />}
+              element={
+                user.provider ? (
+                  <Profile user={user} setUser={setUser} />
+                ) : (
+                  <Navigate to="/login" />
+                )
+              }
             />
             <Route path="*" element={<NotFound />} />
           </Route>

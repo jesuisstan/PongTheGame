@@ -21,7 +21,7 @@ const Profile = ({ user, setUser }: any) => {
     console.log('2-step Verif checkbox clicked');
   };
 
-  return !user.nickname ? (
+  return !user.nickname && user.provider ? (
     <EditNickname
       user={user}
       setUser={setUser}
