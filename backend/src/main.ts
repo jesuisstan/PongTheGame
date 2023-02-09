@@ -29,6 +29,11 @@ async function bootstrap() {
   setupSwagger(app);
   setupSession(app, config, prisma);
 
+  app.useStaticAssets('avatars', {
+    index: false,
+    prefix: '/static/',
+  });
+
   app.enableCors({
     origin: true,
     credentials: true,
@@ -57,6 +62,7 @@ function setupSwagger(app: NestExpressApplication) {
     .addTag('Matches', 'Manipulate matches')
     .addTag('Users', 'Manipulate users')
     .addTag('Docker', 'Endpoints that are relevant to Docker containers')
+    .addTag('Avatar', 'Upload user avatars')
     .build();
 
   const swagger = SwaggerModule.createDocument(app, swaggerConfig);

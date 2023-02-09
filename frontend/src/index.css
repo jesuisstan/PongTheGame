@@ -4,9 +4,7 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Roboto","Helvetica","Arial",sans-serif;
   color: whitesmoke;
-  background: linear-gradient(to bottom right, black, rgba(253, 80, 135, 0.91), rgb(0, 0, 0)) fixed;
+  background: linear-gradient(to bottom right, black, rgba(253, 80, 135, 0.91), black) fixed;
 }

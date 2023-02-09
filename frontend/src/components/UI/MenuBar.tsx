@@ -1,5 +1,5 @@
+import { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
 import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
@@ -7,18 +7,9 @@ import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
-import styles from './MenuBar.module.css';
+import styles from './UI.module.css';
 
 const MenuBar = ({ user }: any) => {
-  const navigate = useNavigate();
-  const authenticate = () => {
-    if (user.provider) {
-      window.location.href = 'http://localhost:3080/auth/logout';
-    } else {
-      window.location.href = 'http://localhost:3000/login';
-    }
-  };
-
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
 
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -27,6 +18,16 @@ const MenuBar = ({ user }: any) => {
 
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
+  };
+
+  const navigate = useNavigate();
+
+  const authenticate = () => {
+    if (user.provider) {
+      window.location.href = 'http://localhost:3080/auth/logout';
+    } else {
+      window.location.href = 'http://localhost:3000/login';
+    }
   };
 
   return (
@@ -51,10 +52,10 @@ const MenuBar = ({ user }: any) => {
           </Button>
         </div>
         <div className={styles.right}>
-          <div className={styles.nickname}>{user.nickname}</div>
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                <div className={styles.nickname}>{user.nickname}</div>
                 <Avatar alt="" src={user.avatar} />
               </IconButton>
             </Tooltip>

@@ -1,6 +1,11 @@
+import { useNavigate } from 'react-router-dom';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import ButtonPong from '../UI/ButtonPong';
 import styles from './Login.module.css';
 
 const Login = ({ user }: any) => {
+  const navigate = useNavigate();
+
   const ecole42Auth = () => {
     window.location.href = 'http://localhost:3080/auth/42';
   };
@@ -10,7 +15,14 @@ const Login = ({ user }: any) => {
   };
 
   return user.provider ? (
-    <h1>You have been already logged in</h1>
+    <div className="centeredWrappedCard">
+      <h1>You have been already logged in</h1>
+      <ButtonPong
+        text="Profile"
+        endIcon={<ArrowForwardIosIcon />}
+        onClick={() => navigate('/profile')}
+      />
+    </div>
   ) : (
     <div className={styles.loginCard}>
       <div className={styles.wrapper}>
@@ -33,7 +45,7 @@ const Login = ({ user }: any) => {
               alt=""
               className={styles.icon}
             />
-            Ecole 42
+            École 42
           </div>
         </div>
       </div>
