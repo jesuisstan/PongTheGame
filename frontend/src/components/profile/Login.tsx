@@ -14,16 +14,7 @@ const Login = ({ user }: any) => {
     window.location.href = 'http://localhost:3080/auth/github';
   };
 
-  return user.provider ? (
-    <div className="centeredWrappedCard">
-      <h1>You have been already logged in</h1>
-      <ButtonPong
-        text="Profile"
-        endIcon={<ArrowForwardIosIcon />}
-        onClick={() => navigate('/profile')}
-      />
-    </div>
-  ) : (
+  return (
     <div className={styles.loginCard}>
       <div className={styles.wrapper}>
         <div className={styles.left}>Choose your Login Method</div>
