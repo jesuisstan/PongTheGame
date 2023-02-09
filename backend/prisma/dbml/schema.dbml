@@ -22,7 +22,7 @@ Table User {
 Table Achievements {
   id Int [pk, increment]
   Name String [unique, not null]
-  Title String [not null]
+  Title String [unique, not null]
   Description String [not null]
   icon_path String
   User User

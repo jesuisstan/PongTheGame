@@ -38,7 +38,7 @@ enum Role {
 model Achievement {
   id          Int     @id @default(autoincrement())
   Name        String  @unique
-  Title       String // MEMO Check if needed to keep the title ?
+  Title       String  @unique// MEMO Check if needed to keep the title ?
   Description String
   icon_path   String? // TODO Remove the ? when we got the picture  
   User        User?   @relation(fields: [userId], references: [id])
