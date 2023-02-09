@@ -46,6 +46,7 @@ const EditAvatar = ({ user, open, setOpen }: any) => {
         });
       } catch (error) {
         console.log(error);
+        setOpen(false);
         Swal.fire({
           showConfirmButton: false,
           icon: 'error',
@@ -66,56 +67,6 @@ const EditAvatar = ({ user, open, setOpen }: any) => {
     };
     uploadAvatar(formData);
 
-    //axios
-    //  .post(URL_UPLOAD_AVATAR, formData, {
-    //    withCredentials: true,
-    //    headers: { 'Content-type': 'multipart/form-data' }
-    //  })
-    //  .then(
-    //    (response) => {
-    //      console.log('new avatar uploaded');
-    //    },
-    //    (error) => {
-    //      console.log(error.message);
-    //      Swal.fire({
-    //        showConfirmButton: false,
-    //        icon: 'error',
-    //        iconColor: '#fd5087',
-    //        width: 450,
-    //        title: 'Oops...',
-    //        text: 'Something went wrong',
-    //        showCloseButton: true,
-    //        color: 'whitesmoke',
-    //        background: 'black'
-    //      });
-    //    }
-    //  );
-
-    //axios({
-    //  url: 'http://localhost:3080/avatar/upload',
-    //  method: 'POST',
-    //  headers: { 'Content-type': 'multipart/form-data' },
-    //  data: formData,
-    //  withCredentials: true
-    //}).then(
-    //  (response) => {
-    //              console.log('new avatar uploaded');
-    //  },
-    //  (error) => {
-    //    console.log(error.message);
-    //    Swal.fire({
-    //      showConfirmButton: false,
-    //      icon: 'error',
-    //      iconColor: '#fd5087',
-    //      width: 450,
-    //      title: 'Oops...',
-    //      text: 'Something went wrong',
-    //      showCloseButton: true,
-    //      color: 'whitesmoke',
-    //      background: 'black'
-    //    });
-    //  }
-    //);
     setFile(undefined);
   };
 
@@ -126,9 +77,7 @@ const EditAvatar = ({ user, open, setOpen }: any) => {
         open={open}
         onClose={(event, reason) => {
           if (event && reason == 'backdropClick') return;
-          if (user.avatar) {
-            setOpen(false);
-          }
+          if (user.avatar) setOpen(false);
         }}
       >
         <ModalDialog

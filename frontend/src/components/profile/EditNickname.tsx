@@ -37,6 +37,36 @@ const EditNickname = ({ user, setUser, open, setOpen }: any) => {
     }
   };
 
+  const warningNameUsed = () => {
+    setOpen(false);
+    Swal.fire({
+      showConfirmButton: false,
+      icon: 'error',
+      iconColor: '#fd5087',
+      width: 450,
+      title: 'Oops...',
+      text: 'This nickname is already used',
+      showCloseButton: true,
+      color: 'whitesmoke',
+      background: 'black'
+    });
+  };
+
+  const warningWentWrong = () => {
+    setOpen(false);
+    Swal.fire({
+      showConfirmButton: false,
+      icon: 'error',
+      iconColor: '#fd5087',
+      width: 450,
+      title: 'Oops...',
+      text: 'Something went wrong',
+      showCloseButton: true,
+      color: 'whitesmoke',
+      background: 'black'
+    });
+  };
+
   const setNickname = (value: string) => {
     return axios
       .patch(
@@ -53,29 +83,7 @@ const EditNickname = ({ user, setUser, open, setOpen }: any) => {
         },
         (error) => {
           console.log(error);
-          error.request.status === 400
-            ? Swal.fire({
-                showConfirmButton: false,
-                icon: 'error',
-                iconColor: '#fd5087',
-                width: 450,
-                title: 'Oops...',
-                text: 'This nickname is already used',
-                showCloseButton: true,
-                color: 'whitesmoke',
-                background: 'black'
-              })
-            : Swal.fire({
-                showConfirmButton: false,
-                icon: 'error',
-                iconColor: '#fd5087',
-                width: 450,
-                title: 'Oops...',
-                text: 'Something went wrong',
-                showCloseButton: true,
-                color: 'whitesmoke',
-                background: 'black'
-              });
+          error.request.status === 400 ? warningNameUsed() : warningWentWrong();
         }
       );
   };
@@ -100,10 +108,8 @@ const EditNickname = ({ user, setUser, open, setOpen }: any) => {
         sx={{ color: 'black' }}
         open={open}
         onClose={(event, reason) => {
+          if (user.nickname) setOpen(false);
           if (event && reason == 'backdropClick') return;
-          if (user.nickname) {
-            setOpen(false);
-          }
         }}
       >
         <ModalDialog

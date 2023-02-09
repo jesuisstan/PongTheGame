@@ -15,7 +15,7 @@ const Login = ({ user }: any) => {
   };
 
   return user.provider ? (
-    <div>
+    <div className="centeredWrappedCard">
       <h1>You have been already logged in</h1>
       <ButtonPong
         text="Profile"
