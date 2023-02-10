@@ -65,41 +65,29 @@ export class UserService {
     return this.prisma.user.create({
       data: {
         profileId,
-        username,
         provider,
+        username,
         avatar,
       },
-      select: {
-        avatar: true,
-        id: true,
-        username: true,
-        nickname: true,
-        profileId: true,
-        provider: true,
-      },
-    });
-  }
-
-  async findUsersById(...ids: number[]): Promise<(User | null)[]> {
-    const users = await this.prisma.user.findMany({
-      where: {
-        id: {
-          in: ids,
-        },
-      },
-      select: {
-        avatar: true,
-        id: true,
-        profileId: true,
-        provider: true,
-        nickname: true,
-        username: true,
-      },
     });
 
-    return ids.map((id) => {
-      return users.find((user) => user.id == id) ?? null;
-    });
+    // return this.prisma.user.create({
+    //   data: {
+    //     profileId,
+    //     username,
+    //     provider,
+    //     profileAvatar,
+    //     avatar: null,
+    //   },
+    //   select: {
+    //     avatar: true,
+    //     id: true,
+    //     username: true,
+    //     nickname: true,
+    //     profileId: true,
+    //     provider: true,
+    //   },
+    // });
   }
 
   async setUserNickname(user: User, nickname: string): Promise<User> {
@@ -114,4 +102,17 @@ export class UserService {
       },
     });
   }
+
+  // async setAvatar(user: User, bytes: Buffer): Promise<User> {
+  //   const { id } = user;
+
+  //   return this.prisma.user.update({
+  //     data: {
+  //       avatar: bytes,
+  //     },
+  //     where: {
+  //       id,
+  //     },
+  //   });
+  // }
 }
