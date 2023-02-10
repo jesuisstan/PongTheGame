@@ -9,14 +9,15 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
-import * as fs from 'fs/promises';
-import * as path from 'path';
 import { IsAuthenticatedGuard } from 'src/auth/auth.guard';
+import { AvatarService } from 'src/avatar/avatar.service';
 import { SessionUser } from 'src/decorator/session-user.decorator';
 
 @Controller('/avatar')
 export class AvatarController {
   private readonly logger = new Logger(AvatarController.name);
+
+  constructor(private readonly avatars: AvatarService) {}
 
   @Post('/upload')
   @UseGuards(IsAuthenticatedGuard)
@@ -40,7 +41,7 @@ export class AvatarController {
   ) {
     if (file === undefined) throw new BadRequestException('no file given');
 
-    const handle = await fs.open(path.join('avatars', user.id.toString()), 'w');
+    const handle = await this.avatars.openAvatarFile(user);
 
     await handle.write(file.buffer);
     await handle.close();
