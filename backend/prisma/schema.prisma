@@ -22,10 +22,6 @@ model User {
   @@unique([profileId, provider])
 }
 
-// model GithubUser {
-//   user User?
-// }
-
 model MatchEntry {
   id    Int @id @default(autoincrement())
   score Int
