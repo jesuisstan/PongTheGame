@@ -1,14 +1,12 @@
-import { useNavigate } from 'react-router-dom';
 import styles from './Login.module.css';
 
-const Login = ({ user }: any) => {
-  const navigate = useNavigate();
+const Login = () => {
 
   const ecole42Auth = () => {
     window.location.href = String(process.env.REACT_APP_URL_AUTH_42);
   };
 
-  const github = () => {
+  const githubAuth = () => {
     window.location.href = String(process.env.REACT_APP_URL_AUTH_GITHUB);
   };
 
@@ -20,7 +18,7 @@ const Login = ({ user }: any) => {
           <div className={styles.line} />
         </div>
         <div className={styles.right}>
-          <div className={styles.loginButtonGithub} onClick={github}>
+          <div className={styles.loginButtonGithub} onClick={githubAuth}>
             <img
               src={require('../../assets/github.png')}
               alt=""

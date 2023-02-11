@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
+import { UserContext } from '../../context/UserContext';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import LoadingButton from '@mui/lab/LoadingButton';
@@ -19,7 +20,8 @@ const modalDialogStyle = {
   borderRadius: '4px'
 };
 
-const EditNickname = ({ user, setUser, open, setOpen }: any) => {
+const EditNickname = ({ open, setOpen }: any) => {
+  const { user, setUser } = useContext(UserContext);
   const [text, setText] = useState('');
   const [error, setError] = useState('');
   const [load, setLoad] = useState(false);
