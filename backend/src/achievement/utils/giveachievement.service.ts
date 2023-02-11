@@ -1,5 +1,7 @@
 import { PrismaService } from "src/prisma/prisma.service";
+import { Injectable } from '@nestjs/common';
 
+@Injectable()
 export class giveAchievementService {
 	constructor (private prisma : PrismaService){}
 
@@ -15,7 +17,7 @@ export class giveAchievementService {
 		this.collector(user);
 	}
 
-	async custom(user : Express.User){ // TODO add this in the right order
+	async custom(user : Express.User){ // TODO add this in the right request
 		await this.prisma.achievement.update({
 			where : {
 				Title : "Change Avatar",
@@ -135,30 +137,29 @@ export class giveAchievementService {
 			where : {
 				userId : user.id,
 			},
-		})
-		console.log({nb_achievements});
-		// if (nb_achievements == 10)
-		// {
-		// 	await this.prisma.achievement.update({
-		// 		where : {
-		// 			Title : "Achievements everywhere",
-		// 		},
-		// 		data : {
-		// 			userId : user.id,
-		// 		},
-		// 	});
-		// }
-		// else if (nb_achievements == 20)
-		// {
-		// 	await this.prisma.achievement.update({
-		// 		where : {
-		// 			Title : "Achievements everywhere * 2",
-		// 		},
-		// 		data : {
-		// 			userId : user.id,
-		// 		},
-		// 	});
-		// }
+		});
+		if (nb_achievements.length == 10)
+		{
+			await this.prisma.achievement.update({
+				where : {
+					Title : "Achievements everywhere",
+				},
+				data : {
+					userId : user.id,
+				},
+			});
+		}
+		else if (nb_achievements.length == 20)
+		{
+			await this.prisma.achievement.update({
+				where : {
+					Title : "Achievements everywhere * 2",
+				},
+				data : {
+					userId : user.id,
+				},
+			});
+		}
 	}
 	getAchievement(user : Express.User){
 		// playGame(user);

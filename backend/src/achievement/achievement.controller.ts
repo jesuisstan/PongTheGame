@@ -1,14 +1,9 @@
 import { Body, Controller, Delete, HttpCode, HttpStatus, Param, ParseIntPipe, Patch, Post, UseGuards } from '@nestjs/common';
 import { AchievementService } from 'src/achievement/achievement.service';
 import { AchievementDTO } from 'src/achievement/dto/achievement.dto';
-import { ApiOperation, ApiResponse, ApiTags, DocumentBuilder } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { IsAdmin } from 'src/achievement/guard/isadmin.guard';
 import { IsAuthenticatedGuard } from 'src/auth/auth.guard';
-
-const options = new DocumentBuilder().addSecurity('basic', {
-	type: 'http',
-	scheme: 'basic',
-  });
 
 @UseGuards(IsAuthenticatedGuard)
 @Controller('achievements')

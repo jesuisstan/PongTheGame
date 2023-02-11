@@ -5,6 +5,7 @@ import { giveAchievementService } from './giveachievement.service';
 @Module({
 	providers : [giveAchievementService],
 	imports: [PrismaModule],
+	exports: [giveAchievementService],
 })
 
 export class giveAchievementModule {}
