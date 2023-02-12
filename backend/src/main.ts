@@ -22,6 +22,8 @@ process.env.DATABASE_URL ??= `postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  app.useWebSocketAdapter(new SocketAdapter(app));
+
   const config = app.get(ConfigService<Config>);
   const prisma = app.get(PrismaService);
 
@@ -34,8 +36,6 @@ async function bootstrap() {
     origin: true,
     credentials: true,
   });
-
-  app.useWebSocketAdapter(new SocketAdapter(app));
 
   await app.listen(config.getOrThrow('BACKEND_PORT'));
 }

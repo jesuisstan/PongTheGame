@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Home from './components/Home';
 import Login from './components/profile/Login';
 import Game from './components/game/Game';
-import Chat from './components/chat/Chat';
+import ChatEntrance from './components/chat/ChatEntrance';
 import Profile from './components/profile/Profile';
 import NotFound from './components/NotFound';
 import MainLayout from './components/layouts/MainLayout';
@@ -48,7 +48,7 @@ function App() {
             <Route path="login" element={<Login />} />
             <Route
               path="chat"
-              element={user.provider ? <Chat user={user} /> : <Navigate to="/login" />}
+              element={user.provider ? <ChatEntrance user={user} /> : <Navigate to="/login" />}
             />
             <Route
               path="game"
