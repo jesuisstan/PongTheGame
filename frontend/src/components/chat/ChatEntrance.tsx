@@ -31,22 +31,22 @@ const ChatEntrance = ({ user }: any) => {
 
   // Add event listeners
   useEffect(() => {
-    socket.on('connect', () => console.log('Connected to websocket!'))
+    socket.on('connect', () => console.log('Connected to websocket'))
     
-    socket.on('createChatRoom', (chatRoom: any) => {
-      console.log('Created new chat room!')
+    socket.on('createChatRoom', (roomName: string) => {
+      console.log('Created new chat room [' + roomName + ']')
     })
 
     socket.on('joinRoom', (roomName: string) => {
       setJoinedRoom(roomName)
-      console.log('Joined a chatroom!')
+      console.log(user.nickname + ' joined chatroom ' + roomName)
     })
 
     socket.on('quitRoom', (userName: string) => {
       if (userName === user.nickname)
       {
         setJoinedRoom('')
-        console.log('Quit from room!')
+        console.log(userName + ' quit room')
       }
     })
     // Clean listeners to avoid multiple activations
@@ -121,10 +121,13 @@ const ChatEntrance = ({ user }: any) => {
                       <ul>
                         { // Mapping chatroom array to retrieve all chatrooms with
                           chatRooms.map((room, index) => (
-                          <li key={ index }>
-                            [{ room.name }]: { Object.keys(room.users).length } members
-                            <button onClick={ () => joinRoom(room.name) }>join</button>
-                          </li>
+                            <li key={ index }>
+                              [{ room.name }]: { Object.keys(room.users).length } members
+                              | { Object.keys(room.messages).length } messages
+                              { Object.values(room.modes).indexOf('p') !== -1 ? '| P ' : ' ' }
+
+                              <button onClick={ () => joinRoom(room.name) }>join</button>
+                            </li>
                           ))
                         }
                       </ul>

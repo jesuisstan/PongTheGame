@@ -37,10 +37,10 @@ export class ChatGateway {
   @SubscribeMessage('createChatRoom')
   async createChatRoom(@MessageBody() room: ChatRoomDto) {
     // Create a chat room object using the create method from chat.service
-    const chatRoom = await this.chatService.createChatRoom(room);
+    await this.chatService.createChatRoom(room);
     console.log('chatRoom emitted: ' + Object.entries(room));
     // Broadcast newly created room to all users
-    this.server.emit('createChatRoom', chatRoom);
+    this.server.emit('createChatRoom', room.name);
   }
 
   @SubscribeMessage('findAllMessages')
