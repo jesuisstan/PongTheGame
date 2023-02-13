@@ -1,46 +1,51 @@
 import { Injectable } from '@nestjs/common';
 import { User } from '@prisma/client';
-import { messageDto, chatRoomDto } from './dto/chat.dto';
+import { MessageDto, ChatRoomDto } from './dto/chat.dto';
 
 @Injectable()
 export class ChatService {
-  // All chatrooms
-  chatRooms: chatRoomDto[] = [];
-  // All messages from the chatroom
-  messages: messageDto[] = [];
-  // // All users that have joined the chatroom
-  // users: { [key: string]: string } = {};
+  // Array containing all chatrooms
+  chatRooms: ChatRoomDto[] = [];
 
-  identify(room: chatRoomDto, user: User, clientId: string) {
-    room.users[clientId] = user;
-    // return Object.values(room.users);
+  identify(roomName: string, user: User, clientId: string) {
+    const room = this.getChatRoomByName(roomName);
+    if (room) room.users[clientId] = user;
   }
 
-  // getChatRoomByName(name: string) {
-  //   for (let i = 0; i < this.chatRooms.length; ++i)
-  //     if (this.chatRooms[i].name === name) return this.chatRooms[i];
-  // }
+  quitRoom(roomName: string, userName: string, clientId: string) {
+    const room = this.getChatRoomByName(roomName);
+    if (room) delete room.users[clientId];
+  }
 
-  getUserById(room: chatRoomDto, clientId: string) {
-    return room.users[clientId];
+  getChatRoomByName(name: string) {
+    for (let i = 0; i < this.chatRooms.length; ++i)
+      if (this.chatRooms[i].name === name) return this.chatRooms[i];
+  }
+
+  getUserById(roomName: string, clientId: string) {
+    const room = this.getChatRoomByName(roomName);
+    if (room) return room.users[clientId];
   }
 
   // Create a new message object and push it to the messages array
-  createMessage(messageDto: messageDto) {
-    const message = { ...messageDto };
-    this.messages.push(messageDto);
+  createMessage(roomName: string, msg: MessageDto) {
+    const message = { ...MessageDto };
+    const room = this.getChatRoomByName(roomName);
+    if (room) room.messages.push(msg);
     return message;
   }
+
   // Create a new chat room object and push it to the chat rooms array
-  createChatRoom(chatRoomDto: chatRoomDto) {
-    const chatRoom = { ...chatRoomDto };
-    this.chatRooms.push(chatRoomDto);
+  createChatRoom(room: ChatRoomDto) {
+    const chatRoom = { ...ChatRoomDto };
+    if (room) this.chatRooms.push(room);
     return chatRoom;
   }
 
   // Return all messages from the chatroom
-  findAllMessages() {
-    return this.messages;
+  findAllMessages(roomName: string) {
+    const room = this.getChatRoomByName(roomName);
+    if (room) return room.messages;
   }
 
   findAllChatRooms() {

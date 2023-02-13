@@ -5,7 +5,7 @@ export class Message {
   data: string;
 }
 
-export class chatRoom {
+export class ChatRoom {
   name: string;
   modes: string;
   password: string;
