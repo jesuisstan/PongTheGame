@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
+import { UserContext } from '../../context/UserContext';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import LoadingButton from '@mui/lab/LoadingButton';
@@ -12,8 +13,6 @@ import ModalClose from '@mui/joy/ModalClose';
 import Stack from '@mui/joy/Stack';
 import Typography from '@mui/joy/Typography';
 
-const URL_SET_NICKNAME = 'http://localhost:3080/user/setnickname';
-
 const modalDialogStyle = {
   maxWidth: 500,
   border: '0px solid #000',
@@ -21,7 +20,8 @@ const modalDialogStyle = {
   borderRadius: '4px'
 };
 
-const EditNickname = ({ user, setUser, open, setOpen }: any) => {
+const EditNickname = ({ open, setOpen }: any) => {
+  const { user, setUser } = useContext(UserContext);
   const [text, setText] = useState('');
   const [error, setError] = useState('');
   const [load, setLoad] = useState(false);
@@ -70,7 +70,7 @@ const EditNickname = ({ user, setUser, open, setOpen }: any) => {
   const setNickname = (value: string) => {
     return axios
       .patch(
-        URL_SET_NICKNAME,
+        String(process.env.REACT_APP_URL_SET_NICKNAME),
         { nickname: value },
         {
           withCredentials: true,

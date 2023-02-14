@@ -1,29 +1,16 @@
-import { useNavigate } from 'react-router-dom';
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import ButtonPong from '../UI/ButtonPong';
 import styles from './Login.module.css';
 
-const Login = ({ user }: any) => {
-  const navigate = useNavigate();
+const Login = () => {
 
   const ecole42Auth = () => {
-    window.location.href = 'http://localhost:3080/auth/42';
+    window.location.href = String(process.env.REACT_APP_URL_AUTH_42);
   };
 
-  const github = () => {
-    window.location.href = 'http://localhost:3080/auth/github';
+  const githubAuth = () => {
+    window.location.href = String(process.env.REACT_APP_URL_AUTH_GITHUB);
   };
 
-  return user.provider ? (
-    <div className="centeredWrappedCard">
-      <h1>You have been already logged in</h1>
-      <ButtonPong
-        text="Profile"
-        endIcon={<ArrowForwardIosIcon />}
-        onClick={() => navigate('/profile')}
-      />
-    </div>
-  ) : (
+  return (
     <div className={styles.loginCard}>
       <div className={styles.wrapper}>
         <div className={styles.left}>Choose your Login Method</div>
@@ -31,7 +18,7 @@ const Login = ({ user }: any) => {
           <div className={styles.line} />
         </div>
         <div className={styles.right}>
-          <div className={styles.loginButtonGithub} onClick={github}>
+          <div className={styles.loginButtonGithub} onClick={githubAuth}>
             <img
               src={require('../../assets/github.png')}
               alt=""

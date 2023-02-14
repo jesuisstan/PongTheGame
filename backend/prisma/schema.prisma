@@ -14,13 +14,14 @@ datasource db {
 }
 
 model User {
-  id        Int     @id @default(autoincrement()) // primary key
+  id        Int     @id @default(autoincrement())
   nickname  String? @unique
   username  String
   avatar    String?
   profileId String
   provider  String
   role      Role     @default(USER)
+  tfa       Boolean @default(false)
 
   // MatchEntry
   matchEntries MatchEntry[]

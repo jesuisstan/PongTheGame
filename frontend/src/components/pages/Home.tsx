@@ -1,5 +1,3 @@
-import styles from './profile/Login.module.css'
-
 const Home = () => {
   return (
     <div className='baseCard'>
@@ -7,7 +5,7 @@ const Home = () => {
         <h2>Thanks to this website, you will play Ping-Pong with others</h2>
         <img
           className="image"
-          src={require('../assets/pongScreen.png')}
+          src={require('../../assets/pongScreen.png')}
           alt="HTML"
           width="405"
           height="255"

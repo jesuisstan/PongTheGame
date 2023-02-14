@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
+import { UserContext } from '../../context/UserContext';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import FormLabel from '@mui/joy/FormLabel';
@@ -10,8 +11,6 @@ import Typography from '@mui/joy/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
 import SaveIcon from '@mui/icons-material/Save';
 
-const URL_UPLOAD_AVATAR = 'http://localhost:3080/avatar/upload';
-
 const modalDialogStyle = {
   maxWidth: 500,
   border: '0px solid #000',
@@ -19,7 +18,8 @@ const modalDialogStyle = {
   borderRadius: '4px'
 };
 
-const EditAvatar = ({ user, open, setOpen }: any) => {
+const EditAvatar = ({ open, setOpen }: any) => {
+  const { user, setUser } = useContext(UserContext);
   const [file, setFile] = useState<File>();
   const [load, setLoad] = useState(false);
   const [buttonText, setButtonText] = useState('Submit');
@@ -40,7 +40,7 @@ const EditAvatar = ({ user, open, setOpen }: any) => {
     const uploadAvatar = async (formData: FormData) => {
       setLoad(true);
       try {
-        const res = await axios.post(URL_UPLOAD_AVATAR, formData, {
+        const res = await axios.post(String(process.env.REACT_APP_URL_UPLOAD_AVATAR), formData, {
           withCredentials: true,
           headers: { 'Content-type': 'multipart/form-data' }
         });
