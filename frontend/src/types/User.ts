@@ -4,4 +4,5 @@ export type User = {
   username: string;
   avatar: string;
   provider: string;
+  TFAuth: boolean
 };

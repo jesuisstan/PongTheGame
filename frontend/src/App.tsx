@@ -18,15 +18,15 @@ function App() {
     nickname: '',
     avatar: '',
     provider: '',
-    username: ''
+    username: '',
+    TFAuth: false
   });
 
   useEffect(() => {
     axios
       .get(String(process.env.REACT_APP_URL_AUTH), { withCredentials: true })
       .then(
-        (response) => {setUser(response.data)
-        console.log('hi')},
+        (response) => setUser(response.data),
         (error) => console.log(error)
       );
   }, []);

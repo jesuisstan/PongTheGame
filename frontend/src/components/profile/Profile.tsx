@@ -7,27 +7,42 @@ import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
 import Typography from '@mui/joy/Typography';
 import List from '@mui/joy/List';
 import ListItem from '@mui/joy/ListItem';
-import Checkbox from '@mui/material/Checkbox';
 import CreateIcon from '@mui/icons-material/Create';
 import ButtonPong from '../UI/ButtonPong';
 import EditNickname from './EditNickname';
 import EditAvatar from './EditAvatar';
 import styles from './Profile.module.css';
+import Enable2FactorAuth from './Enable2FactorAuth';
+import axios from 'axios';
 
 const Profile = () => {
   const { user, setUser } = useContext(UserContext);
   const [modalNicknameOpen, setModalNicknameOpen] = useState(false);
   const [modalAvatarOpen, setModalAvatarOpen] = useState(false);
+  const [modalTwoFactorAuthOpen, setModalTwoFactorAuthOpen] = useState(false);
 
-  const enableTwoStepVerification = () => {
-    console.log('2-step Verif checkbox clicked');
+  const setupTwoFactorAuth = () => {
+    //user.TFAuth ? (
+    //  axios
+    //  .patch(
+    //    String(process.env.REACT_APP_URL_SET_NICKNAME),
+    //    { TFAuth: false },
+    //    {
+    //      withCredentials: true,
+    //      headers: { 'Content-type': 'application/json; charset=UTF-8' }
+    //    }
+    //  )
+    //  .then(
+    //    (response) => { setUser(response.data); },
+    //    (error) => { console.log(error); }
+    //  ))
+
+    //: (setModalTwoFactorAuthOpen(true))
+    console.log('gggg');
   };
 
   return !user.nickname && user.provider ? (
-    <EditNickname
-      open={true}
-      setOpen={setModalNicknameOpen}
-    />
+    <EditNickname open={true} setOpen={setModalNicknameOpen} />
   ) : (
     <div className={styles.profileCard}>
       <div className={styles.left}>
@@ -41,10 +56,7 @@ const Profile = () => {
               endIcon={<AddAPhotoIcon />}
               onClick={() => setModalAvatarOpen(true)}
             />
-            <EditAvatar
-              open={modalAvatarOpen}
-              setOpen={setModalAvatarOpen}
-            />
+            <EditAvatar open={modalAvatarOpen} setOpen={setModalAvatarOpen} />
           </div>
         </div>
 
@@ -61,13 +73,16 @@ const Profile = () => {
             <List aria-labelledby="basic-list-demo">
               <ListItem>Login method: {user.provider}</ListItem>
               <ListItem>
-                2-Factor Authentication:{' '}
-                {<Checkbox onClick={enableTwoStepVerification} />}
+                2-Factor Authentication: {user.TFAuth ? 'on' : 'off'}
               </ListItem>
             </List>
           </div>
           <div className={styles.bottom}>
-            <ButtonPong text="Enable 2FA" endIcon={<ArrowForwardIosIcon />} />
+            <ButtonPong
+              text={user.TFAuth === true ? 'Disable 2FA' : 'Setup 2FA'}
+              endIcon={<ArrowForwardIosIcon />}
+              onClick={() => setModalAvatarOpen(true)}
+            />
           </div>
         </div>
       </div>
