@@ -2,6 +2,16 @@ import { Injectable } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 
+const USER_SELECT = {
+  avatar: true,
+  id: true,
+  profileId: true,
+  provider: true,
+  nickname: true,
+  username: true,
+  tfa: true,
+};
+
 @Injectable()
 export class UserService {
   constructor(private readonly prisma: PrismaService) {}
@@ -9,28 +19,14 @@ export class UserService {
   async findUserById(id: number): Promise<User | null> {
     return this.prisma.user.findUnique({
       where: { id },
-      select: {
-        avatar: true,
-        id: true,
-        profileId: true,
-        provider: true,
-        nickname: true,
-        username: true,
-      },
+      select: USER_SELECT,
     });
   }
 
   async findUserByNickname(nickname: string) {
     return this.prisma.user.findUnique({
       where: { nickname },
-      select: {
-        avatar: true,
-        id: true,
-        profileId: true,
-        provider: true,
-        nickname: true,
-        username: true,
-      },
+      select: USER_SELECT,
     });
   }
 
@@ -45,14 +41,7 @@ export class UserService {
           provider,
         },
       },
-      select: {
-        avatar: true,
-        id: true,
-        nickname: true,
-        profileId: true,
-        provider: true,
-        username: true,
-      },
+      select: USER_SELECT,
     });
   }
 
@@ -69,14 +58,7 @@ export class UserService {
         provider,
         avatar,
       },
-      select: {
-        avatar: true,
-        id: true,
-        username: true,
-        nickname: true,
-        profileId: true,
-        provider: true,
-      },
+      select: USER_SELECT,
     });
   }
 
@@ -87,14 +69,7 @@ export class UserService {
           in: ids,
         },
       },
-      select: {
-        avatar: true,
-        id: true,
-        profileId: true,
-        provider: true,
-        nickname: true,
-        username: true,
-      },
+      select: USER_SELECT,
     });
 
     return ids.map((id) => {
@@ -108,6 +83,19 @@ export class UserService {
     return this.prisma.user.update({
       data: {
         nickname,
+      },
+      where: {
+        id,
+      },
+    });
+  }
+
+  async setUserTfa(user: User, tfaEnabled: boolean) {
+    const { id } = user;
+
+    return this.prisma.user.update({
+      data: {
+        tfa: tfaEnabled,
       },
       where: {
         id,
