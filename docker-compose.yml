@@ -71,6 +71,7 @@ services:
             && yarn run start:debug"
     ports:
       - "${BACKEND_PORT}:${BACKEND_PORT}"
+      - 5555:5555
     env_file:
       - .env
     environment:
