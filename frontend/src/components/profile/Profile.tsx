@@ -14,6 +14,7 @@ import EditAvatar from './EditAvatar';
 import styles from './Profile.module.css';
 import Enable2FactorAuth from './Enable2FactorAuth';
 import axios from 'axios';
+import Swal from 'sweetalert2';
 
 const Profile = () => {
   const { user, setUser } = useContext(UserContext);
@@ -21,24 +22,67 @@ const Profile = () => {
   const [modalAvatarOpen, setModalAvatarOpen] = useState(false);
   const [modalTwoFactorAuthOpen, setModalTwoFactorAuthOpen] = useState(false);
 
-  const setupTwoFactorAuth = () => {
-    //user.TFAuth ? (
-    //  axios
-    //  .patch(
-    //    String(process.env.REACT_APP_URL_SET_NICKNAME),
-    //    { TFAuth: false },
-    //    {
-    //      withCredentials: true,
-    //      headers: { 'Content-type': 'application/json; charset=UTF-8' }
-    //    }
-    //  )
-    //  .then(
-    //    (response) => { setUser(response.data); },
-    //    (error) => { console.log(error); }
-    //  ))
+  const toggleTfa = () => {
+    if (user.tfa) {
+      return axios
+        .patch(
+          String(process.env.REACT_APP_URL_TOGGLE_TFA),
+          { enabled: false },
+          {
+            withCredentials: true,
+            headers: { 'Content-type': 'application/json; charset=UTF-8' }
+          }
+        )
+        .then(
+          (response) => {
+            setUser(response.data);
+            //if (response.data.tfa) setModalTwoFactorAuthOpen(true)
+          },
+          (error) => {
+            Swal.fire({
+              showConfirmButton: false,
+              icon: 'error',
+              iconColor: '#fd5087',
+              width: 450,
+              title: 'Oops...',
+              text: 'Something went wrong',
+              showCloseButton: true,
+              color: 'whitesmoke',
+              background: 'black'
+            });
+          }
+        );
+    } else {
+      setModalTwoFactorAuthOpen(true);
 
-    //: (setModalTwoFactorAuthOpen(true))
-    console.log('gggg');
+      return axios
+        .patch(
+          String(process.env.REACT_APP_URL_TOGGLE_TFA),
+          { enabled: true },
+          {
+            withCredentials: true,
+            headers: { 'Content-type': 'application/json; charset=UTF-8' }
+          }
+        )
+        .then(
+          (response) => {
+            setUser(response.data);
+          },
+          (error) => {
+            Swal.fire({
+              showConfirmButton: false,
+              icon: 'error',
+              iconColor: '#fd5087',
+              width: 450,
+              title: 'Oops...',
+              text: 'Something went wrong',
+              showCloseButton: true,
+              color: 'whitesmoke',
+              background: 'black'
+            });
+          }
+        );
+    }
   };
 
   return !user.nickname && user.provider ? (
@@ -73,15 +117,19 @@ const Profile = () => {
             <List aria-labelledby="basic-list-demo">
               <ListItem>Login method: {user.provider}</ListItem>
               <ListItem>
-                2-Factor Authentication: {user.TFAuth ? 'on' : 'off'}
+                2-Factor Authentication: {user.tfa ? 'on' : 'off'}
               </ListItem>
             </List>
           </div>
           <div className={styles.bottom}>
             <ButtonPong
-              text={user.TFAuth === true ? 'Disable 2FA' : 'Setup 2FA'}
+              text={user.tfa === true ? 'Disable 2FA' : 'Setup 2FA'}
               endIcon={<ArrowForwardIosIcon />}
-              onClick={() => setModalAvatarOpen(true)}
+              onClick={toggleTfa}
+            />
+            <Enable2FactorAuth
+              open={modalTwoFactorAuthOpen}
+              setOpen={setModalTwoFactorAuthOpen}
             />
           </div>
         </div>

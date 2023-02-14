@@ -19,7 +19,7 @@ function App() {
     avatar: '',
     provider: '',
     username: '',
-    TFAuth: false
+    tfa: false
   });
 
   useEffect(() => {

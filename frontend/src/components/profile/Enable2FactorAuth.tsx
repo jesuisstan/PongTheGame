@@ -1,8 +1,7 @@
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { UserContext } from '../../context/UserContext';
 import axios from 'axios';
-import Swal from 'sweetalert2';
-import FormLabel from '@mui/joy/FormLabel';
+import QRCode from 'qrcode';
 import Modal from '@mui/joy/Modal';
 import ModalDialog from '@mui/joy/ModalDialog';
 import ModalClose from '@mui/joy/ModalClose';
@@ -10,6 +9,7 @@ import Stack from '@mui/joy/Stack';
 import Typography from '@mui/joy/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
 import SaveIcon from '@mui/icons-material/Save';
+import TextField from '@mui/material/TextField';
 
 const modalDialogStyle = {
   maxWidth: 500,
@@ -18,56 +18,58 @@ const modalDialogStyle = {
   borderRadius: '4px'
 };
 
-const SetupTwoFactorAuth = ({ open, setOpen }: any) => {
+const Enable2FactorAuth = ({ open, setOpen }: any) => {
   const { user, setUser } = useContext(UserContext);
-  const [file, setFile] = useState<File>();
   const [load, setLoad] = useState(false);
   const [buttonText, setButtonText] = useState('Submit');
+  const [qrCodeUrl, setqrCodeUrl] = useState('');
+  const [text, setText] = useState('');
+  const [error, setError] = useState('');
 
-  const handleInput = (event: React.FormEvent) => {
-    const files = (event.target as HTMLInputElement).files;
+  useEffect(() => {
+    QRCode.toDataURL('').then(setqrCodeUrl);
+  }, []);
 
-    if (files && files.length > 0) {
-      setFile(files[0]);
+  const handleTextInput = (event: any) => {
+    const newValue = event.target.value;
+    if (newValue.match(/[^0-9]/)) {
+      setError('Only numbers acceptable');
+    } else {
+      setError('');
+      setText(newValue);
     }
   };
 
-  const handleSubmit = (event: any) => {
-    event.preventDefault();
-    let formData = new FormData();
-    formData.append('file', file!);
-
-    const uploadAvatar = async (formData: FormData) => {
-      setLoad(true);
-      try {
-        const res = await axios.post(String(process.env.REACT_APP_URL_UPLOAD_AVATAR), formData, {
+  const submitCode = async () => {
+    return axios
+      .patch(
+        String(process.env.REACT_APP_URL_SET_),
+        { nickname: 'value' },
+        {
           withCredentials: true,
-          headers: { 'Content-type': 'multipart/form-data' }
-        });
-      } catch (error) {
-        console.log(error);
-        setOpen(false);
-        Swal.fire({
-          showConfirmButton: false,
-          icon: 'error',
-          iconColor: '#fd5087',
-          width: 450,
-          title: 'Oops...',
-          text: 'Something went wrong',
-          showCloseButton: true,
-          color: 'whitesmoke',
-          background: 'black'
-        });
-      }
-      setLoad(false);
-      setButtonText('Done ✔️');
-      console.log('new avatar uploaded');
-      setTimeout(() => setOpen(false), 442);
-      setTimeout(() => setButtonText('Submit'), 442);
-    };
-    uploadAvatar(formData);
+          headers: { 'Content-type': 'application/json; charset=UTF-8' }
+        }
+      )
+      .then(
+        (response) => {
+          console.log('QR proof submitted');
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
+  };
 
-    setFile(undefined);
+  const handleSubmit = async (event: any) => {
+    event.preventDefault();
+    setLoad(true);
+    await submitCode(); //todo
+    setLoad(false);
+    setButtonText('Done ✔️');
+    setText('');
+    setError('');
+    setTimeout(() => setOpen(false), 442);
+    setTimeout(() => setButtonText('Submit'), 442);
   };
 
   return (
@@ -77,7 +79,6 @@ const SetupTwoFactorAuth = ({ open, setOpen }: any) => {
         open={open}
         onClose={(event, reason) => {
           if (event && reason == 'backdropClick') return;
-          if (user.avatar) setOpen(false);
         }}
       >
         <ModalDialog
@@ -85,23 +86,46 @@ const SetupTwoFactorAuth = ({ open, setOpen }: any) => {
           sx={modalDialogStyle}
         >
           <ModalClose />
-          <Typography
-            id="basic-modal-dialog-title"
-            component="h2"
-            sx={{ color: 'black' }}
-          >
-            Modifying your avatar
-          </Typography>
           <form onSubmit={handleSubmit}>
             <Stack spacing={2}>
-              <FormLabel sx={{ color: 'black' }}>Max file size ...</FormLabel>
-              <input
+              <Typography component="h3" sx={{ color: 'rgb(37, 120, 204)' }}>
+                Configuring Google Authenticator or Authy
+              </Typography>
+              <div>
+                <li>
+                  Install Google Authenticator (IOS - Android) or Authy (IOS -
+                  Android).
+                </li>
+                <li>In the authenticator app, select "+" icon.</li>
+                <li>
+                  Select "Scan a barcode (or QR code)" and use the phone's
+                  camera to scan this barcode.
+                </li>
+              </div>
+
+              <div>
+                <Typography component="h3" sx={{ color: 'rgb(37, 120, 204)' }}>
+                  Scan QR Code
+                </Typography>
+                <img src={qrCodeUrl} alt="qrcode url" />
+              </div>
+              <div>
+                <Typography component="h3" sx={{ color: 'rgb(37, 120, 204)' }}>
+                  Verify Code
+                </Typography>
+              </div>
+              <TextField
+                autoFocus
                 required
-                type="file"
-                name="file"
-                id="raised-button-file"
-                accept="image/*,.png,.jpg,.gif,.web"
-                onChange={handleInput}
+                value={text}
+                inputProps={{
+                  minLength: 6,
+                  maxLength: 6
+                }}
+                placeholder="Authentication Code"
+                helperText={error} // error message
+                error={!!error} // set to true to change the border/helperText color to red
+                onChange={handleTextInput}
               />
               <LoadingButton
                 type="submit"
@@ -120,4 +144,4 @@ const SetupTwoFactorAuth = ({ open, setOpen }: any) => {
   );
 };
 
-export default SetupTwoFactorAuth;
+export default Enable2FactorAuth;
