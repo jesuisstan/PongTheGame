@@ -10,8 +10,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt'){
 	constructor (config: ConfigService, private prisma: PrismaService){
 		super({
 			jwtFromRequest : ExtractJwt.fromExtractors([
-				JwtStrategy.test,
-				JwtStrategy.extractJWT,
+				JwtStrategy.fromCookie,
 				ExtractJwt.fromAuthHeaderAsBearerToken(),
 			  ]),// MEMO http://www.passportjs.org/packages/passport-jwt/#extracting-the-jwt-from-the-request
 			ignoreExpiration:false,
@@ -19,12 +18,10 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt'){
 		});
 	}
 
-	private static extractJWT(req : RequestType): string | null {
-		console.log(req.cookies);
-		// console.log(res);
-		// if ( req.cookies && 'access_token' in req.cookies && req.cookies.user_token.length > 0) {
-		// 	return req.cookies.access_token;
-		// }
+	private static fromCookie(req : RequestType): string | null {
+		if ( req.cookies && 'access_token' in req.cookies) {
+			return req.cookies.access_token;
+		}
 		return null;
 	}
 	
@@ -37,21 +34,4 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt'){
 		return user;
 	}
 
-	// var cookieExtractor = function(req) {
-	// 	var token = null;
-	// 	if (req && req.cookies)
-	// 	{
-	// 		token = req.cookies['jwt'];
-	// 	}
-	// 	return token;
-	// };
-	private static test(req : RequestType) : any {
-		console.log(req.cookies);
-		// var token = null;
-		// if (req && req.cookies)
-		// {
-		// 	token = req.cookies['jwt'];
-		// }
-		// return token;
-	};
 }
