@@ -15,8 +15,6 @@ export class SessionService {
     const { id, displayName: username, provider, photos } = profile;
     const avatar = photos?.[0].value ?? null;
 
-    console.log(profile);
-
     return this.users.createUser(id, provider, username, avatar ?? null);
   }
 

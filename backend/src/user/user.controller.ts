@@ -1,14 +1,25 @@
 import {
+  BadRequestException,
+  Body,
   Controller,
   Get,
   NotFoundException,
   Param,
   ParseIntPipe,
+  Patch,
+  UseGuards,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
-import { ApiOperation } from '@nestjs/swagger';
-import { UserService } from './user.service';
+import { ApiBadRequestResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { User } from '@prisma/client';
+import { IsAuthenticatedGuard } from 'src/auth/auth.guard';
+import { SessionUser } from 'src/decorator/session-user.decorator';
+import { SetNicknameDTO } from 'src/user/dto/setNickname.dto';
+import { UserService } from 'src/user/user.service';
 
 @Controller('/user')
+@ApiTags('Users')
 export class UserController {
   constructor(private readonly users: UserService) {}
 
@@ -28,5 +39,27 @@ export class UserController {
 
     if (user === null) throw new NotFoundException();
     return user;
+  }
+
+  @Patch('/setnickname')
+  @ApiOperation({
+    summary: "Change a user's nickname",
+  })
+  @UseGuards(IsAuthenticatedGuard)
+  @UsePipes(ValidationPipe)
+  @ApiBadRequestResponse({
+    description:
+      'The username is already taken, or the payload is not formatted well',
+  })
+  async setNickname(
+    @SessionUser() user: User,
+    @Body() dto: SetNicknameDTO,
+  ): Promise<User> {
+    const { nickname } = dto;
+    const foundUser = await this.users.findUserByNickname(nickname);
+
+    if (foundUser !== null)
+      throw new BadRequestException('This nickname is already used');
+    return await this.users.setUserNickname(user, nickname);
   }
 }

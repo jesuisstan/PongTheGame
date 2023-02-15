@@ -6,12 +6,20 @@ h1,
 h2 {
   margin-top: 20px;
   margin-bottom: 20px;
+  font-family: "Roboto","Helvetica","Arial",sans-serif;
+  font-weight: 500;
+  line-height: 1.75;
+  letter-spacing: 0.02857em;
 }
 
 a {
   color: whitesmoke;
-  font-size: 19px;
   text-decoration: none;
+  font-family: "Roboto","Helvetica","Arial",sans-serif;
+  font-weight: 500;
+  font-size: 1.2rem;
+  line-height: 1.75;
+  letter-spacing: 0.02857em;
 }
 
 a:hover {
@@ -29,11 +37,17 @@ a:hover {
   text-decoration: underline;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.swal2-container.swal2-backdrop-show, .swal2-container.swal2-noanimation {
+  z-index: 11000;
+}
+
+body.swal2-shown > [aria-hidden="true"] {
+  transition: 0.1s filter;
+  filter: blur(2px);
+}
+
+.baseCard {
+  width: 100%;
+  height: 100%;
+  margin-top: 100px;
 }

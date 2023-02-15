@@ -1,14 +1,14 @@
+import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { PrismaSessionStore } from '@quixo3/prisma-session-store';
 import * as ExpressSession from 'express-session';
 import * as passport from 'passport';
-import { AppModule } from './app.module';
-import { Config } from './config.interface';
-import { PrismaService } from './prisma/prisma.service';
-import { convertTime } from './utils/time';
+import { AppModule } from 'src/app.module';
+import { Config } from 'src/config.interface';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { convertTime } from 'src/utils/time';
 import { SocketAdapter } from './chat/socketAdapter';
 
 const {
@@ -32,6 +32,11 @@ async function bootstrap() {
   setupSwagger(app);
   setupSession(app, config, prisma);
 
+  app.useStaticAssets('avatars', {
+    index: false,
+    prefix: '/static/',
+  });
+
   app.enableCors({
     origin: true,
     credentials: true,
@@ -45,7 +50,22 @@ function setupSwagger(app: NestExpressApplication) {
     .setTitle('ft_transcendence')
     .setDescription('The ft_transcendence API description')
     .setVersion('1.0')
-    .addTag('test')
+    .addTag(
+      'Authentication',
+      'Authentication endpoints that are not tied to a specific authentication method',
+    )
+    .addTag(
+      'Authentication/42',
+      'Authentication endpoints for the 42 OAuth2 API',
+    )
+    .addTag(
+      'Authentication/Github',
+      'Authentication endpoints for the Github OAuth2 API',
+    )
+    .addTag('Matches', 'Manipulate matches')
+    .addTag('Users', 'Manipulate users')
+    .addTag('Docker', 'Endpoints that are relevant to Docker containers')
+    .addTag('Avatar', 'Upload user avatars')
     .build();
 
   const swagger = SwaggerModule.createDocument(app, swaggerConfig);

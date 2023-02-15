@@ -1,5 +1,6 @@
 import { SetStateAction, useContext, useEffect, useState } from "react";
-import { WebSocketContext, WebSocketProvider } from "../../contexts/WebsocketContext";
+import { UserContext } from "../../contexts/UserContext";
+import { WebSocketContext } from "../../contexts/WebsocketContext";
 import ChatRoom from "./ChatRoom";
 
 // // All newly created message should have an author and the message itself
@@ -8,11 +9,11 @@ import ChatRoom from "./ChatRoom";
 // 	data: string
 // }
 
-// It takes the logged in user's profile as argument
-// The messages are displayed alongside some of the profile info
-const ChatEntrance = ({ user }: any) => {
-
+const ChatEntrance = () => {
+  // Fetching the socket from its context
   const socket = useContext(WebSocketContext)
+  // Fetching the user profile from its context
+  const { user, setUser } = useContext(UserContext)
 
   // Array including all chat rooms
   const [chatRooms, setChatRooms] = useState<any[]>([])
@@ -22,8 +23,6 @@ const ChatEntrance = ({ user }: any) => {
   // Enter in chatroom create mode
   const [chatRoomCreateMode, setChatRoomCreateMode] = useState<boolean>(false)
   const [newChatRoomName, setNewChatRoomName] = useState<string>('')
-
-  const [nickName, setnickName] = useState<string>(user.nickname || '')
 
   socket.emit('findAllChatRooms', {}, (response: SetStateAction<any[]>) => {
     setChatRooms(response)
@@ -78,8 +77,6 @@ const ChatEntrance = ({ user }: any) => {
   const onValueChange = (type: string, value: string) => {
     if (type === 'name')
       setNewChatRoomName(value)
-    if (type === "nick")
-      setnickName(value)
   }
   // Join a chatroom
   const joinRoom = (roomName: string) => {
@@ -90,67 +87,51 @@ const ChatEntrance = ({ user }: any) => {
     })
   }
 
-  const onNickSubmit = (e: any) => {
-    e.preventDefault()
-    user.nickname = nickName
-  }
-
   return (
-    <WebSocketProvider value={socket}>
+    <WebSocketContext.Provider value={socket}>
 
+    <div className='baseCard'>
         <h1>Let's chat together right now</h1>
           {
-            !user.nickname ? (
-              <form onSubmit={ onNickSubmit }>
-                <label htmlFor="nick">Choose a nickname</label>
+            joinedRoom ? (
+              <ChatRoom user={ user } room={ joinedRoom } />
+              ) : (
+              <div>
+                {
+                  chatRooms.length === 0 ? (<div>No channel</div>) : (
+                    <ul>
+                      { // Mapping chatroom array to retrieve all chatrooms with
+                        chatRooms.map((room, index) => (
+                          <li key={ index }>
+                            [{ room.name }]: { Object.keys(room.users).length } members
+                            | { Object.keys(room.messages).length } messages
+                            { Object.values(room.modes).indexOf('p') !== -1 ? '| P ' : ' ' }
 
-                <input type="text" id="nick" 
-                  value={ nickName }
-                  onChange={ (e) => onValueChange("nick", e.target.value) } />
+                            <button onClick={ () => joinRoom(room.name) }>join</button>
+                          </li>
+                        ))
+                      }
+                    </ul>
+                )
+                }
 
-                <button type="submit">send</button>
-              </form>
-            ) :
-            (
-              joinedRoom ? (
-                <ChatRoom user={ user } room={ joinedRoom } />
-                ) : (
-                <div>
-                  {
-                    chatRooms.length === 0 ? (<div>No channel</div>) : (
-                      <ul>
-                        { // Mapping chatroom array to retrieve all chatrooms with
-                          chatRooms.map((room, index) => (
-                            <li key={ index }>
-                              [{ room.name }]: { Object.keys(room.users).length } members
-                              | { Object.keys(room.messages).length } messages
-                              { Object.values(room.modes).indexOf('p') !== -1 ? '| P ' : ' ' }
-
-                              <button onClick={ () => joinRoom(room.name) }>join</button>
-                            </li>
-                          ))
-                        }
-                      </ul>
-                  )
-                  }
-
-                  { // Button that gets into chatroom create mode 
-                    chatRooms.length < parseInt(process.env.REACT_APP_MAX_CHATROOM_NBR!)
-                      && <button onClick={ onNewClick }>new</button>
-                  }
-                  
-                  { // Chatroom create mode form
-                    chatRoomCreateMode &&
-                    <form onSubmit={ onChatRoomCreateModeSubmit }>
-                      <input type="text" value={ newChatRoomName } onChange={ (e) => onValueChange('name', e.target.value) }/>
-                      <button type="submit">create</button>
-                    </form>
-                  }
-                </div>
-              )
+                { // Button that gets into chatroom create mode 
+                  chatRooms.length < parseInt(process.env.REACT_APP_MAX_CHATROOM_NBR!)
+                    && <button onClick={ onNewClick }>new</button>
+                }
+                
+                { // Chatroom create mode form
+                  chatRoomCreateMode &&
+                  <form onSubmit={ onChatRoomCreateModeSubmit }>
+                    <input type="text" value={ newChatRoomName } onChange={ (e) => onValueChange('name', e.target.value) }/>
+                    <button type="submit">create</button>
+                  </form>
+                }
+              </div>
             )
           }
-    </WebSocketProvider>
+    </div>
+    </WebSocketContext.Provider>
   )
 }
 

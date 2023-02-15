@@ -1,12 +1,15 @@
 import { Outlet } from 'react-router-dom';
 import MenuBar from './MenuBar';
+import Footer from './Footer'
 
-const MainLayout = ({ user }: any) => {
+const MainLayout = () => {
   return (
     <div>
-      <MenuBar user={user} />
+      <MenuBar />
       <Outlet />
+      <Footer />
     </div>
   );
 };
+
 export default MainLayout;

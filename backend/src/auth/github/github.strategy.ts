@@ -3,8 +3,8 @@ import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { Profile } from 'passport';
 import { Strategy, StrategyOptions } from 'passport-github2';
+import { SessionService } from 'src/auth/session/session.service';
 import { Config } from 'src/config.interface';
-import { SessionService } from '../session/session.service';
 
 @Injectable()
 export class GithubStrategy extends PassportStrategy(Strategy, 'github') {

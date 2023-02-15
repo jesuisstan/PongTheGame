@@ -1,16 +1,13 @@
 import styles from './Login.module.css';
 
 const Login = () => {
-  const google = () => {
-    window.open('http://localhost:3080/auth/google', '_self');
-  };
 
   const ecole42Auth = () => {
-    window.open('http://localhost:3080/auth/42', '_self');
+    window.location.href = String(process.env.REACT_APP_URL_AUTH_42);
   };
 
-  const github = () => {
-    window.open('http://localhost:3080/auth/github', '_self');
+  const githubAuth = () => {
+    window.location.href = String(process.env.REACT_APP_URL_AUTH_GITHUB);
   };
 
   return (
@@ -21,7 +18,7 @@ const Login = () => {
           <div className={styles.line} />
         </div>
         <div className={styles.right}>
-          <div className={styles.loginButtonGithub} onClick={github}>
+          <div className={styles.loginButtonGithub} onClick={githubAuth}>
             <img
               src={require('../../assets/github.png')}
               alt=""
@@ -35,7 +32,7 @@ const Login = () => {
               alt=""
               className={styles.icon}
             />
-            Ecole 42
+            École 42
           </div>
         </div>
       </div>

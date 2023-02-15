@@ -19,7 +19,7 @@ services:
     tty: true
 
     working_dir: /app-${FRONTEND_NAME}
-    # Install project dependencies, then run front
+    # Install project dependencies,, then run front
     command: >
             sh -cx "npm install
             && npm run start"
@@ -39,12 +39,14 @@ services:
     image: postgres:15.1-alpine
     ports:
       - "${POSTGRES_PORT}:${POSTGRES_PORT}"
+    environment:
+      POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+      POSTGRES_USER: $POSTGRES_USER
+      POSTGRES_PORT: $POSTGRES_PORT
     volumes:
       - db:/var/lib/postgresql/data
     networks:
       - transcendence
-    env_file:
-      - .env
     restart: unless-stopped
     healthcheck:
       test: pg_isready -U ${POSTGRES_USER}
@@ -61,23 +63,37 @@ services:
     image: ${NODE_VERSION}
     working_dir: /app-${BACKEND_NAME}
     # install project dependencies,
-    # downgrade 2modules to make them work,
     # then run in dev mode
     command: >
             sh -cx "apk add --no-cache curl
             && yarn install
-            && yarn add @nestjs/websockets@9.2.1 @nestjs/platform-socket.io@9.2.1
             && yarn prisma db push
             && yarn run start:debug"
     ports:
       - "${BACKEND_PORT}:${BACKEND_PORT}"
     env_file:
       - .env
+    environment:
+      BACKEND_PORT: ${BACKEND_PORT}
+      FRONTEND_PORT: ${BACKEND_PORT}
+      SESSION_SECRET: ${SESSION_SECRET}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_HOST: database
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST:-database}:${POSTGRES_PORT}/pong?schema=public
+      INTRA42_CLIENT_ID: ${INTRA42_CLIENT_ID}
+      INTRA42_CLIENT_SECRET: ${INTRA42_CLIENT_SECRET}
+      INTRA42_CALLBACK_URL: ${INTRA42_CALLBACK_URL}
+      GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID}
+      GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
+      GITHUB_CALLBACK_URL: ${GITHUB_CALLBACK_URL}
     networks:
       - transcendence
     volumes:
       - ./${BACKEND_NAME}:/app-${BACKEND_NAME}
       - backend_node_modules:/app-${BACKEND_NAME}/node_modules/
+      - avatars:/app-${BACKEND_NAME}/avatars
     # stdin_open: true
     # tty: true
     restart: unless-stopped
@@ -86,9 +102,7 @@ services:
       interval: 10s
       timeout: 30s
       retries: 30
-      start_period: 0s
-      # timeout: 1s
-      # retries: 30
+      start_period: 2s
 
   controller:
     container_name: health_controller
@@ -104,6 +118,7 @@ services:
 
 volumes:
   db: {}
+  avatars: {}
   backend_node_modules: {}
 
 networks:
