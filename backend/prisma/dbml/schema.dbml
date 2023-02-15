@@ -10,6 +10,7 @@ Table User {
   profileId String [not null]
   provider String [not null]
   role Role [not null, default: 'USER']
+  tfa Boolean [not null, default: false]
   matchEntries MatchEntry [not null]
   friends Friends [not null]
   achievement Achievements [not null]
