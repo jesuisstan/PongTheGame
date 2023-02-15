@@ -1,5 +1,7 @@
 import { useState, useContext } from 'react';
 import { UserContext } from '../../context/UserContext';
+import axios from 'axios';
+import errorAlert from '../UI/errorAlert';
 import Avatar from '@mui/material/Avatar';
 import Rating from '@mui/material/Rating';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
@@ -11,10 +13,8 @@ import CreateIcon from '@mui/icons-material/Create';
 import ButtonPong from '../UI/ButtonPong';
 import EditNickname from './EditNickname';
 import EditAvatar from './EditAvatar';
-import styles from './Profile.module.css';
 import Enable2FactorAuth from './Enable2FactorAuth';
-import axios from 'axios';
-import Swal from 'sweetalert2';
+import styles from './Profile.module.css';
 
 const Profile = () => {
   const { user, setUser } = useContext(UserContext);
@@ -34,55 +34,10 @@ const Profile = () => {
           }
         )
         .then(
-          (response) => {
-            setUser(response.data);
-            //if (response.data.tfa) setModalTwoFactorAuthOpen(true)
-          },
-          (error) => {
-            Swal.fire({
-              showConfirmButton: false,
-              icon: 'error',
-              iconColor: '#fd5087',
-              width: 450,
-              title: 'Oops...',
-              text: 'Something went wrong',
-              showCloseButton: true,
-              color: 'whitesmoke',
-              background: 'black'
-            });
-          }
+          (response) => setUser(response.data),
+          (error) => errorAlert('Something went wrong')
         );
-    } else {
-      setModalTwoFactorAuthOpen(true);
-
-      return axios
-        .patch(
-          String(process.env.REACT_APP_URL_TOGGLE_TFA),
-          { enabled: true },
-          {
-            withCredentials: true,
-            headers: { 'Content-type': 'application/json; charset=UTF-8' }
-          }
-        )
-        .then(
-          (response) => {
-            setUser(response.data);
-          },
-          (error) => {
-            Swal.fire({
-              showConfirmButton: false,
-              icon: 'error',
-              iconColor: '#fd5087',
-              width: 450,
-              title: 'Oops...',
-              text: 'Something went wrong',
-              showCloseButton: true,
-              color: 'whitesmoke',
-              background: 'black'
-            });
-          }
-        );
-    }
+    } else setModalTwoFactorAuthOpen(true);
   };
 
   return !user.nickname && user.provider ? (
@@ -146,7 +101,7 @@ const Profile = () => {
             >
               Info
             </Typography>
-            <List aria-labelledby="basic-list-demo">
+            <List aria-labelledby="basic-list">
               <ListItem>Player: {user.username}</ListItem>
               <ListItem>Nickname: {user.nickname}</ListItem>
             </List>

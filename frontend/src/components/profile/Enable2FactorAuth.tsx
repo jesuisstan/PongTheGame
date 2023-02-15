@@ -10,6 +10,7 @@ import Typography from '@mui/joy/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
 import SaveIcon from '@mui/icons-material/Save';
 import TextField from '@mui/material/TextField';
+import errorAlert from '../UI/errorAlert';
 
 const modalDialogStyle = {
   maxWidth: 500,
@@ -56,6 +57,7 @@ const Enable2FactorAuth = ({ open, setOpen }: any) => {
         },
         (error) => {
           console.log(error);
+          errorAlert('Something went wrong');
         }
       );
   };
@@ -68,6 +70,21 @@ const Enable2FactorAuth = ({ open, setOpen }: any) => {
     setButtonText('Done ✔️');
     setText('');
     setError('');
+    axios
+      .patch(
+        String(process.env.REACT_APP_URL_TOGGLE_TFA),
+        { enabled: true },
+        {
+          withCredentials: true,
+          headers: { 'Content-type': 'application/json; charset=UTF-8' }
+        }
+      )
+      .then(
+        (response) => {
+          setUser(response.data);
+        },
+        (error) => errorAlert('Something went wrong')
+      );
     setTimeout(() => setOpen(false), 442);
     setTimeout(() => setButtonText('Submit'), 442);
   };
@@ -78,7 +95,7 @@ const Enable2FactorAuth = ({ open, setOpen }: any) => {
         sx={{ color: 'black' }}
         open={open}
         onClose={(event, reason) => {
-          if (event && reason == 'backdropClick') return;
+          if (event && reason == 'closeClick') setOpen(false);
         }}
       >
         <ModalDialog
