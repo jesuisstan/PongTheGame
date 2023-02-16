@@ -14,6 +14,10 @@ import './App.css';
 import { WebSocketContext } from './contexts/WebsocketContext';
 
 function App() {
+
+  // Fetching the socket from its context
+  const socket = useContext(WebSocketContext)
+
   const [user, setUser] = useState<User>({
     id: -1,
     nickname: '',
@@ -39,46 +43,48 @@ function App() {
   // const socket = useContext(WebSocketContext)
 
   return (
-    <BrowserRouter>
-      <div className="App">
-        <UserContext.Provider value={{ user, setUser }}>
-          <Routes>
-            <Route path="/" element={<MainLayout />}>
-              <Route index={true} element={<Home />} />
-              <Route
-                path="login"
-                element={
-                  !user.provider ? (
-                    <Login />
-                  ) : (
-                    <Navigate to="/profile" />
-                  )
-                }
-              />
-              <Route
-                path="chat"
-                element={user.provider ? <ChatEntrance /> : <Navigate to="/login" />}
-              />
-              <Route
-                path="game"
-                element={user.provider ? <Game /> : <Navigate to="/login" />}
-              />
-              <Route
-                path="profile"
-                element={
-                  user.provider ? (
-                    <Profile />
-                  ) : (
-                    <Navigate to="/login" />
-                  )
-                }
-              />
-              <Route path="*" element={<NotFound />} />
-            </Route>
-          </Routes>
-        </UserContext.Provider>
-      </div>
-    </BrowserRouter>
+    <WebSocketContext.Provider value={socket}>
+      <BrowserRouter>
+        <div className="App">
+          <UserContext.Provider value={{ user, setUser }}>
+            <Routes>
+              <Route path="/" element={<MainLayout />}>
+                <Route index={true} element={<Home />} />
+                <Route
+                  path="login"
+                  element={
+                    !user.provider ? (
+                      <Login />
+                    ) : (
+                      <Navigate to="/profile" />
+                    )
+                  }
+                />
+                <Route
+                  path="chat"
+                  element={user.provider ? <ChatEntrance /> : <Navigate to="/login" />}
+                />
+                <Route
+                  path="game"
+                  element={user.provider ? <Game /> : <Navigate to="/login" />}
+                />
+                <Route
+                  path="profile"
+                  element={
+                    user.provider ? (
+                      <Profile />
+                    ) : (
+                      <Navigate to="/login" />
+                    )
+                  }
+                />
+                <Route path="*" element={<NotFound />} />
+              </Route>
+            </Routes>
+          </UserContext.Provider>
+        </div>
+      </BrowserRouter>
+    </WebSocketContext.Provider>
   );
 }
 

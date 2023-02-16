@@ -36,6 +36,7 @@ export class ChatGateway {
 
   @SubscribeMessage('createChatRoom')
   async createChatRoom(@MessageBody() room: ChatRoomDto) {
+    if (room.password) room.modes += 'p';
     // Create a chat room object using the create method from chat.service
     await this.chatService.createChatRoom(room);
     console.log('chatRoom emitted: ' + Object.entries(room));
@@ -65,12 +66,12 @@ export class ChatGateway {
   }
 
   @SubscribeMessage('quitRoom')
-  async quitRoom(
+  quitRoom(
     @MessageBody('roomName') roomName: string,
     @MessageBody('userName') userName: string,
     @ConnectedSocket() client: Socket,
   ) {
-    await this.chatService.quitRoom(roomName, userName, client.id);
+    this.chatService.quitRoom(roomName, userName, client.id);
     this.server.emit('quitRoom', userName);
   }
 
@@ -90,5 +91,20 @@ export class ChatGateway {
       const nickname = user.nickname;
       client.broadcast.emit('typingMessage', { roomName, nickname, isTyping });
     }
+  }
+
+  @SubscribeMessage('isPasswordProtected')
+  async isPasswordProtected(@MessageBody('roomName') roomName: string) {
+    const room = await this.chatService.getChatRoomByName(roomName);
+    return room?.password ? true : false;
+  }
+
+  @SubscribeMessage('checkPassword')
+  async checkPassword(
+    @MessageBody('roomName') roomName: string,
+    @MessageBody('password') password: string,
+  ) {
+    const room = await this.chatService.getChatRoomByName(roomName);
+    return room?.password === password ? true : false;
   }
 }

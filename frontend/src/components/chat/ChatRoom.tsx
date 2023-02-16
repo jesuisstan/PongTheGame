@@ -7,16 +7,21 @@ import { WebSocketContext } from "../../contexts/WebsocketContext";
 // 	data: string
 // }
 
-// It takes the logged in user's profile as argument
-// The messages are displayed alongside some of the profile info
+/*************************************************************
+ * Chat room
+ 
+ * Represents each created chat room 
+**************************************************************/
+
 const ChatRoom = (props: any) => {
 
+  /*************************************************************
+   * States
+  **************************************************************/
   const socket = useContext(WebSocketContext)
 
   // Array including all message objects (author + msg)
   const [messages, setMessages] = useState<any[]>([])
-  // Tells whether the user has joined the chatroom
-  const [joined, setJoined] = useState<boolean>(true)
   // Display typing state of the user
   const [typingDisplay, setTypingDisplay] = useState<string>('')
   
@@ -28,7 +33,10 @@ const ChatRoom = (props: any) => {
     setMessages(response)
   })
 
-  // Add event listeners
+
+  /*************************************************************
+   * Event listeners
+  **************************************************************/
   useEffect(() => {
     socket.on('connect', () => console.log('connected to websocket!'))
     socket.on('createMessage', (newMessage: any) => console.log('createMessage event received!'))
@@ -79,15 +87,16 @@ const ChatRoom = (props: any) => {
       roomName: props.room.name,
       userName: props.user.nickname
     })
-    setJoined(false)
+    props.cleanRoomLoginData()
   }
 
+
+  /*************************************************************
+   * HTML response
+  **************************************************************/
   return (
       <>
         {
-          !joined ? (
-              <div></div>
-          ) : (
             <div>
               <button onClick={ onReturnClick }>return</button>
               <h2>topic: { props.room.name }</h2>
@@ -106,21 +115,17 @@ const ChatRoom = (props: any) => {
               }
 
               { // Display message to other users if user is currently typing
-                typingDisplay && (
-                  <div>{ typingDisplay }</div>
-                )
+                typingDisplay && ( <div>{ typingDisplay }</div> )
               }
               
               <form onSubmit={ onFormSubmit }>
                 <input type="text"
                   value={ messageText }
                   onChange={ (e) => onTyping(e.target.value) } />
-
                 <button type="submit">Submit</button>
               </form>
 
             </div>
-          )
         }
       </>
       );
