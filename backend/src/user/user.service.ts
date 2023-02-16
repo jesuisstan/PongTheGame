@@ -9,7 +9,7 @@ const USER_SELECT = {
   provider: true,
   nickname: true,
   username: true,
-  tfa: true,
+  totpSecret: false,
 };
 
 @Injectable()
@@ -83,19 +83,6 @@ export class UserService {
     return this.prisma.user.update({
       data: {
         nickname,
-      },
-      where: {
-        id,
-      },
-    });
-  }
-
-  async setUserTfa(user: User, tfaEnabled: boolean) {
-    const { id } = user;
-
-    return this.prisma.user.update({
-      data: {
-        tfa: tfaEnabled,
       },
       where: {
         id,
