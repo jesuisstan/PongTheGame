@@ -21,6 +21,7 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
+import { User } from '@prisma/client';
 import { Response } from 'express';
 import { IsAuthenticatedGuard } from 'src/auth/auth.guard';
 import { AvatarService } from 'src/avatar/avatar.service';
@@ -108,7 +109,15 @@ export class AvatarController {
   @UseGuards(IsAuthenticatedGuard)
   @UseInterceptors(FsExceptionInterceptor)
   @ApiTags('Avatar')
-  async deleteAvatar(@SessionUser() user: Express.User) {
-    return this.avatars.deleteAvatar(user);
+  async deleteAvatar(@SessionUser() user: User) {
+    const dbUser = this.users.setAvatar(user, null);
+
+    try {
+      this.avatars.deleteAvatar(user);
+    } catch (e) {
+      if (e.code !== 'ENOENT') throw e;
+    }
+
+    return dbUser;
   }
 }

@@ -103,16 +103,16 @@ export class UserService {
     });
   }
 
-  // async setAvatar(user: User, bytes: Buffer): Promise<User> {
-  //   const { id } = user;
+  async setAvatar(user: User, url: string | null): Promise<User> {
+    const { id } = user;
 
-  //   return this.prisma.user.update({
-  //     data: {
-  //       avatar: bytes,
-  //     },
-  //     where: {
-  //       id,
-  //     },
-  //   });
-  // }
+    return this.prisma.user.update({
+      data: {
+        avatar: url,
+      },
+      where: {
+        id,
+      },
+    });
+  }
 }
