@@ -1,4 +1,5 @@
 import { useState, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../context/UserContext';
 import axios from 'axios';
 import LoadingButton from '@mui/lab/LoadingButton';
@@ -20,13 +21,13 @@ const modalDialogStyle = {
   borderRadius: '4px'
 };
 
-const Validate2fa = () => {
+const Validate2fa = ({ open, setOpen, userData }: any) => {
   const { user, setUser } = useContext(UserContext);
   const [text, setText] = useState('');
   const [error, setError] = useState('');
   const [load, setLoad] = useState(false);
   const [buttonText, setButtonText] = useState('Submit');
-  const [open, setOpen] = useState(true);
+  const navigate = useNavigate();
 
   const handleTextInput = (event: any) => {
     const newValue = event.target.value;
@@ -39,14 +40,26 @@ const Validate2fa = () => {
   };
 
   const submitCode = (value: string) => {
-    console.log('la-la-la');
+    console.log('2fa code submitted after login');
+    return true // todo hardcode
   };
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     if (text) {
       setLoad(true);
-      await submitCode(text);
+      if (submitCode(text)) {
+        setUser(userData);
+      } else {
+        setUser({
+          id: -1,
+          nickname: '',
+          avatar: '',
+          provider: '',
+          username: '',
+          tfa: false
+        });
+      }
       setLoad(false);
       setButtonText('Done ✔️');
     }
@@ -54,17 +67,12 @@ const Validate2fa = () => {
     setError('');
     setTimeout(() => setOpen(false), 442);
     setTimeout(() => setButtonText('Submit'), 442);
+    setTimeout(() => navigate('/profile'), 500);
   };
 
   return (
     <div>
-      <Modal
-        sx={{ color: 'black' }}
-        open={open}
-        onClose={(event, reason) => {
-          if (event && reason == 'closeClick') setOpen(false);
-        }}
-      >
+      <Modal sx={{ color: 'black' }} open={open}>
         <ModalDialog
           aria-labelledby="basic-modal-dialog-title"
           sx={modalDialogStyle}
