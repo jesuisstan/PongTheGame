@@ -1,31 +1,51 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { User } from '@prisma/client';
 import { authenticator } from 'otplib';
-import { Config } from 'src/config.interface';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class TotpService {
-  // https://stackoverflow.com/a/53601060
-  private static readonly BASE32_REGEX = /^[A-Z2-7]+=*$/;
-
+  private static readonly issuerName = 'ft_transcendence';
   private readonly logger = new Logger(TotpService.name);
-  private readonly secret: string;
 
-  constructor(config: ConfigService<Config>) {
-    const secret = config.getOrThrow('TOTP_SECRET');
-    // const secret = 'AJU3JX7ZIA54EZQ=';
+  constructor(private readonly prisma: PrismaService) {}
 
-    this.secret = TotpService.checkSecret(secret);
+  /**
+   * Generate a new secret
+   *
+   * @param bytes the size in bytes of the secret
+   * @returns the generated secret
+   */
+  generateSecret(bytes: number): string {
+    return authenticator.generateSecret(bytes);
   }
 
-  private static checkSecret(secret: string) {
-    if (secret.length % 8 !== 0 || !this.BASE32_REGEX.test(secret)) {
-      throw new Error('Invalid secret: ' + secret);
+  /**
+   * Generate an url for google authenticator (otpauth://...)
+   *
+   * @param user the user for whom the url will be generated
+   * @returns an url if the user has totp enabled, null otherwise
+   */
+  async getTotpUrl(user: User): Promise<string | null> {
+    const { id: userId } = user;
+
+    const totpSecret = await this.prisma.totpSecret.findUnique({
+      where: {
+        userId,
+      },
+      select: {
+        secret: true,
+      },
+    });
+
+    if (totpSecret === null) {
+      return null;
     }
-    return secret;
-  }
 
-  getQrCode(username: string) {
-    return authenticator.keyuri(username, 'ft_transcendence', this.secret);
+    return authenticator.keyuri(
+      user.username,
+      TotpService.issuerName,
+      totpSecret.secret,
+    );
   }
 }
