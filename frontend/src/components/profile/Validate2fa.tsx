@@ -1,4 +1,5 @@
 import { useState, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../context/UserContext';
 import axios from 'axios';
 import LoadingButton from '@mui/lab/LoadingButton';
@@ -27,6 +28,7 @@ const Validate2fa = () => {
   const [load, setLoad] = useState(false);
   const [buttonText, setButtonText] = useState('Submit');
   const [open, setOpen] = useState(true);
+  const navigate = useNavigate();
 
   const handleTextInput = (event: any) => {
     const newValue = event.target.value;
@@ -38,8 +40,8 @@ const Validate2fa = () => {
     }
   };
 
-  const submitCode = (value: string) => {
-    console.log('la-la-la');
+  const submitCode = async (value: string) => {
+    console.log('2fa code submitted after login');
   };
 
   const handleSubmit = async (event: React.FormEvent) => {
@@ -54,17 +56,12 @@ const Validate2fa = () => {
     setError('');
     setTimeout(() => setOpen(false), 442);
     setTimeout(() => setButtonText('Submit'), 442);
+    setTimeout(() => navigate('/profile'), 500);
   };
 
   return (
     <div>
-      <Modal
-        sx={{ color: 'black' }}
-        open={open}
-        onClose={(event, reason) => {
-          if (event && reason == 'closeClick') setOpen(false);
-        }}
-      >
+      <Modal sx={{ color: 'black' }} open={open}>
         <ModalDialog
           aria-labelledby="basic-modal-dialog-title"
           sx={modalDialogStyle}
