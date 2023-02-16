@@ -88,6 +88,7 @@ services:
       GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID}
       GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
       GITHUB_CALLBACK_URL: ${GITHUB_CALLBACK_URL}
+      TOTP_SECRET: ${TOTP_SECRET}
     networks:
       - transcendence
     volumes:
