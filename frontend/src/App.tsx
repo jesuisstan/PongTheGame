@@ -11,7 +11,7 @@ import Profile from './components/profile/Profile';
 import NotFound from './components/pages/NotFound';
 import MainLayout from './components/UI/MainLayout';
 import './App.css';
-
+import Validate2fa from './components/profile/Validate2fa';
 function App() {
   const [user, setUser] = useState<User>({
     id: -1,
@@ -22,14 +22,14 @@ function App() {
     tfa: false
   });
 
-  useEffect(() => {
-    axios
-      .get(String(process.env.REACT_APP_URL_AUTH), { withCredentials: true })
-      .then(
-        (response) => setUser(response.data),
-        (error) => console.log(error)
-      );
-  }, []);
+  //useEffect(() => {
+  //  axios
+  //    .get(String(process.env.REACT_APP_URL_AUTH), { withCredentials: true })
+  //    .then(
+  //      (response) => setUser(response.data),
+  //      (error) => console.log(error)
+  //    );
+  //}, []);
 
   user.provider ? console.log('user logged in') : console.log('no user');
   console.log(user);
@@ -50,6 +50,11 @@ function App() {
                     <Navigate to="/profile" />
                   )
                 }
+              />
+              
+              <Route
+                path="validate2fa"
+                element={<Validate2fa />}
               />
               <Route
                 path="chat"
