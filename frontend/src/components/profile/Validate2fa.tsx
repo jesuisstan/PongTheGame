@@ -21,13 +21,12 @@ const modalDialogStyle = {
   borderRadius: '4px'
 };
 
-const Validate2fa = () => {
+const Validate2fa = ({ open, setOpen, userData }: any) => {
   const { user, setUser } = useContext(UserContext);
   const [text, setText] = useState('');
   const [error, setError] = useState('');
   const [load, setLoad] = useState(false);
   const [buttonText, setButtonText] = useState('Submit');
-  const [open, setOpen] = useState(true);
   const navigate = useNavigate();
 
   const handleTextInput = (event: any) => {
@@ -40,15 +39,27 @@ const Validate2fa = () => {
     }
   };
 
-  const submitCode = async (value: string) => {
+  const submitCode = (value: string) => {
     console.log('2fa code submitted after login');
+    return true // todo hardcode
   };
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     if (text) {
       setLoad(true);
-      await submitCode(text);
+      if (submitCode(text)) {
+        setUser(userData);
+      } else {
+        setUser({
+          id: -1,
+          nickname: '',
+          avatar: '',
+          provider: '',
+          username: '',
+          tfa: false
+        });
+      }
       setLoad(false);
       setButtonText('Done ✔️');
     }
