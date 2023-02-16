@@ -9,18 +9,28 @@ datasource db {
 }
 
 model User {
-  id         Int     @id @default(autoincrement())
-  nickname   String? @unique
-  username   String
-  avatar     String?
-  profileId  String
-  provider   String
-  totpSecret Bytes?
+  id        Int     @id @default(autoincrement())
+  nickname  String? @unique
+  username  String
+  avatar    String?
+  profileId String
+  provider  String
+
+  totpSecret TotpSecret?
 
   // MatchEntry
   matchEntries MatchEntry[]
 
   @@unique([profileId, provider])
+}
+
+model TotpSecret {
+  id     Int    @id @default(autoincrement())
+  secret String
+
+  // User
+  userId Int?  @unique
+  user   User? @relation(fields: [userId], references: [id])
 }
 
 model MatchEntry {
