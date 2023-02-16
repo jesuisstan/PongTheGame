@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
+import { UserContext } from '../../context/UserContext';
 import Avatar from '@mui/material/Avatar';
 import Rating from '@mui/material/Rating';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
@@ -13,7 +14,8 @@ import EditNickname from './EditNickname';
 import EditAvatar from './EditAvatar';
 import styles from './Profile.module.css';
 
-const Profile = ({ user, setNickname }: any) => {
+const Profile = () => {
+  const { user, setUser } = useContext(UserContext);
   const [modalNicknameOpen, setModalNicknameOpen] = useState(false);
   const [modalAvatarOpen, setModalAvatarOpen] = useState(false);
 
@@ -21,10 +23,8 @@ const Profile = ({ user, setNickname }: any) => {
     console.log('2-step Verif checkbox clicked');
   };
 
-  return !user.nickname ? (
+  return !user.nickname && user.provider ? (
     <EditNickname
-      user={user}
-      setNickname={setNickname}
       open={true}
       setOpen={setModalNicknameOpen}
     />
@@ -42,7 +42,6 @@ const Profile = ({ user, setNickname }: any) => {
               onClick={() => setModalAvatarOpen(true)}
             />
             <EditAvatar
-              user={user}
               open={modalAvatarOpen}
               setOpen={setModalAvatarOpen}
             />
@@ -97,8 +96,6 @@ const Profile = ({ user, setNickname }: any) => {
                 onClick={() => setModalNicknameOpen(true)}
               />
               <EditNickname
-                user={user}
-                setNickname={setNickname}
                 open={modalNicknameOpen}
                 setOpen={setModalNicknameOpen}
               />

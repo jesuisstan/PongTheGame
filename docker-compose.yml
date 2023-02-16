@@ -64,14 +64,14 @@ services:
     working_dir: /app-${BACKEND_NAME}
     # install project dependencies,
     # then run in dev mode
-    command: >
-            sh -cx "apk add --no-cache curl
-            && yarn install
-            && yarn prisma db push
-            && yarn run start:debug"
+    command: sh -cx 'apk add --no-cache curl && yarn install && yarn prisma db push && yarn prisma db seed && yarn run start:debug'
+
+  # yarn prisma studio &
+  # yarn run test
+
     ports:
       - "${BACKEND_PORT}:${BACKEND_PORT}"
-      - 5555:5555
+      - 5555:5555 # TODO remove is for prisma studio
     env_file:
       - .env
     environment:

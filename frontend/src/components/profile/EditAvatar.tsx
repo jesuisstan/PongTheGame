@@ -1,15 +1,15 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
+import { UserContext } from '../../context/UserContext';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import FormLabel from '@mui/joy/FormLabel';
 import Modal from '@mui/joy/Modal';
 import ModalDialog from '@mui/joy/ModalDialog';
+import ModalClose from '@mui/joy/ModalClose';
 import Stack from '@mui/joy/Stack';
 import Typography from '@mui/joy/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
 import SaveIcon from '@mui/icons-material/Save';
-
-const urlUploadAvatar = 'http://localhost:3080/avatar/upload';
 
 const modalDialogStyle = {
   maxWidth: 500,
@@ -18,9 +18,11 @@ const modalDialogStyle = {
   borderRadius: '4px'
 };
 
-const EditAvatar = ({ user, open, setOpen }: any) => {
+const EditAvatar = ({ open, setOpen }: any) => {
+  const { user, setUser } = useContext(UserContext);
   const [file, setFile] = useState<File>();
   const [load, setLoad] = useState(false);
+  const [buttonText, setButtonText] = useState('Submit');
 
   const handleInput = (event: React.FormEvent) => {
     const files = (event.target as HTMLInputElement).files;
@@ -35,15 +37,16 @@ const EditAvatar = ({ user, open, setOpen }: any) => {
     let formData = new FormData();
     formData.append('file', file!);
 
-    const getData = async (formData: FormData) => {
+    const uploadAvatar = async (formData: FormData) => {
       setLoad(true);
       try {
-        const res = await axios.post(urlUploadAvatar, formData, {
+        const res = await axios.post(String(process.env.REACT_APP_URL_UPLOAD_AVATAR), formData, {
           withCredentials: true,
           headers: { 'Content-type': 'multipart/form-data' }
         });
       } catch (error) {
         console.log(error);
+        setOpen(false);
         Swal.fire({
           showConfirmButton: false,
           icon: 'error',
@@ -57,61 +60,13 @@ const EditAvatar = ({ user, open, setOpen }: any) => {
         });
       }
       setLoad(false);
+      setButtonText('Done ✔️');
       console.log('new avatar uploaded');
       setTimeout(() => setOpen(false), 442);
+      setTimeout(() => setButtonText('Submit'), 442);
     };
-    getData(formData);
+    uploadAvatar(formData);
 
-    //axios
-    //  .post(urlUploadAvatar, formData, {
-    //    withCredentials: true,
-    //    headers: { 'Content-type': 'multipart/form-data' }
-    //  })
-    //  .then(
-    //    (response) => {
-    //      console.log('new avatar uploaded');
-    //    },
-    //    (error) => {
-    //      console.log(error.message);
-    //      Swal.fire({
-    //        showConfirmButton: false,
-    //        icon: 'error',
-    //        iconColor: '#fd5087',
-    //        width: 450,
-    //        title: 'Oops...',
-    //        text: 'Something went wrong',
-    //        showCloseButton: true,
-    //        color: 'whitesmoke',
-    //        background: 'black'
-    //      });
-    //    }
-    //  );
-
-    //axios({
-    //  url: 'http://localhost:3080/avatar/upload',
-    //  method: 'POST',
-    //  headers: { 'Content-type': 'multipart/form-data' },
-    //  data: formData,
-    //  withCredentials: true
-    //}).then(
-    //  (response) => {
-    //              console.log('new avatar uploaded');
-    //  },
-    //  (error) => {
-    //    console.log(error.message);
-    //    Swal.fire({
-    //      showConfirmButton: false,
-    //      icon: 'error',
-    //      iconColor: '#fd5087',
-    //      width: 450,
-    //      title: 'Oops...',
-    //      text: 'Something went wrong',
-    //      showCloseButton: true,
-    //      color: 'whitesmoke',
-    //      background: 'black'
-    //    });
-    //  }
-    //);
     setFile(undefined);
   };
 
@@ -120,16 +75,16 @@ const EditAvatar = ({ user, open, setOpen }: any) => {
       <Modal
         sx={{ color: 'black' }}
         open={open}
-        onClose={() => {
-          if (user.avatar) {
-            setOpen(false);
-          }
+        onClose={(event, reason) => {
+          if (event && reason == 'backdropClick') return;
+          if (user.avatar) setOpen(false);
         }}
       >
         <ModalDialog
           aria-labelledby="basic-modal-dialog-title"
           sx={modalDialogStyle}
         >
+          <ModalClose />
           <Typography
             id="basic-modal-dialog-title"
             component="h2"
@@ -155,7 +110,7 @@ const EditAvatar = ({ user, open, setOpen }: any) => {
                 variant="contained"
                 color="inherit"
               >
-                Submit
+                {buttonText}
               </LoadingButton>
             </Stack>
           </form>
