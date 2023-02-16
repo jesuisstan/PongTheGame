@@ -1,14 +1,11 @@
 import { useEffect, useState, useContext } from 'react';
 import { UserContext } from '../../context/UserContext';
-import Validate2fa from './Validate2fa';
+import { useNavigate } from 'react-router-dom';
 import styles from './Login.module.css';
-import { useNavigate, BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import axios from 'axios';
-import errorAlert from '../UI/errorAlert';
 
 const Login = () => {
   const { user, setUser } = useContext(UserContext);
-  const [modalOpen, setModalOpen] = useState(false);
 
   const navigate = useNavigate();
 
@@ -18,7 +15,6 @@ const Login = () => {
       .then(
         (response) => {
           if (response.data.tfa) {
-            console.log("response.data.tfa = " + response.data.tfa)
             navigate("/validate2fa")
           }
           setUser(response.data)
@@ -37,7 +33,6 @@ const Login = () => {
 
   return (
     <div className={styles.loginCard}>
-      {/*<Validate2fa open={modalOpen} setOpen={setModalOpen} />*/}
       <div className={styles.wrapper}>
         <div className={styles.left}>Choose your Login Method</div>
         <div className={styles.center}>

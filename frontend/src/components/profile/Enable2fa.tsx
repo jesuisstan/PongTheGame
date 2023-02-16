@@ -19,7 +19,7 @@ const modalDialogStyle = {
   borderRadius: '4px'
 };
 
-const Enable2FactorAuth = ({ open, setOpen }: any) => {
+const Enable2fa = ({ open, setOpen }: any) => {
   const { user, setUser } = useContext(UserContext);
   const [load, setLoad] = useState(false);
   const [buttonText, setButtonText] = useState('Submit');
@@ -161,4 +161,4 @@ const Enable2FactorAuth = ({ open, setOpen }: any) => {
   );
 };
 
-export default Enable2FactorAuth;
+export default Enable2fa;

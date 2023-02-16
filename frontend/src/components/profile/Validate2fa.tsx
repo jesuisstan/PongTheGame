@@ -30,25 +30,15 @@ const Validate2fa = () => {
 
   const handleTextInput = (event: any) => {
     const newValue = event.target.value;
-    if (!newValue.match(/[%<>\\$|/?* +^.()\[\]]/)) {
+    if (newValue.match(/[^0-9]/)) {
+      setError('Only numbers acceptable');
+    } else {
       setError('');
       setText(newValue);
-    } else {
-      setError('Forbidden: [ ] < > ^ $ % . \\ | / ? * + ( ) space');
     }
   };
 
-  const warningNameUsed = () => {
-    setOpen(false);
-    errorAlert('This nickname is already used');
-  };
-
-  const warningWentWrong = () => {
-    setOpen(false);
-    errorAlert('Something went wrong');
-  };
-
-  const setNickname = (value: string) => {
+  const submitCode = (value: string) => {
     console.log('la-la-la');
   };
 
@@ -56,7 +46,7 @@ const Validate2fa = () => {
     event.preventDefault();
     if (text) {
       setLoad(true);
-      await setNickname(text);
+      await submitCode(text);
       setLoad(false);
       setButtonText('Done ✔️');
     }
