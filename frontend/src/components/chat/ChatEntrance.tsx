@@ -116,7 +116,9 @@ const ChatEntrance = () => {
   console.log('isprotec3 ?? '+ isPasswordProtected)
   })
 
-    if (isPasswordProtected === false) joinRoom(roomName)
+    isPasswordProtected === false
+      ? joinRoom(roomName)
+      : onPasswordSubmit()
 }
 
   // Join a chatroom if no password has been set
@@ -127,17 +129,17 @@ const ChatEntrance = () => {
       setJoinedRoom(response)
     })
   }
-  // const checkIfJoinedRoom(roomName: string)
 
   // Check if the password is right
-  const onPasswordSubmit = (e: any) => {
-    e.preventDefault()
+  const onPasswordSubmit = () => {
+    // e.preventDefault()
     socket.emit('checkPassword',
       { roomName: joinRoomClicked, password: inputPassword },
       (response: SetStateAction<boolean>) => {
         response === true ? setIsPasswordRight(true) : setIsPasswordRight(false)
       }
     )
+    if (isPasswordRight) joinRoom(joinRoomClicked)
     setInputPassword('')
   }
 
@@ -149,80 +151,80 @@ const ChatEntrance = () => {
 
   
   /*************************************************************
-   * HTML response
+   * Render HTML response
   **************************************************************/
   return (
     <div className='baseCard'>
-        <h1>Let's chat together right now</h1>
+      <h1>Let's chat together right now</h1>
 
-              { // If user has joined and given the right password,
-                // or no password is asked, then display the room
-                ((joinedRoom && ((isPasswordProtected && isPasswordRight) || !isPasswordProtected))) ?
-                <ChatRoom user={ user } room={ joinedRoom } cleanRoomLoginData={ cleanRoomLoginData } /> :
-
-              (<div>
+      { // If user has joined and given the right password,
+        // or no password is asked, then display the room
+        ((joinedRoom
+          && ((isPasswordProtected && isPasswordRight) || !isPasswordProtected))) ?
+        <ChatRoom
+          user={ user }
+          room={ joinedRoom }
+          cleanRoomLoginData={ cleanRoomLoginData }
+        /> :
+        (<div>
+        {
+          chatRooms.length === 0 ? (<div>No channel</div>) : (
+            <ul>
+              { // Mapping chatroom array to retrieve all chatrooms with
+                chatRooms.map((room, index) => (
+                  <li key={ index }>
+                    [{ room.name }]: { Object.keys(room.users).length } members
+                    | { Object.keys(room.messages).length } messages
+                    { Object.values(room.modes).indexOf('p') !== -1 ? '| PWD ' : ' ' }
                 {
-                  chatRooms.length === 0 ? (<div>No channel</div>) : (
-                    <ul>
-                      { // Mapping chatroom array to retrieve all chatrooms with
-                        chatRooms.map((room, index) => (
-                          <li key={ index }>
-                            [{ room.name }]: { Object.keys(room.users).length } members
-                            | { Object.keys(room.messages).length } messages
-                            { Object.values(room.modes).indexOf('p') !== -1 ? '| PWD ' : ' ' }
-
-                                      {
-            joinRoomClicked === room.name &&
-            Object.values(room.modes).indexOf('p') !== -1 &&
-            (
-                  <form onSubmit={ onPasswordSubmit }>
+                  joinRoomClicked === room.name &&
+                  Object.values(room.modes).indexOf('p') !== -1 &&
+                  (
+                    <>
                     <label htmlFor="password">password</label>
                     <input type="password"
                       id="password"
                       value={ inputPassword }
                       onChange={ (e) => setInputPassword(e.target.value) }
                     />
-                    <button type="submit">access</button>
-                  </form>
-            )
-          }
-
-
-                            <button onClick={ () => onClickJoinRoom(room.name) }>join</button>
-                          </li>
-                        ))
-                      }
-                    </ul>
-                )}
-
-                { // Button that gets into chatroom create mode 
-                  chatRooms.length < parseInt(process.env.REACT_APP_MAX_CHATROOM_NBR!)
-                    && <button onClick={ onNewClick }>new</button>
+                    </>
+                  )
                 }
-                
-                { // Chatroom create mode form
-                  chatRoomCreateMode &&
-                  <form onSubmit={ onChatRoomCreateModeSubmit }>
-                    <label htmlFor="roomCreateSubmit">name</label>
-                    <input type="text"
-                      id="rommCreateSubmit"
-                      value={ newChatRoomName }
-                      onChange={ (e) => onValueChange('name', e.target.value) }
-                    />
+                    <button onClick={ () => onClickJoinRoom(room.name) }>join</button>
+                  </li>
+                ))
+              }
+            </ul>
+        )}
 
-                    <label htmlFor="password">password</label>
-                    <input type="password"
-                      id="password"
-                      value={ chatRoomPassword }
-                      onChange={ (e) => onValueChange('password', e.target.value) }
-                    />
+        { // Button that gets into chatroom create mode 
+          chatRooms.length < parseInt(process.env.REACT_APP_MAX_CHATROOM_NBR!)
+            && <button onClick={ onNewClick }>new</button>
+        }
+        
+        { // Chatroom create mode form
+          chatRoomCreateMode &&
+          <form onSubmit={ onChatRoomCreateModeSubmit }>
+            <label htmlFor="roomCreateSubmit">name</label>
+            <input type="text"
+              id="rommCreateSubmit"
+              value={ newChatRoomName }
+              onChange={ (e) => onValueChange('name', e.target.value) }
+            />
 
-                    <button type="submit">create</button>
-                  </form>
-                }
-              </div>)
-            
-          }
+            <label htmlFor="password">password</label>
+            <input type="password"
+              id="password"
+              value={ chatRoomPassword }
+              onChange={ (e) => onValueChange('password', e.target.value) }
+            />
+
+            <button type="submit">create</button>
+          </form>
+        }
+      </div>
+      )
+  }
     </div>
   )
 }
