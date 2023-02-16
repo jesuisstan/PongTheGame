@@ -16,7 +16,8 @@ model User {
   profileId String
   provider  String
 
-  totpSecret TotpSecret?
+  totpEnabled Boolean     @default(false)
+  totpSecret  TotpSecret?
 
   // MatchEntry
   matchEntries MatchEntry[]
