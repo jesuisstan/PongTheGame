@@ -101,6 +101,7 @@ export class AvatarController {
 
     await handle.write(file.buffer);
     await handle.close();
+    // TODO remove provider avatar from db
   }
 
   @Delete('/')
