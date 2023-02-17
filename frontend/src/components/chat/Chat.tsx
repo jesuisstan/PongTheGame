@@ -15,7 +15,7 @@ import ChatRoom from "./ChatRoom";
  * It is the entrance for chat rooms.
  * Users can create/join chat rooms.
 **************************************************************/
-const ChatEntrance = () => {
+const Chat = () => {
 
   /*************************************************************
    * States
@@ -229,4 +229,4 @@ const ChatEntrance = () => {
   )
 }
 
-export default ChatEntrance
+export default Chat

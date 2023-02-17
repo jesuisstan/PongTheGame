@@ -1,4 +1,5 @@
 import { useState, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../contexts/UserContext';
 import axios from 'axios';
 import LoadingButton from '@mui/lab/LoadingButton';
@@ -20,59 +21,46 @@ const modalDialogStyle = {
   borderRadius: '4px'
 };
 
-const EditNickname = ({ open, setOpen }: any) => {
+const Validate2fa = ({ open, setOpen, userData }: any) => {
   const { user, setUser } = useContext(UserContext);
   const [text, setText] = useState('');
   const [error, setError] = useState('');
   const [load, setLoad] = useState(false);
   const [buttonText, setButtonText] = useState('Submit');
+  const navigate = useNavigate();
 
   const handleTextInput = (event: any) => {
     const newValue = event.target.value;
-    if (!newValue.match(/[%<>\\$|/?* +^.()\[\]]/)) {
+    if (newValue.match(/[^0-9]/)) {
+      setError('Only numbers acceptable');
+    } else {
       setError('');
       setText(newValue);
-    } else {
-      setError('Forbidden: [ ] < > ^ $ % . \\ | / ? * + ( ) space');
     }
   };
 
-  const warningNameUsed = () => {
-    setOpen(false);
-    errorAlert('This nickname is already used');
-  };
-
-  const warningWentWrong = () => {
-    setOpen(false);
-    errorAlert('Something went wrong');
-  };
-
-  const setNickname = (value: string) => {
-    return axios
-      .patch(
-        String(process.env.REACT_APP_URL_SET_NICKNAME),
-        { nickname: value },
-        {
-          withCredentials: true,
-          headers: { 'Content-type': 'application/json; charset=UTF-8' }
-        }
-      )
-      .then(
-        (response) => {
-          setUser(response.data);
-        },
-        (error) => {
-          console.log(error);
-          error.request.status === 400 ? warningNameUsed() : warningWentWrong();
-        }
-      );
+  const submitCode = (value: string) => {
+    console.log('2fa code submitted after login');
+    return true // todo hardcode
   };
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     if (text) {
       setLoad(true);
-      await setNickname(text);
+      if (submitCode(text) === true) {
+        setUser(userData);
+      } else {
+        // user data from git or 42 should be deleted from back
+        setUser({
+          id: -11,
+          nickname: '',
+          avatar: '',
+          provider: '',
+          username: '',
+          tfa: false
+        });
+      }
       setLoad(false);
       setButtonText('Done ✔️');
     }
@@ -80,17 +68,12 @@ const EditNickname = ({ open, setOpen }: any) => {
     setError('');
     setTimeout(() => setOpen(false), 442);
     setTimeout(() => setButtonText('Submit'), 442);
+    setTimeout(() => navigate('/profile'), 500);
   };
 
   return (
     <div>
-      <Modal
-        sx={{ color: 'black' }}
-        open={open}
-        onClose={(event, reason) => {
-          if (event && reason === 'closeClick') setOpen(false);
-        }}
-      >
+      <Modal sx={{ color: 'black' }} open={open}>
         <ModalDialog
           aria-labelledby="basic-modal-dialog-title"
           sx={modalDialogStyle}
@@ -101,21 +84,19 @@ const EditNickname = ({ open, setOpen }: any) => {
             component="h2"
             sx={{ color: 'black' }}
           >
-            Modifying your nickname
+            Verifying 2FA Code
           </Typography>
           <form onSubmit={handleSubmit}>
             <Stack spacing={2}>
               <FormControl>
-                <FormLabel sx={{ color: 'black' }}>
-                  3 - 10 characters:
-                </FormLabel>
+                <FormLabel sx={{ color: 'black' }}>6 digits:</FormLabel>
                 <TextField
                   autoFocus
                   required
                   value={text}
                   inputProps={{
-                    minLength: 3,
-                    maxLength: 10
+                    minLength: 6,
+                    maxLength: 6
                   }}
                   helperText={error} // error message
                   error={!!error} // set to true to change the border/helperText color to red
@@ -139,4 +120,4 @@ const EditNickname = ({ open, setOpen }: any) => {
   );
 };
 
-export default EditNickname;
+export default Validate2fa;

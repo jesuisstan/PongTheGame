@@ -13,7 +13,7 @@ import CreateIcon from '@mui/icons-material/Create';
 import ButtonPong from '../UI/ButtonPong';
 import EditNickname from './EditNickname';
 import EditAvatar from './EditAvatar';
-import Enable2FactorAuth from './Enable2FactorAuth';
+import Enable2fa from './Enable2fa';
 import styles from './Profile.module.css';
 
 const Profile = () => {
@@ -82,7 +82,7 @@ const Profile = () => {
               endIcon={<ArrowForwardIosIcon />}
               onClick={toggleTfa}
             />
-            <Enable2FactorAuth
+            <Enable2fa
               open={modalTwoFactorAuthOpen}
               setOpen={setModalTwoFactorAuthOpen}
             />
