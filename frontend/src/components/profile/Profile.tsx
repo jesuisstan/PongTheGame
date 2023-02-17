@@ -7,27 +7,86 @@ import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
 import Typography from '@mui/joy/Typography';
 import List from '@mui/joy/List';
 import ListItem from '@mui/joy/ListItem';
-import Checkbox from '@mui/material/Checkbox';
 import CreateIcon from '@mui/icons-material/Create';
 import ButtonPong from '../UI/ButtonPong';
 import EditNickname from './EditNickname';
 import EditAvatar from './EditAvatar';
 import styles from './Profile.module.css';
+import Enable2FactorAuth from './Enable2FactorAuth';
+import axios from 'axios';
+import Swal from 'sweetalert2';
 
 const Profile = () => {
   const { user, setUser } = useContext(UserContext);
   const [modalNicknameOpen, setModalNicknameOpen] = useState(false);
   const [modalAvatarOpen, setModalAvatarOpen] = useState(false);
+  const [modalTwoFactorAuthOpen, setModalTwoFactorAuthOpen] = useState(false);
 
-  const enableTwoStepVerification = () => {
-    console.log('2-step Verif checkbox clicked');
+  const toggleTfa = () => {
+    if (user.tfa) {
+      return axios
+        .patch(
+          String(process.env.REACT_APP_URL_TOGGLE_TFA),
+          { enabled: false },
+          {
+            withCredentials: true,
+            headers: { 'Content-type': 'application/json; charset=UTF-8' }
+          }
+        )
+        .then(
+          (response) => {
+            setUser(response.data);
+            //if (response.data.tfa) setModalTwoFactorAuthOpen(true)
+          },
+          (error) => {
+            Swal.fire({
+              showConfirmButton: false,
+              icon: 'error',
+              iconColor: '#fd5087',
+              width: 450,
+              title: 'Oops...',
+              text: 'Something went wrong',
+              showCloseButton: true,
+              color: 'whitesmoke',
+              background: 'black'
+            });
+          }
+        );
+    } else {
+      setModalTwoFactorAuthOpen(true);
+
+      return axios
+        .patch(
+          String(process.env.REACT_APP_URL_TOGGLE_TFA),
+          { enabled: true },
+          {
+            withCredentials: true,
+            headers: { 'Content-type': 'application/json; charset=UTF-8' }
+          }
+        )
+        .then(
+          (response) => {
+            setUser(response.data);
+          },
+          (error) => {
+            Swal.fire({
+              showConfirmButton: false,
+              icon: 'error',
+              iconColor: '#fd5087',
+              width: 450,
+              title: 'Oops...',
+              text: 'Something went wrong',
+              showCloseButton: true,
+              color: 'whitesmoke',
+              background: 'black'
+            });
+          }
+        );
+    }
   };
 
   return !user.nickname && user.provider ? (
-    <EditNickname
-      open={true}
-      setOpen={setModalNicknameOpen}
-    />
+    <EditNickname open={true} setOpen={setModalNicknameOpen} />
   ) : (
     <div className={styles.profileCard}>
       <div className={styles.left}>
@@ -41,10 +100,7 @@ const Profile = () => {
               endIcon={<AddAPhotoIcon />}
               onClick={() => setModalAvatarOpen(true)}
             />
-            <EditAvatar
-              open={modalAvatarOpen}
-              setOpen={setModalAvatarOpen}
-            />
+            <EditAvatar open={modalAvatarOpen} setOpen={setModalAvatarOpen} />
           </div>
         </div>
 
@@ -61,13 +117,20 @@ const Profile = () => {
             <List aria-labelledby="basic-list-demo">
               <ListItem>Login method: {user.provider}</ListItem>
               <ListItem>
-                2-Factor Authentication:{' '}
-                {<Checkbox onClick={enableTwoStepVerification} />}
+                2-Factor Authentication: {user.tfa ? 'on' : 'off'}
               </ListItem>
             </List>
           </div>
           <div className={styles.bottom}>
-            <ButtonPong text="Enable 2FA" endIcon={<ArrowForwardIosIcon />} />
+            <ButtonPong
+              text={user.tfa === true ? 'Disable 2FA' : 'Setup 2FA'}
+              endIcon={<ArrowForwardIosIcon />}
+              onClick={toggleTfa}
+            />
+            <Enable2FactorAuth
+              open={modalTwoFactorAuthOpen}
+              setOpen={setModalTwoFactorAuthOpen}
+            />
           </div>
         </div>
       </div>
