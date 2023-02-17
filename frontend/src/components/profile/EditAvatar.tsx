@@ -1,5 +1,5 @@
 import { useState, useContext } from 'react';
-import { UserContext } from '../../context/UserContext';
+import { UserContext } from '../../contexts/UserContext';
 import axios from 'axios';
 import errorAlert from '../UI/errorAlert';
 import FormLabel from '@mui/joy/FormLabel';
@@ -67,7 +67,7 @@ const EditAvatar = ({ open, setOpen }: any) => {
         sx={{ color: 'black' }}
         open={open}
         onClose={(event, reason) => {
-          if (event && reason == 'closeClick') setOpen(false);
+          if (event && reason === 'closeClick') setOpen(false);
         }}
       >
         <ModalDialog
