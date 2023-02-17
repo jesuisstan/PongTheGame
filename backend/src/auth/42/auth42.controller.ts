@@ -1,16 +1,7 @@
-import {
-  Controller,
-  Get,
-  Req,
-  Res,
-  UnauthorizedException,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Res, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { Auth42Guard } from 'src/auth/42/auth42.guard';
-import { AuthService } from 'src/auth/auth.service';
-import { convertTime } from 'src/utils/time';
 
 // TODO use config
 const CLIENT_URL = 'http://localhost:3000';
@@ -18,8 +9,6 @@ const CLIENT_URL = 'http://localhost:3000';
 @Controller('/auth/42')
 @ApiTags('Authentication/42')
 export class Auth42Controller {
-  constructor(private readonly auth: AuthService) {}
-
   @Get('/')
   @ApiOperation({ summary: 'Connect using the 42 OAuth2 API' })
   @UseGuards(Auth42Guard)
@@ -38,17 +27,7 @@ export class Auth42Controller {
     ],
   })
   @UseGuards(Auth42Guard)
-  async callback(@Req() req: Request, @Res() res: Response) {
-    if (req.user === undefined) throw new UnauthorizedException();
-
-    const token = await this.auth.signToken(req.user.id);
-
-    res.cookie('access_token', token, {
-      maxAge: convertTime({
-        minutes: 30,
-      }),
-    });
-
+  async callback(@Res() res: Response) {
     return res.redirect(`${CLIENT_URL}/profile`);
   }
 }

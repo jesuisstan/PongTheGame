@@ -48,11 +48,12 @@ const Validate2fa = ({ open, setOpen, userData }: any) => {
     event.preventDefault();
     if (text) {
       setLoad(true);
-      if (submitCode(text)) {
+      if (submitCode(text) === true) {
         setUser(userData);
       } else {
+        // user data from git or 42 should be deleted from back
         setUser({
-          id: -1,
+          id: -11,
           nickname: '',
           avatar: '',
           provider: '',

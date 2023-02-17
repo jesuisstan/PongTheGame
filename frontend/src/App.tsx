@@ -14,6 +14,9 @@ import Validate2fa from './components/profile/Validate2fa';
 import './App.css';
 
 function App() {
+  const [open, setOpen] = useState(false);
+  const [tmpUser, setTmpUser] = useState(null);
+
   const [user, setUser] = useState<User>({
     id: -1,
     nickname: '',
@@ -32,6 +35,22 @@ function App() {
   //    );
   //}, []);
 
+  useEffect(() => {
+    axios
+      .get(String(process.env.REACT_APP_URL_AUTH), { withCredentials: true })
+      .then(
+        (response) => {
+          //let flag_validated = false
+          if (response.data.tfa) {
+            setTmpUser(response.data);
+
+            setOpen(true);
+          } else setUser(response.data);
+        },
+        (error) => console.log(error)
+      );
+  }, []);
+
   user.provider ? console.log('user logged in') : console.log('no user');
   console.log(user);
 
@@ -39,6 +58,7 @@ function App() {
     <BrowserRouter>
       <div className="App">
         <UserContext.Provider value={{ user, setUser }}>
+          <Validate2fa open={open} setOpen={setOpen} userData={tmpUser} />
           <Routes>
             <Route path="/" element={<MainLayout />}>
               <Route index={true} element={<Home />} />
