@@ -3,7 +3,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
 
 export class IsAuthenticatedGuard extends AuthGuard('jwt') {
-  constructor(){
+  constructor() {
     super();
   }
 }
