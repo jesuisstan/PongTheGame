@@ -40,11 +40,11 @@ const EditNickname = ({ open, setOpen }: any) => {
   const warningNameUsed = () => {
     setOpen(false);
     errorAlert('This nickname is already used');
-   };
+  };
 
   const warningWentWrong = () => {
     setOpen(false);
-    errorAlert('Something went wrong')
+    errorAlert('Something went wrong');
   };
 
   const setNickname = (value: string) => {
