@@ -1,4 +1,4 @@
-import { useState, useContext, useEffect } from 'react';
+import { useState, useContext, useEffect, SetStateAction, Dispatch } from 'react';
 import { UserContext } from '../../contexts/UserContext';
 import axios from 'axios';
 import QRCode from 'qrcode';
@@ -19,7 +19,13 @@ const modalDialogStyle = {
   borderRadius: '4px'
 };
 
-const Enable2fa = ({ open, setOpen }: any) => {
+const Enable2fa = ({
+  open,
+  setOpen
+}: {
+  open: boolean;
+  setOpen: Dispatch<SetStateAction<boolean>>;
+}) => {
   const { user, setUser } = useContext(UserContext);
   const [load, setLoad] = useState(false);
   const [buttonText, setButtonText] = useState('Submit');

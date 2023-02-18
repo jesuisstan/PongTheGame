@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react';
+import { useState, useContext, SetStateAction, Dispatch } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../contexts/UserContext';
 import axios from 'axios';
@@ -21,7 +21,15 @@ const modalDialogStyle = {
   borderRadius: '4px'
 };
 
-const Validate2fa = ({ open, setOpen, userData }: any) => {
+const Validate2fa = ({
+  open,
+  setOpen,
+  userData
+}: {
+  open: boolean;
+  setOpen: Dispatch<SetStateAction<boolean>>;
+  userData: any;
+}) => {
   const { user, setUser } = useContext(UserContext);
   const [text, setText] = useState('');
   const [error, setError] = useState('');

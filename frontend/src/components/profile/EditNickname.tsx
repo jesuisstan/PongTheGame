@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react';
+import { useState, useContext, SetStateAction, Dispatch } from 'react';
 import { UserContext } from '../../contexts/UserContext';
 import axios from 'axios';
 import LoadingButton from '@mui/lab/LoadingButton';
@@ -20,7 +20,13 @@ const modalDialogStyle = {
   borderRadius: '4px'
 };
 
-const EditNickname = ({ open, setOpen }: any) => {
+const EditNickname = ({
+  open,
+  setOpen
+}: {
+  open: boolean;
+  setOpen: Dispatch<SetStateAction<boolean>>;
+}) => {
   const { user, setUser } = useContext(UserContext);
   const [text, setText] = useState('');
   const [error, setError] = useState('');

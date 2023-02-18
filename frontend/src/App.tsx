@@ -76,8 +76,6 @@ function App() {
                     !user.provider ? <Login /> : <Navigate to="/profile" />
                   }
                 />
-
-                <Route path="validate2fa" element={<Validate2fa />} />
                 <Route path="chat" element={<Chat />} />
                 <Route path="game" element={<Game />} />
                 <Route
