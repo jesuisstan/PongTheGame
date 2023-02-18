@@ -41,7 +41,7 @@ const Validate2fa = ({ open, setOpen, userData }: any) => {
 
   const submitCode = (value: string) => {
     console.log('2fa code submitted after login');
-    return true // todo hardcode
+    return false; // todo hardcode
   };
 
   const handleSubmit = async (event: React.FormEvent) => {
@@ -51,15 +51,10 @@ const Validate2fa = ({ open, setOpen, userData }: any) => {
       if (submitCode(text) === true) {
         setUser(userData);
       } else {
-        // user data from git or 42 should be deleted from back
-        setUser({
-          id: -11,
-          nickname: '',
-          avatar: '',
-          provider: '',
-          username: '',
-          tfa: false
+        axios.get('http://localhost:3080/auth/logout', {
+          withCredentials: true
         });
+        errorAlert('Validation failed. Try login again');
       }
       setLoad(false);
       setButtonText('Done ✔️');
