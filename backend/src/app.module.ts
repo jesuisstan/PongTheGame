@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { AchivementModule } from 'src/achievement/achievement.module';
 import { AuthModule } from 'src/auth/auth.module';
 import { AvatarModule } from 'src/avatar/avatar.module';
 import { MatchModule } from 'src/match/match.module';
@@ -14,6 +15,7 @@ import { ChatModule } from './chat/chat.module';
       envFilePath: '../.env',
       isGlobal: true,
     }),
+    AchivementModule,
     AuthModule,
     UserModule,
     MatchModule,
