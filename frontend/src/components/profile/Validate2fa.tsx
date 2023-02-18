@@ -51,7 +51,7 @@ const Validate2fa = ({ open, setOpen, userData }: any) => {
       if (submitCode(text) === true) {
         setUser(userData);
       } else {
-        axios.get('http://localhost:3080/auth/logout', {
+        axios.get(String(process.env.REACT_APP_URL_LOGOUT), {
           withCredentials: true
         });
         errorAlert('Validation failed. Try login again');
