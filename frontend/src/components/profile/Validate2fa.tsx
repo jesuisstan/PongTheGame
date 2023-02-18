@@ -1,6 +1,6 @@
 import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { UserContext } from '../../context/UserContext';
+import { UserContext } from '../../contexts/UserContext';
 import axios from 'axios';
 import LoadingButton from '@mui/lab/LoadingButton';
 import SaveIcon from '@mui/icons-material/Save';
@@ -41,24 +41,20 @@ const Validate2fa = ({ open, setOpen, userData }: any) => {
 
   const submitCode = (value: string) => {
     console.log('2fa code submitted after login');
-    return true // todo hardcode
+    return false; // todo hardcode
   };
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     if (text) {
       setLoad(true);
-      if (submitCode(text)) {
+      if (submitCode(text) === true) {
         setUser(userData);
       } else {
-        setUser({
-          id: -1,
-          nickname: '',
-          avatar: '',
-          provider: '',
-          username: '',
-          tfa: false
+        axios.get(String(process.env.REACT_APP_URL_LOGOUT), {
+          withCredentials: true
         });
+        errorAlert('Validation failed. Try login again');
       }
       setLoad(false);
       setButtonText('Done ✔️');

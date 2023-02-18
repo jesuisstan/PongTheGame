@@ -1,6 +1,6 @@
 import { useState, useContext } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { UserContext } from '../../context/UserContext';
+import { UserContext } from '../../contexts/UserContext';
 import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';

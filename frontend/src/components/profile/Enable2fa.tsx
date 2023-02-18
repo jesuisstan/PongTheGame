@@ -1,5 +1,5 @@
 import { useState, useContext, useEffect } from 'react';
-import { UserContext } from '../../context/UserContext';
+import { UserContext } from '../../contexts/UserContext';
 import axios from 'axios';
 import QRCode from 'qrcode';
 import Modal from '@mui/joy/Modal';
