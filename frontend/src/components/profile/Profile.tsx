@@ -1,5 +1,5 @@
 import { useState, useContext } from 'react';
-import { UserContext } from '../../context/UserContext';
+import { UserContext } from '../../contexts/UserContext';
 import axios from 'axios';
 import errorAlert from '../UI/errorAlert';
 import Avatar from '@mui/material/Avatar';

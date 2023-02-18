@@ -1,5 +1,5 @@
 import { useState, useContext } from 'react';
-import { UserContext } from '../../context/UserContext';
+import { UserContext } from '../../contexts/UserContext';
 import axios from 'axios';
 import LoadingButton from '@mui/lab/LoadingButton';
 import SaveIcon from '@mui/icons-material/Save';
@@ -40,11 +40,11 @@ const EditNickname = ({ open, setOpen }: any) => {
   const warningNameUsed = () => {
     setOpen(false);
     errorAlert('This nickname is already used');
-   };
+  };
 
   const warningWentWrong = () => {
     setOpen(false);
-    errorAlert('Something went wrong')
+    errorAlert('Something went wrong');
   };
 
   const setNickname = (value: string) => {
@@ -88,7 +88,7 @@ const EditNickname = ({ open, setOpen }: any) => {
         sx={{ color: 'black' }}
         open={open}
         onClose={(event, reason) => {
-          if (event && reason == 'closeClick') setOpen(false);
+          if (event && reason === 'closeClick') setOpen(false);
         }}
       >
         <ModalDialog
