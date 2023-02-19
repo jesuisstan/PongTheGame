@@ -1,4 +1,4 @@
-import { Controller, Get, Res, UseGuards } from '@nestjs/common';
+import { Controller, Get, Res, UseGuards, UnauthorizedException} from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import { Auth42Guard } from 'src/auth/42/auth42.guard';
@@ -33,11 +33,10 @@ export class Auth42Controller {
     ],
   })
   @UseGuards(Auth42Guard)
-<<<<<<< HEAD
-  async callback(@SessionUser() user : Express.User, @Req() req: Request, @Res() res: Response) {
-    if (req.user === undefined) throw new UnauthorizedException();
+  async callback(@SessionUser() user : Express.User, @Res() res: Response) {
+    if (user === undefined) throw new UnauthorizedException();
     this.give.fisrtLogin(user);
-    const token = await this.auth.signToken(req.user.id);
+    const token = await this.auth.signToken(user.id);
 
     res.cookie('access_token', token, {
       maxAge: convertTime({
@@ -45,9 +44,6 @@ export class Auth42Controller {
       }),
     });
 
-=======
-  async callback(@Res() res: Response) {
->>>>>>> master
     return res.redirect(`${CLIENT_URL}/profile`);
   }
 }
