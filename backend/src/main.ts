@@ -10,6 +10,7 @@ import { Config } from 'src/config.interface';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { convertTime } from 'src/utils/time';
 import { SocketAdapter } from './chat/socketAdapter';
+import * as cookieParser from 'cookie-parser';
 
 const {
   POSTGRES_USER,
@@ -92,6 +93,7 @@ function setupSession(
   });
 
   app.use(session);
+  app.use(cookieParser());
   app.use(passport.initialize());
   app.use(passport.session());
 }
