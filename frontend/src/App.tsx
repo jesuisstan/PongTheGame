@@ -1,8 +1,9 @@
 import { useContext, useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import axios from 'axios';
 import { UserContext } from './contexts/UserContext';
+import { WebSocketContext } from './contexts/WebsocketContext';
 import { User } from './types/User';
+import axios from 'axios';
 import MainLayout from './components/UI/MainLayout';
 import Home from './components/pages/Home';
 import NotFound from './components/pages/NotFound';
@@ -11,8 +12,8 @@ import Game from './components/game/Game';
 import Chat from './components/chat/Chat';
 import Profile from './components/profile/Profile';
 import Validate2fa from './components/profile/Validate2fa';
+import History from './components/pages/History';
 import './App.css';
-import { WebSocketContext } from './contexts/WebsocketContext';
 
 const URL_GET_USER =
   String(process.env.REACT_APP_URL_BACKEND) +
@@ -22,7 +23,7 @@ function App() {
   // Fetching the socket from its context
   const socket = useContext(WebSocketContext);
   const [open, setOpen] = useState(false);
-  const [tmpUser, setTmpUser] = useState(null);
+  const [tmpUser, setTmpUser] = useState<User | undefined>();
 
   const [user, setUser] = useState<User>({
     id: -1,
@@ -79,6 +80,7 @@ function App() {
                 />
                 <Route path="chat" element={<Chat />} />
                 <Route path="game" element={<Game />} />
+                <Route path="history" element={<History />} />
                 <Route
                   path="profile"
                   element={

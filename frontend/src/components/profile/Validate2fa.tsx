@@ -2,6 +2,7 @@ import { useState, useContext, SetStateAction, Dispatch } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../contexts/UserContext';
 import axios from 'axios';
+import { User } from '../../types/User';
 import LoadingButton from '@mui/lab/LoadingButton';
 import SaveIcon from '@mui/icons-material/Save';
 import FormControl from '@mui/joy/FormControl';
@@ -32,14 +33,14 @@ const Validate2fa = ({
 }: {
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
-  userData: any;
+  userData: User | undefined;
 }) => {
+  const navigate = useNavigate();
   const { user, setUser } = useContext(UserContext);
   const [text, setText] = useState('');
   const [error, setError] = useState('');
   const [load, setLoad] = useState(false);
   const [buttonText, setButtonText] = useState('Submit');
-  const navigate = useNavigate();
 
   const handleTextInput = (event: any) => {
     const newValue = event.target.value;
@@ -60,7 +61,7 @@ const Validate2fa = ({
     event.preventDefault();
     if (text) {
       setLoad(true);
-      if (submitCode(text) === true) {
+      if (submitCode(text) === true && userData) {
         setUser(userData);
       } else {
         axios.get(URL_LOGOUT, {

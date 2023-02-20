@@ -1,4 +1,5 @@
 import { useState, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../contexts/UserContext';
 import axios from 'axios';
 import errorAlert from '../UI/errorAlert';
@@ -21,6 +22,7 @@ const URL_TOGGLE_TFA =
   String(process.env.REACT_APP_URL_TOGGLE_TFA);
 
 const Profile = () => {
+  const navigate = useNavigate();
   const { user, setUser } = useContext(UserContext);
   const [modalNicknameOpen, setModalNicknameOpen] = useState(false);
   const [modalAvatarOpen, setModalAvatarOpen] = useState(false);
@@ -139,7 +141,11 @@ const Profile = () => {
             <Rating name="read-only" value={4} readOnly />
           </div>
           <div className={styles.bottom}>
-            <ButtonPong text="Full stats" endIcon={<ArrowForwardIosIcon />} />
+            <ButtonPong
+              text="Full stats"
+              onClick={() => navigate('/history')}
+              endIcon={<ArrowForwardIosIcon />}
+            />
           </div>
         </div>
       </div>

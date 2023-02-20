@@ -20,7 +20,7 @@ const NotFound = () => {
             onClick={() => navigate(-1)}
             startIcon={<ArrowBackIosIcon />}
           />
-          <h1></h1>
+          <h1> </h1>
           <ButtonPong
             text="Home"
             onClick={() => navigate('/')}
