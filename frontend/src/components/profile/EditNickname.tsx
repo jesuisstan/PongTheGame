@@ -37,7 +37,7 @@ const EditNickname = ({
 
   const handleTextInput = (event: any) => {
     const newValue = event.target.value;
-    if (!newValue.match(/[%<>\\$|/?* +^.()\[\]]/)) {
+    if (!newValue.match(/[%<>\\$|/?* +^.()[\]]/)) {
       setError('');
       setText(newValue);
     } else {
