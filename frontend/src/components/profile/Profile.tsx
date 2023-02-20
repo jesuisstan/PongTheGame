@@ -26,7 +26,7 @@ const Profile = () => {
   const { user, setUser } = useContext(UserContext);
   const [modalNicknameOpen, setModalNicknameOpen] = useState(false);
   const [modalAvatarOpen, setModalAvatarOpen] = useState(false);
-  const [modalTwoFactorAuthOpen, setModalTwoFactorAuthOpen] = useState(false);
+  const [modal2faOpen, setModal2faOpen] = useState(false);
 
   const toggleTfa = () => {
     if (user.tfa) {
@@ -43,7 +43,7 @@ const Profile = () => {
           (response) => setUser(response.data),
           (error) => errorAlert('Something went wrong')
         );
-    } else setModalTwoFactorAuthOpen(true);
+    } else setModal2faOpen(true);
   };
 
   return !user.nickname && user.provider ? (
@@ -89,8 +89,8 @@ const Profile = () => {
               onClick={toggleTfa}
             />
             <Enable2fa
-              open={modalTwoFactorAuthOpen}
-              setOpen={setModalTwoFactorAuthOpen}
+              open={modal2faOpen}
+              setOpen={setModal2faOpen}
             />
           </div>
         </div>

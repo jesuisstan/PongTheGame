@@ -17,6 +17,7 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import SaveIcon from '@mui/icons-material/Save';
 import TextField from '@mui/material/TextField';
 import errorAlert from '../UI/errorAlert';
+import styles from './Profile.module.css';
 
 const URL_TOGGLE_TFA =
   String(process.env.REACT_APP_URL_BACKEND) +
@@ -46,9 +47,9 @@ const Enable2fa = ({
   const [text, setText] = useState('');
   const [error, setError] = useState('');
 
-  useEffect(() => {
-    QRCode.toDataURL('').then(setqrCodeUrl);
-  }, []);
+  const createQRcode = () => {
+    QRCode.toDataURL('otpauth_url').then(setqrCodeUrl);
+  };
 
   const handleTextInput = (event: any) => {
     const newValue = event.target.value;
@@ -134,8 +135,8 @@ const Enable2fa = ({
                 </li>
                 <li>In the authenticator app, select "+" icon.</li>
                 <li>
-                  Select "Scan a barcode (or QR code)" and use the phone's
-                  camera to scan this barcode.
+                  Select "Scan a QR code" and use the phone's camera to scan the
+                  following QR code.
                 </li>
               </div>
 
@@ -143,7 +144,20 @@ const Enable2fa = ({
                 <Typography component="h3" sx={{ color: 'rgb(37, 120, 204)' }}>
                   Scan QR Code
                 </Typography>
-                <img src={qrCodeUrl} alt="qrcode url" />
+                <div className={styles.QRbox}>
+                  {!qrCodeUrl ? (
+                    <LoadingButton
+                      disabled={qrCodeUrl ? true : false}
+                      variant="contained"
+                      color="inherit"
+                      onClick={createQRcode}
+                    >
+                      Show QR Code
+                    </LoadingButton>
+                  ) : (
+                    <img src={qrCodeUrl} alt="" />
+                  )}
+                </div>
               </div>
               <div>
                 <Typography component="h3" sx={{ color: 'rgb(37, 120, 204)' }}>
