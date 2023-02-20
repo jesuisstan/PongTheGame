@@ -3,24 +3,61 @@ generator client {
   binaryTargets = ["native", "linux-musl"]
 }
 
+generator dbml {
+  projectDatabaseType = "PostgreSQL"
+  provider            = "prisma-dbml-generator"
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 model User {
-  id        Int     @id @default(autoincrement()) // primary key
+  id        Int     @id @default(autoincrement())
   nickname  String? @unique
   username  String
   avatar    String?
   profileId String
   provider  String
+  role      Role    @default(USER)
+  tfa       Boolean @default(false)
 
   // MatchEntry
   matchEntries MatchEntry[]
 
+  friends     Friends[]
+  achievement Achievement[]
+
   @@unique([profileId, provider])
 }
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model Achievement {
+  id          Int     @id @default(autoincrement())
+  Name        String  @unique
+  Title       String  @unique // MEMO Check if needed to keep the title ?
+  Description String
+  icon_path   String? // TODO Remove the ? when we got the picture
+  User        User?   @relation(fields: [userId], references: [id])
+  userId      Int?
+
+  @@map("Achievements")
+}
+
+model Friends {
+  user      User     @relation(fields: [friendId], references: [id])
+  friendId  Int      @id
+  addedDate DateTime @default(now())
+}
+
+// model GithubUser {
+//   user User?
+// }
 
 model MatchEntry {
   id    Int @id @default(autoincrement())

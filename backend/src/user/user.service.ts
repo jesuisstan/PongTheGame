@@ -2,6 +2,17 @@ import { Injectable } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 
+const USER_SELECT = {
+  avatar: true,
+  id: true,
+  profileId: true,
+  provider: true,
+  nickname: true,
+  username: true,
+  tfa: true,
+  role: true,
+};
+
 @Injectable()
 export class UserService {
   constructor(private readonly prisma: PrismaService) {}
@@ -9,28 +20,14 @@ export class UserService {
   async findUserById(id: number): Promise<User | null> {
     return this.prisma.user.findUnique({
       where: { id },
-      select: {
-        avatar: true,
-        id: true,
-        profileId: true,
-        provider: true,
-        nickname: true,
-        username: true,
-      },
+      select: USER_SELECT,
     });
   }
 
   async findUserByNickname(nickname: string) {
     return this.prisma.user.findUnique({
       where: { nickname },
-      select: {
-        avatar: true,
-        id: true,
-        profileId: true,
-        provider: true,
-        nickname: true,
-        username: true,
-      },
+      select: USER_SELECT,
     });
   }
 
@@ -45,14 +42,7 @@ export class UserService {
           provider,
         },
       },
-      select: {
-        avatar: true,
-        id: true,
-        nickname: true,
-        profileId: true,
-        provider: true,
-        username: true,
-      },
+      select: USER_SELECT,
     });
   }
 

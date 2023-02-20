@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
+import { UserContext } from '../../contexts/UserContext';
 import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
@@ -9,7 +10,8 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import styles from './UI.module.css';
 
-const MenuBar = ({ user }: any) => {
+const MenuBar = () => {
+  const { user } = useContext(UserContext)
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
 
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
