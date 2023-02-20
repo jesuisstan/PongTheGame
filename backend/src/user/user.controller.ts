@@ -10,7 +10,7 @@ import {
   Patch,
   UseGuards,
   UsePipes,
-  ValidationPipe
+  ValidationPipe,
 } from '@nestjs/common';
 import { ApiBadRequestResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { User } from '@prisma/client';

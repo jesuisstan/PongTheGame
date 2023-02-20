@@ -843,6 +843,40 @@
     consola "^2.15.0"
     node-fetch "^2.6.1"
 
+"@opentelemetry/api@^1.1.0":
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/@opentelemetry/api/-/api-1.4.0.tgz#2c91791a9ba6ca0a0f4aaac5e45d58df13639ac8"
+  integrity sha512-IgMK9i3sFGNUqPMbjABm0G26g0QCKCUBfglhQ7rQq6WcxbKfEHRcmwsoER4hZcuYqJgkYn2OeuoJIv7Jsftp7g==
+
+"@opentelemetry/core@1.9.1":
+  version "1.9.1"
+  resolved "https://registry.yarnpkg.com/@opentelemetry/core/-/core-1.9.1.tgz#e343337e1a7bf30e9a6aef3ef659b9b76379762a"
+  integrity sha512-6/qon6tw2I8ZaJnHAQUUn4BqhTbTNRS0WP8/bA0ynaX+Uzp/DDbd0NS0Cq6TMlh8+mrlsyqDE7mO50nmv2Yvlg==
+  dependencies:
+    "@opentelemetry/semantic-conventions" "1.9.1"
+
+"@opentelemetry/resources@1.9.1":
+  version "1.9.1"
+  resolved "https://registry.yarnpkg.com/@opentelemetry/resources/-/resources-1.9.1.tgz#5ad3d80ba968a3a0e56498ce4bc82a6a01f2682f"
+  integrity sha512-VqBGbnAfubI+l+yrtYxeLyOoL358JK57btPMJDd3TCOV3mV5TNBmzvOfmesM4NeTyXuGJByd3XvOHvFezLn3rQ==
+  dependencies:
+    "@opentelemetry/core" "1.9.1"
+    "@opentelemetry/semantic-conventions" "1.9.1"
+
+"@opentelemetry/sdk-trace-base@^1.4.0":
+  version "1.9.1"
+  resolved "https://registry.yarnpkg.com/@opentelemetry/sdk-trace-base/-/sdk-trace-base-1.9.1.tgz#c349491b432a7e0ae7316f0b48b2d454d79d2b84"
+  integrity sha512-Y9gC5M1efhDLYHeeo2MWcDDMmR40z6QpqcWnPCm4Dmh+RHAMf4dnEBBntIe1dDpor686kyU6JV1D29ih1lZpsQ==
+  dependencies:
+    "@opentelemetry/core" "1.9.1"
+    "@opentelemetry/resources" "1.9.1"
+    "@opentelemetry/semantic-conventions" "1.9.1"
+
+"@opentelemetry/semantic-conventions@1.9.1":
+  version "1.9.1"
+  resolved "https://registry.yarnpkg.com/@opentelemetry/semantic-conventions/-/semantic-conventions-1.9.1.tgz#ad3367684a57879392513479e0a436cb2ac46dad"
+  integrity sha512-oPQdbFDmZvjXk5ZDoBGXG8B4tSB/qW5vQunJWQMFUBp7Xe8O1ByPANueJ+Jzg58esEBegyyxZ7LRmfJr7kFcFg==
+
 "@otplib/core@^12.0.1":
   version "12.0.1"
   resolved "https://registry.yarnpkg.com/@otplib/core/-/core-12.0.1.tgz#73720a8cedce211fe5b3f683cd5a9c098eaf0f8d"
@@ -880,6 +914,11 @@
     "@otplib/core" "^12.0.1"
     "@otplib/plugin-crypto" "^12.0.1"
     "@otplib/plugin-thirty-two" "^12.0.1"
+
+"@polka/url@^0.5.0":
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/@polka/url/-/url-0.5.0.tgz#b21510597fd601e5d7c95008b76bf0d254ebfd31"
+  integrity sha512-oZLYFEAzUKyi3SKnXvj32ZCEGH6RDnao7COuCVhDydMS9NrCSVXhM79VaKyP5+Zc33m0QXEd2DN3UkU7OsHcfw==
 
 "@prisma/client@4.9.0":
   version "4.9.0"
@@ -4861,6 +4900,13 @@ otplib@^12.0.1:
     "@otplib/core" "^12.0.1"
     "@otplib/preset-default" "^12.0.1"
     "@otplib/preset-v11" "^12.0.1"
+
+p-filter@2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/p-filter/-/p-filter-2.1.0.tgz#1b1472562ae7a0f742f0f3d3d3718ea66ff9c09c"
+  integrity sha512-ZBxxZ5sL2HghephhpGAQdoskxplTwr7ICaehZwLIlfL6acuVgZPm8yBNuRAFBGEqtD/hmUeq9eqLg2ys9Xr/yw==
+  dependencies:
+    p-map "^2.0.0"
 
 p-limit@^2.2.0:
   version "2.3.0"
