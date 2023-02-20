@@ -64,19 +64,21 @@ services:
     working_dir: /app-${BACKEND_NAME}
     # install project dependencies,
     # then run in dev mode
-    command: >
-            sh -cx "apk add --no-cache curl
-            && yarn install
-            && yarn prisma db push
-            && yarn run start:debug"
+    command: sh -cx 'apk add --no-cache curl && yarn install && yarn prisma db push && yarn prisma db seed && yarn run start:debug'
+
+  # yarn prisma studio &
+  # yarn run test
+
     ports:
       - "${BACKEND_PORT}:${BACKEND_PORT}"
+      - 5555:5555 # TODO remove is for prisma studio
     env_file:
       - .env
     environment:
       BACKEND_PORT: ${BACKEND_PORT}
       FRONTEND_PORT: ${BACKEND_PORT}
       SESSION_SECRET: ${SESSION_SECRET}
+      JWT_SECRET: ${JWT_SECRET}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_HOST: database
@@ -99,10 +101,10 @@ services:
     restart: unless-stopped
     healthcheck:
       test: curl -fsSL http://localhost:${BACKEND_PORT}/healthcheck
-      interval: 3s
-      timeout: 1s
+      interval: 10s
+      timeout: 30s
       retries: 30
-      start_period: 0s
+      start_period: 2s
 
   controller:
     container_name: health_controller

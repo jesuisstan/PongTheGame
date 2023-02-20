@@ -9,6 +9,8 @@ import { AppModule } from 'src/app.module';
 import { Config } from 'src/config.interface';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { convertTime } from 'src/utils/time';
+import { SocketAdapter } from './chat/socketAdapter';
+import * as cookieParser from 'cookie-parser';
 
 const {
   POSTGRES_USER,
@@ -21,6 +23,8 @@ process.env.DATABASE_URL ??= `postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  app.useWebSocketAdapter(new SocketAdapter(app));
+
   const config = app.get(ConfigService<Config>);
   const prisma = app.get(PrismaService);
 
@@ -89,6 +93,7 @@ function setupSession(
   });
 
   app.use(session);
+  app.use(cookieParser());
   app.use(passport.initialize());
   app.use(passport.session());
 }
