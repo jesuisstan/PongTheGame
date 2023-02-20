@@ -21,7 +21,7 @@ export class TotpService {
   }
 
   /**
-   * Generate an url for google authenticator (otpauth://...)
+   * Generate an url for google authenticator (`otpauth://<...>`)
    *
    * @param user the user for whom the url will be generated
    * @returns an url if the user has totp enabled, null otherwise
@@ -47,5 +47,25 @@ export class TotpService {
       TotpService.issuerName,
       totpSecret.secret,
     );
+  }
+
+  async verifyToken(user: User, token: string): Promise<boolean | null> {
+    const dbSecret = await this.prisma.totpSecret.findUnique({
+      where: {
+        userId: user.id,
+      },
+      select: {
+        secret: true,
+      },
+    });
+
+    if (dbSecret === null) {
+      return null;
+    }
+
+    return authenticator.verify({
+      secret: dbSecret.secret,
+      token,
+    });
   }
 }
