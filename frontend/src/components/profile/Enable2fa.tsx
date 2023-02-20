@@ -1,4 +1,10 @@
-import { useState, useContext, useEffect, SetStateAction, Dispatch } from 'react';
+import {
+  useState,
+  useContext,
+  useEffect,
+  SetStateAction,
+  Dispatch
+} from 'react';
 import { UserContext } from '../../contexts/UserContext';
 import axios from 'axios';
 import QRCode from 'qrcode';
@@ -11,6 +17,13 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import SaveIcon from '@mui/icons-material/Save';
 import TextField from '@mui/material/TextField';
 import errorAlert from '../UI/errorAlert';
+
+const URL_TOGGLE_TFA =
+  String(process.env.REACT_APP_URL_BACKEND) +
+  String(process.env.REACT_APP_URL_TOGGLE_TFA);
+const URL_VALIDATE_2FA =
+  String(process.env.REACT_APP_URL_BACKEND) +
+  String(process.env.REACT_APP_URL_VALIDATE_2FA);
 
 const modalDialogStyle = {
   maxWidth: 500,
@@ -50,7 +63,7 @@ const Enable2fa = ({
   const submitCode = async () => {
     return axios
       .patch(
-        String(process.env.REACT_APP_URL_SET_),
+        URL_VALIDATE_2FA,
         { nickname: 'value' },
         {
           withCredentials: true,
@@ -78,7 +91,7 @@ const Enable2fa = ({
     setError('');
     axios
       .patch(
-        String(process.env.REACT_APP_URL_TOGGLE_TFA),
+        URL_TOGGLE_TFA,
         { enabled: true },
         {
           withCredentials: true,

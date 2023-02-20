@@ -14,10 +14,13 @@ import Validate2fa from './components/profile/Validate2fa';
 import './App.css';
 import { WebSocketContext } from './contexts/WebsocketContext';
 
-function App() {
+const URL_GET_USER =
+  String(process.env.REACT_APP_URL_BACKEND) +
+  String(process.env.REACT_APP_URL_GET_USER);
 
+function App() {
   // Fetching the socket from its context
-  const socket = useContext(WebSocketContext)
+  const socket = useContext(WebSocketContext);
   const [open, setOpen] = useState(false);
   const [tmpUser, setTmpUser] = useState(null);
 
@@ -40,19 +43,17 @@ function App() {
   //}, []);
 
   useEffect(() => {
-    axios
-      .get(String(process.env.REACT_APP_URL_AUTH), { withCredentials: true })
-      .then(
-        (response) => {
-          //let flag_validated = false
-          if (response.data.tfa) {
-            setTmpUser(response.data);
+    axios.get(URL_GET_USER, { withCredentials: true }).then(
+      (response) => {
+        //let flag_validated = false
+        if (response.data.tfa) {
+          setTmpUser(response.data);
 
-            setOpen(true);
-          } else setUser(response.data);
-        },
-        (error) => console.log(error)
-      );
+          setOpen(true);
+        } else setUser(response.data);
+      },
+      (error) => console.log(error)
+    );
   }, []);
 
   user.provider ? console.log('user logged in') : console.log('no user');
@@ -80,7 +81,9 @@ function App() {
                 <Route path="game" element={<Game />} />
                 <Route
                   path="profile"
-                  element={user.provider ? <Profile /> : <Navigate to="/login" />}
+                  element={
+                    user.provider ? <Profile /> : <Navigate to="/login" />
+                  }
                 />
                 <Route path="*" element={<NotFound />} />
               </Route>

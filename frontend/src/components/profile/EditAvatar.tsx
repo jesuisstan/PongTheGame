@@ -11,6 +11,10 @@ import Typography from '@mui/joy/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
 import SaveIcon from '@mui/icons-material/Save';
 
+const URL_UPLOAD_AVATAR =
+  String(process.env.REACT_APP_URL_BACKEND) +
+  String(process.env.REACT_APP_URL_UPLOAD_AVATAR);
+
 const modalDialogStyle = {
   maxWidth: 500,
   border: '0px solid #000',
@@ -46,25 +50,21 @@ const EditAvatar = ({
     const uploadAvatar = async (formData: FormData) => {
       setLoad(true);
       try {
-        const response = await axios.post(
-          String(process.env.REACT_APP_URL_UPLOAD_AVATAR),
-          formData,
-          {
-            withCredentials: true,
-            headers: { 'Content-type': 'multipart/form-data' }
-          }
-        );
+        const response = await axios.post(URL_UPLOAD_AVATAR, formData, {
+          withCredentials: true,
+          headers: { 'Content-type': 'multipart/form-data' }
+        });
         //setUser(response.data); //todo
-        axios
-          .get(String(process.env.REACT_APP_URL_AUTH), {
-            withCredentials: true
-          })
-          .then(
-            (response) => {
-              setUser(response.data);
-            },
-            (error) => console.log(error)
-          );
+        //axios
+        //  .get(String(process.env.REACT_APP_URL_AUTH), {
+        //    withCredentials: true
+        //  })
+        //  .then(
+        //    (response) => {
+        //      setUser(response.data);
+        //    },
+        //    (error) => console.log(error)
+        //  );
       } catch (error) {
         console.log(error);
         setOpen(false);
