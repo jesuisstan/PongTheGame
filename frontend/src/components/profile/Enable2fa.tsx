@@ -1,5 +1,5 @@
-import { useState, useContext, useEffect } from 'react';
-import { UserContext } from '../../context/UserContext';
+import { useState, useContext, useEffect, SetStateAction, Dispatch } from 'react';
+import { UserContext } from '../../contexts/UserContext';
 import axios from 'axios';
 import QRCode from 'qrcode';
 import Modal from '@mui/joy/Modal';
@@ -19,7 +19,13 @@ const modalDialogStyle = {
   borderRadius: '4px'
 };
 
-const Enable2FactorAuth = ({ open, setOpen }: any) => {
+const Enable2fa = ({
+  open,
+  setOpen
+}: {
+  open: boolean;
+  setOpen: Dispatch<SetStateAction<boolean>>;
+}) => {
   const { user, setUser } = useContext(UserContext);
   const [load, setLoad] = useState(false);
   const [buttonText, setButtonText] = useState('Submit');
@@ -161,4 +167,4 @@ const Enable2FactorAuth = ({ open, setOpen }: any) => {
   );
 };
 
-export default Enable2FactorAuth;
+export default Enable2fa;

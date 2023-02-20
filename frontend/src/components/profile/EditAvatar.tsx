@@ -1,5 +1,5 @@
-import { useState, useContext } from 'react';
-import { UserContext } from '../../context/UserContext';
+import { useState, useContext, SetStateAction, Dispatch } from 'react';
+import { UserContext } from '../../contexts/UserContext';
 import axios from 'axios';
 import errorAlert from '../UI/errorAlert';
 import FormLabel from '@mui/joy/FormLabel';
@@ -18,7 +18,13 @@ const modalDialogStyle = {
   borderRadius: '4px'
 };
 
-const EditAvatar = ({ open, setOpen }: any) => {
+const EditAvatar = ({
+  open,
+  setOpen
+}: {
+  open: boolean;
+  setOpen: Dispatch<SetStateAction<boolean>>;
+}) => {
   const { user, setUser } = useContext(UserContext);
   const [file, setFile] = useState<File>();
   const [load, setLoad] = useState(false);
@@ -40,11 +46,25 @@ const EditAvatar = ({ open, setOpen }: any) => {
     const uploadAvatar = async (formData: FormData) => {
       setLoad(true);
       try {
-        const response = await axios.post(String(process.env.REACT_APP_URL_UPLOAD_AVATAR), formData, {
-          withCredentials: true,
-          headers: { 'Content-type': 'multipart/form-data' }
-        });
+        const response = await axios.post(
+          String(process.env.REACT_APP_URL_UPLOAD_AVATAR),
+          formData,
+          {
+            withCredentials: true,
+            headers: { 'Content-type': 'multipart/form-data' }
+          }
+        );
         //setUser(response.data); //todo
+        axios
+          .get(String(process.env.REACT_APP_URL_AUTH), {
+            withCredentials: true
+          })
+          .then(
+            (response) => {
+              setUser(response.data);
+            },
+            (error) => console.log(error)
+          );
       } catch (error) {
         console.log(error);
         setOpen(false);
@@ -67,7 +87,7 @@ const EditAvatar = ({ open, setOpen }: any) => {
         sx={{ color: 'black' }}
         open={open}
         onClose={(event, reason) => {
-          if (event && reason == 'closeClick') setOpen(false);
+          if (event && reason === 'closeClick') setOpen(false);
         }}
       >
         <ModalDialog
@@ -84,7 +104,9 @@ const EditAvatar = ({ open, setOpen }: any) => {
           </Typography>
           <form onSubmit={handleSubmit}>
             <Stack spacing={2}>
-              <FormLabel sx={{ color: 'black' }}>Max file size is 2 Mb</FormLabel>
+              <FormLabel sx={{ color: 'black' }}>
+                Max file size is 2 Mb
+              </FormLabel>
               <input
                 required
                 type="file"
