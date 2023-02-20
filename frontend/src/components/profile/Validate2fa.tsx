@@ -54,7 +54,7 @@ const Validate2fa = ({
 
   const submitCode = (value: string) => {
     console.log('2fa code submitted after login');
-    return false; // todo hardcode
+    return true; // todo hardcode
   };
 
   const handleSubmit = async (event: React.FormEvent) => {
