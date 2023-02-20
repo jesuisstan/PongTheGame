@@ -35,8 +35,83 @@ describe('Appe@e', () => {
     app.close();
   });
 
-  describe('Testing', () => {
-    it.todo('Start test');
+  describe('Match', () => {
+    it.todo('Should thrown not connected');
+    it.todo('Should thrown no body send');
+    it.todo('Should thrown only 1 users send');
+    it.todo('Should thrown bad id send');
+    it.todo('Should thrown the same users send 2 times');
+    it.todo('Should works');
+    describe('mine', () => {
+      it.todo('Should thrown not connected');
+      it.todo('Should thrown bad id send');
+      it.todo('Should works');
+    })
+    describe(':id', () => {
+      it.todo('Should thrown not connected');
+      it.todo('Should thrown with a bad id');
+      it.todo('Should work');
+    })
+  })
+  describe('Users', () => {
+    describe(':id', () => {
+      it.todo('Should thrown not connected');
+      it.todo('Should thrown with a bad id');
+      it.todo('Should work');
+    })
+    describe('setnickname', () => {
+      it.todo('Should thrown not connected');
+      it.todo('Should thrown with a bad id');
+      it.todo('Should thrown no body');
+      it.todo('Should work');
+      it.todo('Should thrown change with same nickname');
+    })
+    describe('2fa', () => {
+      it.todo('Should thrown not connected');
+      it.todo('Should thrown with a bad id');
+      it.todo('Should thrown no body');
+      it.todo('Should work');
+    })
+  })
+  describe('Achievement', () => {
+      it.todo('Should thrown not connected');
+      it.todo('Should work');
+      describe('add (admin only)', () => {
+        it.todo('Should thrown not connected');
+        it.todo('Should thrown not admin');
+        it.todo('Should thrown no body send');
+        it.todo('Should work');
+      })
+      describe('modif achievement', () => {
+        it.todo('Should thrown not connected');
+        it.todo('Should thrown not admin');
+        it.todo('Should thrown no id send');
+        it.todo('Should thrown no body send');
+        it.todo('Should thrown bad id send');
+        it.todo('Should work');
+      })
+      describe('delete achievement', () => {
+        it.todo('Should thrown not connected');
+        it.todo('Should thrown not admin');
+        it.todo('Should thrown no id send');
+        it.todo('Should thrown bad id send');
+        it.todo('Should work');
+      })
+      describe('get user ahchievement', () => {
+        it.todo('Should thrown not connected');
+        it.todo('Should thrown no id send');
+        it.todo('Should thrown bad id send');
+        it.todo('Should work');
+      })
+      describe('Add achievement to user', () => {
+        it.todo('Should thrown not connected');
+        it.todo('Should thrown no user id send');
+        it.todo('Should thrown no achievement id send');
+        it.todo('Should thrown bad user id send');
+        it.todo('Should thrown bad achievement id send');
+        it.todo('Should thrown not admin');
+        it.todo('Should work');
+      })
   })
   // describe('Auth', () => {
     
