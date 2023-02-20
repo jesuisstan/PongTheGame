@@ -73,6 +73,7 @@ export class UserController {
   })
   @UseGuards(IsAuthenticatedGuard)
   async toggle2fa(@SessionUser() user: User, @Body() dto: ToggleTfaDTO) {
-    return this.users.setUserTfa(user, dto.enabled);
+    // TODO
+    // return this.users.setUserTfa(user, dto.enabled);
   }
 }
