@@ -1,3 +1,3 @@
 describe('TotpService', () => {
-  // TODO add tests for totp service
+  it.todo('add some tests!');
 });
