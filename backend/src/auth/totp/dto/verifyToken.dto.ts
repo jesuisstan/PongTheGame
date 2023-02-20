@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class ToggleTfaDTO {
+export class VerifyTokenDTO {
   @ApiProperty()
-  enabled: boolean;
+  token: string;
 }

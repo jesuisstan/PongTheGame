@@ -9,4 +9,5 @@ export interface Config {
 
   BACKEND_PORT: string;
   SESSION_SECRET: string;
+  TOTP_SECRET: string;
 }

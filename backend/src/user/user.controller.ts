@@ -17,7 +17,6 @@ import { User } from '@prisma/client';
 import { IsAuthenticatedGuard } from 'src/auth/auth.guard';
 import { SessionUser } from 'src/decorator/session-user.decorator';
 import { SetNicknameDTO } from 'src/user/dto/setNickname.dto';
-import { ToggleTfaDTO } from 'src/user/dto/toggleTfa.dto';
 import { UserService } from 'src/user/user.service';
 
 @Controller('/user')
@@ -65,15 +64,5 @@ export class UserController {
     if (foundUser !== null)
       throw new BadRequestException('This nickname is already used');
     return await this.users.setUserNickname(user, nickname);
-  }
-
-  @Patch('2fa')
-  @ApiOperation({
-    summary: 'Enable or disable two factor authentication for the current user',
-  })
-  @UseGuards(IsAuthenticatedGuard)
-  async toggle2fa(@SessionUser() user: User, @Body() dto: ToggleTfaDTO) {
-    // TODO
-    // return this.users.setUserTfa(user, dto.enabled);
   }
 }

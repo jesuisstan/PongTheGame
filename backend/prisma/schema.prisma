@@ -20,8 +20,10 @@ model User {
   avatar    String?
   profileId String
   provider  String
-  role      Role    @default(USER)
-  tfa       Boolean @default(false)
+
+  totpEnabled Boolean     @default(false)
+  totpSecret  TotpSecret?
+  role        Role        @default(USER)
 
   // MatchEntry
   matchEntries MatchEntry[]
@@ -30,6 +32,15 @@ model User {
   achievement Achievement[]
 
   @@unique([profileId, provider])
+}
+
+model TotpSecret {
+  id     Int    @id @default(autoincrement())
+  secret String
+
+  // User
+  userId Int?  @unique
+  user   User? @relation(fields: [userId], references: [id])
 }
 
 enum Role {

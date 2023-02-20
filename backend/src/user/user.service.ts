@@ -9,7 +9,7 @@ const USER_SELECT = {
   provider: true,
   nickname: true,
   username: true,
-  tfa: true,
+  totpEnabled: true,
   role: true,
 };
 
@@ -90,7 +90,21 @@ export class UserService {
       where: {
         id,
       },
+      select: USER_SELECT,
     });
+  }
+
+  async hasTotpSecret(user: User): Promise<boolean> {
+    const { id } = user;
+
+    const dbUser = await this.prisma.user.findFirst({
+      where: { id },
+      select: {
+        totpSecret: true,
+      },
+    });
+
+    return (dbUser?.totpSecret ?? null) !== null;
   }
 
   async setAvatar(user: User, url: string | null): Promise<User> {
@@ -103,6 +117,37 @@ export class UserService {
       where: {
         id,
       },
+    });
+  }
+
+  async setTotpSecret(user: User, secret: string): Promise<User> {
+    const { id } = user;
+
+    return this.prisma.user.update({
+      data: {
+        totpSecret: {
+          upsert: {
+            create: { secret },
+            update: { secret },
+          },
+        },
+      },
+      where: { id },
+      select: USER_SELECT,
+    });
+  }
+
+  async removeTotpSecret(user: User): Promise<User> {
+    const { id } = user;
+
+    return this.prisma.user.update({
+      data: {
+        totpSecret: {
+          delete: true,
+        },
+      },
+      where: { id },
+      select: USER_SELECT,
     });
   }
 }
