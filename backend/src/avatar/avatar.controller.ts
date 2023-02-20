@@ -94,7 +94,7 @@ export class AvatarController {
   })
   async uploadAvatar(
     @UploadedFile('file') file: Express.Multer.File,
-    @SessionUser() user: Express.User,
+    @SessionUser() user: User,
   ) {
     if (file === undefined) throw new BadRequestException('no file given');
 
@@ -102,7 +102,10 @@ export class AvatarController {
 
     await handle.write(file.buffer);
     await handle.close();
-    // TODO remove provider avatar from db
+
+    // set the avatar to null if and only if the operations
+    // on the file system were successful
+    return this.users.setAvatar(user, null);
   }
 
   @Delete('/')
