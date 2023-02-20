@@ -16,6 +16,10 @@ import EditAvatar from './EditAvatar';
 import Enable2fa from './Enable2fa';
 import styles from './Profile.module.css';
 
+const URL_TOGGLE_TFA =
+  String(process.env.REACT_APP_URL_BACKEND) +
+  String(process.env.REACT_APP_URL_TOGGLE_TFA);
+
 const Profile = () => {
   const { user, setUser } = useContext(UserContext);
   const [modalNicknameOpen, setModalNicknameOpen] = useState(false);
@@ -26,7 +30,7 @@ const Profile = () => {
     if (user.tfa) {
       return axios
         .patch(
-          String(process.env.REACT_APP_URL_TOGGLE_TFA),
+          URL_TOGGLE_TFA,
           { enabled: false },
           {
             withCredentials: true,

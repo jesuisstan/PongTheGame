@@ -14,6 +14,10 @@ import Stack from '@mui/joy/Stack';
 import Typography from '@mui/joy/Typography';
 import errorAlert from '../UI/errorAlert';
 
+const URL_LOGOUT =
+  String(process.env.REACT_APP_URL_BACKEND) +
+  String(process.env.REACT_APP_URL_LOGOUT);
+
 const modalDialogStyle = {
   maxWidth: 500,
   border: '0px solid #000',
@@ -59,7 +63,7 @@ const Validate2fa = ({
       if (submitCode(text) === true) {
         setUser(userData);
       } else {
-        axios.get(String(process.env.REACT_APP_URL_LOGOUT), {
+        axios.get(URL_LOGOUT, {
           withCredentials: true
         });
         errorAlert('Validation failed. Try login again');
