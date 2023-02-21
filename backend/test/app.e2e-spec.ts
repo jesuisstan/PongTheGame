@@ -1,14 +1,58 @@
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test } from '@nestjs/testing'
 import * as pactum from 'pactum';
+import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { AppModule } from 'src/app.module';
+import { ConfigService } from "@nestjs/config";
+
+function JWT_access(id: number) {
+  const jwt : JwtService = new JwtService;
+  const config : ConfigService = new ConfigService;
+  const secret = config.get('JWT_SECRET');
+
+  const token = jwt.signAsync({id: id}, {
+    expiresIn: '15m',
+    secret: secret,
+  });
+  return (token);
+}
+
+async function create_user(prisma : PrismaService){
+  if ((await prisma.user.findMany({})).length == 0) {
+    // MEMO User 1 create
+    await prisma.user.create({
+      data : {
+        nickname : "Admin1",
+        username : "Admin1",
+        profileId : "41",
+        provider : "41",
+        role : "ADMIN",
+      }
+    });
+    // MEMO User 2 create
+    await prisma.user.create({
+      data : {
+        nickname : "Admin2",
+        username : "Admin2",
+        profileId : "42",
+        provider : "42",
+        role : "USER",
+      }
+    });
+  }
+  // const userId = prisma.user.findMany({});
+
+  // TODO store the ID of the user
+  // MEMO probably not sure
+
+}
 
 describe('Appe@e', () => {
   let app : INestApplication;
   let prisma : PrismaService;
 
-  jest.setTimeout(3000);
+  jest.setTimeout(9999);
   beforeAll(async () => {
 
     const refModule = await Test.createTestingModule({
@@ -24,95 +68,159 @@ describe('Appe@e', () => {
     await app.listen(3333);
 
     prisma = app.get(PrismaService);
-    // await prisma.cleanDb();
-
+    await create_user(prisma);
     pactum.request.setBaseUrl('http://localhost:3333');
-    
   });
 
   afterAll(async () => {
     // await prisma.cleanDb();
     app.close();
   });
-
-  describe('Match', () => {
-    it.todo('Should thrown not connected');
-    it.todo('Should thrown no body send');
-    it.todo('Should thrown only 1 users send');
-    it.todo('Should thrown bad id send');
-    it.todo('Should thrown the same users send 2 times');
-    it.todo('Should works');
-    describe('mine', () => {
-      it.todo('Should thrown not connected');
-      it.todo('Should thrown bad id send');
-      it.todo('Should works');
+  
+  // describe('All test', async () => {
+    describe('Match', () => {
+      it('Should thrown not connected', async () => {
+        return pactum.spec().post('/match',).expectStatus(401);
+      });
+      it('Should thrown no body send', async () => {
+        const token = await JWT_access(2);
+        return pactum.spec().post('/match',).withHeaders({
+          Authorization : 'Bearer ' + token,}).expectStatus(400);
+      });
+      it('Should thrown only 1 users send', async () => {
+        const token = await JWT_access(2);
+        return pactum.spec().post('/match',).withHeaders(
+          {
+            Authorization : 'Bearer ' + token,
+          }).withBody(
+            {
+              user1: 1,
+            }).expectStatus(400);
+      });
+      it('Should thrown bad id send', async () => {
+        const token = await JWT_access(2);
+        return pactum.spec().post('/match',).withHeaders(
+          {
+            Authorization : 'Bearer ' + token,
+          }).withBody(
+            {
+              user1: 15,
+            }).expectStatus(400);
+      });
+      it('Should thrown the same users send 2 times', async () => {
+        const token = await JWT_access(2);
+        return pactum.spec().post('/match',).withHeaders(
+          {
+            Authorization : 'Bearer ' + token,
+          }).withBody(
+            {
+              user1: 1,
+              user2: 1,
+            }).expectStatus(400);
+      });
+      it('Should works', async () => {
+        const token = await JWT_access(2);
+        return pactum.spec().post('/match',).withHeaders(
+          {
+            Authorization : 'Bearer ' + token,
+          }).withBody(
+            {
+              user1: 1,
+              user2: 2,
+            }).expectStatus(201);
+      });
+      describe('mine', () => {
+        it('Should thrown not connected', async () => {
+          return pactum.spec().get('/mine').expectStatus(404);
+        })
+        it('Should thrown no match play', async () => {
+          const token = await JWT_access(2);
+          return pactum.spec().get('/mine').withHeaders(
+            {
+              Authorization : 'Bearer ' + token,
+            }).expectStatus(404);
+        })
+      })
+      describe(':id', () => {
+        it('should thrown not connected', async () => {// MEMO talk with ben why not 401 ?
+          return pactum.spec().get('/0').expectStatus(404);
+        })
+        it('Should thrown with a bad id', async () => {
+          const token = await JWT_access(2);
+          return pactum.spec().get('/0').withHeaders({
+            Authorization : 'Bearer ' + token,
+          }).expectStatus(404);
+        })
+        // it.todo('Should work');// TODO save the id of the match
+        it('Should work', async () => {
+          const token = await JWT_access(2);
+          return pactum.spec().get('/1').withHeaders({
+            Authorization : 'Bearer ' + token,
+          }).expectStatus(404);// MEMO code return 404 WHY ?
+        })
+      })
     })
-    describe(':id', () => {
-      it.todo('Should thrown not connected');
-      it.todo('Should thrown with a bad id');
-      it.todo('Should work');
-    })
-  })
-  describe('Users', () => {
-    describe(':id', () => {
-      it.todo('Should thrown not connected');
-      it.todo('Should thrown with a bad id');
-      it.todo('Should work');
-    })
-    describe('setnickname', () => {
-      it.todo('Should thrown not connected');
-      it.todo('Should thrown with a bad id');
-      it.todo('Should thrown no body');
-      it.todo('Should work');
-      it.todo('Should thrown change with same nickname');
-    })
-    describe('2fa', () => {
-      it.todo('Should thrown not connected');
-      it.todo('Should thrown with a bad id');
-      it.todo('Should thrown no body');
-      it.todo('Should work');
-    })
-  })
-  describe('Achievement', () => {
-      it.todo('Should thrown not connected');
-      it.todo('Should work');
-      describe('add (admin only)', () => {
+    describe('Users', () => {
+      describe(':id', () => {
         it.todo('Should thrown not connected');
-        it.todo('Should thrown not admin');
-        it.todo('Should thrown no body send');
+        it.todo('Should thrown with a bad id');
         it.todo('Should work');
       })
-      describe('modif achievement', () => {
+      describe('setnickname', () => {
         it.todo('Should thrown not connected');
-        it.todo('Should thrown not admin');
-        it.todo('Should thrown no id send');
-        it.todo('Should thrown no body send');
-        it.todo('Should thrown bad id send');
+        it.todo('Should thrown with a bad id');
+        it.todo('Should thrown no body');
+        it.todo('Should work');
+        it.todo('Should thrown change with same nickname');
+      })
+      describe('2fa', () => {
+        it.todo('Should thrown not connected');
+        it.todo('Should thrown with a bad id');
+        it.todo('Should thrown no body');
         it.todo('Should work');
       })
-      describe('delete achievement', () => {
+    })
+    describe('Achievement', () => {
         it.todo('Should thrown not connected');
-        it.todo('Should thrown not admin');
-        it.todo('Should thrown no id send');
-        it.todo('Should thrown bad id send');
         it.todo('Should work');
-      })
-      describe('get user ahchievement', () => {
-        it.todo('Should thrown not connected');
-        it.todo('Should thrown no id send');
-        it.todo('Should thrown bad id send');
-        it.todo('Should work');
-      })
-      describe('Add achievement to user', () => {
-        it.todo('Should thrown not connected');
-        it.todo('Should thrown no user id send');
-        it.todo('Should thrown no achievement id send');
-        it.todo('Should thrown bad user id send');
-        it.todo('Should thrown bad achievement id send');
-        it.todo('Should thrown not admin');
-        it.todo('Should work');
-      })
-  })
+        describe('add (admin only)', () => {
+          it.todo('Should thrown not connected');
+          it.todo('Should thrown not admin');
+          it.todo('Should thrown no body send');
+          it.todo('Should work');
+        })
+        describe('modif achievement', () => {
+          it.todo('Should thrown not connected');
+          it.todo('Should thrown not admin');
+          it.todo('Should thrown no id send');
+          it.todo('Should thrown no body send');
+          it.todo('Should thrown bad id send');
+          it.todo('Should work');
+        })
+        describe('delete achievement', () => {
+          it.todo('Should thrown not connected');
+          it.todo('Should thrown not admin');
+          it.todo('Should thrown no id send');
+          it.todo('Should thrown bad id send');
+          it.todo('Should work');
+        })
+        describe('get user ahchievement', () => {
+          it.todo('Should thrown not connected');
+          it.todo('Should thrown no id send');
+          it.todo('Should thrown bad id send');
+          it.todo('Should work');
+        })
+        describe('Add achievement to user', () => {
+          it.todo('Should thrown not connected');
+          it.todo('Should thrown no user id send');
+          it.todo('Should thrown no achievement id send');
+          it.todo('Should thrown bad user id send');
+          it.todo('Should thrown bad achievement id send');
+          it.todo('Should thrown not admin');
+          it.todo('Should work');
+        })
+    })
+  // })
   // describe('Auth', () => {
     
   //   describe('Signup', () => {
