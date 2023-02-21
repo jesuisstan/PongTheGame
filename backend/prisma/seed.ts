@@ -5,13 +5,14 @@ export const prisma = new PrismaClient();
 
 async function main() {
   await prisma.$connect();
-  const size : number = (await prisma.achievement.findMany({
-    select :{
-      id :true,
-    },
-  })).length;
-  if (size == 0)
-  {
+  const size: number = (
+    await prisma.achievement.findMany({
+      select: {
+        id: true,
+      },
+    })
+  ).length;
+  if (size == 0) {
     console.log(`Start seeding ...`);
     insert_achievement();
     console.log(`Seeding finished.`);
