@@ -29,6 +29,7 @@ const MenuBar = () => {
 
   const authenticate = () => {
     if (user.provider) {
+      localStorage.removeItem('totpVerified');
       window.location.href = URL_LOGOUT;
     } else {
       window.location.href = 'http://localhost:3000/login';

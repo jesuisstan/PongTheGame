@@ -89,8 +89,12 @@ const Enable2fa = ({
       .then(
         (response) => {
           console.log('QR proof submitted');
+          localStorage.setItem('totpVerified', 'true');
         },
-        (error) => errorAlert(error)
+        (error) => {
+          localStorage.removeItem('totpVerified');
+          errorAlert(error);
+        }
       );
   };
 

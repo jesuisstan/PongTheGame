@@ -29,7 +29,7 @@ const Profile = () => {
   const [modal2faOpen, setModal2faOpen] = useState(false);
 
   const toggleTfa = () => {
-    if (user.tfa) {
+    if (user.totpEnabled) {
       return axios
         .patch(
           URL_TOGGLE_TFA,
@@ -78,20 +78,17 @@ const Profile = () => {
             <List aria-labelledby="basic-list-demo">
               <ListItem>Login method: {user.provider}</ListItem>
               <ListItem>
-                2-Factor Authentication: {user.tfa ? 'on' : 'off'}
+                2-Factor Authentication: {user.totpEnabled ? 'on' : 'off'}
               </ListItem>
             </List>
           </div>
           <div className={styles.bottom}>
             <ButtonPong
-              text={user.tfa === true ? 'Disable 2FA' : 'Setup 2FA'}
+              text={user.totpEnabled === true ? 'Disable 2FA' : 'Setup 2FA'}
               endIcon={<ArrowForwardIosIcon />}
               onClick={toggleTfa}
             />
-            <Enable2fa
-              open={modal2faOpen}
-              setOpen={setModal2faOpen}
-            />
+            <Enable2fa open={modal2faOpen} setOpen={setModal2faOpen} />
           </div>
         </div>
       </div>

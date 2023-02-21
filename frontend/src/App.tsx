@@ -24,14 +24,13 @@ function App() {
   const socket = useContext(WebSocketContext);
   const [open, setOpen] = useState(false);
   const [tmpUser, setTmpUser] = useState<User | undefined>();
-
   const [user, setUser] = useState<User>({
     id: -1,
     nickname: '',
     avatar: '',
     provider: '',
     username: '',
-    tfa: false
+    totpEnabled: false
   });
 
   //useEffect(() => {
@@ -46,10 +45,12 @@ function App() {
   useEffect(() => {
     axios.get(URL_GET_USER, { withCredentials: true }).then(
       (response) => {
-        //let flag_validated = false
-        if (response.data.tfa) {
+        //change !response.data.tfa back to response.data.tf
+        if (
+          response.data.totpEnabled &&
+          localStorage.getItem('totpVerified') === null
+        ) {
           setTmpUser(response.data);
-
           setOpen(true);
         } else setUser(response.data);
       },
@@ -59,9 +60,7 @@ function App() {
 
   user.provider ? console.log('user logged in') : console.log('no user');
   console.log(user);
-
-  // Fetching the socket from its context
-  // const socket = useContext(WebSocketContext)
+  console.log('totpVerified ?? -> ' + localStorage.getItem('totpVerified'));
 
   return (
     <WebSocketContext.Provider value={socket}>
