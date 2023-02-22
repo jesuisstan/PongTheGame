@@ -2,6 +2,9 @@
 /dist
 /node_modules
 
+# json package files
+package*.json
+
 # Logs
 logs
 *.log

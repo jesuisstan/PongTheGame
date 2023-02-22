@@ -1,12 +1,13 @@
-export type ConfigKey =
-  | 'INTRA42_CLIENT_ID'
-  | 'INTRA42_CLIENT_SECRET'
-  | 'INTRA42_CALLBACK_URL'
-  | 'GITHUB_CLIENT_ID'
-  | 'GITHUB_CLIENT_SECRET'
-  | 'GITHUB_CALLBACK_URL'
-  | 'BACKEND_PORT'
-  | 'SESSION_SECRET'
-  | 'JWT_SECRET';
+export interface Config {
+  INTRA42_CLIENT_ID: string;
+  INTRA42_CLIENT_SECRET: string;
+  INTRA42_CALLBACK_URL: string;
 
-export type Config = Record<ConfigKey, string>;
+  GITHUB_CLIENT_ID: string;
+  GITHUB_CLIENT_SECRET: string;
+  GITHUB_CALLBACK_URL: string;
+
+  BACKEND_PORT: string;
+  SESSION_SECRET: string;
+  TOTP_SECRET: string;
+}

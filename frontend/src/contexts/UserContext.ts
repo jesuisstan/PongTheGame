@@ -6,13 +6,14 @@ interface UserContextData {
 	setUser: (user: User) => void;
 }
 
-export const UserContext = createContext<UserContextData>( {
+export const UserContext = createContext<UserContextData>({
     user: {
 		id: -1,
 		nickname: '',
 		avatar: '',
 		provider: '',
-		username: ''
+		username: '',
+		tfa: false
 	  },
 	setUser: (user) => {},
-  });
+});

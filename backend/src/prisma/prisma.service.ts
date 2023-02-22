@@ -6,12 +6,12 @@ import { PrismaClient } from '@prisma/client';
 export class PrismaService extends PrismaClient implements OnModuleInit {
   constructor() {
     super({
-      datasources : {
-        db : {
-          url : process.env.DATABASE_URL,
-        }
-      }
-    })
+      datasources: {
+        db: {
+          url: process.env.DATABASE_URL,
+        },
+      },
+    });
   }
 
   async onModuleInit() {
@@ -24,7 +24,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
     });
   }
 
-  cleanDb(){
+  cleanDb() {
     return this.$transaction([
       this.achievement.deleteMany(),
       this.friends.deleteMany(),

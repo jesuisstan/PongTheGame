@@ -6,6 +6,7 @@ import { AuthController } from 'src/auth/auth.controller';
 import { AuthService } from 'src/auth/auth.service';
 import { GithubModule } from 'src/auth/github/github.module';
 import { JwtStrategy } from 'src/auth/jwt.strategy';
+import { TotpModule } from 'src/auth/totp/totp.module';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UserModule } from 'src/user/user.module';
 
@@ -18,6 +19,7 @@ import { UserModule } from 'src/user/user.module';
     Auth42Module,
     GithubModule,
     UserModule,
+    TotpModule,
     JwtModule.register({}),
   ],
   controllers: [AuthController],

@@ -1,13 +1,19 @@
 import styles from './Login.module.css';
 
-const Login = () => {
+const URL_AUTH_42 =
+  String(process.env.REACT_APP_URL_BACKEND) +
+  String(process.env.REACT_APP_URL_AUTH_42);
+const URL_AUTH_GITHUB =
+  String(process.env.REACT_APP_URL_BACKEND) +
+  String(process.env.REACT_APP_URL_AUTH_GITHUB);
 
+const Login = () => {
   const ecole42Auth = () => {
-    window.location.href = String(process.env.REACT_APP_URL_AUTH_42);
+    window.location.href = URL_AUTH_42;
   };
 
   const githubAuth = () => {
-    window.location.href = String(process.env.REACT_APP_URL_AUTH_GITHUB);
+    window.location.href = URL_AUTH_GITHUB;
   };
 
   return (

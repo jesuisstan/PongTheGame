@@ -1,6 +1,16 @@
 import Button from '@mui/material/Button';
 
-const ButtonPong = ({ text, onClick, endIcon, startIcon }: any) => {
+const ButtonPong = ({
+  text,
+  onClick,
+  endIcon,
+  startIcon
+}: {
+  text: string;
+  onClick: React.MouseEventHandler<HTMLButtonElement>;
+  endIcon?: React.ReactNode;
+  startIcon?: React.ReactNode;
+}) => {
   return (
     <Button
       sx={{
