@@ -28,7 +28,7 @@ export class AuthController {
         return resolve();
       });
     });
-    return res.clearCookie('connect.sid').redirect(`${CLIENT_URL}/login`);
+    return res.clearCookie('access_token').redirect(`${CLIENT_URL}/login`);
   }
 
   @Get('getuser')
