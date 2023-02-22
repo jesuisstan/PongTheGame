@@ -88,7 +88,7 @@ export class ChatGateway {
   ) {
     const user = await this.chatService.getUserById(roomName, client.id);
     if (user) {
-      const nickname = user.nickname;
+      const nickname = user.profile.nickname;
       client.broadcast.emit('typingMessage', { roomName, nickname, isTyping });
     }
   }

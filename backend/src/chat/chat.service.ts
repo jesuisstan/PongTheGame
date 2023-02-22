@@ -9,7 +9,7 @@ export class ChatService {
 
   identify(roomName: string, user: User, clientId: string) {
     const room = this.getChatRoomByName(roomName);
-    if (room) room.users[clientId] = user;
+    if (room) room.users[clientId].profile = user;
   }
 
   quitRoom(roomName: string, userName: string, clientId: string) {

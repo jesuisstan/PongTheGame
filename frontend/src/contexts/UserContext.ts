@@ -11,9 +11,11 @@ export const UserContext = createContext<UserContextData>({
 		id: -1,
 		nickname: '',
 		avatar: '',
+		profileId: '',
 		provider: '',
 		username: '',
-		tfa: false
+		tfa: false,
+		blockedUsers: [],
 	  },
 	setUser: (user) => {},
 });

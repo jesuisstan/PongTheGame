@@ -1,5 +1,7 @@
 import { SetStateAction, useContext, useEffect, useState } from "react";
+import { UserContext } from "../../contexts/UserContext";
 import { WebSocketContext } from "../../contexts/WebsocketContext";
+import { Message } from "../../types/chat";
 
 // // All newly created message should have an author and the message itself
 // export type MessagePayload = {
@@ -19,18 +21,29 @@ const ChatRoom = (props: any) => {
    * States
   **************************************************************/
   const socket = useContext(WebSocketContext)
-
-  // Array including all message objects (author + msg)
-  const [messages, setMessages] = useState<any[]>([])
+  const { user, setUser } = useContext(UserContext)
+  // Array including all the messages, even the ones from
+  // blocked users/users who blocked the user
+  const [messagesToFilter, setMessagesToFilter] = useState<Message[]>([])
+  // Array including all message objects (author + msg) excluding
+  // messages from blocked users/users who blocked the user
+  const [messages, setMessages] = useState<Message[]>([])
   // Display typing state of the user
   const [typingDisplay, setTypingDisplay] = useState<string>('')
-  
   // Message input field value
   const [messageText, setMessageText] = useState<string>('')
 
   // Get all messages from messages array in chat.service and fill the messages variable
-  socket.emit('findAllMessages', { roomName: props.room.name }, (response: SetStateAction<any[]>) => {
-    setMessages(response)
+  socket.emit('findAllMessages',
+    { roomName: props.room.name },
+    (response: SetStateAction<Message[]>) => {
+      setMessagesToFilter(response)
+      messagesToFilter.map((msg, index) => {
+        for (const blockedUser in user.blockedUsers)
+          if (msg.author === blockedUser)
+            setMessagesToFilter(messagesToFilter.filter((msg, id) => id !== index))
+      })
+      setMessages(messagesToFilter)
   })
 
 
@@ -38,14 +51,19 @@ const ChatRoom = (props: any) => {
    * Event listeners
   **************************************************************/
   useEffect(() => {
+    // Activate listeners and subscribe to events as the component is mounted
     socket.on('connect', () => console.log('connected to websocket!'))
-    socket.on('createMessage', (newMessage: any) => console.log('createMessage event received!'))
+    socket.on(
+      'createMessage',
+      (newMessage: any) => console.log('createMessage event received!') 
+    )
     socket.on('typingMessage', ({ roomName, nickname, isTyping }) => {
       roomName === props.room.name && isTyping ? setTypingDisplay(nickname + ' is typing...')
         : setTypingDisplay('')
     })
 
-    // Clean listeners to avoid multiple activations
+    // Clean listeners to unsubscribe all callbacks for these events
+    // before the component is unmounted
     return () => {
       socket.off('connect')
       socket.off('createMessage')
@@ -75,7 +93,7 @@ const ChatRoom = (props: any) => {
     if (messageText)
       socket.emit('createMessage', {
         roomName: props.room.name,
-        message: {author: props.user.nickname, data: messageText}
+        message: {author: user.nickname, data: messageText},
       })
     // Reset input field value once sent
     setMessageText('')
@@ -85,9 +103,14 @@ const ChatRoom = (props: any) => {
   const onReturnClick = () => {
     socket.emit('quitRoom', {
       roomName: props.room.name,
-      userName: props.user.nickname
+      userName: user.nickname
     })
     props.cleanRoomLoginData()
+  }
+
+  // When clicking on the 'block' button to block a user
+  const onBlockClick = (target: string) => {
+    user.blockedUsers.push(target)
   }
 
 
@@ -107,7 +130,9 @@ const ChatRoom = (props: any) => {
                       // their corresponding authors
                       messages.map((msg, index) => (
                       <div key={ index }>
-                        <p>[{ msg.author }]: { msg.data }</p>
+                        <p>[{ msg.author }]
+                          <button onClick={ (msg) => onBlockClick }>block</button>
+                          : { msg.data }</p>
                       </div>
                     ))}
                   </div>

@@ -10,6 +10,7 @@ const USER_SELECT = {
   nickname: true,
   username: true,
   tfa: true,
+  blockedUsers: true,
   role: true,
 };
 

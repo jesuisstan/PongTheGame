@@ -10,7 +10,6 @@ export class ChatRoom {
   modes: string;
   password: string;
   userLimit: number;
-  users: { [key: string]: User };
-  banList: string[];
+  users: { [key: string]: { profile: User; modes: string } };
   messages: Message[];
 }

@@ -21,7 +21,7 @@ const Chat = () => {
    * States
    **************************************************************/
   // Fetching the socket from its context
-  const socket = useContext(WebSocketContext);
+  const socket = useContext(WebSocketContext)
   // Fetching the user profile from its context
   const { user, setUser } = useContext(UserContext);
 
@@ -48,26 +48,25 @@ const Chat = () => {
    * Event listeners
    **************************************************************/
   useEffect(() => {
+    // Activate listeners and subscribe to events as the component is mounted
     socket.on('connect', () => console.log('Connected to websocket'));
-
     socket.on('createChatRoom', (roomName: string) => {
       console.log('Created new chat room [' + roomName + ']');
     });
-
     socket.on('joinRoom', (roomName: string) => {
       setJoinedRoom(roomName);
       console.log(user.nickname + ' joined chatroom [' + roomName + ']');
     });
+    socket.on('quitRoom', (userName: string) => {
+      if (userName === user.nickname)
+      {
+        console.log(userName + ' quit room [' + joinedRoom.name + ']')
+        setJoinedRoom('')
+      }
+    })
 
-    // socket.on('quitRoom', (userName: string) => {
-    //   if (userName === user.nickname)
-    //   {
-    //     console.log(userName + ' quit room [' + joinedRoom.name + ']')
-    //     setJoinedRoom('')
-    //   }
-    // })
-
-    // Clean listeners to avoid multiple activations
+    // Clean listeners to unsubscribe all callbacks for these events
+    // before the component is unmounted
     return () => {
       socket.off('connect');
       socket.off('createChatRoom');
@@ -76,6 +75,7 @@ const Chat = () => {
     };
   }, []);
 
+  // When clicking on the 'new' button to create a new chat room
   const onNewClick = () => setChatRoomCreateMode(true);
 
   const onChatRoomCreateModeSubmit = (e: any) => {
@@ -87,7 +87,6 @@ const Chat = () => {
         password: chatRoomPassword,
         userLimit: 0,
         users: {},
-        banList: [],
         messages: []
       });
     setNewChatRoomName('');
@@ -168,7 +167,6 @@ const Chat = () => {
         joinedRoom &&
         ((isPasswordProtected && isPasswordRight) || !isPasswordProtected) ? (
           <ChatRoom
-            user={user}
             room={joinedRoom}
             cleanRoomLoginData={cleanRoomLoginData}
           />

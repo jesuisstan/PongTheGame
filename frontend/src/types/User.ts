@@ -3,6 +3,8 @@ export type User = {
   nickname: string;
   username: string;
   avatar: string;
+  profileId: String;
   provider: string;
-  tfa: boolean
+  tfa: boolean;
+  blockedUsers: string[];
 };

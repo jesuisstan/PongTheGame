@@ -11,6 +11,7 @@ Table User {
   provider String [not null]
   role Role [not null, default: 'USER']
   tfa Boolean [not null, default: false]
+  blockedUsers String[] [not null]
   matchEntries MatchEntry [not null]
   friends Friends [not null]
   achievement Achievements [not null]

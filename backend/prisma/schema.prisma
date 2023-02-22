@@ -22,6 +22,7 @@ model User {
   provider  String
   role      Role     @default(USER)
   tfa       Boolean @default(false)
+  blockedUsers String[]
 
   // MatchEntry
   matchEntries MatchEntry[]

@@ -25,9 +25,11 @@ function App() {
     id: -1,
     nickname: '',
     avatar: '',
+    profileId: '',
     provider: '',
     username: '',
-    tfa: false
+    tfa: false,
+    blockedUsers: []
   });
 
   //useEffect(() => {
