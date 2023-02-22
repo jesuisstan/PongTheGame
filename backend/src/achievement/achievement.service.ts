@@ -106,6 +106,8 @@ export class AchievementService {
 		if (!userAchivement)
 			throw new ForbiddenException("User not found");// TODO modif not a forbidden exepction
 		const achievement : any = userAchivement.achievement.find(Achievement => (Achievement.id == achievementId));
+		if (!achievement)
+			throw new ForbiddenException("Achievement not found");
 		if (achievement.Title)
 			throw new ForbiddenException(`User already got the achivement '${achievement.Title}'`,);// TODO modif not a forbidden exepction
 		
