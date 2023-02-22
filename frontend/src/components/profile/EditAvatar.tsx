@@ -50,11 +50,19 @@ const EditAvatar = ({
     const uploadAvatar = async (formData: FormData) => {
       setLoad(true);
       try {
-        const response = await axios.post(URL_UPLOAD_AVATAR, formData, {
+        const responseUpload = await axios.post(URL_UPLOAD_AVATAR, formData, {
           withCredentials: true,
           headers: { 'Content-type': 'multipart/form-data' }
         });
-        //setUser(response.data); //todo
+
+        const responseGetAvatar = await axios.get(
+          String(`http://localhost:3080/avatar/${user.id}`),
+          {
+            withCredentials: true
+          }
+        );
+
+        //setUser(responseGetAvatar.data); //todo
         //axios
         //  .get(String(process.env.REACT_APP_URL_AUTH), {
         //    withCredentials: true
@@ -66,9 +74,8 @@ const EditAvatar = ({
         //    (error) => console.log(error)
         //  );
       } catch (error) {
-        console.log(error);
         setOpen(false);
-        errorAlert('Something went wrong');
+        errorAlert(String(error));
       }
       setLoad(false);
       setButtonText('Done ✔️');

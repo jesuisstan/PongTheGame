@@ -47,8 +47,8 @@ function App() {
       (response) => {
         //change !response.data.tfa back to response.data.tf
         if (
-          response.data.totpEnabled &&
-          localStorage.getItem('totpVerified') === null
+          !response.data.totpEnabled &&
+          localStorage.getItem('totpVerified') !== 'true'
         ) {
           setTmpUser(response.data);
           setOpen(true);
