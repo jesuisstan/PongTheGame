@@ -74,3 +74,16 @@
   margin-bottom: 21px;
   flex-grow: 1;
 }
+
+.QRbox {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin-top: 15px;
+}
+
+.QRimage {
+  height: 200px;
+  width: 200px;
+}

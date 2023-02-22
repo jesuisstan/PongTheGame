@@ -1,8 +1,9 @@
 import { useContext, useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import axios from 'axios';
 import { UserContext } from './contexts/UserContext';
+import { WebSocketContext } from './contexts/WebsocketContext';
 import { User } from './types/User';
+import axios from 'axios';
 import MainLayout from './components/UI/MainLayout';
 import Home from './components/pages/Home';
 import NotFound from './components/pages/NotFound';
@@ -11,15 +12,18 @@ import Game from './components/game/Game';
 import Chat from './components/chat/Chat';
 import Profile from './components/profile/Profile';
 import Validate2fa from './components/profile/Validate2fa';
+import History from './components/pages/History';
 import './App.css';
-import { WebSocketContext } from './contexts/WebsocketContext';
+
+const URL_GET_USER =
+  String(process.env.REACT_APP_URL_BACKEND) +
+  String(process.env.REACT_APP_URL_GET_USER);
 
 function App() {
-
   // Fetching the socket from its context
-  const socket = useContext(WebSocketContext)
+  const socket = useContext(WebSocketContext);
   const [open, setOpen] = useState(false);
-  const [tmpUser, setTmpUser] = useState(null);
+  const [tmpUser, setTmpUser] = useState<User | undefined>();
 
   const [user, setUser] = useState<User>({
     id: -1,
@@ -42,19 +46,17 @@ function App() {
   //}, []);
 
   useEffect(() => {
-    axios
-      .get(String(process.env.REACT_APP_URL_AUTH), { withCredentials: true })
-      .then(
-        (response) => {
-          //let flag_validated = false
-          if (response.data.tfa) {
-            setTmpUser(response.data);
+    axios.get(URL_GET_USER, { withCredentials: true }).then(
+      (response) => {
+        //let flag_validated = false
+        if (response.data.tfa) {
+          setTmpUser(response.data);
 
-            setOpen(true);
-          } else setUser(response.data);
-        },
-        (error) => console.log(error)
-      );
+          setOpen(true);
+        } else setUser(response.data);
+      },
+      (error) => console.log(error)
+    );
   }, []);
 
   user.provider ? console.log('user logged in') : console.log('no user');
@@ -80,9 +82,12 @@ function App() {
                 />
                 <Route path="chat" element={<Chat />} />
                 <Route path="game" element={<Game />} />
+                <Route path="history" element={<History />} />
                 <Route
                   path="profile"
-                  element={user.provider ? <Profile /> : <Navigate to="/login" />}
+                  element={
+                    user.provider ? <Profile /> : <Navigate to="/login" />
+                  }
                 />
                 <Route path="*" element={<NotFound />} />
               </Route>

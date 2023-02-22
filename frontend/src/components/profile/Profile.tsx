@@ -1,4 +1,5 @@
 import { useState, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../contexts/UserContext';
 import axios from 'axios';
 import errorAlert from '../UI/errorAlert';
@@ -16,17 +17,22 @@ import EditAvatar from './EditAvatar';
 import Enable2fa from './Enable2fa';
 import styles from './Profile.module.css';
 
+const URL_TOGGLE_TFA =
+  String(process.env.REACT_APP_URL_BACKEND) +
+  String(process.env.REACT_APP_URL_TOGGLE_TFA);
+
 const Profile = () => {
+  const navigate = useNavigate();
   const { user, setUser } = useContext(UserContext);
   const [modalNicknameOpen, setModalNicknameOpen] = useState(false);
   const [modalAvatarOpen, setModalAvatarOpen] = useState(false);
-  const [modalTwoFactorAuthOpen, setModalTwoFactorAuthOpen] = useState(false);
+  const [modal2faOpen, setModal2faOpen] = useState(false);
 
   const toggleTfa = () => {
     if (user.tfa) {
       return axios
         .patch(
-          String(process.env.REACT_APP_URL_TOGGLE_TFA),
+          URL_TOGGLE_TFA,
           { enabled: false },
           {
             withCredentials: true,
@@ -37,7 +43,7 @@ const Profile = () => {
           (response) => setUser(response.data),
           (error) => errorAlert('Something went wrong')
         );
-    } else setModalTwoFactorAuthOpen(true);
+    } else setModal2faOpen(true);
   };
 
   return !user.nickname && user.provider ? (
@@ -83,8 +89,8 @@ const Profile = () => {
               onClick={toggleTfa}
             />
             <Enable2fa
-              open={modalTwoFactorAuthOpen}
-              setOpen={setModalTwoFactorAuthOpen}
+              open={modal2faOpen}
+              setOpen={setModal2faOpen}
             />
           </div>
         </div>
@@ -135,7 +141,11 @@ const Profile = () => {
             <Rating name="read-only" value={4} readOnly />
           </div>
           <div className={styles.bottom}>
-            <ButtonPong text="Full stats" endIcon={<ArrowForwardIosIcon />} />
+            <ButtonPong
+              text="Full stats"
+              onClick={() => navigate('/history')}
+              endIcon={<ArrowForwardIosIcon />}
+            />
           </div>
         </div>
       </div>

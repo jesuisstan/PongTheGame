@@ -1,4 +1,10 @@
-import { useState, useContext, useEffect, SetStateAction, Dispatch } from 'react';
+import {
+  useState,
+  useContext,
+  useEffect,
+  SetStateAction,
+  Dispatch
+} from 'react';
 import { UserContext } from '../../contexts/UserContext';
 import axios from 'axios';
 import QRCode from 'qrcode';
@@ -11,6 +17,17 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import SaveIcon from '@mui/icons-material/Save';
 import TextField from '@mui/material/TextField';
 import errorAlert from '../UI/errorAlert';
+import styles from './Profile.module.css';
+
+const URL_TOGGLE_TFA =
+  String(process.env.REACT_APP_URL_BACKEND) +
+  String(process.env.REACT_APP_URL_TOGGLE_TFA);
+const URL_VALIDATE_2FA =
+  String(process.env.REACT_APP_URL_BACKEND) +
+  String(process.env.REACT_APP_URL_VALIDATE_2FA);
+const URL_GET_SECRET =
+  String(process.env.REACT_APP_URL_BACKEND) +
+  String(process.env.REACT_APP_URL_GET_USER); //todo change URL
 
 const modalDialogStyle = {
   maxWidth: 500,
@@ -27,15 +44,27 @@ const Enable2fa = ({
   setOpen: Dispatch<SetStateAction<boolean>>;
 }) => {
   const { user, setUser } = useContext(UserContext);
-  const [load, setLoad] = useState(false);
+  const [loadSubmit, setLoadSubmit] = useState(false);
+  const [loadCreateQr, setLoadCreateQr] = useState(false);
   const [buttonText, setButtonText] = useState('Submit');
-  const [qrCodeUrl, setqrCodeUrl] = useState('');
+  const [qrCodeUrl, setQrCodeUrl] = useState('');
   const [text, setText] = useState('');
   const [error, setError] = useState('');
 
-  useEffect(() => {
-    QRCode.toDataURL('').then(setqrCodeUrl);
-  }, []);
+  const createQRcode = () => {
+    return axios.get(URL_GET_SECRET, { withCredentials: true }).then(
+      (response) => {
+        QRCode.toDataURL(response.data.nickname).then(setQrCodeUrl); //todo change resp.fieldname
+      },
+      (error) => errorAlert(error)
+    );
+  };
+
+  const showQRcode = async () => {
+    setLoadCreateQr(true);
+    await createQRcode();
+    setLoadCreateQr(false);
+  };
 
   const handleTextInput = (event: any) => {
     const newValue = event.target.value;
@@ -47,11 +76,11 @@ const Enable2fa = ({
     }
   };
 
-  const submitCode = async () => {
+  const sendCode = async () => {
     return axios
       .patch(
-        String(process.env.REACT_APP_URL_SET_),
-        { nickname: 'value' },
+        URL_VALIDATE_2FA,
+        { nickname: 'value' }, //todo modify
         {
           withCredentials: true,
           headers: { 'Content-type': 'application/json; charset=UTF-8' }
@@ -61,24 +90,21 @@ const Enable2fa = ({
         (response) => {
           console.log('QR proof submitted');
         },
-        (error) => {
-          console.log(error);
-          errorAlert('Something went wrong');
-        }
+        (error) => errorAlert(error)
       );
   };
 
   const handleSubmit = async (event: any) => {
     event.preventDefault();
-    setLoad(true);
-    await submitCode(); //todo
-    setLoad(false);
+    setLoadSubmit(true);
+    await sendCode(); //todo
+    setLoadSubmit(false);
     setButtonText('Done ✔️');
     setText('');
     setError('');
     axios
       .patch(
-        String(process.env.REACT_APP_URL_TOGGLE_TFA),
+        URL_TOGGLE_TFA,
         { enabled: true },
         {
           withCredentials: true,
@@ -89,10 +115,10 @@ const Enable2fa = ({
         (response) => {
           setUser(response.data);
         },
-        (error) => errorAlert('Something went wrong')
+        (error) => errorAlert(error)
       );
     setTimeout(() => setOpen(false), 442);
-    setTimeout(() => setButtonText('Submit'), 442);
+    setTimeout(() => setButtonText('Submit'), 450);
   };
 
   return (
@@ -101,7 +127,7 @@ const Enable2fa = ({
         sx={{ color: 'black' }}
         open={open}
         onClose={(event, reason) => {
-          if (event && reason == 'closeClick') setOpen(false);
+          if (event && reason === 'closeClick') setOpen(false);
         }}
       >
         <ModalDialog
@@ -121,8 +147,8 @@ const Enable2fa = ({
                 </li>
                 <li>In the authenticator app, select "+" icon.</li>
                 <li>
-                  Select "Scan a barcode (or QR code)" and use the phone's
-                  camera to scan this barcode.
+                  Select "Scan a QR code" and use the phone's camera to scan the
+                  following QR code.
                 </li>
               </div>
 
@@ -130,7 +156,21 @@ const Enable2fa = ({
                 <Typography component="h3" sx={{ color: 'rgb(37, 120, 204)' }}>
                   Scan QR Code
                 </Typography>
-                <img src={qrCodeUrl} alt="qrcode url" />
+                <div className={styles.QRbox}>
+                  {!qrCodeUrl ? (
+                    <LoadingButton
+                      disabled={qrCodeUrl ? true : false}
+                      variant="contained"
+                      color="inherit"
+                      loading={loadCreateQr}
+                      onClick={showQRcode}
+                    >
+                      Show QR Code
+                    </LoadingButton>
+                  ) : (
+                    <img className={styles.QRimage} src={qrCodeUrl} alt="" />
+                  )}
+                </div>
               </div>
               <div>
                 <Typography component="h3" sx={{ color: 'rgb(37, 120, 204)' }}>
@@ -152,7 +192,7 @@ const Enable2fa = ({
               />
               <LoadingButton
                 type="submit"
-                loading={load}
+                loading={loadSubmit}
                 startIcon={<SaveIcon />}
                 variant="contained"
                 color="inherit"

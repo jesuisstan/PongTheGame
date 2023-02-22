@@ -11,6 +11,7 @@ const USER_SELECT = {
   username: true,
   tfa: true,
   blockedUsers: true,
+  totpEnabled: true,
   role: true,
 };
 
@@ -56,27 +57,29 @@ export class UserService {
     return this.prisma.user.create({
       data: {
         profileId,
-        username,
         provider,
+        username,
         avatar,
       },
-      select: USER_SELECT,
-    });
-  }
-
-  async findUsersById(...ids: number[]): Promise<(User | null)[]> {
-    const users = await this.prisma.user.findMany({
-      where: {
-        id: {
-          in: ids,
-        },
-      },
-      select: USER_SELECT,
     });
 
-    return ids.map((id) => {
-      return users.find((user) => user.id == id) ?? null;
-    });
+    // return this.prisma.user.create({
+    //   data: {
+    //     profileId,
+    //     username,
+    //     provider,
+    //     profileAvatar,
+    //     avatar: null,
+    //   },
+    //   select: {
+    //     avatar: true,
+    //     id: true,
+    //     username: true,
+    //     nickname: true,
+    //     profileId: true,
+    //     provider: true,
+    //   },
+    // });
   }
 
   async setUserNickname(user: User, nickname: string): Promise<User> {
@@ -89,19 +92,64 @@ export class UserService {
       where: {
         id,
       },
+      select: USER_SELECT,
     });
   }
 
-  async setUserTfa(user: User, tfaEnabled: boolean) {
+  async hasTotpSecret(user: User): Promise<boolean> {
+    const { id } = user;
+
+    const dbUser = await this.prisma.user.findFirst({
+      where: { id },
+      select: {
+        totpSecret: true,
+      },
+    });
+
+    return (dbUser?.totpSecret ?? null) !== null;
+  }
+
+  async setAvatar(user: User, url: string | null): Promise<User> {
     const { id } = user;
 
     return this.prisma.user.update({
       data: {
-        tfa: tfaEnabled,
+        avatar: url,
       },
       where: {
         id,
       },
+    });
+  }
+
+  async setTotpSecret(user: User, secret: string): Promise<User> {
+    const { id } = user;
+
+    return this.prisma.user.update({
+      data: {
+        totpSecret: {
+          upsert: {
+            create: { secret },
+            update: { secret },
+          },
+        },
+      },
+      where: { id },
+      select: USER_SELECT,
+    });
+  }
+
+  async removeTotpSecret(user: User): Promise<User> {
+    const { id } = user;
+
+    return this.prisma.user.update({
+      data: {
+        totpSecret: {
+          delete: true,
+        },
+      },
+      where: { id },
+      select: USER_SELECT,
     });
   }
 }

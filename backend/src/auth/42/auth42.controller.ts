@@ -1,11 +1,18 @@
-import { Controller, Get, Res, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Res,
+  UnauthorizedException,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { User } from '@prisma/client';
 import { Response } from 'express';
+import { giveAchievementService } from 'src/achievement/utils/giveachievement.service';
 import { Auth42Guard } from 'src/auth/42/auth42.guard';
 import { AuthService } from 'src/auth/auth.service';
-import { convertTime } from 'src/utils/time';
 import { SessionUser } from 'src/decorator/session-user.decorator';
-import { giveAchievementService } from 'src/achievement/utils/giveachievement.service';
+import { convertTime } from 'src/utils/time';
 
 // TODO use config
 const CLIENT_URL = 'http://localhost:3000';
@@ -36,7 +43,17 @@ export class Auth42Controller {
     ],
   })
   @UseGuards(Auth42Guard)
-  async callback(@Res() res: Response) {
+  async callback(@SessionUser() user: User, @Res() res: Response) {
+    if (user === undefined) throw new UnauthorizedException();
+    this.give.fisrtLogin(user);
+    const token = await this.auth.signToken(user.id);
+
+    res.cookie('access_token', token, {
+      maxAge: convertTime({
+        minutes: 30,
+      }),
+    });
+
     return res.redirect(`${CLIENT_URL}/profile`);
   }
 }

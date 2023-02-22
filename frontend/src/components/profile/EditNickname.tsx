@@ -13,6 +13,8 @@ import Stack from '@mui/joy/Stack';
 import Typography from '@mui/joy/Typography';
 import errorAlert from '../UI/errorAlert';
 
+const URL_SET_NICKNAME = String(process.env.REACT_APP_URL_BACKEND) + String(process.env.REACT_APP_URL_SET_NICKNAME);
+
 const modalDialogStyle = {
   maxWidth: 500,
   border: '0px solid #000',
@@ -35,7 +37,7 @@ const EditNickname = ({
 
   const handleTextInput = (event: any) => {
     const newValue = event.target.value;
-    if (!newValue.match(/[%<>\\$|/?* +^.()\[\]]/)) {
+    if (!newValue.match(/[%<>\\$|/?* +^.()[\]]/)) {
       setError('');
       setText(newValue);
     } else {
@@ -56,7 +58,7 @@ const EditNickname = ({
   const setNickname = (value: string) => {
     return axios
       .patch(
-        String(process.env.REACT_APP_URL_SET_NICKNAME),
+        URL_SET_NICKNAME,
         { nickname: value },
         {
           withCredentials: true,

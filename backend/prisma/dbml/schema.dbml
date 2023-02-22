@@ -9,6 +9,8 @@ Table User {
   avatar String
   profileId String [not null]
   provider String [not null]
+  totpEnabled Boolean [not null, default: false]
+  totpSecret TotpSecret
   role Role [not null, default: 'USER']
   tfa Boolean [not null, default: false]
   blockedUsers String[] [not null]
@@ -19,6 +21,13 @@ Table User {
   indexes {
     (profileId, provider) [unique]
   }
+}
+
+Table TotpSecret {
+  id Int [pk, increment]
+  secret String [not null]
+  userId Int [unique]
+  user User
 }
 
 Table Achievements {
@@ -71,6 +80,8 @@ Enum MatchState {
   Started
   Finished
 }
+
+Ref: TotpSecret.userId - User.id
 
 Ref: Achievements.userId > User.id
 

@@ -2,6 +2,7 @@ import { useState, useContext, SetStateAction, Dispatch } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../contexts/UserContext';
 import axios from 'axios';
+import { User } from '../../types/User';
 import LoadingButton from '@mui/lab/LoadingButton';
 import SaveIcon from '@mui/icons-material/Save';
 import FormControl from '@mui/joy/FormControl';
@@ -13,6 +14,10 @@ import ModalClose from '@mui/joy/ModalClose';
 import Stack from '@mui/joy/Stack';
 import Typography from '@mui/joy/Typography';
 import errorAlert from '../UI/errorAlert';
+
+const URL_LOGOUT =
+  String(process.env.REACT_APP_URL_BACKEND) +
+  String(process.env.REACT_APP_URL_LOGOUT);
 
 const modalDialogStyle = {
   maxWidth: 500,
@@ -28,14 +33,14 @@ const Validate2fa = ({
 }: {
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
-  userData: any;
+  userData: User | undefined;
 }) => {
+  const navigate = useNavigate();
   const { user, setUser } = useContext(UserContext);
   const [text, setText] = useState('');
   const [error, setError] = useState('');
   const [load, setLoad] = useState(false);
   const [buttonText, setButtonText] = useState('Submit');
-  const navigate = useNavigate();
 
   const handleTextInput = (event: any) => {
     const newValue = event.target.value;
@@ -49,17 +54,17 @@ const Validate2fa = ({
 
   const submitCode = (value: string) => {
     console.log('2fa code submitted after login');
-    return false; // todo hardcode
+    return true; // todo hardcode
   };
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     if (text) {
       setLoad(true);
-      if (submitCode(text) === true) {
+      if (submitCode(text) === true && userData) {
         setUser(userData);
       } else {
-        axios.get(String(process.env.REACT_APP_URL_LOGOUT), {
+        axios.get(URL_LOGOUT, {
           withCredentials: true
         });
         errorAlert('Validation failed. Try login again');
