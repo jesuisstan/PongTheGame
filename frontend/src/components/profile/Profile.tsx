@@ -17,9 +17,9 @@ import EditAvatar from './EditAvatar';
 import Enable2fa from './Enable2fa';
 import styles from './Profile.module.css';
 
-const URL_TOGGLE_TFA =
+const URL_TOTP_TOGGLE =
   String(process.env.REACT_APP_URL_BACKEND) +
-  String(process.env.REACT_APP_URL_TOGGLE_TFA);
+  String(process.env.REACT_APP_URL_TOTP_TOGGLE);
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -31,14 +31,10 @@ const Profile = () => {
   const toggleTfa = () => {
     if (user.totpEnabled) {
       return axios
-        .patch(
-          URL_TOGGLE_TFA,
-          { enabled: false },
-          {
-            withCredentials: true,
-            headers: { 'Content-type': 'application/json; charset=UTF-8' }
-          }
-        )
+        .delete(URL_TOTP_TOGGLE, {
+          withCredentials: true,
+          headers: { 'Content-type': 'application/json; charset=UTF-8' }
+        })
         .then(
           (response) => setUser(response.data),
           (error) => errorAlert('Something went wrong')
