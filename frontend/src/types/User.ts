@@ -5,6 +5,6 @@ export type User = {
   avatar: string;
   profileId: String;
   provider: string;
-  tfa: boolean;
-  blockedUsers: string[];
+  totpEnabled: boolean;
+  blockedUsers: User[];
 };

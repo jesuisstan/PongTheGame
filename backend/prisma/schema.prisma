@@ -20,9 +20,9 @@ model User {
   avatar    String?
   profileId String
   provider  String
-  role      Role     @default(USER)
-  tfa       Boolean @default(false)
+
   blockedUsers String[]
+
   totpEnabled Boolean     @default(false)
   totpSecret  TotpSecret?
   role        Role        @default(USER)

@@ -9,7 +9,6 @@ const USER_SELECT = {
   provider: true,
   nickname: true,
   username: true,
-  tfa: true,
   blockedUsers: true,
   totpEnabled: true,
   role: true,

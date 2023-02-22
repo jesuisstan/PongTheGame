@@ -14,8 +14,8 @@ export const UserContext = createContext<UserContextData>({
 		profileId: '',
 		provider: '',
 		username: '',
-		tfa: false,
 		blockedUsers: [],
+		totpEnabled: false,
 	  },
 	setUser: (user) => {},
 });
