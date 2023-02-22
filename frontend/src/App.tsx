@@ -24,44 +24,37 @@ function App() {
   const socket = useContext(WebSocketContext);
   const [open, setOpen] = useState(false);
   const [tmpUser, setTmpUser] = useState<User | undefined>();
-
   const [user, setUser] = useState<User>({
     id: -1,
     nickname: '',
     avatar: '',
     provider: '',
     username: '',
-    tfa: false
+    totpEnabled: false
   });
-
-  //useEffect(() => {
-  //  axios
-  //    .get(String(process.env.REACT_APP_URL_AUTH), { withCredentials: true })
-  //    .then(
-  //      (response) => setUser(response.data),
-  //      (error) => console.log(error)
-  //    );
-  //}, []);
 
   useEffect(() => {
     axios.get(URL_GET_USER, { withCredentials: true }).then(
       (response) => {
-        //let flag_validated = false
-        if (response.data.tfa) {
+        if (
+          //todo change !response.data.tfa back to response.data.tf
+          !response.data.totpEnabled &&
+          localStorage.getItem('totpVerified') !== 'true'
+        ) {
           setTmpUser(response.data);
-
           setOpen(true);
         } else setUser(response.data);
       },
-      (error) => console.log(error)
+      (error) => {
+        console.log(error);
+        localStorage.removeItem('totpVerified');
+      }
     );
   }, []);
 
   user.provider ? console.log('user logged in') : console.log('no user');
   console.log(user);
-
-  // Fetching the socket from its context
-  // const socket = useContext(WebSocketContext)
+  console.log('totpVerified ?? -> ' + localStorage.getItem('totpVerified'));
 
   return (
     <WebSocketContext.Provider value={socket}>
@@ -83,9 +76,7 @@ function App() {
                 <Route path="history" element={<History />} />
                 <Route
                   path="profile"
-                  element={
-                    user.provider ? <Profile /> : <Navigate to="/login" />
-                  }
+                  element={user.provider ? <Profile /> : <Login />}
                 />
                 <Route path="*" element={<NotFound />} />
               </Route>

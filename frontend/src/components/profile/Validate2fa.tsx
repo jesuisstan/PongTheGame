@@ -63,6 +63,7 @@ const Validate2fa = ({
       setLoad(true);
       if (submitCode(text) === true && userData) {
         setUser(userData);
+        localStorage.setItem('totpVerified', 'true');
       } else {
         axios.get(URL_LOGOUT, {
           withCredentials: true
