@@ -32,7 +32,7 @@ jobs:
       - name: Generate Prisma schema
         run: yarn prisma generate
         working-directory: ./backend
-      - run: yarn test:e2e
+      - run: yarn test:e2e:docker
         working-directory: ./backend
 
   lint:
