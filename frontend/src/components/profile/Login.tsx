@@ -1,39 +1,25 @@
-import { useEffect, useContext, useState } from 'react';
-import { UserContext } from '../../context/UserContext';
-import axios from 'axios';
 import styles from './Login.module.css';
-import Validate2fa from './Validate2fa';
+
+const URL_AUTH_42 =
+  String(process.env.REACT_APP_URL_BACKEND) +
+  String(process.env.REACT_APP_URL_AUTH_42);
+const URL_AUTH_GITHUB =
+  String(process.env.REACT_APP_URL_BACKEND) +
+  String(process.env.REACT_APP_URL_AUTH_GITHUB);
 
 const Login = () => {
-  const { user, setUser } = useContext(UserContext);
-  const [open, setOpen] = useState(false);
-  const [tmpUser, setTmpUser] = useState(null);
-
-  useEffect(() => {
-    axios
-      .get(String(process.env.REACT_APP_URL_AUTH), { withCredentials: true })
-      .then(
-        (response) => {
-          if (response.data.tfa) {
-            setTmpUser(response.data);
-            setOpen(true);
-          } else setUser(response.data);
-        },
-        (error) => console.log(error)
-      );
-  }, []);
-
   const ecole42Auth = () => {
-    window.location.href = String(process.env.REACT_APP_URL_AUTH_42);
+    localStorage.removeItem('totpVerified');
+    window.location.href = URL_AUTH_42;
   };
 
   const githubAuth = () => {
-    window.location.href = String(process.env.REACT_APP_URL_AUTH_GITHUB);
+    localStorage.removeItem('totpVerified');
+    window.location.href = URL_AUTH_GITHUB;
   };
 
   return (
     <div className={styles.loginCard}>
-      <Validate2fa open={open} setOpen={setOpen} userData={tmpUser} />
       <div className={styles.wrapper}>
         <div className={styles.left}>Choose your Login Method</div>
         <div className={styles.center}>

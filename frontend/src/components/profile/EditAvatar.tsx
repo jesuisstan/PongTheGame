@@ -1,5 +1,5 @@
-import { useState, useContext } from 'react';
-import { UserContext } from '../../context/UserContext';
+import { useState, useContext, SetStateAction, Dispatch } from 'react';
+import { UserContext } from '../../contexts/UserContext';
 import axios from 'axios';
 import errorAlert from '../UI/errorAlert';
 import FormLabel from '@mui/joy/FormLabel';
@@ -11,6 +11,10 @@ import Typography from '@mui/joy/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
 import SaveIcon from '@mui/icons-material/Save';
 
+const URL_UPLOAD_AVATAR =
+  String(process.env.REACT_APP_URL_BACKEND) +
+  String(process.env.REACT_APP_URL_UPLOAD_AVATAR);
+
 const modalDialogStyle = {
   maxWidth: 500,
   border: '0px solid #000',
@@ -18,7 +22,13 @@ const modalDialogStyle = {
   borderRadius: '4px'
 };
 
-const EditAvatar = ({ open, setOpen }: any) => {
+const EditAvatar = ({
+  open,
+  setOpen
+}: {
+  open: boolean;
+  setOpen: Dispatch<SetStateAction<boolean>>;
+}) => {
   const { user, setUser } = useContext(UserContext);
   const [file, setFile] = useState<File>();
   const [load, setLoad] = useState(false);
@@ -40,15 +50,32 @@ const EditAvatar = ({ open, setOpen }: any) => {
     const uploadAvatar = async (formData: FormData) => {
       setLoad(true);
       try {
-        const response = await axios.post(String(process.env.REACT_APP_URL_UPLOAD_AVATAR), formData, {
+        const responseUpload = await axios.post(URL_UPLOAD_AVATAR, formData, {
           withCredentials: true,
           headers: { 'Content-type': 'multipart/form-data' }
         });
-        //setUser(response.data); //todo
+
+        const responseGetAvatar = await axios.get(
+          String(`http://localhost:3080/avatar/${user.id}`),
+          {
+            withCredentials: true
+          }
+        );
+
+        //setUser(responseGetAvatar.data); //todo
+        //axios
+        //  .get(String(process.env.REACT_APP_URL_AUTH), {
+        //    withCredentials: true
+        //  })
+        //  .then(
+        //    (response) => {
+        //      setUser(response.data);
+        //    },
+        //    (error) => console.log(error)
+        //  );
       } catch (error) {
-        console.log(error);
         setOpen(false);
-        errorAlert('Something went wrong');
+        errorAlert(String(error));
       }
       setLoad(false);
       setButtonText('Done ✔️');
@@ -67,7 +94,7 @@ const EditAvatar = ({ open, setOpen }: any) => {
         sx={{ color: 'black' }}
         open={open}
         onClose={(event, reason) => {
-          if (event && reason == 'closeClick') setOpen(false);
+          if (event && reason === 'closeClick') setOpen(false);
         }}
       >
         <ModalDialog
@@ -84,7 +111,9 @@ const EditAvatar = ({ open, setOpen }: any) => {
           </Typography>
           <form onSubmit={handleSubmit}>
             <Stack spacing={2}>
-              <FormLabel sx={{ color: 'black' }}>Max file size is 2 Mb</FormLabel>
+              <FormLabel sx={{ color: 'black' }}>
+                Max file size is 2 Mb
+              </FormLabel>
               <input
                 required
                 type="file"

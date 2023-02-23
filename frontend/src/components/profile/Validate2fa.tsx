@@ -1,7 +1,8 @@
-import { useState, useContext } from 'react';
+import { useState, useContext, SetStateAction, Dispatch } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { UserContext } from '../../context/UserContext';
+import { UserContext } from '../../contexts/UserContext';
 import axios from 'axios';
+import { User } from '../../types/User';
 import LoadingButton from '@mui/lab/LoadingButton';
 import SaveIcon from '@mui/icons-material/Save';
 import FormControl from '@mui/joy/FormControl';
@@ -14,6 +15,10 @@ import Stack from '@mui/joy/Stack';
 import Typography from '@mui/joy/Typography';
 import errorAlert from '../UI/errorAlert';
 
+const URL_LOGOUT =
+  String(process.env.REACT_APP_URL_BACKEND) +
+  String(process.env.REACT_APP_URL_LOGOUT);
+
 const modalDialogStyle = {
   maxWidth: 500,
   border: '0px solid #000',
@@ -21,13 +26,21 @@ const modalDialogStyle = {
   borderRadius: '4px'
 };
 
-const Validate2fa = ({ open, setOpen, userData }: any) => {
+const Validate2fa = ({
+  open,
+  setOpen,
+  userData
+}: {
+  open: boolean;
+  setOpen: Dispatch<SetStateAction<boolean>>;
+  userData: User | undefined;
+}) => {
+  const navigate = useNavigate();
   const { user, setUser } = useContext(UserContext);
   const [text, setText] = useState('');
   const [error, setError] = useState('');
   const [load, setLoad] = useState(false);
   const [buttonText, setButtonText] = useState('Submit');
-  const navigate = useNavigate();
 
   const handleTextInput = (event: any) => {
     const newValue = event.target.value;
@@ -41,24 +54,21 @@ const Validate2fa = ({ open, setOpen, userData }: any) => {
 
   const submitCode = (value: string) => {
     console.log('2fa code submitted after login');
-    return true // todo hardcode
+    return true; // todo hardcode
   };
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     if (text) {
       setLoad(true);
-      if (submitCode(text)) {
+      if (submitCode(text) === true && userData) {
         setUser(userData);
+        localStorage.setItem('totpVerified', 'true');
       } else {
-        setUser({
-          id: -1,
-          nickname: '',
-          avatar: '',
-          provider: '',
-          username: '',
-          tfa: false
+        axios.get(URL_LOGOUT, {
+          withCredentials: true
         });
+        errorAlert('Validation failed. Try login again');
       }
       setLoad(false);
       setButtonText('Done ✔️');

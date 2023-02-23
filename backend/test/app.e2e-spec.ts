@@ -1,25 +1,26 @@
 import { INestApplication, ValidationPipe } from '@nestjs/common';
-import { Test } from '@nestjs/testing'
+import { Test } from '@nestjs/testing';
 import * as pactum from 'pactum';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { AppModule } from 'src/app.module';
 
 describe('Appe@e', () => {
-  let app : INestApplication;
-  let prisma : PrismaService;
+  let app: INestApplication;
+  let prisma: PrismaService;
 
   jest.setTimeout(3000);
   beforeAll(async () => {
-
     const refModule = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
 
     app = refModule.createNestApplication();
 
-    app.useGlobalPipes(new ValidationPipe({
-      whitelist: true,
-    }));
+    app.useGlobalPipes(
+      new ValidationPipe({
+        whitelist: true,
+      }),
+    );
     await app.init();
     await app.listen(3333);
 
@@ -27,7 +28,6 @@ describe('Appe@e', () => {
     // await prisma.cleanDb();
 
     pactum.request.setBaseUrl('http://localhost:3333');
-    
   });
 
   afterAll(async () => {
@@ -37,9 +37,9 @@ describe('Appe@e', () => {
 
   describe('Testing', () => {
     it.todo('Start test');
-  })
+  });
   // describe('Auth', () => {
-    
+
   //   describe('Signup', () => {
 
   //     it('Should thrown email empty', () => {

@@ -4,5 +4,5 @@ export type User = {
   username: string;
   avatar: string;
   provider: string;
-  tfa: boolean
+  totpEnabled: boolean
 };

@@ -4,3 +4,6 @@
 /ft_transcendence_env
 yarn-error.log
 yarn-debug.log
+/package.json
+/package-lock.json
+/yarn.lock

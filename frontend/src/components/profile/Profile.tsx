@@ -1,5 +1,6 @@
 import { useState, useContext } from 'react';
-import { UserContext } from '../../context/UserContext';
+import { useNavigate } from 'react-router-dom';
+import { UserContext } from '../../contexts/UserContext';
 import axios from 'axios';
 import errorAlert from '../UI/errorAlert';
 import Avatar from '@mui/material/Avatar';
@@ -16,28 +17,29 @@ import EditAvatar from './EditAvatar';
 import Enable2fa from './Enable2fa';
 import styles from './Profile.module.css';
 
+const URL_TOTP_TOGGLE =
+  String(process.env.REACT_APP_URL_BACKEND) +
+  String(process.env.REACT_APP_URL_TOTP_TOGGLE);
+
 const Profile = () => {
+  const navigate = useNavigate();
   const { user, setUser } = useContext(UserContext);
   const [modalNicknameOpen, setModalNicknameOpen] = useState(false);
   const [modalAvatarOpen, setModalAvatarOpen] = useState(false);
-  const [modalTwoFactorAuthOpen, setModalTwoFactorAuthOpen] = useState(false);
+  const [modal2faOpen, setModal2faOpen] = useState(false);
 
   const toggleTfa = () => {
-    if (user.tfa) {
+    if (user.totpEnabled) {
       return axios
-        .patch(
-          String(process.env.REACT_APP_URL_TOGGLE_TFA),
-          { enabled: false },
-          {
-            withCredentials: true,
-            headers: { 'Content-type': 'application/json; charset=UTF-8' }
-          }
-        )
+        .delete(URL_TOTP_TOGGLE, {
+          withCredentials: true,
+          headers: { 'Content-type': 'application/json; charset=UTF-8' }
+        })
         .then(
           (response) => setUser(response.data),
           (error) => errorAlert('Something went wrong')
         );
-    } else setModalTwoFactorAuthOpen(true);
+    } else setModal2faOpen(true);
   };
 
   return !user.nickname && user.provider ? (
@@ -72,20 +74,17 @@ const Profile = () => {
             <List aria-labelledby="basic-list-demo">
               <ListItem>Login method: {user.provider}</ListItem>
               <ListItem>
-                2-Factor Authentication: {user.tfa ? 'on' : 'off'}
+                2-Factor Authentication: {user.totpEnabled ? 'on' : 'off'}
               </ListItem>
             </List>
           </div>
           <div className={styles.bottom}>
             <ButtonPong
-              text={user.tfa === true ? 'Disable 2FA' : 'Setup 2FA'}
+              text={user.totpEnabled === true ? 'Disable 2FA' : 'Setup 2FA'}
               endIcon={<ArrowForwardIosIcon />}
               onClick={toggleTfa}
             />
-            <Enable2fa
-              open={modalTwoFactorAuthOpen}
-              setOpen={setModalTwoFactorAuthOpen}
-            />
+            <Enable2fa open={modal2faOpen} setOpen={setModal2faOpen} />
           </div>
         </div>
       </div>
@@ -135,7 +134,11 @@ const Profile = () => {
             <Rating name="read-only" value={4} readOnly />
           </div>
           <div className={styles.bottom}>
-            <ButtonPong text="Full stats" endIcon={<ArrowForwardIosIcon />} />
+            <ButtonPong
+              text="Full stats"
+              onClick={() => navigate('/history')}
+              endIcon={<ArrowForwardIosIcon />}
+            />
           </div>
         </div>
       </div>

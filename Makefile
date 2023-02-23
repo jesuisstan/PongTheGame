@@ -1,4 +1,3 @@
-# ENV		= --env-file
 COMPOSE = docker-compose
 # COMPOSE = sudo docker-compose
 

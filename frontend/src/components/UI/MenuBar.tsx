@@ -1,6 +1,6 @@
 import { useState, useContext } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { UserContext } from '../../context/UserContext';
+import { UserContext } from '../../contexts/UserContext';
 import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
@@ -10,8 +10,13 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import styles from './UI.module.css';
 
+const URL_LOGOUT =
+  String(process.env.REACT_APP_URL_BACKEND) +
+  String(process.env.REACT_APP_URL_LOGOUT);
+
 const MenuBar = () => {
-  const { user } = useContext(UserContext)
+  const navigate = useNavigate();
+  const { user } = useContext(UserContext);
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
 
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -22,13 +27,12 @@ const MenuBar = () => {
     setAnchorElUser(null);
   };
 
-  const navigate = useNavigate();
-
   const authenticate = () => {
     if (user.provider) {
-      window.location.href = 'http://localhost:3080/auth/logout';
+      localStorage.removeItem('totpVerified');
+      window.location.href = URL_LOGOUT;
     } else {
-      window.location.href = 'http://localhost:3000/login';
+      navigate('/login');
     }
   };
 
@@ -87,9 +91,7 @@ const MenuBar = () => {
                 disabled={user.provider ? false : true}
                 onClick={handleCloseUserMenu}
               >
-                <div onClick={(event) => navigate('/match_history')}>
-                  History
-                </div>
+                <div onClick={(event) => navigate('/history')}>History</div>
               </MenuItem>
               <MenuItem onClick={handleCloseUserMenu}>
                 <div onClick={authenticate}>
