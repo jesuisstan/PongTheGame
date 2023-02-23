@@ -13,9 +13,9 @@ export class ChatService {
     throw new WsException('identify: unknown room name!');
   }
 
-  quitRoom(roomName: string, userName: string, clientId: string) {
+  quitRoom(roomName: string, nick: string) {
     const room = this.getChatRoomByName(roomName);
-    if (room) delete room.users[clientId];
+    if (room) delete room.users[nick];
     throw new WsException('quitRoom: unknown room name!');
   }
 
@@ -25,11 +25,11 @@ export class ChatService {
     throw new WsException('getChatRoomByName: unknown room name!');
   }
 
-  getUserById(roomName: string, clientId: string) {
-    const room = this.getChatRoomByName(roomName);
-    if (room) return room.users[clientId];
-    throw new WsException('getUserById: unknown room name!');
-  }
+  // getUserById(roomName: string, clientId: string) {
+  //   const room = this.getChatRoomByName(roomName);
+  //   if (room) return room.users[clientId];
+  //   throw new WsException('getUserById: unknown room name!');
+  // }
 
   // Create a new message object and push it to the messages array
   createMessage(roomName: string, msg: MessageDto) {
@@ -67,6 +67,20 @@ export class ChatService {
     return this.chatRooms;
   }
 
+  changePassword(roomName: string, newPassword: string) {
+    const room = this.getChatRoomByName(roomName);
+    if (room) room.password = newPassword;
+    else throw new WsException('changePassword: unknown room name!');
+  }
+
+  removePassword(roomName: string) {
+    const room = this.getChatRoomByName(roomName);
+    if (room) {
+      room.password = '';
+      room.modes = '';
+    } else throw new WsException('changePassword: unknown room name!');
+  }
+
   isUserOper(roomName: string, nick: string) {
     const room = this.getChatRoomByName(roomName);
     if (room) {
@@ -75,6 +89,12 @@ export class ChatService {
       return false;
     }
     throw new WsException('isUserOper: unknown room name!');
+  }
+
+  makeOper(roomName: string, nick: string) {
+    const room = this.getChatRoomByName(roomName);
+    if (room) room.users[nick].modes += 'o';
+    else throw new WsException('makeOper: unknown room name!');
   }
 
   banUser(roomName: string, nick: string) {

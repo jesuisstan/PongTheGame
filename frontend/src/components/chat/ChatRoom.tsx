@@ -70,6 +70,18 @@ const ChatRoom = (props: any) => {
       roomName === props.room.name && isTyping ? setTypingDisplay(nickname + ' is typing...')
         : setTypingDisplay('')
     })
+    socket.on('removePassword', ({ roomName }) => {
+      console.log('Password from ' + roomName + ' has been removed!')
+    })
+    socket.on('makeOper', ({ roomName, nick }) => {
+      console.log(nick + ' is Oper now!')
+    })
+    socket.on('banUser', ({ roomName, nick }) => {
+      console.log(nick + ' has been banned!')
+    })
+    socket.on('kickUser', ({ roomName, nick }) => {
+      console.log(nick + ' has been kicked!')
+    })
 
     // Clean listeners to unsubscribe all callbacks for these events
     // before the component is unmounted
@@ -77,6 +89,10 @@ const ChatRoom = (props: any) => {
       socket.off('connect')
       socket.off('createMessage')
       socket.off('typingMessage')
+      socket.off('removePassword')
+      socket.off('makeOper')
+      socket.off('banUser')
+      socket.off('kickUser')
     }
   }, [])
 

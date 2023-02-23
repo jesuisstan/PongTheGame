@@ -181,6 +181,9 @@ const Chat = () => {
                 {
                   // Mapping chatroom array to retrieve all chatrooms with
                   chatRooms.map((room, index) => (
+                    // Chat room not private (not a conversation of 2 users)
+                    (room.modes.search('i') === -1) 
+                    &&
                     <li key={index}>
                       [{room.name}]: {Object.keys(room.users).length} members |{' '}
                       {Object.keys(room.messages).length} messages
