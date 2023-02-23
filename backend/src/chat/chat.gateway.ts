@@ -4,8 +4,8 @@ import {
   MessageBody,
   WebSocketServer,
   ConnectedSocket,
+  WsException,
 } from '@nestjs/websockets';
-import { User } from '@prisma/client';
 import { Socket, Server } from 'socket.io';
 import { ChatService } from './chat.service';
 import { ChatRoomDto, MessageDto } from './dto/chat.dto';
@@ -35,10 +35,13 @@ export class ChatGateway {
   }
 
   @SubscribeMessage('createChatRoom')
-  async createChatRoom(@MessageBody() room: ChatRoomDto) {
+  async createChatRoom(
+    @MessageBody('room') room: ChatRoomDto,
+    @MessageBody('nick') nick: string,
+  ) {
     if (room.password) room.modes += 'p';
     // Create a chat room object using the create method from chat.service
-    await this.chatService.createChatRoom(room);
+    await this.chatService.createChatRoom(room, nick);
     console.log('chatRoom emitted: ' + Object.entries(room));
     // Broadcast newly created room to all users
     this.server.emit('createChatRoom', room.name);
@@ -57,11 +60,13 @@ export class ChatGateway {
   @SubscribeMessage('joinRoom')
   async joinRoom(
     @MessageBody('roomName') roomName: string,
-    @MessageBody('user') user: User,
-    @ConnectedSocket() client: Socket,
+    @MessageBody('nickName') nick: string,
   ) {
-    await this.chatService.identify(roomName, user, client.id);
+    await this.chatService.identify(roomName, nick, '');
     const room = this.chatService.getChatRoomByName(roomName);
+    room?.bannedNicks.forEach((nickname) => {
+      if (nickname === nick) throw new WsException('User is blocked.');
+    });
     return room;
   }
 
@@ -83,14 +88,11 @@ export class ChatGateway {
   @SubscribeMessage('typingMessage')
   async typingMessage(
     @MessageBody('roomName') roomName: string,
+    @MessageBody('nickname') nick: string,
     @MessageBody('isTyping') isTyping: boolean,
     @ConnectedSocket() client: Socket,
   ) {
-    const user = await this.chatService.getUserById(roomName, client.id);
-    if (user) {
-      const nickname = user.profile.nickname;
-      client.broadcast.emit('typingMessage', { roomName, nickname, isTyping });
-    }
+    client.broadcast.emit('typingMessage', { roomName, nick, isTyping });
   }
 
   @SubscribeMessage('isPasswordProtected')

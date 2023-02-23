@@ -1,4 +1,6 @@
+import { User } from "./User";
+
 export type Message = {
-	author: string,
+	author: User,
 	data: string;
 }

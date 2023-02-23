@@ -37,11 +37,18 @@ const ChatRoom = (props: any) => {
   socket.emit('findAllMessages',
     { roomName: props.room.name },
     (response: SetStateAction<Message[]>) => {
+      // Messages are unfiltered yet
       setMessagesToFilter(response)
-      messagesToFilter.map((msg, index) => {
+
+      messagesToFilter.forEach((msg, index, object) => {
+        // First we filter the recipient's blocked users
         for (const blockedUser in user.blockedUsers)
-          if (msg.author === blockedUser)
-            setMessagesToFilter(messagesToFilter.filter((msg, id) => id !== index))
+          if (msg.author.nickname === blockedUser)
+            object.slice(index, 1)
+        // Then we filter the sender's blocked users
+        for (const blockedUser in msg.author.blockedUsers)
+        if (user.nickname === blockedUser)
+          object.slice(index, 1)  
       })
       setMessages(messagesToFilter)
   })
@@ -110,7 +117,7 @@ const ChatRoom = (props: any) => {
 
   // When clicking on the 'block' button to block a user
   const onBlockClick = (target: string) => {
-    user.blockedUsers.push(target)
+    user.blockedUsers.push()
   }
 
 

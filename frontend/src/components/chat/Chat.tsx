@@ -110,10 +110,8 @@ const Chat = () => {
       { roomName: roomName },
       (response: SetStateAction<boolean>) => {
         console.log('isprotec?? ' + response);
-
         setIsPasswordProtected(response);
         console.log('isprotec2 ?? ' + response);
-
         console.log('isprotec3 ?? ' + isPasswordProtected);
       }
     );
@@ -123,6 +121,7 @@ const Chat = () => {
 
   // Join a chatroom if no password has been set
   const joinRoom = (roomName: string) => {
+    try {
     socket.emit(
       'joinRoom',
       { roomName: roomName, user: user },
@@ -130,6 +129,9 @@ const Chat = () => {
         setJoinedRoom(response);
       }
     );
+    } catch(error) {
+      console.log(error)
+    }
   };
 
   // Check if the password is right

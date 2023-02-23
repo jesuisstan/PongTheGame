@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { User } from '@prisma/client';
+import { WsException } from '@nestjs/websockets';
 import { MessageDto, ChatRoomDto } from './dto/chat.dto';
 
 @Injectable()
@@ -7,48 +7,60 @@ export class ChatService {
   // Array containing all chatrooms
   chatRooms: ChatRoomDto[] = [];
 
-  identify(roomName: string, user: User, clientId: string) {
+  identify(roomName: string, nick: string, modes: string) {
     const room = this.getChatRoomByName(roomName);
-    if (room) room.users[clientId].profile = user;
+    if (room) room.users[nick].modes = modes;
+    throw new WsException('identify: unknown room name!');
   }
 
   quitRoom(roomName: string, userName: string, clientId: string) {
     const room = this.getChatRoomByName(roomName);
     if (room) delete room.users[clientId];
+    throw new WsException('quitRoom: unknown room name!');
   }
 
   getChatRoomByName(name: string) {
     for (let i = 0; i < this.chatRooms.length; ++i)
       if (this.chatRooms[i].name === name) return this.chatRooms[i];
-    return null;
+    throw new WsException('getChatRoomByName: unknown room name!');
   }
 
   getUserById(roomName: string, clientId: string) {
     const room = this.getChatRoomByName(roomName);
     if (room) return room.users[clientId];
-    return null;
+    throw new WsException('getUserById: unknown room name!');
   }
 
   // Create a new message object and push it to the messages array
   createMessage(roomName: string, msg: MessageDto) {
     const message = { ...MessageDto };
     const room = this.getChatRoomByName(roomName);
-    if (room) room.messages.push(msg);
-    return message;
+    if (room) {
+      room.messages.push(msg);
+      return message;
+    }
+    throw new WsException('createMessage: unknown room name!');
   }
 
   // Create a new chat room object and push it to the chat rooms array
-  createChatRoom(room: ChatRoomDto) {
+  // the creator will get admin privileges
+  createChatRoom(room: ChatRoomDto, nick: string) {
     const chatRoom = { ...ChatRoomDto };
-    if (room) this.chatRooms.push(room);
-    return chatRoom;
+    if (room) {
+      // Add room to room array
+      this.chatRooms.push(room);
+      // Identify creator as the oper(=admin)
+      this.identify(room.name, nick, 'o');
+      return chatRoom;
+    }
+    throw new WsException("createChatRoom: 'room' argument is missing!");
   }
 
   // Return all messages from the chatroom
   findAllMessages(roomName: string) {
     const room = this.getChatRoomByName(roomName);
     if (room) return room.messages;
-    return null;
+    throw new WsException('findAllMessages: unknown room name!');
   }
 
   findAllChatRooms() {

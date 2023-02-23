@@ -1,7 +1,7 @@
 import { User } from '@prisma/client';
 
 export class Message {
-  author: string;
+  author: User;
   data: string;
 }
 
@@ -10,7 +10,7 @@ export class ChatRoom {
   modes: string;
   password: string;
   userLimit: number;
-  users: { [key: string]: { profile: User; modes: string } };
+  users: { [nick: string]: { modes: string } };
   messages: Message[];
-  bannedUsers: User[];
+  bannedNicks: string[];
 }
