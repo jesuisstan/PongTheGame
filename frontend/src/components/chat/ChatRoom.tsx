@@ -32,6 +32,8 @@ const ChatRoom = (props: any) => {
   const [typingDisplay, setTypingDisplay] = useState<string>('')
   // Message input field value
   const [messageText, setMessageText] = useState<string>('')
+  // Checks if the user is oper(=admin) in the chat room
+  const [isOper, setIsOper] = useState<boolean>(false)
 
   // Get all messages from messages array in chat.service and fill the messages variable
   socket.emit('findAllMessages',
@@ -110,14 +112,19 @@ const ChatRoom = (props: any) => {
   const onReturnClick = () => {
     socket.emit('quitRoom', {
       roomName: props.room.name,
-      userName: user.nickname
+      nick: user.nickname
     })
     props.cleanRoomLoginData()
   }
 
   // When clicking on the 'block' button to block a user
-  const onBlockClick = (target: string) => {
-    user.blockedUsers.push()
+  const onBlockClick = (msg: Message) => {
+    user.blockedUsers.push(msg.author.nickname)
+  }
+
+  // When clicking on the 'ban' button to ban a user
+   const onBanClick = (target: string) => {
+
   }
 
 
@@ -137,9 +144,16 @@ const ChatRoom = (props: any) => {
                       // their corresponding authors
                       messages.map((msg, index) => (
                       <div key={ index }>
-                        <p>[{ msg.author }]
+                        <p>
+                          <>
+                          [{ msg.author.nickname }]
+                          { // If user is oper(=admin), the button to ban users is displayed 
+                            isOper && <button onClick={ (msg) => onBanClick }>ban</button>
+                          }
                           <button onClick={ (msg) => onBlockClick }>block</button>
-                          : { msg.data }</p>
+                          : { msg.data }
+                          </>
+                        </p>
                       </div>
                     ))}
                   </div>

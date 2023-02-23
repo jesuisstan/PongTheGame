@@ -65,7 +65,7 @@ export class ChatGateway {
     await this.chatService.identify(roomName, nick, '');
     const room = this.chatService.getChatRoomByName(roomName);
     room?.bannedNicks.forEach((nickname) => {
-      if (nickname === nick) throw new WsException('User is blocked.');
+      if (nickname === nick) throw new WsException('joinRoom: User is blocked.');
     });
     return room;
   }
@@ -73,11 +73,11 @@ export class ChatGateway {
   @SubscribeMessage('quitRoom')
   quitRoom(
     @MessageBody('roomName') roomName: string,
-    @MessageBody('userName') userName: string,
+    @MessageBody('nick') nick: string,
     @ConnectedSocket() client: Socket,
   ) {
-    this.chatService.quitRoom(roomName, userName, client.id);
-    this.server.emit('quitRoom', userName);
+    this.chatService.quitRoom(roomName, nick, client.id);
+    this.server.emit('quitRoom', nick);
   }
 
   @SubscribeMessage('ping')
@@ -108,5 +108,22 @@ export class ChatGateway {
   ) {
     const room = await this.chatService.getChatRoomByName(roomName);
     return room?.password === password ? true : false;
+  }
+
+  @SubscribeMessage('isUserOper')
+  isUserOper(
+    @MessageBody('roomName') roomName: string,
+    @MessageBody('nick') nick: string,
+  ) {
+    return this.chatService.isUserOper(roomName, nick);
+  }
+
+  @SubscribeMessage('banUser')
+  banUser(
+    @MessageBody('roomName') roomName: string,
+    @MessageBody('nick') nick: string,
+  ) {
+    this.chatService.banUser(roomName, nick);
+    this.server.emit('banUser', nick);
   }
 }

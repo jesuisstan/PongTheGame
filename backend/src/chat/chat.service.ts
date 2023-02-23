@@ -66,4 +66,22 @@ export class ChatService {
   findAllChatRooms() {
     return this.chatRooms;
   }
+
+  isUserOper(roomName: string, nick: string) {
+    const room = this.getChatRoomByName(roomName);
+    if (room) {
+      // Look for oper mode ('o') in user's modes
+      if (room.users[nick].modes.search('o') != -1) return true;
+      return false;
+    }
+    throw new WsException('isUserOper: unknown room name!');
+  }
+
+  banUser(roomName: string, nick: string) {
+    const room = this.getChatRoomByName(roomName);
+    if (room) {
+      if (nick) room.bannedNicks.push(nick);
+    }
+    throw new WsException('banUser: unknown room name!');
+  }
 }

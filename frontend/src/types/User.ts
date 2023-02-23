@@ -6,5 +6,5 @@ export type User = {
   profileId: String;
   provider: string;
   totpEnabled: boolean;
-  blockedUsers: User[];
+  blockedUsers: string[];
 };
