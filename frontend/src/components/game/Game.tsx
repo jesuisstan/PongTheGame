@@ -1,6 +1,8 @@
-import { useContext } from 'react';
+import { useState, useContext, useRef } from 'react';
 import { UserContext } from '../../contexts/UserContext';
 import PleaseLogin from '../pages/PleaseLogin';
+import styles from './Game.module.css';
+import Pong from './Pong';
 
 const Game = () => {
   const { user, setUser } = useContext(UserContext);
@@ -8,8 +10,8 @@ const Game = () => {
   return !user.provider ? (
     <PleaseLogin />
   ) : (
-    <div className="baseCard">
-      <h1>The game itself</h1>
+    <div className={styles.basic}>
+      <Pong />
     </div>
   );
 };
