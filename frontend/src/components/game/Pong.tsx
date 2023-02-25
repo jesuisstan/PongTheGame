@@ -2,6 +2,10 @@ import { useRef, useEffect, useContext, useState } from 'react';
 import { UserContext } from '../../contexts/UserContext';
 import VictoryModal from './VictoryModal';
 
+const indent = 10;
+const winningScore = 3;
+const framesPerSecond = 30;
+
 const Pong: React.FC = () => {
   const { user } = useContext(UserContext);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -17,21 +21,21 @@ const Pong: React.FC = () => {
     }
 
     canvasContext.font = '21px Helvetica';
-    const framesPerSecond = 42;
+    let gotWinner = true;
+
+    let player1Score = 0;
+    let player2Score = 0;
+
     let ballX = canvas!.width / 2;
     let ballY = canvas!.height / 2;
     let ballSpeedX = 10;
     let ballSpeedY = 4;
-    const winningScore = 3;
-    const paddleColorX2 = 'rgb(253, 80, 135)';
-    let player1Score = 0;
-    let player2Score = 0;
-    let gotWinner = true;
 
-    const paddleHeight = 100;
-    const paddleWidth = 15;
-    let paddle1Y = 100;
-    let paddle2Y = 250;
+    const paddleColorX2 = 'rgb(253, 80, 135)';
+    const paddleHeight = canvas!.height / 6;
+    const paddleWidth = 10;
+    let paddle1Y = canvas!.height / 2 - paddleHeight / 2;
+    let paddle2Y = canvas!.height / 2 - paddleHeight / 2;
 
     const makeRectangleShape = (
       cX: number,
@@ -77,14 +81,14 @@ const Pong: React.FC = () => {
         }
       }); // Net
       makeRectangleShape(
-        10,
+        indent,
         paddle1Y,
         paddleWidth,
         paddleHeight,
         paddleColorX2
       ); // Left Paddle
       makeRectangleShape(
-        canvas!.width - 25,
+        canvas!.width - indent - paddleWidth,
         paddle2Y,
         paddleWidth,
         paddleHeight,
@@ -93,13 +97,15 @@ const Pong: React.FC = () => {
       makeCircleShape(ballX, ballY, 10, 0, 'whitesmoke'); // Ball creation
       canvasContext.fillText(
         `${user.nickname}: ${player1Score}`,
-        canvas!.width / 8,
-        42
+        canvas!.width / 4 - 100,
+        42,
+        200
       );
       canvasContext.fillText(
         `Other player: ${player2Score}`, // todo change to other player nickname
-        (canvas!.width / 8) * 6,
-        42
+        canvas!.width / 2 + 100,
+        42,
+        200
       );
     };
 
@@ -131,8 +137,9 @@ const Pong: React.FC = () => {
           canvasContext.font = '21px Helvetica';
           canvasContext.fillText(
             'YOU WIN ... Click to Play Again',
-            canvas!.width / 4 + 40,
-            canvas!.height / 4
+            canvas!.width / 2 - 150,
+            canvas!.height / 4,
+            300
           );
         }
         if (player2Score >= winningScore) {
@@ -140,8 +147,9 @@ const Pong: React.FC = () => {
           canvasContext.font = '21px Helvetica';
           canvasContext.fillText(
             'YOU LOSE ... Click to Play Again',
-            canvas!.width / 4 + 40,
-            canvas!.height / 4
+            canvas!.width / 2 - 150,
+            canvas!.height / 4,
+            300
           );
         }
         return;
@@ -161,33 +169,43 @@ const Pong: React.FC = () => {
         ballY = canvas!.height / 2;
       };
 
-      if (ballX > 790) {
-        //Bouncing the ball in the X Axix      ballSpeedX = -ballSpeedX
-        if (ballY > paddle2Y && ballY < paddle2Y + paddleHeight) {
-          ballSpeedX = -ballSpeedX; // Bounce the ball
-          let deltaY = ballY - (paddle2Y + paddleHeight / 2);
-          ballSpeedY = deltaY * 0.35;
-        } else {
-          player1Score += 1;
-          resetBall();
-        }
+      if (ballX > canvas!.width - indent) {
+        player1Score += 1;
+        resetBall();
       }
 
-      if (ballX < 10) {
-        if (ballY > paddle1Y && ballY < paddle1Y + paddleHeight) {
-          ballSpeedX = -ballSpeedX; // Bounce the ball
-          let deltaY = ballY - (paddle1Y + paddleHeight / 2);
-          ballSpeedY = deltaY * 0.35;
-        } else {
-          player2Score += 1;
-          resetBall();
-        }
+      if (ballX < indent) {
+        player2Score += 1;
+        resetBall();
       }
 
-      if (ballY > 590) {
+      // Bounce the ball from the right paddle --->
+      if (
+        ballX === canvas!.width - 2 * indent - paddleWidth &&
+        ballY > paddle2Y &&
+        ballY < paddle2Y + paddleHeight
+      ) {
+        ballSpeedX = -ballSpeedX; // Bounce the ball
+        let deltaY = ballY - (paddle2Y + paddleHeight / 2);
+        ballSpeedY = deltaY * 0.35;
+      }
+
+      // Bounce the ball from the left paddle --->
+      if (
+        ballX === 2 * indent + paddleWidth &&
+        ballY > paddle1Y &&
+        ballY < paddle1Y + paddleHeight
+      ) {
+        ballSpeedX = -ballSpeedX;
+        let deltaY = ballY - (paddle1Y + paddleHeight / 2);
+        ballSpeedY = deltaY * 0.35;
+      }
+
+      // Bounce the ball from top & bottom
+      if (ballY > canvas!.height - indent) {
         ballSpeedY = -ballSpeedY;
-      } //Bouncing the ball in the Y Axix
-      if (ballY < 10) {
+      }
+      if (ballY < indent) {
         ballSpeedY = -ballSpeedY;
       }
     };
@@ -226,7 +244,7 @@ const Pong: React.FC = () => {
 
   return (
     <div>
-      <canvas ref={canvasRef} width={800} height={600} />
+      <canvas ref={canvasRef} width={900} height={700} />
       <VictoryModal open={open} setOpen={setOpen} winner={winner} />
     </div>
   );
