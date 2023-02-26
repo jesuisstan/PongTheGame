@@ -18,7 +18,7 @@ const URL_SET_NICKNAME = String(process.env.REACT_APP_URL_BACKEND) + String(proc
 const modalDialogStyle = {
   maxWidth: 500,
   border: '0px solid #000',
-  bgcolor: '#f5f5f5a6',
+  bgcolor: '#f5f5f5ee',
   borderRadius: '4px'
 };
 

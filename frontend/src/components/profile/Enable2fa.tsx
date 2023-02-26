@@ -32,7 +32,7 @@ const URL_GET_SECRET =
 const modalDialogStyle = {
   maxWidth: 500,
   border: '0px solid #000',
-  bgcolor: '#f5f5f5a6',
+  bgcolor: '#f5f5f5ee',
   borderRadius: '4px'
 };
 
