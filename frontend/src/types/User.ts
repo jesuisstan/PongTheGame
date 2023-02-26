@@ -7,4 +7,5 @@ export type User = {
   provider: string;
   totpEnabled: boolean;
   blockedUsers: string[];
+  joinedChatRoom: string;
 };

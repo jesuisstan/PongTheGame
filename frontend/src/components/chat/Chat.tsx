@@ -3,12 +3,8 @@ import { UserContext } from '../../contexts/UserContext';
 import { WebSocketContext } from '../../contexts/WebsocketContext';
 import ChatRoom from './ChatRoom';
 import PleaseLogin from '../pages/PleaseLogin';
+import { ChatRoomType } from "../../types/chat";
 
-// // All newly created message should have an author and the message itself
-// export type MessagePayload = {
-// 	author: string
-// 	data: string
-// }
 
 /*************************************************************
  * Chat entrance
@@ -26,9 +22,9 @@ const Chat = () => {
   const { user, setUser } = useContext(UserContext);
 
   // Array including all chat rooms
-  const [chatRooms, setChatRooms] = useState<any[]>([]);
+  const [chatRooms, setChatRooms] = useState<ChatRoomType[]>([]);
   // Tells whether the user has joined the chatroom
-  const [joinedRoom, setJoinedRoom] = useState<any>();
+  const [joinedRoom, setJoinedRoom] = useState<string>(user.joinedChatRoom);
 
   // Enter in chatroom create mode
   const [chatRoomCreateMode, setChatRoomCreateMode] = useState<boolean>(false);
@@ -40,7 +36,7 @@ const Chat = () => {
   const [isPasswordRight, setIsPasswordRight] = useState<boolean>(false);
   const [joinRoomClicked, setJoinRoomClicked] = useState<string>('');
 
-  socket.emit('findAllChatRooms', {}, (response: SetStateAction<any[]>) => {
+  socket.emit('findAllChatRooms', {}, (response: SetStateAction<ChatRoomType[]>) => {
     setChatRooms(response);
   });
 
@@ -60,7 +56,7 @@ const Chat = () => {
     socket.on('quitRoom', (userName: string) => {
       if (userName === user.nickname)
       {
-        console.log(userName + ' quit room [' + joinedRoom.name + ']')
+        console.log(userName + ' quit room [' + joinedRoom + ']')
         setJoinedRoom('')
       }
     })
@@ -87,7 +83,8 @@ const Chat = () => {
         password: chatRoomPassword,
         userLimit: 0,
         users: {},
-        messages: []
+        messages: [],
+        bannedNicks: []
       });
     setNewChatRoomName('');
     setChatRoomCreateMode(false);

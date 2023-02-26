@@ -32,7 +32,8 @@ function App() {
     provider: '',
     username: '',
     blockedUsers: [],
-    totpEnabled: false
+    totpEnabled: false,
+    joinedChatRoom: '',
   });
 
   useEffect(() => {
@@ -80,7 +81,7 @@ function App() {
                   path="profile"
                   element={user.provider ? <Profile /> : <Login />}
                 />
-                <Route path="*" element={<NotFound />} />
+                <Route path="*" element={<NotFound />} />*
               </Route>
             </Routes>
           </UserContext.Provider>

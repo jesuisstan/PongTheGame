@@ -24,11 +24,6 @@ process.env.DATABASE_URL ??= `postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
-  app.enableCors({
-    origin: true,
-    credentials: true,
-  });
-
   // Define websocket settings for the chat page
   app.useWebSocketAdapter(new SocketAdapter(app));
 
@@ -43,6 +38,11 @@ async function bootstrap() {
   app.useStaticAssets('avatars', {
     index: false,
     prefix: '/static/',
+  });
+
+  app.enableCors({
+    origin: true,
+    credentials: true,
   });
 
   await app.listen(config.getOrThrow('BACKEND_PORT'));

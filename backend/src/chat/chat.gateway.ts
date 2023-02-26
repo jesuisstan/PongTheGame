@@ -85,10 +85,21 @@ export class ChatGateway {
     this.server.emit('quitRoom', nick);
   }
 
-  @SubscribeMessage('ping')
-  ping() {
-    this.server.emit('ping');
-  }
+  // @SubscribeMessage('ping')
+  // ping() {
+  //   const rooms = this.chatService.getChatRooms();
+  //   for (const room in rooms)
+  //   {
+  //     for (const user in rooms[room])
+  //       this.server.emit('ping',
+  //         { rooms[room].name, user },
+  //       )
+  //   }
+  // }
+
+  // @SubscribeMessage('pong')
+  // pong() {
+  // }
 
   @SubscribeMessage('typingMessage')
   typingMessage(
@@ -173,7 +184,7 @@ export class ChatGateway {
     // First, check if the user has the admin rights
     if (this.isUserOper(roomName, nick) === false)
       throw new WsException('kickUser: user is not oper!');
-    this.chatService.quitRoom(roomName, nick);
-    this.server.emit('kickUser', roomName, nick);
+    this.chatService.quitRoom(roomName, target);
+    this.server.emit('kickUser', roomName, target);
   }
 }

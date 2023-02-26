@@ -9,8 +9,11 @@ export class ChatService {
 
   identify(roomName: string, nick: string, modes: string) {
     const room = this.getChatRoomByName(roomName);
-    if (room) room.users[nick].modes = modes;
-    throw new WsException('identify: unknown room name!');
+    if (!room) throw new WsException('identify: unknown room name!');
+    // Do nothing if user is already identified
+    for (const nickName in room.users) if (nickName === nick) return;
+    room.users[nick].modes = modes;
+    this.updatePingTime(roomName, nick);
   }
 
   quitRoom(roomName: string, nick: string) {
@@ -20,8 +23,8 @@ export class ChatService {
   }
 
   getChatRoomByName(name: string) {
-    for (let i = 0; i < this.chatRooms.length; ++i)
-      if (this.chatRooms[i].name === name) return this.chatRooms[i];
+    for (const room in this.chatRooms)
+      if (this.chatRooms[room].name === name) return this.chatRooms[room];
     throw new WsException('getChatRoomByName: unknown room name!');
   }
 
@@ -107,5 +110,25 @@ export class ChatService {
       if (nick) room.bannedNicks.push(nick);
     }
     throw new WsException('banUser: unknown room name!');
+  }
+
+  updatePingTime(roomName: string, nick: string) {
+    const room = this.getChatRoomByName(roomName);
+    if (room) {
+      if (nick) {
+        room.users[nick].lastPinged = new Date();
+      }
+    }
+    throw new WsException('updatePingTime: unknown room name!');
+  }
+
+  getUserLastPingTime(roomName: string, nick: string) {
+    const room = this.getChatRoomByName(roomName);
+    if (!room) throw new WsException('getUserLastPingTime: unknown room name!');
+    return room.users[nick].lastPinged;
+  }
+
+  getChatRooms() {
+    return this.chatRooms;
   }
 }
