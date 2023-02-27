@@ -52,12 +52,14 @@ const Enable2fa = ({
   const [error, setError] = useState('');
 
   const createQRcode = () => {
-    return axios.get(URL_GET_SECRET, { withCredentials: true }).then(
-      (response) => {
-        QRCode.toDataURL(response.data.nickname).then(setQrCodeUrl); //todo change resp.fieldname
-      },
-      (error) => errorAlert(error)
-    );
+    return axios
+      .post(URL_GET_SECRET, undefined, { withCredentials: true })
+      .then(
+        (response) => {
+          QRCode.toDataURL(response.data).then(setQrCodeUrl); //todo change resp.fieldname
+        },
+        (error) => errorAlert(error)
+      );
   };
 
   const showQRcode = async () => {
@@ -80,7 +82,7 @@ const Enable2fa = ({
     return axios
       .post(
         URL_TOTP_VERIFY,
-        { nickname: 'value' }, //todo modify
+        { token: text }, //todo modify
         {
           withCredentials: true,
           headers: { 'Content-type': 'application/json; charset=UTF-8' }
@@ -90,6 +92,7 @@ const Enable2fa = ({
         (response) => {
           console.log('QR code verified');
           localStorage.setItem('totpVerified', 'true');
+          // TODO no request should be needed here
           axios
             .post(URL_TOTP_TOGGLE, {
               withCredentials: true,

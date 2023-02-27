@@ -63,6 +63,7 @@ function setupSwagger(app: NestExpressApplication) {
       'Authentication/Github',
       'Authentication endpoints for the Github OAuth2 API',
     )
+    .addTag('Authentication/TOTP', '2-step authentication')
     .addTag('Matches', 'Manipulate matches')
     .addTag('Users', 'Manipulate users')
     .addTag('Docker', 'Endpoints that are relevant to Docker containers')

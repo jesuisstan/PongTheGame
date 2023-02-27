@@ -21,9 +21,8 @@ model User {
   profileId String
   provider  String
 
-  totpEnabled Boolean     @default(false)
-  totpSecret  TotpSecret?
-  role        Role        @default(USER)
+  totpSecret TotpSecret?
+  role       Role        @default(USER)
 
   // MatchEntry
   matchEntries MatchEntry[]
@@ -35,8 +34,9 @@ model User {
 }
 
 model TotpSecret {
-  id     Int    @id @default(autoincrement())
-  secret String
+  id       Int     @id @default(autoincrement())
+  secret   String
+  verified Boolean @default(false)
 
   // User
   userId Int?  @unique
