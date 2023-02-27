@@ -16,6 +16,7 @@ import {
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
+  ApiTags,
 } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 import { Response } from 'express';
@@ -36,6 +37,7 @@ export class TotpController {
 
   @Post('/')
   @UseGuards(IsAuthenticatedGuard)
+  @ApiTags('Authentication/TOTP')
   @ApiOperation({
     summary: 'Enable TOTP for the current user',
   })
@@ -56,6 +58,7 @@ export class TotpController {
 
   @Delete('/')
   @UseGuards(IsAuthenticatedGuard)
+  @ApiTags('Authentication/TOTP')
   @ApiOperation({
     summary: 'Disable TOTP for the current user',
   })
@@ -72,9 +75,10 @@ export class TotpController {
 
   @Post('/verify')
   @UseGuards(IsAuthenticatedGuard)
+  @ApiTags('Authentication/TOTP')
   // @UsePipes(ValidationPipe)
   @ApiOperation({
-    summary: 'Verify a token for the current user',
+    summary: 'Verify a token and activate the secret for the current user',
   })
   @ApiOkResponse({
     description: 'The supplied code has been validated ',
@@ -96,6 +100,8 @@ export class TotpController {
 
     if (isValid === null) throw new NotFoundException('totp is not enabled');
     if (!isValid) throw new BadRequestException('invalid code');
+
+    this.totp.enableTotp(user);
 
     res.status(200).send();
   }
