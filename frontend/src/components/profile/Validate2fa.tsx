@@ -1,7 +1,6 @@
 import { useState, useContext, SetStateAction, Dispatch } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../contexts/UserContext';
-import axios from 'axios';
 import { User } from '../../types/User';
 import LoadingButton from '@mui/lab/LoadingButton';
 import SaveIcon from '@mui/icons-material/Save';
@@ -14,10 +13,9 @@ import ModalClose from '@mui/joy/ModalClose';
 import Stack from '@mui/joy/Stack';
 import Typography from '@mui/joy/Typography';
 import errorAlert from '../UI/errorAlert';
+import backendAPI from '../../api/axios-instance';
 
-const URL_LOGOUT =
-  String(process.env.REACT_APP_URL_BACKEND) +
-  String(process.env.REACT_APP_URL_LOGOUT);
+const URL_LOGOUT = String(process.env.REACT_APP_URL_LOGOUT);
 
 const modalDialogStyle = {
   maxWidth: 500,
@@ -65,9 +63,7 @@ const Validate2fa = ({
         setUser(userData);
         localStorage.setItem('totpVerified', 'true');
       } else {
-        axios.get(URL_LOGOUT, {
-          withCredentials: true
-        });
+        backendAPI.get(URL_LOGOUT);
         errorAlert('Validation failed. Try login again');
       }
       setLoad(false);
