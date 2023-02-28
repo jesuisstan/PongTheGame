@@ -67,7 +67,7 @@ export class AchievementService {
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         if (error.code == 'P2025')
-          throw new NotFoundException('Achievement not found'); // TODO modif not a forbidden exepction
+          throw new NotFoundException('Achievement not found');
       }
     }
     return;
@@ -82,7 +82,7 @@ export class AchievementService {
         achievement: true,
       },
     });
-    if (!user) throw new NotFoundException('User not found'); // TODO modif not a forbidden exepction
+    if (!user) throw new NotFoundException('User not found');
     return user;
   }
 
@@ -98,15 +98,14 @@ export class AchievementService {
         achievement: true,
       },
     });
-    if (!userAchivement) throw new NotFoundException('User not found'); // TODO modif not a forbidden exepction
-    const achievement: any = userAchivement.achievement.find(
+    if (!userAchivement) throw new NotFoundException('User not found');
+    const achievement: Achievement | undefined = userAchivement.achievement.find(
       (Achievement) => Achievement.id == achievementId,
     );
-    if (!achievement) throw new ForbiddenException('Achievement not found');
-    if (achievement.Title)
+    if (achievement && achievement.Title)
       throw new BadRequestException(
         `User already got the achivement '${achievement.Title}'`,
-      ); // TODO modif not a forbidden exepction
+      );
 
     try {
       const achievement: Achievement = await this.prisma.achievement.update({
@@ -121,7 +120,7 @@ export class AchievementService {
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         if (error.code == 'P2025')
-          throw new NotFoundException('Achivement not found'); // TODO modif not a forbidden exepction
+          throw new NotFoundException('Achivement not found');
       }
     }
     return;

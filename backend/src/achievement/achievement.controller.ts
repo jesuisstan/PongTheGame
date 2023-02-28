@@ -104,10 +104,10 @@ export class AchievementController {
       { name: 'achievementId', in: 'query' },
     ],
   })
-  @ApiResponse({ status: 401, description: 'Not authorized' })
-  @ApiResponse({ status: 400, description: 'User already got the achivement' })
-  @ApiResponse({ status: 404, description: 'Achievement not found or User not found' })
   @ApiResponse({ status: 200, description: 'Succes' })
+  @ApiResponse({ status: 400, description: 'User already got the achivement' })
+  @ApiResponse({ status: 401, description: 'Not authorized' })
+  @ApiResponse({ status: 404, description: 'Achievement not found or User not found' })
   addToUser(
     @Param('userId', ParseIntPipe) userId: number,
     @Param('achievementId', ParseIntPipe) achId: number,
