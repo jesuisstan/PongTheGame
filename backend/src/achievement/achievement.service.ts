@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import { NotFoundException, BadRequestException, Injectable } from '@nestjs/common';
 import { Achievement } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -34,7 +34,7 @@ export class AchievementService {
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         if (error.code == 'P2002') {
-          throw new ForbiddenException('Achievement Exist');
+          throw new BadRequestException('Achievement Exist');
         }
       }
       throw error;
@@ -52,7 +52,7 @@ export class AchievementService {
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         if (error.code == 'P2025')
-          throw new ForbiddenException('Achievement not found');
+          throw new NotFoundException('Achievement not found');
       }
     }
   }
@@ -67,7 +67,7 @@ export class AchievementService {
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         if (error.code == 'P2025')
-          throw new ForbiddenException('Achievement not found'); // TODO modif not a forbidden exepction
+          throw new NotFoundException('Achievement not found'); // TODO modif not a forbidden exepction
       }
     }
     return;
@@ -82,7 +82,7 @@ export class AchievementService {
         achievement: true,
       },
     });
-    if (!user) throw new ForbiddenException('User not found'); // TODO modif not a forbidden exepction
+    if (!user) throw new NotFoundException('User not found'); // TODO modif not a forbidden exepction
     return user;
   }
 
@@ -98,13 +98,13 @@ export class AchievementService {
         achievement: true,
       },
     });
-    if (!userAchivement) throw new ForbiddenException('User not found'); // TODO modif not a forbidden exepction
+    if (!userAchivement) throw new NotFoundException('User not found'); // TODO modif not a forbidden exepction
     const achievement: any = userAchivement.achievement.find(
       (Achievement) => Achievement.id == achievementId,
     );
     if (!achievement) throw new ForbiddenException('Achievement not found');
     if (achievement.Title)
-      throw new ForbiddenException(
+      throw new BadRequestException(
         `User already got the achivement '${achievement.Title}'`,
       ); // TODO modif not a forbidden exepction
 
@@ -121,7 +121,7 @@ export class AchievementService {
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         if (error.code == 'P2025')
-          throw new ForbiddenException('Achivement not found'); // TODO modif not a forbidden exepction
+          throw new NotFoundException('Achivement not found'); // TODO modif not a forbidden exepction
       }
     }
     return;

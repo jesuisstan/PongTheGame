@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   HttpCode,
   HttpStatus,
   Param,
@@ -22,7 +23,7 @@ import { IsAuthenticatedGuard } from 'src/auth/auth.guard';
 export class AchievementController {
   constructor(private AchivService: AchievementService) {}
 
-  @Post('')
+  @Get('')
   @ApiOperation({
     summary: 'Get all achievements',
   })
@@ -39,8 +40,8 @@ export class AchievementController {
     summary: 'Add achivement',
     security: [{ baseUserSecutity: ['Admin'] }],
   })
+  @ApiResponse({ status: 400, description: 'Achievement already exist' })
   @ApiResponse({ status: 401, description: 'Not authorized' })
-  @ApiResponse({ status: 403, description: 'Achievement already exist' })
   @ApiResponse({ status: 200, description: 'Succes' })
   addAchievement(@Body() dto: AchievementDTO) {
     return this.AchivService.addAchievement(dto);
@@ -55,7 +56,7 @@ export class AchievementController {
     parameters: [{ name: 'id', in: 'query' }],
   })
   @ApiResponse({ status: 401, description: 'Not authorized' })
-  @ApiResponse({ status: 403, description: 'Achievement not found' })
+  @ApiResponse({ status: 404, description: 'Achievement not found' })
   @ApiResponse({ status: 200, description: 'Succes' })
   updateAchievement(
     @Param('id', ParseIntPipe) achvId: number,
@@ -73,20 +74,20 @@ export class AchievementController {
     parameters: [{ name: 'id', in: 'query' }],
   })
   @ApiResponse({ status: 401, description: 'Not authorized' })
-  @ApiResponse({ status: 403, description: 'Achievement not found' })
+  @ApiResponse({ status: 404, description: 'Achievement not found' })
   @ApiResponse({ status: 200, description: 'Succes' })
   deleteAchievement(@Param('id', ParseIntPipe) achId: number) {
     return this.AchivService.deleteAchievement(achId);
   }
 
   @HttpCode(HttpStatus.OK)
-  @Post(':id')
+  @Get(':id')
   @ApiOperation({
     summary: 'Get user achivement',
     parameters: [{ name: 'id', in: 'query' }],
   })
   @ApiResponse({ status: 401, description: 'Not authorized' })
-  @ApiResponse({ status: 403, description: 'User not found' })
+  @ApiResponse({ status: 404, description: 'User not found' })
   @ApiResponse({ status: 200, description: 'Succes' })
   userAchievement(@Param('id', ParseIntPipe) id: number) {
     return this.AchivService.userAchievement(id);
@@ -104,10 +105,8 @@ export class AchievementController {
     ],
   })
   @ApiResponse({ status: 401, description: 'Not authorized' })
-  @ApiResponse({
-    status: 403,
-    description: 'User not found or Achievement not found',
-  })
+  @ApiResponse({ status: 400, description: 'User already got the achivement' })
+  @ApiResponse({ status: 404, description: 'Achievement not found or User not found' })
   @ApiResponse({ status: 200, description: 'Succes' })
   addToUser(
     @Param('userId', ParseIntPipe) userId: number,
