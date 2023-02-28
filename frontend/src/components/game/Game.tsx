@@ -10,7 +10,7 @@ const Game = () => {
   return !user.provider ? (
     <PleaseLogin />
   ) : (
-    <div className={styles.basic}>
+    <div className={styles.parent}>
       <Pong />
     </div>
   );

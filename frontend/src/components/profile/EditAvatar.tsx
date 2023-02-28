@@ -1,6 +1,5 @@
 import { useState, useContext, SetStateAction, Dispatch } from 'react';
 import { UserContext } from '../../contexts/UserContext';
-import axios from 'axios';
 import errorAlert from '../UI/errorAlert';
 import FormLabel from '@mui/joy/FormLabel';
 import Modal from '@mui/joy/Modal';
@@ -10,10 +9,10 @@ import Stack from '@mui/joy/Stack';
 import Typography from '@mui/joy/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
 import SaveIcon from '@mui/icons-material/Save';
+import backendAPI from '../../api/axios-instance';
 
-const URL_UPLOAD_AVATAR =
-  String(process.env.REACT_APP_URL_BACKEND) +
-  String(process.env.REACT_APP_URL_UPLOAD_AVATAR);
+const URL_UPLOAD_AVATAR = String(process.env.REACT_APP_URL_UPLOAD_AVATAR);
+const URL_GET_USER = String(process.env.REACT_APP_URL_GET_USER);
 
 const modalDialogStyle = {
   maxWidth: 500,
@@ -50,32 +49,20 @@ const EditAvatar = ({
     const uploadAvatar = async (formData: FormData) => {
       setLoad(true);
       try {
-        const responseUpload = await axios.post(URL_UPLOAD_AVATAR, formData, {
-          withCredentials: true,
-          headers: { 'Content-type': 'multipart/form-data' }
-        });
-
-        const responseGetAvatar = await axios.get(
-          String(`http://localhost:3080/avatar/${user.id}`),
+        const responseUpload = await backendAPI.post(
+          URL_UPLOAD_AVATAR,
+          formData,
           {
-            withCredentials: true
+            headers: { 'Content-type': 'multipart/form-data' }
           }
         );
 
-        //setUser(responseGetAvatar.data); //todo
-        //axios
-        //  .get(String(process.env.REACT_APP_URL_AUTH), {
-        //    withCredentials: true
-        //  })
-        //  .then(
-        //    (response) => {
-        //      setUser(response.data);
-        //    },
-        //    (error) => console.log(error)
-        //  );
+        const responseGetAvatar = await backendAPI.get(
+          String(`http://localhost:3080/avatar/${user.id}`)
+        );
       } catch (error) {
         setOpen(false);
-        errorAlert(String(error));
+        errorAlert('Something went wrong');
       }
       setLoad(false);
       setButtonText('Done ✔️');

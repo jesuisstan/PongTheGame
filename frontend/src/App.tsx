@@ -3,7 +3,6 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { UserContext } from './contexts/UserContext';
 import { WebSocketContext } from './contexts/WebsocketContext';
 import { User } from './types/User';
-import axios from 'axios';
 import MainLayout from './components/UI/MainLayout';
 import Home from './components/pages/Home';
 import NotFound from './components/pages/NotFound';
@@ -13,11 +12,10 @@ import Chat from './components/chat/Chat';
 import Profile from './components/profile/Profile';
 import Validate2fa from './components/profile/Validate2fa';
 import History from './components/pages/History';
+import backendAPI from './api/axios-instance'
 import './App.css';
 
-const URL_GET_USER =
-  String(process.env.REACT_APP_URL_BACKEND) +
-  String(process.env.REACT_APP_URL_GET_USER);
+const URL_GET_USER = String(process.env.REACT_APP_URL_GET_USER);
 
 function App() {
   // Fetching the socket from its context
@@ -34,7 +32,7 @@ function App() {
   });
 
   useEffect(() => {
-    axios.get(URL_GET_USER, { withCredentials: true }).then(
+    backendAPI.get(URL_GET_USER).then(
       (response) => {
         if (
           //todo change !response.data.tfa back to response.data.tf

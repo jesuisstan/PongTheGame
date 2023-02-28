@@ -9,7 +9,7 @@ const modalDialogStyle = {
   maxWidth: 500,
   border: '0px solid #000',
   bgcolor: '#f5f5f5ee',
-  borderRadius: '4px'
+  borderRadius: '4px',
 };
 
 const VictoryModal = ({
@@ -44,7 +44,7 @@ const VictoryModal = ({
           </Typography>
           <Stack spacing={2}>
             <Typography component="h2" sx={{ color: 'black' }}>
-              {winner} won the game
+              {winner} won the round
             </Typography>
           </Stack>
         </ModalDialog>

@@ -1,33 +1,21 @@
-import {
-  useState,
-  useContext,
-  useEffect,
-  SetStateAction,
-  Dispatch
-} from 'react';
-import { UserContext } from '../../contexts/UserContext';
-import axios from 'axios';
-import QRCode from 'qrcode';
+import SaveIcon from '@mui/icons-material/Save';
 import Modal from '@mui/joy/Modal';
-import ModalDialog from '@mui/joy/ModalDialog';
 import ModalClose from '@mui/joy/ModalClose';
+import ModalDialog from '@mui/joy/ModalDialog';
 import Stack from '@mui/joy/Stack';
 import Typography from '@mui/joy/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
-import SaveIcon from '@mui/icons-material/Save';
 import TextField from '@mui/material/TextField';
+import QRCode from 'qrcode';
+import { Dispatch, SetStateAction, useContext, useState } from 'react';
+import backendAPI from '../../api/axios-instance';
+import { UserContext } from '../../contexts/UserContext';
 import errorAlert from '../UI/errorAlert';
 import styles from './Profile.module.css';
 
-const URL_TOTP_TOGGLE =
-  String(process.env.REACT_APP_URL_BACKEND) +
-  String(process.env.REACT_APP_URL_TOTP_TOGGLE);
-const URL_TOTP_VERIFY =
-  String(process.env.REACT_APP_URL_BACKEND) +
-  String(process.env.REACT_APP_URL_TOTP_VERIFY);
-const URL_GET_SECRET =
-  String(process.env.REACT_APP_URL_BACKEND) +
-  String(process.env.REACT_APP_URL_GET_USER); //todo change URL
+const URL_TOTP_TOGGLE = String(process.env.REACT_APP_URL_TOTP_TOGGLE);
+const URL_TOTP_VERIFY = String(process.env.REACT_APP_URL_TOTP_VERIFY);
+const URL_GET_SECRET = String(process.env.REACT_APP_URL_GET_USER); //todo change URL
 
 const modalDialogStyle = {
   maxWidth: 500,
@@ -52,14 +40,12 @@ const Enable2fa = ({
   const [error, setError] = useState('');
 
   const createQRcode = () => {
-    return axios
-      .post(URL_GET_SECRET, undefined, { withCredentials: true })
-      .then(
-        (response) => {
-          QRCode.toDataURL(response.data).then(setQrCodeUrl); //todo change resp.fieldname
-        },
-        (error) => errorAlert(error)
-      );
+    return backendAPI.get(URL_GET_SECRET).then(
+      (response) => {
+        QRCode.toDataURL(response.data).then(setQrCodeUrl); //todo change resp.fieldname
+      },
+      (error) => errorAlert(error)
+    );
   };
 
   const showQRcode = async () => {
@@ -79,22 +65,32 @@ const Enable2fa = ({
   };
 
   const verifyCode = async () => {
-    return axios
+    return backendAPI
       .post(
         URL_TOTP_VERIFY,
         { token: text }, //todo modify
         {
-          withCredentials: true,
           headers: { 'Content-type': 'application/json; charset=UTF-8' }
         }
       )
       .then(
         (response) => {
           console.log('QR code verified');
+          // localStorage.setItem('totpVerified', 'true');
+          // backendAPI
+          //   .post(URL_TOTP_TOGGLE, {
+          //     headers: { 'Content-type': 'application/json; charset=UTF-8' }
+          //   })
+          //   .then(
+          //     (response) => {
+          //       setUser(response.data);
+          //     },
+          //     (error) => errorAlert('Something went wrong')
+          //   );
         },
         (error) => {
           localStorage.removeItem('totpVerified');
-          errorAlert(error);
+          errorAlert('Something went wrong');
         }
       );
   };
