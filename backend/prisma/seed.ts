@@ -6,10 +6,20 @@ export const prisma = new PrismaClient();
 
 async function main() {
   await prisma.$connect();
-  console.log(`Start seeding ...`);
-  await insert_achievement();
-  await insert_admin();
-  console.log(`Seeding finished.`);
+  const size: number = (
+    await prisma.achievement.findMany({
+      select: {
+        id: true,
+      },
+    })
+  ).length;
+  if (size == 0) {
+    console.log(`Start seeding ...`);
+    insert_achievement();
+    console.log(`Seeding finished.`);
+  } else {
+    console.log(`Seed not needed.`);
+  }
 }
 
 main()
