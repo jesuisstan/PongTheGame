@@ -40,7 +40,7 @@ const Enable2fa = ({
   const [error, setError] = useState('');
 
   const createQRcode = () => {
-    return backendAPI.get(URL_GET_SECRET).then(
+    return backendAPI.post(URL_GET_SECRET).then(
       (response) => {
         QRCode.toDataURL(response.data).then(setQrCodeUrl); //todo change resp.fieldname
       },
