@@ -1,12 +1,14 @@
 import { PrismaClient } from '@prisma/client';
 import { insert_achievement } from './achievement';
+import { insert_admin } from './user';
 
 export const prisma = new PrismaClient();
 
 async function main() {
   await prisma.$connect();
   console.log(`Start seeding ...`);
-  insert_achievement();
+  await insert_achievement();
+  await insert_admin();
   console.log(`Seeding finished.`);
 }
 
