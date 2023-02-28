@@ -91,19 +91,6 @@ const Enable2fa = ({
       .then(
         (response) => {
           console.log('QR code verified');
-          localStorage.setItem('totpVerified', 'true');
-          // TODO no request should be needed here
-          axios
-            .post(URL_TOTP_TOGGLE, {
-              withCredentials: true,
-              headers: { 'Content-type': 'application/json; charset=UTF-8' }
-            })
-            .then(
-              (response) => {
-                setUser(response.data);
-              },
-              (error) => errorAlert(error)
-            );
         },
         (error) => {
           localStorage.removeItem('totpVerified');
