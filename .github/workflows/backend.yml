@@ -25,6 +25,13 @@ jobs:
     runs-on: ubuntu-latest
     env:
         JWT_SECRET: random_thing
+        INTRA42_CLIENT_ID: test
+        INTRA42_CLIENT_SECRET: test
+        INTRA42_CALLBACK_URL: test
+        GITHUB_CLIENT_ID: test
+        GITHUB_CLIENT_SECRET: test
+        GITHUB_CALLBACK_URL: test
+
     steps:
       - name: Checkout
         uses: actions/checkout@v3
