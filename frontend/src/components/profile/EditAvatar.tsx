@@ -1,6 +1,5 @@
 import { useState, useContext, SetStateAction, Dispatch } from 'react';
 import { UserContext } from '../../contexts/UserContext';
-import axios from 'axios';
 import errorAlert from '../UI/errorAlert';
 import FormLabel from '@mui/joy/FormLabel';
 import Modal from '@mui/joy/Modal';
@@ -10,15 +9,15 @@ import Stack from '@mui/joy/Stack';
 import Typography from '@mui/joy/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
 import SaveIcon from '@mui/icons-material/Save';
+import backendAPI from '../../api/axios-instance';
 
-const URL_UPLOAD_AVATAR =
-  String(process.env.REACT_APP_URL_BACKEND) +
-  String(process.env.REACT_APP_URL_UPLOAD_AVATAR);
+const URL_UPLOAD_AVATAR = String(process.env.REACT_APP_URL_UPLOAD_AVATAR);
+const URL_GET_USER = String(process.env.REACT_APP_URL_GET_USER);
 
 const modalDialogStyle = {
   maxWidth: 500,
   border: '0px solid #000',
-  bgcolor: '#f5f5f5a6',
+  bgcolor: '#f5f5f5ee',
   borderRadius: '4px'
 };
 
@@ -50,23 +49,18 @@ const EditAvatar = ({
     const uploadAvatar = async (formData: FormData) => {
       setLoad(true);
       try {
-        const response = await axios.post(URL_UPLOAD_AVATAR, formData, {
-          withCredentials: true,
-          headers: { 'Content-type': 'multipart/form-data' }
-        });
-        //setUser(response.data); //todo
-        //axios
-        //  .get(String(process.env.REACT_APP_URL_AUTH), {
-        //    withCredentials: true
-        //  })
-        //  .then(
-        //    (response) => {
-        //      setUser(response.data);
-        //    },
-        //    (error) => console.log(error)
-        //  );
+        const responseUpload = await backendAPI.post(
+          URL_UPLOAD_AVATAR,
+          formData,
+          {
+            headers: { 'Content-type': 'multipart/form-data' }
+          }
+        );
+
+        const responseGetAvatar = await backendAPI.get(
+          String(`http://localhost:3080/avatar/${user.id}`)
+        );
       } catch (error) {
-        console.log(error);
         setOpen(false);
         errorAlert('Something went wrong');
       }

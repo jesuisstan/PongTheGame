@@ -1,7 +1,6 @@
 import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../contexts/UserContext';
-import axios from 'axios';
 import errorAlert from '../UI/errorAlert';
 import Avatar from '@mui/material/Avatar';
 import Rating from '@mui/material/Rating';
@@ -15,11 +14,10 @@ import ButtonPong from '../UI/ButtonPong';
 import EditNickname from './EditNickname';
 import EditAvatar from './EditAvatar';
 import Enable2fa from './Enable2fa';
+import backendAPI from '../../api/axios-instance';
 import styles from './Profile.module.css';
 
-const URL_TOGGLE_TFA =
-  String(process.env.REACT_APP_URL_BACKEND) +
-  String(process.env.REACT_APP_URL_TOGGLE_TFA);
+const URL_TOTP_TOGGLE = String(process.env.REACT_APP_URL_TOTP_TOGGLE);
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -29,20 +27,11 @@ const Profile = () => {
   const [modal2faOpen, setModal2faOpen] = useState(false);
 
   const toggleTfa = () => {
-    if (user.tfa) {
-      return axios
-        .patch(
-          URL_TOGGLE_TFA,
-          { enabled: false },
-          {
-            withCredentials: true,
-            headers: { 'Content-type': 'application/json; charset=UTF-8' }
-          }
-        )
-        .then(
-          (response) => setUser(response.data),
-          (error) => errorAlert('Something went wrong')
-        );
+    if (user.totpEnabled) {
+      return backendAPI.delete(URL_TOTP_TOGGLE).then(
+        (response) => setUser(response.data),
+        (error) => errorAlert('Something went wrong')
+      );
     } else setModal2faOpen(true);
   };
 
@@ -78,20 +67,17 @@ const Profile = () => {
             <List aria-labelledby="basic-list-demo">
               <ListItem>Login method: {user.provider}</ListItem>
               <ListItem>
-                2-Factor Authentication: {user.tfa ? 'on' : 'off'}
+                2-Factor Authentication: {user.totpEnabled ? 'on' : 'off'}
               </ListItem>
             </List>
           </div>
           <div className={styles.bottom}>
             <ButtonPong
-              text={user.tfa === true ? 'Disable 2FA' : 'Setup 2FA'}
+              text={user.totpEnabled === true ? 'Disable 2FA' : 'Setup 2FA'}
               endIcon={<ArrowForwardIosIcon />}
               onClick={toggleTfa}
             />
-            <Enable2fa
-              open={modal2faOpen}
-              setOpen={setModal2faOpen}
-            />
+            <Enable2fa open={modal2faOpen} setOpen={setModal2faOpen} />
           </div>
         </div>
       </div>

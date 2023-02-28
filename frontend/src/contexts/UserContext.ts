@@ -13,7 +13,7 @@ export const UserContext = createContext<UserContextData>({
 		avatar: '',
 		provider: '',
 		username: '',
-		tfa: false
+		totpEnabled: false,
 	  },
 	setUser: (user) => {},
 });
