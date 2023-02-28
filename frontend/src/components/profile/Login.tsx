@@ -9,10 +9,12 @@ const URL_AUTH_GITHUB =
 
 const Login = () => {
   const ecole42Auth = () => {
+    localStorage.removeItem('totpVerified');
     window.location.href = URL_AUTH_42;
   };
 
   const githubAuth = () => {
+    localStorage.removeItem('totpVerified');
     window.location.href = URL_AUTH_GITHUB;
   };
 

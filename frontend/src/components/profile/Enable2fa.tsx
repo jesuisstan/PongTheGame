@@ -6,7 +6,6 @@ import {
   Dispatch
 } from 'react';
 import { UserContext } from '../../contexts/UserContext';
-import axios from 'axios';
 import QRCode from 'qrcode';
 import Modal from '@mui/joy/Modal';
 import ModalDialog from '@mui/joy/ModalDialog';
@@ -17,19 +16,17 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import SaveIcon from '@mui/icons-material/Save';
 import TextField from '@mui/material/TextField';
 import errorAlert from '../UI/errorAlert';
+import backendAPI from '../../api/axios-instance';
 import styles from './Profile.module.css';
 
-const URL_TOGGLE_TFA =
-  String(process.env.REACT_APP_URL_BACKEND) +
-  String(process.env.REACT_APP_URL_TOGGLE_TFA);
-const URL_VALIDATE_2FA =
-  String(process.env.REACT_APP_URL_BACKEND) +
-  String(process.env.REACT_APP_URL_VALIDATE_2FA);
+const URL_TOTP_TOGGLE = String(process.env.REACT_APP_URL_TOTP_TOGGLE);
+const URL_TOTP_VERIFY = String(process.env.REACT_APP_URL_TOTP_VERIFY);
+const URL_GET_SECRET = String(process.env.REACT_APP_URL_GET_USER); //todo change URL
 
 const modalDialogStyle = {
   maxWidth: 500,
   border: '0px solid #000',
-  bgcolor: '#f5f5f5a6',
+  bgcolor: '#f5f5f5ee',
   borderRadius: '4px'
 };
 
@@ -41,14 +38,26 @@ const Enable2fa = ({
   setOpen: Dispatch<SetStateAction<boolean>>;
 }) => {
   const { user, setUser } = useContext(UserContext);
-  const [load, setLoad] = useState(false);
+  const [loadSubmit, setLoadSubmit] = useState(false);
+  const [loadCreateQr, setLoadCreateQr] = useState(false);
   const [buttonText, setButtonText] = useState('Submit');
-  const [qrCodeUrl, setqrCodeUrl] = useState('');
+  const [qrCodeUrl, setQrCodeUrl] = useState('');
   const [text, setText] = useState('');
   const [error, setError] = useState('');
 
   const createQRcode = () => {
-    QRCode.toDataURL('otpauth_url').then(setqrCodeUrl);
+    return backendAPI.get(URL_GET_SECRET).then(
+      (response) => {
+        QRCode.toDataURL(response.data.nickname).then(setQrCodeUrl); //todo change resp.fieldname
+      },
+      (error) => errorAlert(error)
+    );
+  };
+
+  const showQRcode = async () => {
+    setLoadCreateQr(true);
+    await createQRcode();
+    setLoadCreateQr(false);
   };
 
   const handleTextInput = (event: any) => {
@@ -61,22 +70,31 @@ const Enable2fa = ({
     }
   };
 
-  const submitCode = async () => {
-    return axios
-      .patch(
-        URL_VALIDATE_2FA,
-        { nickname: 'value' },
+  const verifyCode = async () => {
+    return backendAPI
+      .post(
+        URL_TOTP_VERIFY,
         {
-          withCredentials: true,
           headers: { 'Content-type': 'application/json; charset=UTF-8' }
         }
       )
       .then(
         (response) => {
-          console.log('QR proof submitted');
+          console.log('QR code verified');
+          localStorage.setItem('totpVerified', 'true');
+          backendAPI
+            .post(URL_TOTP_TOGGLE, {
+              headers: { 'Content-type': 'application/json; charset=UTF-8' }
+            })
+            .then(
+              (response) => {
+                setUser(response.data);
+              },
+              (error) => errorAlert('Something went wrong')
+            );
         },
         (error) => {
-          console.log(error);
+          localStorage.removeItem('totpVerified');
           errorAlert('Something went wrong');
         }
       );
@@ -84,29 +102,16 @@ const Enable2fa = ({
 
   const handleSubmit = async (event: any) => {
     event.preventDefault();
-    setLoad(true);
-    await submitCode(); //todo
-    setLoad(false);
-    setButtonText('Done ✔️');
+    setLoadSubmit(true);
+    await verifyCode();
+    setLoadSubmit(false);
+    setButtonText(
+      localStorage.getItem('totpVerified') === 'true' ? 'Done ✔️' : 'Failed ❌'
+    );
     setText('');
     setError('');
-    axios
-      .patch(
-        URL_TOGGLE_TFA,
-        { enabled: true },
-        {
-          withCredentials: true,
-          headers: { 'Content-type': 'application/json; charset=UTF-8' }
-        }
-      )
-      .then(
-        (response) => {
-          setUser(response.data);
-        },
-        (error) => errorAlert('Something went wrong')
-      );
     setTimeout(() => setOpen(false), 442);
-    setTimeout(() => setButtonText('Submit'), 442);
+    setTimeout(() => setButtonText('Submit'), 450);
   };
 
   return (
@@ -150,12 +155,13 @@ const Enable2fa = ({
                       disabled={qrCodeUrl ? true : false}
                       variant="contained"
                       color="inherit"
-                      onClick={createQRcode}
+                      loading={loadCreateQr}
+                      onClick={showQRcode}
                     >
                       Show QR Code
                     </LoadingButton>
                   ) : (
-                    <img src={qrCodeUrl} alt="" />
+                    <img className={styles.QRimage} src={qrCodeUrl} alt="" />
                   )}
                 </div>
               </div>
@@ -179,7 +185,7 @@ const Enable2fa = ({
               />
               <LoadingButton
                 type="submit"
-                loading={load}
+                loading={loadSubmit}
                 startIcon={<SaveIcon />}
                 variant="contained"
                 color="inherit"
