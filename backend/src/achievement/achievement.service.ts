@@ -1,4 +1,8 @@
-import { NotFoundException, BadRequestException, Injectable } from '@nestjs/common';
+import {
+  NotFoundException,
+  BadRequestException,
+  Injectable,
+} from '@nestjs/common';
 import { Achievement } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -99,9 +103,10 @@ export class AchievementService {
       },
     });
     if (!userAchivement) throw new NotFoundException('User not found');
-    const achievement: Achievement | undefined = userAchivement.achievement.find(
-      (Achievement) => Achievement.id == achievementId,
-    );
+    const achievement: Achievement | undefined =
+      userAchivement.achievement.find(
+        (Achievement) => Achievement.id == achievementId,
+      );
     if (achievement && achievement.Title)
       throw new BadRequestException(
         `User already got the achivement '${achievement.Title}'`,
