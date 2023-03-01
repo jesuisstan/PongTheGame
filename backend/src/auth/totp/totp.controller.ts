@@ -7,6 +7,7 @@ import {
   Logger,
   NotFoundException,
   Post,
+  Req,
   Res,
   UseGuards,
 } from '@nestjs/common';
@@ -19,7 +20,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { User } from '@prisma/client';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import { IsAuthenticatedGuard } from 'src/auth/auth.guard';
 import { VerifyTokenDTO } from 'src/auth/totp/dto/verifyToken.dto';
 import { TotpService } from 'src/auth/totp/totp.service';
@@ -73,12 +74,12 @@ export class TotpController {
     return this.users.removeTotpSecret(user);
   }
 
-  @Post('/verify')
+  @Post('/activate')
   @UseGuards(IsAuthenticatedGuard)
   @ApiTags('Authentication/TOTP')
   // @UsePipes(ValidationPipe)
   @ApiOperation({
-    summary: 'Verify a token and activate the secret for the current user',
+    summary: 'Activate the TOTP secret for the current user',
   })
   @ApiOkResponse({
     description: 'The supplied code has been validated ',
@@ -89,20 +90,40 @@ export class TotpController {
   @ApiNotFoundResponse({
     description: 'TOTP was not enabled for this user',
   })
-  async verifyToken(
+  async activateSecret(
     @SessionUser() user: User,
     @Body() dto: VerifyTokenDTO,
     @Res() res: Response,
   ) {
     const isValid = await this.totp.verifyToken(user, dto.token);
 
-    this.logger.debug(dto);
-
     if (isValid === null) throw new NotFoundException('totp is not enabled');
     if (!isValid) throw new BadRequestException('invalid code');
 
     this.totp.enableTotp(user);
 
-    res.status(200).send();
+    res.status(200).json(user);
+  }
+
+  @Post('/verify')
+  @UseGuards(IsAuthenticatedGuard)
+  @ApiTags('Authentication/TOTP')
+  @ApiOperation({
+    summary: "Verify a code against the user's secret",
+  })
+  async verifyToken(
+    @SessionUser() user: User,
+    @Body() dto: VerifyTokenDTO,
+    @Res() res: Response,
+    @Req() req: Request,
+  ) {
+    const isValid = await this.totp.verifyToken(user, dto.token);
+
+    if (isValid === null) throw new NotFoundException('totp is not enabled');
+    if (!isValid) throw new BadRequestException('invalid code');
+
+    req.session.totpVerified = true;
+
+    res.status(200).json(user);
   }
 }

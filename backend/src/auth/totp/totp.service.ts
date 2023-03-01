@@ -4,7 +4,7 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import { User } from '@prisma/client';
+import { TotpSecret, User } from '@prisma/client';
 import { authenticator } from 'otplib';
 import { PrismaService } from 'src/prisma/prisma.service';
 
@@ -96,5 +96,17 @@ export class TotpService {
         verified: true,
       },
     });
+  }
+
+  async getSecret(user: User): Promise<TotpSecret | null> {
+    return this.prisma.totpSecret.findUnique({
+      where: {
+        userId: user.id,
+      },
+    });
+  }
+
+  async isTotpEnabled(user: User): Promise<boolean> {
+    return (await this.getSecret(user)) !== null;
   }
 }

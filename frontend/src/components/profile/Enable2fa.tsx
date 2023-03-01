@@ -13,9 +13,14 @@ import { UserContext } from '../../contexts/UserContext';
 import errorAlert from '../UI/errorAlert';
 import styles from './Profile.module.css';
 
-const URL_TOTP_TOGGLE = String(process.env.REACT_APP_URL_TOTP_TOGGLE);
-const URL_TOTP_VERIFY = String(process.env.REACT_APP_URL_TOTP_VERIFY);
-const URL_GET_SECRET = String(process.env.REACT_APP_URL_GET_USER); //todo change URL
+const URL_TOTP_TOGGLE =
+  String(process.env.REACT_APP_URL_BACKEND) +
+  String(process.env.REACT_APP_URL_TOTP_TOGGLE);
+const URL_TOTP_VERIFY = `${process.env.REACT_APP_URL_BACKEND}/auth/totp/activate`;
+// String(process.env.REACT_APP_URL_BACKEND) +
+// String(process.env.REACT_APP_URL_TOTP_VERIFY);
+const URL_GET_SECRET = `${process.env.REACT_APP_URL_BACKEND}/auth/totp`;
+//String(process.env.REACT_APP_URL_BACKEND) + '/auth/totp'; //todo change URL
 
 const modalDialogStyle = {
   maxWidth: 500,
@@ -65,34 +70,22 @@ const Enable2fa = ({
   };
 
   const verifyCode = async () => {
-    return backendAPI
-      .post(
-        URL_TOTP_VERIFY,
-        { token: text }, //todo modify
-        {
-          headers: { 'Content-type': 'application/json; charset=UTF-8' }
-        }
-      )
-      .then(
-        (response) => {
-          console.log('QR code verified');
-          // localStorage.setItem('totpVerified', 'true');
-          // backendAPI
-          //   .post(URL_TOTP_TOGGLE, {
-          //     headers: { 'Content-type': 'application/json; charset=UTF-8' }
-          //   })
-          //   .then(
-          //     (response) => {
-          //       setUser(response.data);
-          //     },
-          //     (error) => errorAlert('Something went wrong')
-          //   );
-        },
-        (error) => {
-          localStorage.removeItem('totpVerified');
+    return backendAPI.post(URL_TOTP_VERIFY, { token: text }).then(
+      (response) => {
+        console.log('QR code verified');
+
+        console.log(response.data);
+      },
+      (error) => {
+        console.error(error);
+
+        if (error?.response?.status === 400) {
+          errorAlert('Invalid code');
+        } else {
           errorAlert('Something went wrong');
         }
-      );
+      }
+    );
   };
 
   const handleSubmit = async (event: any) => {
