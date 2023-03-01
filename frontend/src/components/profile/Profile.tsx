@@ -1,7 +1,6 @@
 import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../contexts/UserContext';
-import axios from 'axios';
 import errorAlert from '../UI/errorAlert';
 import Avatar from '@mui/material/Avatar';
 import Rating from '@mui/material/Rating';
@@ -15,11 +14,10 @@ import ButtonPong from '../UI/ButtonPong';
 import EditNickname from './EditNickname';
 import EditAvatar from './EditAvatar';
 import Enable2fa from './Enable2fa';
+import backendAPI from '../../api/axios-instance';
 import styles from './Profile.module.css';
 
-const URL_TOTP_TOGGLE =
-  String(process.env.REACT_APP_URL_BACKEND) +
-  String(process.env.REACT_APP_URL_TOTP_TOGGLE);
+const URL_TOTP_TOGGLE = String(process.env.REACT_APP_URL_TOTP_TOGGLE);
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -30,15 +28,10 @@ const Profile = () => {
 
   const toggleTfa = () => {
     if (user.totpEnabled) {
-      return axios
-        .delete(URL_TOTP_TOGGLE, {
-          withCredentials: true,
-          headers: { 'Content-type': 'application/json; charset=UTF-8' }
-        })
-        .then(
-          (response) => setUser(response.data),
-          (error) => errorAlert('Something went wrong')
-        );
+      return backendAPI.delete(URL_TOTP_TOGGLE).then(
+        (response) => setUser(response.data),
+        (error) => errorAlert('Something went wrong')
+      );
     } else setModal2faOpen(true);
   };
 
