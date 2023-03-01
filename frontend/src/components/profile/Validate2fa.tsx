@@ -1,19 +1,19 @@
-import { useState, useContext, SetStateAction, Dispatch } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { UserContext } from '../../contexts/UserContext';
-import { User } from '../../types/User';
-import LoadingButton from '@mui/lab/LoadingButton';
 import SaveIcon from '@mui/icons-material/Save';
 import FormControl from '@mui/joy/FormControl';
 import FormLabel from '@mui/joy/FormLabel';
-import TextField from '@mui/material/TextField';
 import Modal from '@mui/joy/Modal';
-import ModalDialog from '@mui/joy/ModalDialog';
 import ModalClose from '@mui/joy/ModalClose';
+import ModalDialog from '@mui/joy/ModalDialog';
 import Stack from '@mui/joy/Stack';
 import Typography from '@mui/joy/Typography';
-import errorAlert from '../UI/errorAlert';
+import LoadingButton from '@mui/lab/LoadingButton';
+import TextField from '@mui/material/TextField';
+import { AxiosError } from 'axios';
+import { Dispatch, SetStateAction, useContext, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import backendAPI from '../../api/axios-instance';
+import { UserContext } from '../../contexts/UserContext';
+import { User } from '../../types/User';
 
 const URL_LOGOUT = String(process.env.REACT_APP_URL_LOGOUT);
 
@@ -50,30 +50,35 @@ const Validate2fa = ({
     }
   };
 
-  const submitCode = (value: string) => {
-    console.log('2fa code submitted after login');
-    return true; // todo hardcode
-  };
-
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
+
     if (text) {
       setLoad(true);
-      if (submitCode(text) === true && userData) {
-        setUser(userData);
-        localStorage.setItem('totpVerified', 'true');
-      } else {
-        backendAPI.get(URL_LOGOUT);
-        errorAlert('Validation failed. Try login again');
+
+      try {
+        const user = (
+          await backendAPI.post<User>('/auth/totp/verify', {
+            token: text
+          })
+        ).data;
+
+        setUser(user);
+        setButtonText('Done ✔️');
+        setText('');
+        setError('');
+
+        setTimeout(() => setOpen(false), 442);
+        setTimeout(() => setButtonText('Submit'), 442);
+        setTimeout(() => navigate('/profile'), 500);
+      } catch (e) {
+        const err = e as AxiosError;
+
+        setError((err.response?.data as any).message);
       }
+
       setLoad(false);
-      setButtonText('Done ✔️');
     }
-    setText('');
-    setError('');
-    setTimeout(() => setOpen(false), 442);
-    setTimeout(() => setButtonText('Submit'), 442);
-    setTimeout(() => navigate('/profile'), 500);
   };
 
   return (
