@@ -12,7 +12,7 @@ interface IMateProps {
   github: string;
 }
 
-const Mate = (props: IMateProps) => {
+const Peer = (props: IMateProps) => {
   return (
     <>
       <article className={props.style}>
@@ -38,7 +38,7 @@ const Mate = (props: IMateProps) => {
             <ButtonPong
               text="To github"
               onClick={() => window.open(props.github)}
-            />
+            />{' '}
             <ButtonPong
               text="To École 42"
               onClick={() =>
@@ -53,4 +53,4 @@ const Mate = (props: IMateProps) => {
     </>
   );
 };
-export default Mate;
+export default Peer;

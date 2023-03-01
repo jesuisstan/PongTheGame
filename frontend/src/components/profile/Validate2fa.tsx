@@ -14,6 +14,7 @@ import { useNavigate } from 'react-router-dom';
 import backendAPI from '../../api/axios-instance';
 import { UserContext } from '../../contexts/UserContext';
 import { User } from '../../types/User';
+import errorAlert from '../UI/errorAlert';
 
 const URL_LOGOUT = String(process.env.REACT_APP_URL_LOGOUT);
 
@@ -26,12 +27,10 @@ const modalDialogStyle = {
 
 const Validate2fa = ({
   open,
-  setOpen,
-  userData
+  setOpen
 }: {
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
-  userData: User | undefined;
 }) => {
   const navigate = useNavigate();
   const { user, setUser } = useContext(UserContext);
@@ -62,8 +61,8 @@ const Validate2fa = ({
             token: text
           })
         ).data;
-
         setUser(user);
+        localStorage.setItem('totpVerified', 'true');
         setButtonText('Done ✔️');
         setText('');
         setError('');
@@ -73,17 +72,26 @@ const Validate2fa = ({
         setTimeout(() => navigate('/profile'), 500);
       } catch (e) {
         const err = e as AxiosError;
-
-        setError((err.response?.data as any).message);
+        backendAPI.get(URL_LOGOUT);
+        setOpen(false);
+        errorAlert((err.response?.data as any).message + `!\nTry login again`);
       }
-
       setLoad(false);
     }
   };
 
   return (
     <div>
-      <Modal sx={{ color: 'black' }} open={open}>
+      <Modal
+        sx={{ color: 'black' }}
+        open={open}
+        onClose={(event, reason) => {
+          if (event && reason === 'closeClick') {
+            setOpen(false);
+            backendAPI.get(URL_LOGOUT);
+          }
+        }}
+      >
         <ModalDialog
           aria-labelledby="basic-modal-dialog-title"
           sx={modalDialogStyle}

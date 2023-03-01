@@ -1,4 +1,4 @@
-import Mate from '../UI/Mate';
+import Peer from '../UI/Peer';
 import Typography from '@mui/joy/Typography';
 import styles from './OtherPages.module.css';
 
@@ -18,7 +18,7 @@ const Home = () => {
         </Typography>
       </div>
       <div className={styles.aboutCards}>
-        <Mate
+        <Peer
           style={styles.benjamin}
           firstName="Benjamin"
           lastName="Brassart"
@@ -27,7 +27,7 @@ const Home = () => {
           role="Backend: ...."
           github="https://github.com/benjaminbrassart"
         />
-        <Mate
+        <Peer
           style={styles.barbara}
           firstName="Barbara"
           lastName="Cano"
@@ -36,7 +36,7 @@ const Home = () => {
           role="Frontend: chat, home page"
           github="https://github.com/BarbaraC12"
         />
-        <Mate
+        <Peer
           style={styles.florian}
           firstName="Florian"
           lastName="Catinaud"
@@ -45,7 +45,7 @@ const Home = () => {
           role="Backend: player's achievements, token-control..."
           github="https://github.com/Balgor18"
         />
-        <Mate
+        <Peer
           style={styles.stan}
           firstName="Stanislav"
           lastName="Krivtsoff"
@@ -54,7 +54,7 @@ const Home = () => {
           role="Frontend: profile, login, auth, pong the game, stats"
           github="https://github.com/ichbinstannis"
         />
-        <Mate
+        <Peer
           style={styles.daisuke}
           firstName="Daisuke"
           lastName="Tanigawa"
