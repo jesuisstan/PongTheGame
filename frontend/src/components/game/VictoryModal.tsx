@@ -43,7 +43,7 @@ const VictoryModal = ({
             Game over!
           </Typography>
           <Stack spacing={2}>
-            <Typography component="h2" sx={{ color: 'black' }}>
+            <Typography sx={{ color: 'black' }}>
               {winner} won the round
             </Typography>
           </Stack>
