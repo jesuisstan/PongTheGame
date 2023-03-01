@@ -67,7 +67,9 @@ const Profile = () => {
             <List aria-labelledby="basic-list-demo">
               <ListItem>Login method: {user.provider}</ListItem>
               <ListItem>
-                2-Factor Authentication: {user.totpEnabled ? 'on' : 'off'}
+                2-Factor Authentication:{' '}
+                {localStorage.getItem('totpEnabled') ? 'on' : 'off'}
+                {/*2-Factor Authentication: {user.totpEnabled ? 'on' : 'off'}*/}
               </ListItem>
             </List>
           </div>

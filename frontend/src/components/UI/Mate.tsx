@@ -1,5 +1,4 @@
 import ButtonPong from './ButtonPong';
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import Typography from '@mui/joy/Typography';
 import Stack from '@mui/joy/Stack';
 
@@ -7,40 +6,46 @@ interface IMateProps {
   style: string;
   firstName: string;
   lastName: string;
-  login: string;
-  role: string;
   description: string;
+  intraNickname: string;
+  role: string;
   github: string;
-  email: string;
 }
 
 const Mate = (props: IMateProps) => {
   return (
     <>
       <article className={props.style}>
-        <Stack spacing={2}>
+        <Stack spacing={1}>
           <Typography
             id="basic-list-demo"
             level="body3"
             textTransform="uppercase"
             fontWeight="lg"
           >
-            {props.firstName + ' ' + props.lastName}
+            {props.lastName + ' ' + props.firstName}
           </Typography>
           <Typography id="basic-list-demo" level="body3">
             {props.description}
           </Typography>
           <Typography id="basic-list-demo" level="body3">
-            {props.role}
+            Location: Paris, France
           </Typography>
           <Typography id="basic-list-demo" level="body3">
-            {props.email}
+            {props.role}
           </Typography>
           <div>
             <ButtonPong
               text="To github"
               onClick={() => window.open(props.github)}
-              endIcon={<ArrowForwardIosIcon />}
+            />
+            <ButtonPong
+              text="To École 42"
+              onClick={() =>
+                window.open(
+                  'https://profile.intra.42.fr/users/' + props.intraNickname
+                )
+              }
             />
           </div>
         </Stack>

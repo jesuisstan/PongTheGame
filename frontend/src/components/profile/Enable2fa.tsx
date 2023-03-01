@@ -47,9 +47,9 @@ const Enable2fa = ({
   const createQRcode = () => {
     return backendAPI.post(URL_GET_SECRET).then(
       (response) => {
-        QRCode.toDataURL(response.data).then(setQrCodeUrl); //todo change resp.fieldname
+        QRCode.toDataURL(response.data).then(setQrCodeUrl);
       },
-      (error) => errorAlert(error)
+      (error) => errorAlert("Failed to create QR code")
     );
   };
 
@@ -73,12 +73,11 @@ const Enable2fa = ({
     return backendAPI.post(URL_TOTP_VERIFY, { token: text }).then(
       (response) => {
         console.log('QR code verified');
-
-        console.log(response.data);
+        localStorage.setItem('totpEnabled', 'true'); // change to User.field later
+        localStorage.setItem('totpVerified', 'true');
+        console.log('TOTP_VERIFY response.data => ' + response.data);
       },
       (error) => {
-        console.error(error);
-
         if (error?.response?.status === 400) {
           errorAlert('Invalid code');
         } else {
@@ -123,8 +122,7 @@ const Enable2fa = ({
               </Typography>
               <div>
                 <li>
-                  Install Google Authenticator (IOS - Android) or Authy (IOS -
-                  Android).
+                  Install Google Authenticator or Authy.
                 </li>
                 <li>In the authenticator app, select "+" icon.</li>
                 <li>

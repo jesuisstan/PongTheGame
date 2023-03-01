@@ -1,3 +1,4 @@
+import { MarginOutlined } from '@mui/icons-material';
 import Button from '@mui/material/Button';
 
 const ButtonPong = ({
@@ -15,6 +16,7 @@ const ButtonPong = ({
     <Button
       sx={{
         backgroundColor: 'black',
+        margin: '0px 5px 0px 5px',
         ':hover': {
           backgroundColor: 'rgba(253, 80, 135, 0.6)',
           color: 'black',
