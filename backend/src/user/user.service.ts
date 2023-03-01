@@ -80,6 +80,14 @@ export class UserService {
     // });
   }
 
+  async createStats(UserId: number) : Promise<void> {
+    await this.prisma.stats.create({
+      data : {
+        userId: UserId,
+      }
+    });
+  }
+
   async setUserNickname(user: User, nickname: string): Promise<User> {
     const { id } = user;
 

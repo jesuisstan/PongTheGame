@@ -67,6 +67,8 @@ function setupSwagger(app: NestExpressApplication) {
     .addTag('Users', 'Manipulate users')
     .addTag('Docker', 'Endpoints that are relevant to Docker containers')
     .addTag('Avatar', 'Upload user avatars')
+    .addTag('Achivements', 'Manipulate achievement')
+    .addTag('Statistique', 'Get statistique from match')
     .build();
 
   const swagger = SwaggerModule.createDocument(app, swaggerConfig);
