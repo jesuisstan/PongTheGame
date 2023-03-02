@@ -80,12 +80,12 @@ export class UserService {
     // });
   }
 
-  async createStats(UserId: number) : Promise<Stats> {
-    console.log("user.service create stats")
+  async createStats(UserId: number): Promise<Stats> {
+    console.log('user.service create stats');
     return this.prisma.stats.create({
-      data : {
+      data: {
         userId: UserId,
-      }
+      },
     });
   }
 

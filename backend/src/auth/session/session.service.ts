@@ -8,13 +8,14 @@ export class SessionService {
   constructor(private readonly users: UserService) {}
 
   async validateUser(profile: Profile): Promise<User> {
-    const user : User = await this.createUser(profile);
-    console.log("gonna create stats")
+    const user: User = await this.createUser(profile);
+    console.log('gonna create stats');
     await this.createStats(user.id); // MEMO Stats is not create check why
-    return (await this.findUser(profile) ?? user);
+    return (await this.findUser(profile)) ?? user;
   }
 
-  async createStats(UserId : number) : Promise<Stats> { // MEMO check if i keep that
+  async createStats(UserId: number): Promise<Stats> {
+    // MEMO check if i keep that
     return this.users.createStats(UserId);
   }
 
