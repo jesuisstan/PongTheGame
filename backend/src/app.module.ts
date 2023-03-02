@@ -8,6 +8,7 @@ import { PrismaModule } from 'src/prisma/prisma.module';
 import { StatusController } from 'src/status/status.controller';
 import { UserModule } from 'src/user/user.module';
 import { ChatModule } from './chat/chat.module';
+import { GameModule } from './game/game.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { ChatModule } from './chat/chat.module';
     PrismaModule,
     ChatModule,
     AvatarModule,
+    GameModule,
   ],
   providers: [],
   controllers: [StatusController],
