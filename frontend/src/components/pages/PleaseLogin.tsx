@@ -2,13 +2,13 @@ import { useNavigate } from 'react-router-dom';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ButtonPong from '../UI/ButtonPong';
-import styles from './NotFound.module.css';
+import styles from './OtherPages.module.css';
 
 const PleaseLogin = () => {
   const navigate = useNavigate();
 
   return (
-    <div className={styles.basicCard}>
+    <div className={styles.centeredCard}>
       <div className={styles.wrapper}>
         <div className={styles.left}>Please login to continue</div>
         <div className={styles.center}>
@@ -20,7 +20,6 @@ const PleaseLogin = () => {
             onClick={() => navigate(-1)}
             startIcon={<ArrowBackIosIcon />}
           />
-          <h1> </h1>
           <ButtonPong
             text="Login"
             onClick={() => navigate('/login')}

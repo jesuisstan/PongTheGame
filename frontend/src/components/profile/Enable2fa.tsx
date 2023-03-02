@@ -47,9 +47,9 @@ const Enable2fa = ({
   const createQRcode = () => {
     return backendAPI.post(URL_GET_SECRET).then(
       (response) => {
-        QRCode.toDataURL(response.data).then(setQrCodeUrl); //todo change resp.fieldname
+        QRCode.toDataURL(response.data).then(setQrCodeUrl);
       },
-      (error) => errorAlert(error)
+      (error) => errorAlert('Failed to create QR code')
     );
   };
 
@@ -73,12 +73,11 @@ const Enable2fa = ({
     return backendAPI.post(URL_TOTP_VERIFY, { token: text }).then(
       (response) => {
         console.log('QR code verified');
-
-        console.log(response.data);
+        localStorage.setItem('totpEnabled', 'true'); // change to User.field later
+        localStorage.setItem('totpVerified', 'true');
+        console.log('TOTP_VERIFY response.data => ' + response.data);
       },
       (error) => {
-        console.error(error);
-
         if (error?.response?.status === 400) {
           errorAlert('Invalid code');
         } else {
@@ -116,23 +115,49 @@ const Enable2fa = ({
           sx={modalDialogStyle}
         >
           <ModalClose />
+          <Typography
+            id="basic-modal-dialog-title"
+            component="h2"
+            sx={{ color: 'black' }}
+          >
+            Setting up 2-Step Verification
+          </Typography>
           <form onSubmit={handleSubmit}>
             <Stack spacing={2}>
               <Typography component="h3" sx={{ color: 'rgb(37, 120, 204)' }}>
-                Configuring Google Authenticator or Authy
+                Configuring Google Authenticator
               </Typography>
-              <div>
+              <Stack spacing={1}>
                 <li>
-                  Install Google Authenticator (IOS - Android) or Authy (IOS -
-                  Android).
+                  Install Google Authenticator:{' '}
+                  <a
+                    href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2&hl=fr&gl=US"
+                    target="_blank"
+                  >
+                    <img
+                      className={styles.logo}
+                      src={require('../../assets/androidLogo.png')}
+                      alt=""
+                    />
+                  </a>{' '}
+                  /{' '}
+                  <a
+                    href="https://apps.apple.com/fr/app/google-authenticator/id388497605"
+                    target="_blank"
+                  >
+                    <img
+                      className={styles.logo}
+                      src={require('../../assets/appleLogo.png')}
+                      alt=""
+                    />
+                  </a>
                 </li>
-                <li>In the authenticator app, select "+" icon.</li>
+                <li>In the authenticator app, select "+" icon</li>
                 <li>
                   Select "Scan a QR code" and use the phone's camera to scan the
-                  following QR code.
+                  following QR code
                 </li>
-              </div>
-
+              </Stack>
               <div>
                 <Typography component="h3" sx={{ color: 'rgb(37, 120, 204)' }}>
                   Scan QR Code

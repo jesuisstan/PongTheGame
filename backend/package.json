@@ -42,7 +42,8 @@
     "test:watch": "jest --watch --config test/jest-unit.json",
     "test:cov": "jest --coverage --config test/jest-unit.json",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand --config test/jest-unit.json",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "node --inspect -r ts-node/register -r tsconfig-paths/register node_modules/.bin/jest --watchAll --no-cache --config ./test/jest-e2e.json",
+    "test:e2e:docker": "node --inspect -r ts-node/register -r tsconfig-paths/register node_modules/.bin/jest --no-cache --config ./test/jest-e2e.json"
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"

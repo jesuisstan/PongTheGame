@@ -28,6 +28,7 @@ export class UserController {
 
   // https://stackoverflow.com/a/71671007
   @Get('/:id(\\d+)')
+  @UseGuards(IsAuthenticatedGuard)
   @ApiOperation({
     summary: 'Find a user by its id',
     parameters: [{ name: 'id', in: 'path' }],

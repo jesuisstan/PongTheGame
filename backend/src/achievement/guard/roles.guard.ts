@@ -3,8 +3,6 @@ import { Role } from '@prisma/client';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
-  constructor() {}
-
   canActivate(ctx: ExecutionContext): boolean {
     const requiredRoles: Role = 'ADMIN';
     if (!requiredRoles) {

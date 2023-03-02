@@ -21,7 +21,6 @@ function App() {
   // Fetching the socket from its context
   const socket = useContext(WebSocketContext);
   const [open, setOpen] = useState(false);
-  const [tmpUser, setTmpUser] = useState<User | undefined>();
   const [user, setUser] = useState<User>({
     id: -1,
     nickname: '',
@@ -34,15 +33,11 @@ function App() {
   useEffect(() => {
     backendAPI.get(URL_GET_USER).then(
       (response) => {
-        // backend did not request 2fa
         setUser(response.data);
       },
-
       (error) => {
-        console.log(error);
-
         if (error.response?.status === 400) {
-          setTmpUser(error?.response?.data);
+          //setTmpUser(error?.response?.data);
           setOpen(true);
           // 2fa is enabled and was not verified
         }
@@ -52,14 +47,13 @@ function App() {
 
   user.provider ? console.log('user logged in') : console.log('no user');
   console.log(user);
-  console.log('totpVerified ?? -> ' + localStorage.getItem('totpVerified'));
 
   return (
     <WebSocketContext.Provider value={socket}>
       <BrowserRouter>
         <div className="App">
           <UserContext.Provider value={{ user, setUser }}>
-            <Validate2fa open={open} setOpen={setOpen} userData={tmpUser} />
+            <Validate2fa open={open} setOpen={setOpen} />
             <Routes>
               <Route path="/" element={<MainLayout />}>
                 <Route index={true} element={<Home />} />
