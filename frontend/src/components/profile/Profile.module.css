@@ -38,6 +38,8 @@
   font-size: 21px;
   color: whitesmoke;
   align-items: flex-start;
+  overflow: auto;
+  max-height: 600px;
 }
 
 .center {
