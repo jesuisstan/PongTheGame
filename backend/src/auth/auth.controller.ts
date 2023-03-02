@@ -39,6 +39,6 @@ export class AuthController {
       'The user has two-step authentication enabled and the session was not verified',
   })
   async profile(@SessionUser() user: User) {
-    return this.users.findUserById(user.id);
+    return this.users.findUserById(user.id, true);
   }
 }

@@ -16,10 +16,24 @@ const USER_SELECT = {
 export class UserService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findUserById(id: number): Promise<User | null> {
+  async findUserById(
+    id: number,
+    includeTfaEnabled = false,
+  ): Promise<User | null> {
+    const select = includeTfaEnabled
+      ? {
+          ...USER_SELECT,
+          totpSecret: {
+            select: {
+              verified: includeTfaEnabled,
+            },
+          },
+        }
+      : USER_SELECT;
+
     return this.prisma.user.findUnique({
       where: { id },
-      select: USER_SELECT,
+      select,
     });
   }
 

@@ -27,8 +27,8 @@ const Profile = () => {
   const [modal2faOpen, setModal2faOpen] = useState(false);
 
   const toggleTfa = () => {
-    if (user.totpEnabled) {
-      return backendAPI.delete(URL_TOTP_TOGGLE).then(
+    if (user.totpSecret?.verified) {
+      return backendAPI.delete('/auth/totp').then(
         (response) => setUser(response.data),
         (error) => errorAlert('Something went wrong')
       );
@@ -67,13 +67,14 @@ const Profile = () => {
             <List aria-labelledby="basic-list-demo">
               <ListItem>Login method: {user.provider}</ListItem>
               <ListItem>
-                2-Factor Authentication: {user.totpEnabled ? 'on' : 'off'}
+                2-Factor Authentication:{' '}
+                {user.totpSecret?.verified ? 'on' : 'off'}
               </ListItem>
             </List>
           </div>
           <div className={styles.bottom}>
             <ButtonPong
-              text={user.totpEnabled === true ? 'Disable 2FA' : 'Setup 2FA'}
+              text={user.totpSecret?.verified ? 'Disable 2FA' : 'Setup 2FA'}
               endIcon={<ArrowForwardIosIcon />}
               onClick={toggleTfa}
             />

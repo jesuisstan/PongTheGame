@@ -4,5 +4,7 @@ export type User = {
   username: string;
   avatar: string;
   provider: string;
-  totpEnabled: boolean
+  totpSecret: null | {
+    verified: boolean;
+  };
 };
