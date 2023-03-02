@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { User } from '@prisma/client';
+import { User, Stats } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 const USER_SELECT = {
@@ -80,8 +80,9 @@ export class UserService {
     // });
   }
 
-  async createStats(UserId: number) : Promise<void> {
-    await this.prisma.stats.create({
+  async createStats(UserId: number) : Promise<Stats> {
+    console.log("user.service create stats")
+    return this.prisma.stats.create({
       data : {
         userId: UserId,
       }
