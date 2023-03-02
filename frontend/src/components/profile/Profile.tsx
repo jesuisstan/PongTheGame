@@ -17,7 +17,7 @@ import EditNickname from './EditNickname';
 import Enable2fa from './Enable2fa';
 import styles from './Profile.module.css';
 
-const URL_TOTP_TOGGLE = String(process.env.REACT_APP_URL_TOTP_TOGGLE);
+const URL_TOTP_TOGGLE = String(process.env.REACT_APP_URL_GET_SECRET);
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -28,7 +28,7 @@ const Profile = () => {
 
   const toggleTfa = () => {
     if (user.totpSecret?.verified) {
-      return backendAPI.delete('/auth/totp').then(
+      return backendAPI.delete(URL_TOTP_TOGGLE).then(
         (response) => setUser(response.data),
         (error) => errorAlert('Something went wrong')
       );

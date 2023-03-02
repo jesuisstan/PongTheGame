@@ -10,17 +10,13 @@ import QRCode from 'qrcode';
 import { Dispatch, SetStateAction, useContext, useState } from 'react';
 import backendAPI from '../../api/axios-instance';
 import { UserContext } from '../../contexts/UserContext';
+import { User } from '../../types/User';
 import errorAlert from '../UI/errorAlert';
 import styles from './Profile.module.css';
 
-const URL_TOTP_TOGGLE =
-  String(process.env.REACT_APP_URL_BACKEND) +
-  String(process.env.REACT_APP_URL_TOTP_TOGGLE);
-const URL_TOTP_VERIFY = `${process.env.REACT_APP_URL_BACKEND}/auth/totp/activate`;
-// String(process.env.REACT_APP_URL_BACKEND) +
-// String(process.env.REACT_APP_URL_TOTP_VERIFY);
-const URL_GET_SECRET = `${process.env.REACT_APP_URL_BACKEND}/auth/totp`;
-//String(process.env.REACT_APP_URL_BACKEND) + '/auth/totp'; //todo change URL
+const URL_TOTP_VERIFY = String(process.env.REACT_APP_URL_TOTP_VERIFY);
+const URL_GET_SECRET = String(process.env.REACT_APP_URL_GET_SECRET);
+const URL_GET_USER = String(process.env.REACT_APP_URL_GET_USER);
 
 const modalDialogStyle = {
   maxWidth: 500,
@@ -69,19 +65,36 @@ const Enable2fa = ({
     }
   };
 
+  const validateCurrentUser = async () => {
+    try {
+      const user = (
+        await backendAPI.post<User>('/auth/totp/verify', {
+          token: text
+        })
+      ).data;
+      //setUser(user);
+
+      // todo lines 77-80 to set user with totpSecret field while /auth/totp/verify doesn't returnes this field
+      backendAPI.get(URL_GET_USER).then((response) => {
+        setUser(response.data);
+      });
+    } catch (e) {
+      setButtonText('Failed to get user data');
+    }
+  };
+
   const verifyCode = async () => {
     return backendAPI.post(URL_TOTP_VERIFY, { token: text }).then(
       (response) => {
-        console.log('QR code verified');
-        localStorage.setItem('totpEnabled', 'true'); // change to User.field later
-        localStorage.setItem('totpVerified', 'true');
-        console.log('TOTP_VERIFY response.data => ' + response.data);
+        validateCurrentUser();
+        setButtonText('Done ✔️');
       },
       (error) => {
+        setButtonText('Failed ❌');
         if (error?.response?.status === 400) {
-          errorAlert('Invalid code');
+          setTimeout(() => errorAlert('Invalid code'), 500);
         } else {
-          errorAlert('Something went wrong');
+          setTimeout(() => errorAlert('Something went wrong'), 500);
         }
       }
     );
@@ -93,7 +106,8 @@ const Enable2fa = ({
     await verifyCode();
     setLoadSubmit(false);
     setButtonText(
-      localStorage.getItem('totpVerified') === 'true' ? 'Done ✔️' : 'Failed ❌'
+      //localStorage.getItem('totpVerified') === 'true' ? 'Done ✔️' : 'Failed ❌'
+      user.totpSecret?.verified ? 'Done ✔️' : 'Failed ❌'
     );
     setText('');
     setError('');
