@@ -2,8 +2,8 @@ import { createContext } from 'react';
 import { User } from '../types/User';
 
 interface UserContextData {
-	user: User;
-	setUser: (user: User) => void;
+  user: User;
+  setUser: (user: User) => void;
 }
 
 export const UserContext = createContext<UserContextData>({
@@ -15,8 +15,8 @@ export const UserContext = createContext<UserContextData>({
 		provider: '',
 		username: '',
 		blockedUsers: [],
-		totpEnabled: false,
 		joinedChatRoom: '',
+    totpSecret: null
 	  },
 	setUser: (user) => {},
 });

@@ -1,33 +1,22 @@
-import {
-  useState,
-  useContext,
-  useEffect,
-  SetStateAction,
-  Dispatch
-} from 'react';
-import { UserContext } from '../../contexts/UserContext';
-import axios from 'axios';
-import QRCode from 'qrcode';
+import SaveIcon from '@mui/icons-material/Save';
 import Modal from '@mui/joy/Modal';
-import ModalDialog from '@mui/joy/ModalDialog';
 import ModalClose from '@mui/joy/ModalClose';
+import ModalDialog from '@mui/joy/ModalDialog';
 import Stack from '@mui/joy/Stack';
 import Typography from '@mui/joy/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
-import SaveIcon from '@mui/icons-material/Save';
 import TextField from '@mui/material/TextField';
+import QRCode from 'qrcode';
+import { Dispatch, SetStateAction, useContext, useState } from 'react';
+import backendAPI from '../../api/axios-instance';
+import { UserContext } from '../../contexts/UserContext';
+import { User } from '../../types/User';
 import errorAlert from '../UI/errorAlert';
 import styles from './Profile.module.css';
 
-const URL_TOTP_TOGGLE =
-  String(process.env.REACT_APP_URL_BACKEND) +
-  String(process.env.REACT_APP_URL_TOTP_TOGGLE);
-const URL_TOTP_VERIFY =
-  String(process.env.REACT_APP_URL_BACKEND) +
-  String(process.env.REACT_APP_URL_TOTP_VERIFY);
-const URL_GET_SECRET =
-  String(process.env.REACT_APP_URL_BACKEND) +
-  String(process.env.REACT_APP_URL_GET_USER); //todo change URL
+const URL_TOTP_VERIFY = String(process.env.REACT_APP_URL_TOTP_VERIFY);
+const URL_GET_SECRET = String(process.env.REACT_APP_URL_GET_SECRET);
+const URL_GET_USER = String(process.env.REACT_APP_URL_GET_USER);
 
 const modalDialogStyle = {
   maxWidth: 500,
@@ -52,11 +41,11 @@ const Enable2fa = ({
   const [error, setError] = useState('');
 
   const createQRcode = () => {
-    return axios.get(URL_GET_SECRET, { withCredentials: true }).then(
+    return backendAPI.post(URL_GET_SECRET).then(
       (response) => {
-        QRCode.toDataURL(response.data.nickname).then(setQrCodeUrl); //todo change resp.fieldname
+        QRCode.toDataURL(response.data).then(setQrCodeUrl);
       },
-      (error) => errorAlert(error)
+      (error) => errorAlert('Failed to create QR code')
     );
   };
 
@@ -76,37 +65,39 @@ const Enable2fa = ({
     }
   };
 
+  const validateCurrentUser = async () => {
+    try {
+      const user = (
+        await backendAPI.post<User>('/auth/totp/verify', {
+          token: text
+        })
+      ).data;
+      //setUser(user);
+
+      // todo lines 77-80 to set user with totpSecret field while /auth/totp/verify doesn't returnes this field
+      backendAPI.get(URL_GET_USER).then((response) => {
+        setUser(response.data);
+      });
+    } catch (e) {
+      setButtonText('Failed to get user data');
+    }
+  };
+
   const verifyCode = async () => {
-    return axios
-      .post(
-        URL_TOTP_VERIFY,
-        { nickname: 'value' }, //todo modify
-        {
-          withCredentials: true,
-          headers: { 'Content-type': 'application/json; charset=UTF-8' }
+    return backendAPI.post(URL_TOTP_VERIFY, { token: text }).then(
+      (response) => {
+        validateCurrentUser();
+        setButtonText('Done ✔️');
+      },
+      (error) => {
+        setButtonText('Failed ❌');
+        if (error?.response?.status === 400) {
+          setTimeout(() => errorAlert('Invalid code'), 500);
+        } else {
+          setTimeout(() => errorAlert('Something went wrong'), 500);
         }
-      )
-      .then(
-        (response) => {
-          console.log('QR code verified');
-          localStorage.setItem('totpVerified', 'true');
-          axios
-            .post(URL_TOTP_TOGGLE, {
-              withCredentials: true,
-              headers: { 'Content-type': 'application/json; charset=UTF-8' }
-            })
-            .then(
-              (response) => {
-                setUser(response.data);
-              },
-              (error) => errorAlert(error)
-            );
-        },
-        (error) => {
-          localStorage.removeItem('totpVerified');
-          errorAlert(error);
-        }
-      );
+      }
+    );
   };
 
   const handleSubmit = async (event: any) => {
@@ -115,7 +106,8 @@ const Enable2fa = ({
     await verifyCode();
     setLoadSubmit(false);
     setButtonText(
-      localStorage.getItem('totpVerified') === 'true' ? 'Done ✔️' : 'Failed ❌'
+      //localStorage.getItem('totpVerified') === 'true' ? 'Done ✔️' : 'Failed ❌'
+      user.totpSecret?.verified ? 'Done ✔️' : 'Failed ❌'
     );
     setText('');
     setError('');
@@ -137,23 +129,49 @@ const Enable2fa = ({
           sx={modalDialogStyle}
         >
           <ModalClose />
+          <Typography
+            id="basic-modal-dialog-title"
+            component="h2"
+            sx={{ color: 'black' }}
+          >
+            Setting up 2-Step Verification
+          </Typography>
           <form onSubmit={handleSubmit}>
             <Stack spacing={2}>
               <Typography component="h3" sx={{ color: 'rgb(37, 120, 204)' }}>
-                Configuring Google Authenticator or Authy
+                Configuring Google Authenticator
               </Typography>
-              <div>
+              <Stack spacing={1}>
                 <li>
-                  Install Google Authenticator (IOS - Android) or Authy (IOS -
-                  Android).
+                  Install Google Authenticator:{' '}
+                  <a
+                    href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2&hl=fr&gl=US"
+                    target="_blank"
+                  >
+                    <img
+                      className={styles.logo}
+                      src={require('../../assets/androidLogo.png')}
+                      alt=""
+                    />
+                  </a>{' '}
+                  /{' '}
+                  <a
+                    href="https://apps.apple.com/fr/app/google-authenticator/id388497605"
+                    target="_blank"
+                  >
+                    <img
+                      className={styles.logo}
+                      src={require('../../assets/appleLogo.png')}
+                      alt=""
+                    />
+                  </a>
                 </li>
-                <li>In the authenticator app, select "+" icon.</li>
+                <li>In the authenticator app, select "+" icon</li>
                 <li>
                   Select "Scan a QR code" and use the phone's camera to scan the
-                  following QR code.
+                  following QR code
                 </li>
-              </div>
-
+              </Stack>
               <div>
                 <Typography component="h3" sx={{ color: 'rgb(37, 120, 204)' }}>
                   Scan QR Code

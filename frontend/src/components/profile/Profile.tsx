@@ -1,25 +1,23 @@
-import { useState, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { UserContext } from '../../contexts/UserContext';
-import axios from 'axios';
-import errorAlert from '../UI/errorAlert';
-import Avatar from '@mui/material/Avatar';
-import Rating from '@mui/material/Rating';
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
-import Typography from '@mui/joy/Typography';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import CreateIcon from '@mui/icons-material/Create';
 import List from '@mui/joy/List';
 import ListItem from '@mui/joy/ListItem';
-import CreateIcon from '@mui/icons-material/Create';
+import Typography from '@mui/joy/Typography';
+import Avatar from '@mui/material/Avatar';
+import Rating from '@mui/material/Rating';
+import { useContext, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import backendAPI from '../../api/axios-instance';
+import { UserContext } from '../../contexts/UserContext';
 import ButtonPong from '../UI/ButtonPong';
-import EditNickname from './EditNickname';
+import errorAlert from '../UI/errorAlert';
 import EditAvatar from './EditAvatar';
+import EditNickname from './EditNickname';
 import Enable2fa from './Enable2fa';
 import styles from './Profile.module.css';
 
-const URL_TOTP_TOGGLE =
-  String(process.env.REACT_APP_URL_BACKEND) +
-  String(process.env.REACT_APP_URL_TOTP_TOGGLE);
+const URL_TOTP_TOGGLE = String(process.env.REACT_APP_URL_GET_SECRET);
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -29,16 +27,11 @@ const Profile = () => {
   const [modal2faOpen, setModal2faOpen] = useState(false);
 
   const toggleTfa = () => {
-    if (user.totpEnabled) {
-      return axios
-        .delete(URL_TOTP_TOGGLE, {
-          withCredentials: true,
-          headers: { 'Content-type': 'application/json; charset=UTF-8' }
-        })
-        .then(
-          (response) => setUser(response.data),
-          (error) => errorAlert('Something went wrong')
-        );
+    if (user.totpSecret?.verified) {
+      return backendAPI.delete(URL_TOTP_TOGGLE).then(
+        (response) => setUser(response.data),
+        (error) => errorAlert('Something went wrong')
+      );
     } else setModal2faOpen(true);
   };
 
@@ -74,13 +67,14 @@ const Profile = () => {
             <List aria-labelledby="basic-list-demo">
               <ListItem>Login method: {user.provider}</ListItem>
               <ListItem>
-                2-Factor Authentication: {user.totpEnabled ? 'on' : 'off'}
+                2-Factor Authentication:{' '}
+                {user.totpSecret?.verified ? 'on' : 'off'}
               </ListItem>
             </List>
           </div>
           <div className={styles.bottom}>
             <ButtonPong
-              text={user.totpEnabled === true ? 'Disable 2FA' : 'Setup 2FA'}
+              text={user.totpSecret?.verified ? 'Disable 2FA' : 'Setup 2FA'}
               endIcon={<ArrowForwardIosIcon />}
               onClick={toggleTfa}
             />

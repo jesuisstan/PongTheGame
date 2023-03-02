@@ -9,9 +9,8 @@ Table User {
   avatar String
   profileId String [not null]
   provider String [not null]
-  blockedUsers String[] [not null]
-  totpEnabled Boolean [not null, default: false]
   totpSecret TotpSecret
+  blockedUsers String[] [not null]
   role Role [not null, default: 'USER']
   matchEntries MatchEntry [not null]
   friends Friends [not null]
@@ -25,6 +24,7 @@ Table User {
 Table TotpSecret {
   id Int [pk, increment]
   secret String [not null]
+  verified Boolean [not null, default: false]
   userId Int [unique]
   user User
 }

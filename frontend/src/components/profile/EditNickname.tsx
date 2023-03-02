@@ -1,6 +1,5 @@
 import { useState, useContext, SetStateAction, Dispatch } from 'react';
 import { UserContext } from '../../contexts/UserContext';
-import axios from 'axios';
 import LoadingButton from '@mui/lab/LoadingButton';
 import SaveIcon from '@mui/icons-material/Save';
 import FormControl from '@mui/joy/FormControl';
@@ -12,8 +11,9 @@ import ModalClose from '@mui/joy/ModalClose';
 import Stack from '@mui/joy/Stack';
 import Typography from '@mui/joy/Typography';
 import errorAlert from '../UI/errorAlert';
+import backendAPI from '../../api/axios-instance';
 
-const URL_SET_NICKNAME = String(process.env.REACT_APP_URL_BACKEND) + String(process.env.REACT_APP_URL_SET_NICKNAME);
+const URL_SET_NICKNAME = String(process.env.REACT_APP_URL_SET_NICKNAME);
 
 const modalDialogStyle = {
   maxWidth: 500,
@@ -56,14 +56,10 @@ const EditNickname = ({
   };
 
   const setNickname = (value: string) => {
-    return axios
+    return backendAPI
       .patch(
         URL_SET_NICKNAME,
-        { nickname: value },
-        {
-          withCredentials: true,
-          headers: { 'Content-type': 'application/json; charset=UTF-8' }
-        }
+        { nickname: value }
       )
       .then(
         (response) => {

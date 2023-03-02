@@ -1,8 +1,27 @@
-.basic {
-   height: calc(100vh - 50px);
-   align-self: center;
-   display: flex;
-   align-items: center;
-   justify-content: center;
- }
- 
+.parent {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: flex;
+  overflow: auto;   
+}
+
+.buttonsBlock {
+  margin-bottom: 21px;
+  display: flex;
+  flex-direction: row;
+  gap: 42px;
+  align-items: center;
+  justify-content: center;
+}
+
+.canvasBlock {
+  margin: auto;
+}
+
+.canvas {
+  width: 100%;
+  height: 100%;
+}

@@ -9,19 +9,32 @@ const USER_SELECT = {
   provider: true,
   nickname: true,
   username: true,
-  blockedUsers: true,
-  totpEnabled: true,
   role: true,
+  blockedUsers: true,
 };
 
 @Injectable()
 export class UserService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findUserById(id: number): Promise<User | null> {
+  async findUserById(
+    id: number,
+    includeTfaEnabled = false,
+  ): Promise<User | null> {
+    const select = includeTfaEnabled
+      ? {
+          ...USER_SELECT,
+          totpSecret: {
+            select: {
+              verified: includeTfaEnabled,
+            },
+          },
+        }
+      : USER_SELECT;
+
     return this.prisma.user.findUnique({
       where: { id },
-      select: USER_SELECT,
+      select,
     });
   }
 

@@ -1,5 +1,10 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { User } from '@prisma/client';
+import {
+  ConflictException,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
+import { TotpSecret, User } from '@prisma/client';
 import { authenticator } from 'otplib';
 import { PrismaService } from 'src/prisma/prisma.service';
 
@@ -67,5 +72,41 @@ export class TotpService {
       secret: dbSecret.secret,
       token,
     });
+  }
+
+  async enableTotp(user: User): Promise<void> {
+    const dbSecret = await this.prisma.totpSecret.findUnique({
+      where: {
+        userId: user.id,
+      },
+      select: {
+        id: true,
+        verified: true,
+      },
+    });
+
+    if (dbSecret === null) throw new NotFoundException('no totp secret');
+    if (dbSecret.verified) throw new ConflictException('totp already enabled');
+
+    await this.prisma.totpSecret.update({
+      where: {
+        id: dbSecret.id,
+      },
+      data: {
+        verified: true,
+      },
+    });
+  }
+
+  async getSecret(user: User): Promise<TotpSecret | null> {
+    return this.prisma.totpSecret.findUnique({
+      where: {
+        userId: user.id,
+      },
+    });
+  }
+
+  async isTotpEnabled(user: User): Promise<boolean> {
+    return (await this.getSecret(user)) !== null;
   }
 }

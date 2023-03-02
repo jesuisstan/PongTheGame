@@ -5,7 +5,9 @@ export type User = {
   avatar: string;
   profileId: String;
   provider: string;
-  totpEnabled: boolean;
   blockedUsers: string[];
   joinedChatRoom: string;
+  totpSecret: null | {
+    verified: boolean;
+  };
 };

@@ -1,4 +1,10 @@
-import { Controller, Get, Res, UnauthorizedException, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Res,
+  UnauthorizedException,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 import { Response } from 'express';
@@ -14,7 +20,10 @@ const CLIENT_URL = 'http://localhost:3000';
 @Controller('/auth/github')
 @ApiTags('Authentication/Github')
 export class GithubController {
-  constructor(private readonly auth: AuthService, private give: giveAchievementService) {}
+  constructor(
+    private readonly auth: AuthService,
+    private give: giveAchievementService,
+  ) {}
 
   @Get('/')
   @ApiOperation({ summary: 'Connect using the Github OAuth2 API' })

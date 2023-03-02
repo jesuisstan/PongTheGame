@@ -2,9 +2,10 @@ import { useRef, useEffect, useContext, useState } from 'react';
 import { UserContext } from '../../contexts/UserContext';
 import VictoryModal from './VictoryModal';
 import ButtonPong from '../UI/ButtonPong';
+import styles from './Game.module.css';
 
-const canvasHeight = 700;
-const canvasWidth = 900;
+const canvasHeight = 600;
+const canvasWidth = 800;
 const indent = 5;
 const winScore = 3;
 const framesPerSecond = 30;
@@ -92,10 +93,10 @@ const Pong: React.FC = () => {
       10,
       0,
       'whitesmoke'
-    ); // Ball creation
+    ); // Ball
     canvasContext.fillText(
       `${user.nickname}: ${gameState.player1Score}`,
-      canvasWidth / 4 - 100,
+      100,
       42,
       200
     );
@@ -213,6 +214,14 @@ const Pong: React.FC = () => {
     }
   };
 
+  const trainWithcomputer = () => {
+    if (gameState.gotWinner) {
+      gameState.player1Score = 0;
+      gameState.player2Score = 0;
+      gameState.gotWinner = false;
+    }
+  };
+
   useEffect(() => {
     const canvas = canvasRef.current;
     const canvasContext = canvas?.getContext('2d');
@@ -221,25 +230,48 @@ const Pong: React.FC = () => {
       return;
     }
 
-    canvas!.addEventListener('mousedown', handleMouseClick); // calls the function that restart the game when "MOUSE-CLICK"
+    canvas!.addEventListener('mousedown', handleMouseClick); // restarts the game when "MOUSE-CLICK"
 
     canvas!.addEventListener('mousemove', (evt) => {
       let mousePos = calculateMousePosition(canvas!, evt);
-      paddle1Y = mousePos.y - paddleHeight / 2;
+      console.log(mousePos);
+      if (mousePos.y < paddleHeight / 2) {
+        paddle1Y = 0;
+      } else if (mousePos.y > canvas!.height - paddleHeight / 2) {
+        paddle1Y = canvas!.height - paddleHeight;
+      } else {
+        paddle1Y = mousePos.y - paddleHeight / 2;
+      }
     });
 
     const intervalId = setInterval(() => {
       draw(canvasContext);
+      console.log(canvas!.width);
       play(canvasContext);
     }, 1000 / framesPerSecond);
 
     return () => clearInterval(intervalId);
-  }, [gameState]);
+  }, []);
 
   return (
-    <div>
-      <ButtonPong text="Start game" onClick={() => console.log('fff')} />
-      <canvas ref={canvasRef} width={canvasWidth} height={canvasHeight} />
+    <div className={styles.canvasBlock}>
+      <div className={styles.buttonsBlock}>
+        <ButtonPong text="train with AI" onClick={trainWithcomputer} />
+        <ButtonPong
+          text="Find opponent"
+          onClick={() => console.log('find opp clicked')}
+        />
+        <ButtonPong
+          text="Smth else"
+          onClick={() => console.log('Smth else clicked')}
+        />
+      </div>
+      <canvas
+        className={styles.canvas}
+        ref={canvasRef}
+        width={canvasWidth}
+        height={canvasHeight}
+      />
       <VictoryModal open={open} setOpen={setOpen} winner={winner} />
     </div>
   );
