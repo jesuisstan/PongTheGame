@@ -1,6 +1,6 @@
 import Peer from '../UI/Peer';
 import Typography from '@mui/joy/Typography';
-import styles from './OtherPages.module.css';
+import styles from './Pages.module.css';
 
 const Home = () => {
   return (

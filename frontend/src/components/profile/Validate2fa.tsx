@@ -17,6 +17,8 @@ import { User } from '../../types/User';
 import errorAlert from '../UI/errorAlert';
 
 const URL_LOGOUT = String(process.env.REACT_APP_URL_LOGOUT);
+const URL_GET_USER = String(process.env.REACT_APP_URL_GET_USER);
+
 
 const modalDialogStyle = {
   maxWidth: 500,
@@ -62,19 +64,24 @@ const Validate2fa = ({
           })
         ).data;
         setUser(user);
-        localStorage.setItem('totpVerified', 'true');
         setButtonText('Done ✔️');
         setText('');
         setError('');
-
-        setTimeout(() => setOpen(false), 442);
-        setTimeout(() => setButtonText('Submit'), 442);
+        setTimeout(() => {
+          setOpen(false);
+          setButtonText('Submit');
+        }, 442);
         setTimeout(() => navigate('/profile'), 500);
       } catch (e) {
         const err = e as AxiosError;
         backendAPI.get(URL_LOGOUT);
-        setOpen(false);
-        errorAlert((err.response?.data as any).message + `!\nTry login again`);
+        setButtonText('Failed ❌');
+        setTimeout(() => {
+          setOpen(false);
+          errorAlert(
+            (err.response?.data as any).message + `!\nTry login again`
+          );
+        }, 500);
       }
       setLoad(false);
     }

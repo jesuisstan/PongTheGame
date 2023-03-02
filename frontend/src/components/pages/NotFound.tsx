@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ButtonPong from '../UI/ButtonPong';
-import styles from './OtherPages.module.css';
+import styles from './Pages.module.css';
 
 const NotFound = () => {
   const navigate = useNavigate();
