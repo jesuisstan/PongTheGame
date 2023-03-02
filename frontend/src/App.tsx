@@ -27,7 +27,7 @@ function App() {
     avatar: '',
     provider: '',
     username: '',
-    totpEnabled: false
+    totpSecret: null
   });
 
   useEffect(() => {

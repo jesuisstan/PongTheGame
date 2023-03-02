@@ -1,20 +1,20 @@
-import { useState, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { UserContext } from '../../contexts/UserContext';
-import errorAlert from '../UI/errorAlert';
-import Avatar from '@mui/material/Avatar';
-import Rating from '@mui/material/Rating';
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
-import Typography from '@mui/joy/Typography';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import CreateIcon from '@mui/icons-material/Create';
 import List from '@mui/joy/List';
 import ListItem from '@mui/joy/ListItem';
-import CreateIcon from '@mui/icons-material/Create';
-import ButtonPong from '../UI/ButtonPong';
-import EditNickname from './EditNickname';
-import EditAvatar from './EditAvatar';
-import Enable2fa from './Enable2fa';
+import Typography from '@mui/joy/Typography';
+import Avatar from '@mui/material/Avatar';
+import Rating from '@mui/material/Rating';
+import { useContext, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import backendAPI from '../../api/axios-instance';
+import { UserContext } from '../../contexts/UserContext';
+import ButtonPong from '../UI/ButtonPong';
+import errorAlert from '../UI/errorAlert';
+import EditAvatar from './EditAvatar';
+import EditNickname from './EditNickname';
+import Enable2fa from './Enable2fa';
 import styles from './Profile.module.css';
 
 const URL_TOTP_TOGGLE = String(process.env.REACT_APP_URL_TOTP_TOGGLE);
@@ -27,8 +27,8 @@ const Profile = () => {
   const [modal2faOpen, setModal2faOpen] = useState(false);
 
   const toggleTfa = () => {
-    if (user.totpEnabled) {
-      return backendAPI.delete(URL_TOTP_TOGGLE).then(
+    if (user.totpSecret?.verified) {
+      return backendAPI.delete('/auth/totp').then(
         (response) => setUser(response.data),
         (error) => errorAlert('Something went wrong')
       );
@@ -68,14 +68,13 @@ const Profile = () => {
               <ListItem>Login method: {user.provider}</ListItem>
               <ListItem>
                 2-Factor Authentication:{' '}
-                {localStorage.getItem('totpEnabled') ? 'on' : 'off'}
-                {/*2-Factor Authentication: {user.totpEnabled ? 'on' : 'off'}*/}
+                {user.totpSecret?.verified ? 'on' : 'off'}
               </ListItem>
             </List>
           </div>
           <div className={styles.bottom}>
             <ButtonPong
-              text={user.totpEnabled === true ? 'Disable 2FA' : 'Setup 2FA'}
+              text={user.totpSecret?.verified ? 'Disable 2FA' : 'Setup 2FA'}
               endIcon={<ArrowForwardIosIcon />}
               onClick={toggleTfa}
             />

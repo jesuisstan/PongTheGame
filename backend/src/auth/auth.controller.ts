@@ -1,5 +1,5 @@
 import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 import { Request, Response } from 'express';
 import { IsAuthenticatedGuard } from 'src/auth/auth.guard';
@@ -34,7 +34,11 @@ export class AuthController {
   @Get('getuser')
   @ApiOperation({ summary: "Returns the current user's data" })
   @UseGuards(IsAuthenticatedGuard)
+  @ApiBadRequestResponse({
+    description:
+      'The user has two-step authentication enabled and the session was not verified',
+  })
   async profile(@SessionUser() user: User) {
-    return this.users.findUserById(user.id);
+    return this.users.findUserById(user.id, true);
   }
 }
