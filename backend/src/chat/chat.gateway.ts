@@ -28,10 +28,10 @@ export class ChatGateway {
     @MessageBody('message') msg: MessageDto,
   ) {
     // Create a message object using the create method from chat.service
-    const message = this.chatService.createMessage(roomName, msg);
+    this.chatService.createMessage(roomName, msg);
     console.log('message emitted: ' + Object.entries(msg));
     // Broadcast received message to all users
-    this.server.emit('createMessage', message);
+    this.server.emit('createMessage', msg);
   }
 
   @SubscribeMessage('createChatRoom')

@@ -66,8 +66,8 @@ const ChatRoom = (props: any) => {
       'createMessage',
       (newMessage: any) => console.log('createMessage event received!') 
     )
-    socket.on('typingMessage', ({ roomName, nickname, isTyping }) => {
-      roomName === props.room.name && isTyping ? setTypingDisplay(nickname + ' is typing...')
+    socket.on('typingMessage', ({ roomName, nick, isTyping }) => {
+      roomName === props.room.name && isTyping ? setTypingDisplay(nick + ' is typing...')
         : setTypingDisplay('')
     })
     socket.on('removePassword', ({ roomName }) => {
@@ -99,9 +99,13 @@ const ChatRoom = (props: any) => {
   // Emit that user is typing, or not typing after timeout
   let timeout
   const emitTyping = () => {
-    socket.emit('typingMessage', { roomName: props.room.name, isTyping: true })
+    socket.emit('typingMessage', { 
+      roomName: props.room.name, nickname: user.nickname, isTyping: true
+    })
     timeout = setTimeout(() => {
-      socket.emit('typingMessage', { roomName: props.room.name, isTyping: false })
+      socket.emit('typingMessage', {
+        roomName: props.room.name, nickname: user.nickname, isTyping: false
+      })
     }, 2000)
   }
 
@@ -118,7 +122,7 @@ const ChatRoom = (props: any) => {
     if (messageText)
       socket.emit('createMessage', {
         roomName: props.room.name,
-        message: {author: user.nickname, data: messageText},
+        message: {author: user, data: messageText},
       })
     // Reset input field value once sent
     setMessageText('')
@@ -166,7 +170,12 @@ const ChatRoom = (props: any) => {
                           { // If user is oper(=admin), the button to ban users is displayed 
                             isOper && <button onClick={ (msg) => onBanClick }>ban</button>
                           }
-                          <button onClick={ (msg) => onBlockClick }>block</button>
+                          
+                          { // Block button appears if the author of the message
+                            // is not the user himself
+                            (user.nickname !== msg.author.nickname)
+                              && <button onClick={ (msg) => onBlockClick }>block</button>
+                          }
                           : { msg.data }
                           </>
                         </p>

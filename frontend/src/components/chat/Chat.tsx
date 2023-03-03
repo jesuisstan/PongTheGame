@@ -78,13 +78,17 @@ const Chat = () => {
     e.preventDefault();
     if (newChatRoomName)
       socket.emit('createChatRoom', {
-        name: newChatRoomName,
-        modes: '',
-        password: chatRoomPassword,
-        userLimit: 0,
-        users: {},
-        messages: [],
-        bannedNicks: []
+        room: {
+          name: newChatRoomName,
+          modes: '',
+          password: chatRoomPassword,
+          userLimit: 0,
+          users: {},
+          messages: [],
+          bannedNicks: []
+        },
+        nick: user.nickname,
+        mode: ''
       });
     setNewChatRoomName('');
     setChatRoomCreateMode(false);

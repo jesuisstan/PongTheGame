@@ -12,8 +12,7 @@ export class ChatService {
     if (!room) throw new WsException('identify: unknown room name!');
     // Do nothing if user is already identified
     for (const nickName in room.users) if (nickName === nick) return;
-    room.users[nick].modes = modes;
-    this.updatePingTime(roomName, nick);
+    room.users[nick] = { modes: modes, lastPinged: new Date() };
   }
 
   quitRoom(roomName: string, nick: string) {
@@ -112,15 +111,15 @@ export class ChatService {
     throw new WsException('banUser: unknown room name!');
   }
 
-  updatePingTime(roomName: string, nick: string) {
-    const room = this.getChatRoomByName(roomName);
-    if (room) {
-      if (nick) {
-        room.users[nick].lastPinged = new Date();
-      }
-    }
-    throw new WsException('updatePingTime: unknown room name!');
-  }
+  // updatePingTime(roomName: string, nick: string) {
+  //   const room = this.getChatRoomByName(roomName);
+  //   if (room) {
+  //     if (nick) {
+  //       room.users[nick].lastPinged = new Date();
+  //     }
+  //   }
+  //   throw new WsException('updatePingTime: unknown room name!');
+  // }
 
   getUserLastPingTime(roomName: string, nick: string) {
     const room = this.getChatRoomByName(roomName);

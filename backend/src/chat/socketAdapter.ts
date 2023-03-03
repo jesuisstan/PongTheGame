@@ -12,8 +12,7 @@ export class SocketAdapter extends IoAdapter {
     const server = super.createIOServer(port, {
       ...options,
       cors: {
-        origin: 'http://localhost:' + process.env.FRONTEND_PORT,
-        methods: ['GET', 'POST'],
+        origin: true,
       },
     });
     return server;
