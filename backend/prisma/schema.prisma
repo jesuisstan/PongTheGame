@@ -21,8 +21,6 @@ model User {
   profileId String
   provider  String
 
-  blockedUsers String[]
-
   totpSecret TotpSecret?
   role       Role        @default(USER)
 

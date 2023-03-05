@@ -37,7 +37,7 @@ const ChatRoom = (props: any) => {
 
   // Get all messages from messages array in chat.service and fill the messages variable
   socket.emit('findAllMessages',
-    { roomName: props.room.name },
+    { roomName: props.roomName },
     (response: SetStateAction<Message[]>) => {
       // Messages are unfiltered yet
       setMessagesToFilter(response)
@@ -67,7 +67,7 @@ const ChatRoom = (props: any) => {
       (newMessage: any) => console.log('createMessage event received!') 
     )
     socket.on('typingMessage', ({ roomName, nick, isTyping }) => {
-      roomName === props.room.name && isTyping ? setTypingDisplay(nick + ' is typing...')
+      roomName === props.roomName && isTyping ? setTypingDisplay(nick + ' is typing...')
         : setTypingDisplay('')
     })
     socket.on('removePassword', ({ roomName }) => {
@@ -100,11 +100,11 @@ const ChatRoom = (props: any) => {
   let timeout
   const emitTyping = () => {
     socket.emit('typingMessage', { 
-      roomName: props.room.name, nickname: user.nickname, isTyping: true
+      roomName: props.roomName, nickname: user.nickname, isTyping: true
     })
     timeout = setTimeout(() => {
       socket.emit('typingMessage', {
-        roomName: props.room.name, nickname: user.nickname, isTyping: false
+        roomName: props.roomName, nickname: user.nickname, isTyping: false
       })
     }, 2000)
   }
@@ -121,7 +121,7 @@ const ChatRoom = (props: any) => {
     e.preventDefault()
     if (messageText)
       socket.emit('createMessage', {
-        roomName: props.room.name,
+        roomName: props.roomName,
         message: {author: user, data: messageText},
       })
     // Reset input field value once sent
@@ -131,7 +131,7 @@ const ChatRoom = (props: any) => {
   // When clicking on the 'return' button
   const onReturnClick = () => {
     socket.emit('quitRoom', {
-      roomName: props.room.name,
+      roomName: props.roomName,
       nick: user.nickname
     })
     props.cleanRoomLoginData()
@@ -156,7 +156,7 @@ const ChatRoom = (props: any) => {
         {
             <div>
               <button onClick={ onReturnClick }>return</button>
-              <h2>topic: { props.room.name }</h2>
+              <h2>topic: { props.roomName }</h2>
               {
                 messages.length === 0 ? (<div>No Message</div>) : (
                   <div>

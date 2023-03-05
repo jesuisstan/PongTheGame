@@ -10,7 +10,6 @@ const USER_SELECT = {
   nickname: true,
   username: true,
   role: true,
-  blockedUsers: true,
 };
 
 @Injectable()

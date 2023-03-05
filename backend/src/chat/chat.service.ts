@@ -7,18 +7,21 @@ export class ChatService {
   // Array containing all chatrooms
   chatRooms: ChatRoomDto[] = [];
 
-  identify(roomName: string, nick: string, modes: string) {
+  identify(roomName: string, nick: string, modes: string, online: boolean) {
     const room = this.getChatRoomByName(roomName);
     if (!room) throw new WsException('identify: unknown room name!');
     // Do nothing if user is already identified
-    for (const nickName in room.users) if (nickName === nick) return;
-    room.users[nick] = { modes: modes, lastPinged: new Date() };
+    for (const nickName in room.users) {
+      if (nickName === nick && room.users[nickName].isOnline === online) return;
+    }
+    room.users[nick] = { isOnline: online, modes: modes, lastPinged: new Date() };
   }
 
   quitRoom(roomName: string, nick: string) {
     const room = this.getChatRoomByName(roomName);
-    if (room) delete room.users[nick];
-    throw new WsException('quitRoom: unknown room name!');
+    if (room) room.users[nick].isOnline = false;
+    else
+      throw new WsException('quitRoom: unknown room name!');
   }
 
   getChatRoomByName(name: string) {
@@ -52,7 +55,7 @@ export class ChatService {
       // Add room to room array
       this.chatRooms.push(room);
       // Identify creator as the oper(=admin)
-      this.identify(room.name, nick, 'o');
+      this.identify(room.name, nick, 'o', false);
       return chatRoom;
     }
     throw new WsException("createChatRoom: 'room' argument is missing!");

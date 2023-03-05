@@ -16,7 +16,7 @@ export const UserContext = createContext<UserContextData>({
 		username: '',
 		blockedUsers: [],
 		joinedChatRoom: '',
-    totpSecret: null
+    	totpSecret: null
 	  },
 	setUser: (user) => {},
 });

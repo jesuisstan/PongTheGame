@@ -10,6 +10,7 @@ import { Socket, Server } from 'socket.io';
 import { ChatService } from './chat.service';
 import { ChatRoomDto, MessageDto } from './dto/chat.dto';
 
+
 // Allow requests from the frontend port
 @WebSocketGateway({
   cors: {
@@ -70,10 +71,12 @@ export class ChatGateway {
     const room = this.chatService.getChatRoomByName(roomName);
     room?.bannedNicks.forEach((nickname) => {
       if (nickname === nick)
-        throw new WsException('joinRoom: User is blocked.');
+        throw new WsException('joinRoom: User is banned.');
     });
-    this.chatService.identify(roomName, nick, '');
-    return room;
+    this.chatService.identify(roomName, nick, '', true);
+    console.log(room.users);
+
+    return roomName;
   }
 
   @SubscribeMessage('quitRoom')
@@ -95,10 +98,6 @@ export class ChatGateway {
   //         { rooms[room].name, user },
   //       )
   //   }
-  // }
-
-  // @SubscribeMessage('pong')
-  // pong() {
   // }
 
   @SubscribeMessage('typingMessage')

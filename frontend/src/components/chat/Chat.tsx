@@ -24,7 +24,7 @@ const Chat = () => {
   // Array including all chat rooms
   const [chatRooms, setChatRooms] = useState<ChatRoomType[]>([]);
   // Tells whether the user has joined the chatroom
-  const [joinedRoom, setJoinedRoom] = useState<string>(user.joinedChatRoom);
+  const [joinedRoomName, setjoinedRoomName] = useState<string>(user.joinedChatRoom);
 
   // Enter in chatroom create mode
   const [chatRoomCreateMode, setChatRoomCreateMode] = useState<boolean>(false);
@@ -34,7 +34,7 @@ const Chat = () => {
     useState<boolean>(false);
   const [inputPassword, setInputPassword] = useState<string>('');
   const [isPasswordRight, setIsPasswordRight] = useState<boolean>(false);
-  const [joinRoomClicked, setJoinRoomClicked] = useState<string>('');
+  const [clickedRoomToJoin, setclickedRoomToJoin] = useState<string>('');
 
   socket.emit('findAllChatRooms', {}, (response: SetStateAction<ChatRoomType[]>) => {
     setChatRooms(response);
@@ -50,14 +50,14 @@ const Chat = () => {
       console.log('Created new chat room [' + roomName + ']');
     });
     socket.on('joinRoom', (roomName: string) => {
-      setJoinedRoom(roomName);
+      setjoinedRoomName(roomName);
       console.log(user.nickname + ' joined chatroom [' + roomName + ']');
     });
     socket.on('quitRoom', (userName: string) => {
       if (userName === user.nickname)
       {
-        console.log(userName + ' quit room [' + joinedRoom + ']')
-        setJoinedRoom('')
+        console.log(userName + ' quit room [' + joinedRoomName + ']')
+        setjoinedRoomName('')
       }
     })
 
@@ -103,17 +103,14 @@ const Chat = () => {
 
   const onClickJoinRoom = (roomName: string) => {
     // Notify that the user has clicked on a 'join' button
-    setJoinRoomClicked(roomName);
+    setclickedRoomToJoin(roomName);
 
-    // Check if that the corresponding chat room is password protected
+    // Check if the corresponding chat room is password protected
     socket.emit(
       'isPasswordProtected',
       { roomName: roomName },
       (response: SetStateAction<boolean>) => {
-        console.log('isprotec?? ' + response);
         setIsPasswordProtected(response);
-        console.log('isprotec2 ?? ' + response);
-        console.log('isprotec3 ?? ' + isPasswordProtected);
       }
     );
 
@@ -125,9 +122,9 @@ const Chat = () => {
     try {
     socket.emit(
       'joinRoom',
-      { roomName: roomName, user: user },
+      { roomName: roomName, nickName: user.nickname },
       (response: SetStateAction<any>) => {
-        setJoinedRoom(response);
+        setjoinedRoomName(response);
       }
     );
     } catch(error) {
@@ -140,19 +137,27 @@ const Chat = () => {
     // e.preventDefault()
     socket.emit(
       'checkPassword',
-      { roomName: joinRoomClicked, password: inputPassword },
+      { roomName: clickedRoomToJoin, password: inputPassword },
       (response: SetStateAction<boolean>) => {
         response === true
           ? setIsPasswordRight(true)
           : setIsPasswordRight(false);
       }
     );
-    if (isPasswordRight) joinRoom(joinRoomClicked);
+    if (isPasswordRight) joinRoom(clickedRoomToJoin);
     setInputPassword('');
   };
 
+  const getMemberNbr = (room: ChatRoomType) => {
+    let memberNbr = 0;
+    for (const user in room.users)
+      if (room.users[user].isOnline === true)
+        memberNbr += 1;
+    return memberNbr;
+  }
+
   const cleanRoomLoginData = () => {
-    setJoinedRoom('');
+    setjoinedRoomName('');
     setIsPasswordProtected(false);
     setIsPasswordRight(false);
   };
@@ -167,10 +172,10 @@ const Chat = () => {
       {
         // If user has joined and given the right password,
         // or no password is asked, then display the room
-        joinedRoom &&
+        joinedRoomName &&
         ((isPasswordProtected && isPasswordRight) || !isPasswordProtected) ? (
           <ChatRoom
-            room={joinedRoom}
+            roomName={joinedRoomName}
             cleanRoomLoginData={cleanRoomLoginData}
           />
         ) : (
@@ -186,13 +191,13 @@ const Chat = () => {
                     (room.modes.search('i') === -1) 
                     &&
                     <li key={index}>
-                      [{room.name}]: {Object.keys(room.users).length} members |{' '}
-                      {Object.keys(room.messages).length} messages
-                      {Object.values(room.modes).indexOf('p') !== -1
+                      [{room.name}]: {getMemberNbr(room)} members |{' '}
+                      {room.messages.length} messages
+                      {room.modes.indexOf('p') !== -1
                         ? '| PWD '
                         : ' '}
-                      {joinRoomClicked === room.name &&
-                        Object.values(room.modes).indexOf('p') !== -1 && (
+                      {clickedRoomToJoin === room.name &&
+                        room.modes.indexOf('p') !== -1 && (
                           <>
                             <label htmlFor="password">password</label>
                             <input
