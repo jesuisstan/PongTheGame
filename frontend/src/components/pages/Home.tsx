@@ -22,9 +22,9 @@ const Home = () => {
           style={styles.benjamin}
           firstName="Benjamin"
           lastName="Brassart"
-          description="'Catch phrase'"
+          description="I need a coffee"
           intraNickname="bbrassar"
-          role="Backend: ...."
+          role="Backend: authentication, 2FA, avatar upload"
           github="https://github.com/benjaminbrassart"
         />
         <Peer
