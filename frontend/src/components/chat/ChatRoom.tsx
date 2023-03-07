@@ -45,13 +45,21 @@ const ChatRoom = (props: any) => {
       messagesToFilter.forEach((msg, index, object) => {
         // First we filter the recipient's blocked users
         for (const blockedUser in user.blockedUsers)
+        {
+        // console.log('useeer ' + blockedUser)
           if (msg.author.nickname === blockedUser)
-            object.slice(index, 1)
+          {
+            object.splice(index, 1);
+            console.log('sdqsfgdfhgdsqd')
+          }
+        }
         // Then we filter the sender's blocked users
         for (const blockedUser in msg.author.blockedUsers)
         if (user.nickname === blockedUser)
-          object.slice(index, 1)  
-      })
+        {
+          object.splice(index, 1);
+          console.log('sdqsfgdfhgdsqd')
+        }      })
       setMessages(messagesToFilter)
   })
 
@@ -138,8 +146,9 @@ const ChatRoom = (props: any) => {
   }
 
   // When clicking on the 'block' button to block a user
-  const onBlockClick = (msg: Message) => {
-    user.blockedUsers.push(msg.author.nickname)
+  const onBlockClick = (target: string) => {
+    user.blockedUsers.push(target)
+    // console.log('pushed: ' + user.blockedUsers[0])
   }
 
   // When clicking on the 'ban' button to ban a user
@@ -168,13 +177,13 @@ const ChatRoom = (props: any) => {
                           <>
                           [{ msg.author.nickname }]
                           { // If user is oper(=admin), the button to ban users is displayed 
-                            isOper && <button onClick={ (msg) => onBanClick }>ban</button>
+                            isOper && <button onClick={ () => onBanClick(msg.author.nickname) }>ban</button>
                           }
                           
                           { // Block button appears if the author of the message
                             // is not the user himself
                             (user.nickname !== msg.author.nickname)
-                              && <button onClick={ (msg) => onBlockClick }>block</button>
+                              && <button onClick={ () => onBlockClick(msg.author.nickname) }>block</button>
                           }
                           : { msg.data }
                           </>

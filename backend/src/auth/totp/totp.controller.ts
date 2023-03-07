@@ -97,8 +97,7 @@ export class TotpController {
   ) {
     const isValid = await this.totp.verifyToken(user, dto.token);
 
-    if (isValid === null)
-      throw new NotFoundException('2-Factor Authentication is not enabled');
+    if (isValid === null) throw new NotFoundException('2-Factor Authentication is not enabled');
     if (!isValid) throw new BadRequestException('Invalid code');
 
     this.totp.enableTotp(user);
@@ -120,8 +119,7 @@ export class TotpController {
   ) {
     const isValid = await this.totp.verifyToken(user, dto.token);
 
-    if (isValid === null)
-      throw new NotFoundException('2-Factor Authentication is not enabled');
+    if (isValid === null) throw new NotFoundException('2-Factor Authentication is not enabled');
     if (!isValid) throw new BadRequestException('Invalid code');
 
     req.session.totpVerified = true;
