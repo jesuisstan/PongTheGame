@@ -169,9 +169,13 @@ export class ChatGateway {
   banUser(
     @MessageBody('roomName') roomName: string,
     @MessageBody('nick') nick: string,
+    @MessageBody('target') target: string,
   ) {
-    this.chatService.banUser(roomName, nick);
-    this.server.emit('banUser', roomName, nick);
+    // First, check if the user has the admin rights
+    if (this.isUserOper(roomName, nick) === false)
+      throw new WsException('banUser: user is not oper!');  
+    this.chatService.banUser(roomName, target);
+    this.server.emit('banUser', roomName, target);
   }
 
   @SubscribeMessage('kickUser')

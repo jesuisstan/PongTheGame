@@ -43,31 +43,28 @@ const ChatRoom = (props: any) => {
       // Messages are unfiltered yet
       setMessagesToFilter(response)
 
-      messagesToFilter.forEach((msg, index, object) => {
+      for (let i = messagesToFilter.length - 1; i >= 0; --i) {
         // First we filter the recipient's blocked users
         let found = false;
         for (const blockedUser in user.blockedUsers) {
-        console.log('useeer ' + user.blockedUsers[blockedUser])
-          if (msg.author.nickname === user.blockedUsers[blockedUser])
+          if (messagesToFilter[i].author.nickname === user.blockedUsers[blockedUser])
           {
-            object.splice(index, 1);
+            messagesToFilter.splice(i, 1);
             found = true;
-            console.log('11sdqsfgdfhgdsqd')
             break;
           }
         }
         // Then we filter the sender's blocked users
         if (found === false) {
-          for (const blockedUser in msg.author.blockedUsers) {
-            if (user.nickname === msg.author.blockedUsers[blockedUser])
+          for (const blockedUser in messagesToFilter[i].author.blockedUsers) {
+            if (user.nickname === messagesToFilter[i].author.blockedUsers[blockedUser])
             {
-              object.splice(index, 1);
-              console.log('22sdqsfgdfhgdsqd')
+              messagesToFilter.splice(i, 1);
               break;
             }
           }
         }
-      })
+      }
       const filteredMessages = messagesToFilter
       setMessages(filteredMessages)
     })
@@ -154,22 +151,44 @@ const ChatRoom = (props: any) => {
     props.cleanRoomLoginData()
   }
 
-  const checkIfBlocked = (target: string) => {
-    for (const blockedUser in user.blockedUsers)
-      if (target === user.blockedUsers[blockedUser])
-        return true
-    return false
-  }
+  // const checkIfBlocked = (target: string) => {
+  //   for (const blockedUser in user.blockedUsers)
+  //     if (target === user.blockedUsers[blockedUser])
+  //       return true
+  //   return false
+  // }
 
   // When clicking on the 'block' button to block a user
   const onBlockClick = (target: string) => {
     user.blockedUsers.push(target)
-    console.log('pushed: ' + user.blockedUsers[0])
+  }
+
+  // When clicking on the 'unblock' button to block a user
+  const onUnBlockClick = (target: string) => {
+    for (var i=0; i < user.blockedUsers.length; ++i)
+      if (user.blockedUsers[i] === target)
+      {
+        user.blockedUsers.splice(i, 1)
+        break
+      }
   }
 
   // When clicking on the 'ban' button to ban a user
-   const onBanClick = (target: string) => {
+  const onBanClick = (target: string) => {
+    socket.emit('banUser', {
+      roomName: props.roomName,
+      nick: user.nickname,
+      target: target
+    })  
+  }
 
+  // When clicking on the 'kick' button to kick a user
+  const onKickClick = (target: string) => {
+    socket.emit('kickUser', {
+      roomName: props.roomName,
+      nick: user.nickname,
+      target: target
+    })  
   }
 
 
