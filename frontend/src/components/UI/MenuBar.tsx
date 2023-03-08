@@ -39,29 +39,12 @@ const MenuBar = () => {
     <div>
       <nav className={styles.navibar}>
         <div className={styles.left}>
-          <img
-            src={require('../../assets/gameLogo.png')}
-            alt=""
-            className={styles.logo}
-          />
-        </div>
-        <div className={styles.center}>
-          <Button variant="text">
-            <NavLink to=".">Home</NavLink>
-          </Button>
-          <Button variant="text">
-            <NavLink to="chat">Chat</NavLink>
-          </Button>
-          <Button variant="text">
-            <NavLink to="game">Game</NavLink>
-          </Button>
-        </div>
-        <div className={styles.right}>
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <div className={styles.nickname}>{user.nickname}</div>
+                <div className={styles.burger}>⋮</div>
                 <Avatar alt="" src={user.avatar} />
+                <div className={styles.nickname}>{user.nickname}</div>
               </IconButton>
             </Tooltip>
             <Menu
@@ -70,12 +53,12 @@ const MenuBar = () => {
               anchorEl={anchorElUser}
               anchorOrigin={{
                 vertical: 'top',
-                horizontal: 'right'
+                horizontal: 'left'
               }}
               keepMounted
               transformOrigin={{
                 vertical: 'top',
-                horizontal: 'right'
+                horizontal: 'left'
               }}
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
@@ -99,6 +82,24 @@ const MenuBar = () => {
               </MenuItem>
             </Menu>
           </Box>
+        </div>
+        <div className={styles.center}>
+          <Button variant="text">
+            <NavLink to=".">Home</NavLink>
+          </Button>
+          <Button variant="text">
+            <NavLink to="chat">Chat</NavLink>
+          </Button>
+          <Button variant="text">
+            <NavLink to="game">Game</NavLink>
+          </Button>
+        </div>
+        <div className={styles.right}>
+          <img
+            src={require('../../assets/gameLogo.png')}
+            alt=""
+            className={styles.logo}
+          />
         </div>
       </nav>
     </div>
