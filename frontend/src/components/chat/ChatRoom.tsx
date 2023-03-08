@@ -35,7 +35,8 @@ const ChatRoom = (props: any) => {
   // Checks if the user is oper(=admin) in the chat room
   const [isOper, setIsOper] = useState<boolean>(false)
 
-  // Get all messages from messages array in chat.service and fill the messages variable
+  // Get all messages from messages array in chat.service
+  // and fill the messages variable
   socket.emit('findAllMessages',
     { roomName: props.roomName },
     (response: SetStateAction<Message[]>) => {
@@ -44,24 +45,32 @@ const ChatRoom = (props: any) => {
 
       messagesToFilter.forEach((msg, index, object) => {
         // First we filter the recipient's blocked users
-        for (const blockedUser in user.blockedUsers)
-        {
-        // console.log('useeer ' + blockedUser)
-          if (msg.author.nickname === blockedUser)
+        let found = false;
+        for (const blockedUser in user.blockedUsers) {
+        console.log('useeer ' + user.blockedUsers[blockedUser])
+          if (msg.author.nickname === user.blockedUsers[blockedUser])
           {
             object.splice(index, 1);
-            console.log('sdqsfgdfhgdsqd')
+            found = true;
+            console.log('11sdqsfgdfhgdsqd')
+            break;
           }
         }
         // Then we filter the sender's blocked users
-        for (const blockedUser in msg.author.blockedUsers)
-        if (user.nickname === blockedUser)
-        {
-          object.splice(index, 1);
-          console.log('sdqsfgdfhgdsqd')
-        }      })
-      setMessages(messagesToFilter)
-  })
+        if (found === false) {
+          for (const blockedUser in msg.author.blockedUsers) {
+            if (user.nickname === msg.author.blockedUsers[blockedUser])
+            {
+              object.splice(index, 1);
+              console.log('22sdqsfgdfhgdsqd')
+              break;
+            }
+          }
+        }
+      })
+      const filteredMessages = messagesToFilter
+      setMessages(filteredMessages)
+    })
 
 
   /*************************************************************
@@ -145,10 +154,17 @@ const ChatRoom = (props: any) => {
     props.cleanRoomLoginData()
   }
 
+  const checkIfBlocked = (target: string) => {
+    for (const blockedUser in user.blockedUsers)
+      if (target === user.blockedUsers[blockedUser])
+        return true
+    return false
+  }
+
   // When clicking on the 'block' button to block a user
   const onBlockClick = (target: string) => {
     user.blockedUsers.push(target)
-    // console.log('pushed: ' + user.blockedUsers[0])
+    console.log('pushed: ' + user.blockedUsers[0])
   }
 
   // When clicking on the 'ban' button to ban a user
