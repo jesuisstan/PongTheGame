@@ -5,7 +5,7 @@
   top: 0;
   left: 0;
   display: flex;
-  overflow: auto;   
+  overflow: auto;
 }
 
 .buttonsBlock {
@@ -25,3 +25,25 @@
   width: 100%;
   height: 100%;
 }
+
+.scoreBar {
+  background-color: black;
+  border-bottom: 2px solid rgba(37, 120, 204, 0.5);
+  display: flex;
+  flex-direction: row;
+  /*gap: 42px;*/
+  align-items: center;
+  flex: 1;
+  margin: auto;
+  justify-content: space-around;
+}
+
+.scoreSelector {
+  background-color: black;
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
+  align-items: center;
+  justify-content: space-between;
+}
+
