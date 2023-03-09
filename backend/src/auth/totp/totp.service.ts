@@ -109,6 +109,6 @@ export class TotpService {
   async isTotpEnabled(user: User): Promise<boolean> {
     const secret = await this.getSecret(user);
 
-    return secret !== null && secret.verified;
+    return secret?.verified ?? false;
   }
 }
