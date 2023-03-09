@@ -15,7 +15,6 @@ import { ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 import { Request } from 'express';
 import { IsAuthenticatedGuard } from 'src/auth/auth.guard';
-import { FsExceptionInterceptor } from 'src/avatar/filter/fs-exception.interceptor';
 import { SessionUser } from 'src/decorator/session-user.decorator';
 import { UserService } from 'src/user/user.service';
 
@@ -64,7 +63,6 @@ export class AvatarController {
         // if (acceptedMimeTypes.includes(file.))
       },
     }),
-    FsExceptionInterceptor,
   )
   @ApiTags('Avatar')
   @ApiConsumes('multipart/form-data')
@@ -93,7 +91,6 @@ export class AvatarController {
 
   @Delete('/')
   @UseGuards(IsAuthenticatedGuard)
-  @UseInterceptors(FsExceptionInterceptor)
   @ApiTags('Avatar')
   async deleteAvatar(@SessionUser() user: User) {
     return this.users.setAvatar(user, null);
