@@ -9,18 +9,17 @@ const ScoreBar = ({
   winScore,
   setWinScore,
   score,
-  dis
+  gotWinner
 }: {
   winScore: number;
-  setWinScore: any;
-  score: any;
-  dis: boolean;
+  setWinScore: React.Dispatch<React.SetStateAction<number>>;
+  score: {
+    player1: number;
+    player2: number;
+  };
+  gotWinner: boolean;
 }) => {
   const { user } = useContext(UserContext);
-
-  const handleChange = (event: SelectChangeEvent) => {
-    setWinScore(event.target.value as string);
-  };
 
   return (
     <div className={styles.scoreBar}>
@@ -28,10 +27,7 @@ const ScoreBar = ({
         {user.nickname}: {score.player1}
       </div>
       <div className={styles.scoreSelector}>
-        <div>
-
-        Win score:{' '}
-        </div>
+        <div>Win score: </div>
         <FormControl
           size="small"
           sx={{
@@ -43,9 +39,9 @@ const ScoreBar = ({
           }}
         >
           <Select
-            value={winScore ? String(winScore) : 3}
-            disabled={!dis}
-            onChange={(event) => setWinScore(event.target.value as string)}
+            value={winScore ? winScore : 3}
+            disabled={!gotWinner}
+            onChange={(event) => setWinScore(event.target.value as number)}
           >
             <MenuItem value={3}>
               <em>3</em>
@@ -56,8 +52,7 @@ const ScoreBar = ({
           </Select>
         </FormControl>
       </div>
-
-      <div>Opponent: {score.player2}</div>
+      <div>Opponent: {score.player2}</div> {/*todo change name to other player*/}
     </div>
   );
 };
