@@ -100,3 +100,12 @@
 .logo:hover {
   transform: scale(1.4);
 }
+
+.bottomAvatarBox {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+  flex-grow: 1;
+  gap: 10px;
+}
