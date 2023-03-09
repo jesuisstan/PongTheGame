@@ -2,29 +2,19 @@ import {
   BadRequestException,
   Controller,
   Delete,
-  Get,
   Logger,
-  NotFoundException,
-  Param,
-  ParseIntPipe,
+  PayloadTooLargeException,
   Post,
-  Res,
+  UnsupportedMediaTypeException,
   UploadedFile,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import {
-  ApiBody,
-  ApiConsumes,
-  ApiNotFoundResponse,
-  ApiOperation,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { User } from '@prisma/client';
-import { Response } from 'express';
+import { Request } from 'express';
 import { IsAuthenticatedGuard } from 'src/auth/auth.guard';
-import { AvatarService } from 'src/avatar/avatar.service';
 import { FsExceptionInterceptor } from 'src/avatar/filter/fs-exception.interceptor';
 import { SessionUser } from 'src/decorator/session-user.decorator';
 import { UserService } from 'src/user/user.service';
@@ -33,50 +23,47 @@ import { UserService } from 'src/user/user.service';
 export class AvatarController {
   private readonly logger = new Logger(AvatarController.name);
 
-  constructor(
-    private readonly avatars: AvatarService,
-    private readonly users: UserService,
-  ) {}
-
-  @Get('/:id')
-  // @UseGuards(IsAuthenticatedGuard)
-  @ApiTags('Avatar')
-  @ApiOperation({
-    summary: "Get a user's avatar",
-  })
-  @ApiNotFoundResponse({
-    description: 'User with such id not found',
-  })
-  async getAvatar(@Param('id', ParseIntPipe) id: number, @Res() res: Response) {
-    const user = await this.users.findUserById(id);
-
-    if (user === null) {
-      throw new NotFoundException();
-    }
-
-    this.logger.debug('User found');
-    try {
-      res.contentType('image/jpeg');
-      const stream = await this.avatars.getAvatarStream(user);
-      this.logger.debug('File found');
-      return stream.pipe(res);
-    } catch {}
-
-    this.logger.debug('File not found');
-
-    if (user.avatar !== null) {
-      this.logger.debug('Avatar url set');
-      return res.redirect(302, user.avatar);
-    }
-
-    this.logger.debug('Avatar url not set');
-    throw new NotFoundException(); // TODO return default avatar
-  }
+  constructor(private readonly users: UserService) {}
 
   @Post('/upload')
   @UseGuards(IsAuthenticatedGuard)
   @UseInterceptors(
-    FileInterceptor('file', { limits: { fileSize: 100000000 } }),
+    FileInterceptor('file', {
+      fileFilter(req: Request, file, callback) {
+        const lengthHeader = req.header('Content-Length');
+
+        if (lengthHeader === undefined) {
+          throw new BadRequestException('missing Content-Length header');
+        }
+
+        const length = parseInt(lengthHeader);
+
+        if (isNaN(length)) {
+          throw new BadRequestException('invalid Content-Length header');
+        }
+
+        if (length >= 2e6)
+          return callback(
+            new PayloadTooLargeException('Maximum file size is 2.0 MB'),
+            false,
+          );
+
+        const regex = /^image\/(png|jpeg|gif|webp)$/;
+
+        if (regex.test(file.mimetype)) {
+          return callback(null, true);
+        }
+
+        return callback(
+          new UnsupportedMediaTypeException(
+            'Accepted file types are png, jpeg, gif, webp',
+          ),
+          false,
+        );
+
+        // if (acceptedMimeTypes.includes(file.))
+      },
+    }),
     FsExceptionInterceptor,
   )
   @ApiTags('Avatar')
@@ -98,14 +85,10 @@ export class AvatarController {
   ) {
     if (file === undefined) throw new BadRequestException('no file given');
 
-    const handle = await this.avatars.openAvatarFile(user, 'w');
+    const bufferBase64 = file.buffer.toString('base64');
+    const base64 = `data:${file.mimetype};base64,${bufferBase64}`;
 
-    await handle.write(file.buffer);
-    await handle.close();
-
-    // set the avatar to null if and only if the operations
-    // on the file system were successful
-    return this.users.setAvatar(user, null);
+    return this.users.setAvatar(user, base64);
   }
 
   @Delete('/')
@@ -113,14 +96,6 @@ export class AvatarController {
   @UseInterceptors(FsExceptionInterceptor)
   @ApiTags('Avatar')
   async deleteAvatar(@SessionUser() user: User) {
-    const dbUser = this.users.setAvatar(user, null);
-
-    try {
-      this.avatars.deleteAvatar(user);
-    } catch (e) {
-      if (e.code !== 'ENOENT') throw e;
-    }
-
-    return dbUser;
+    return this.users.setAvatar(user, null);
   }
 }

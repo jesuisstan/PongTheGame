@@ -10,6 +10,7 @@ import Typography from '@mui/joy/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
 import SaveIcon from '@mui/icons-material/Save';
 import backendAPI from '../../api/axios-instance';
+import { User } from '../../types/User';
 
 const URL_UPLOAD_AVATAR = String(process.env.REACT_APP_URL_UPLOAD_AVATAR);
 const URL_GET_USER = String(process.env.REACT_APP_URL_GET_USER);
@@ -53,16 +54,17 @@ const EditAvatar = ({
           URL_UPLOAD_AVATAR,
           formData,
           {
-            headers: { 'Content-type': 'multipart/form-data' }
+            headers: { 'Content-Type': 'multipart/form-data' }
           }
         );
 
-        const responseGetAvatar = await backendAPI.get(
-          String(`http://localhost:3080/avatar/${user.id}`)
-        );
+        setUser(responseUpload.data);
       } catch (error) {
         setOpen(false);
-        errorAlert('Something went wrong');
+
+        const message = (error as any)?.response?.data?.message ?? 'Something went wrong';
+
+        errorAlert(message);
       }
       setLoad(false);
       setButtonText('Done ✔️');
