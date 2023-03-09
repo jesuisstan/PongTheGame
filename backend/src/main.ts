@@ -33,11 +33,6 @@ async function bootstrap() {
   setupSwagger(app);
   setupSession(app, config, prisma);
 
-  app.useStaticAssets('avatars', {
-    index: false,
-    prefix: '/static/',
-  });
-
   app.enableCors({
     origin: true,
     credentials: true,
