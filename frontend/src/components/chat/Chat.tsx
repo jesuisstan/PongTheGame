@@ -316,11 +316,11 @@ const Chat = () => {
               cleanRoomLoginData={cleanRoomLoginData}
             />
           ) : (
-            <>
+            <div className='black'>
               <h2>Actually no room joined</h2>
               <p>To join a room click on the arrow on the left</p>
               <p>Or add a new chan with the + button</p>
-            </>
+            </div>
           )}
         </Box>
       </Box>

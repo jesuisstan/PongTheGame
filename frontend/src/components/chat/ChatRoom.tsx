@@ -1,31 +1,12 @@
 import { SetStateAction, useContext, useEffect, useState } from 'react';
 import { WebSocketContext } from '../../contexts/WebsocketContext';
 import {
-  Send,
-  Delete,
-  ArrowBackIosNew,
-  PersonAdd,
-  Settings,
-  PersonAddAlt,
-  Password,
-  ExitToApp
-} from '@mui/icons-material';
+  Send, Delete, ArrowBackIosNew, Settings,PersonAddAlt, Password, ExitToApp
+      } from '@mui/icons-material';
 import {
-  Box,
-  Button,
-  Divider,
-  FormControl,
-  Grid,
-  IconButton,
-  List,
-  ListItem,
-  ListItemText,
-  Menu,
-  MenuItem,
-  Paper,
-  TextField,
-  Typography
-} from '@mui/material';
+  Box, Button, Divider, FormControl, Grid, IconButton, List,
+  ListItem, ListItemText, Menu, MenuItem,TextField, Typography
+      } from '@mui/material';
 
 import timeFromNow from './utils/GetTime';
 import './Chat.css';
@@ -172,8 +153,8 @@ const ChatRoom = (props: any) => {
       <div>
         <Box>
           <Typography
-            variant="h5"
             gutterBottom
+            variant='h6'
             sx={{
               display: 'flex',
               flexDirection: 'row',
@@ -184,11 +165,12 @@ const ChatRoom = (props: any) => {
             <IconButton style={{ paddingRight: -1 }}>
               <ArrowBackIosNew
                 onClick={onReturnClick}
-                sx={{ color: 'black' }}
+                className='black'
                 aria-label="return"
               />
             </IconButton>
-            Lets chat here ! #{props.room.name}
+            <p className='black'>Lets chat here ! #{props.room.name}</p>
+            {/* change upper */}
             <Button
               id="basic-button"
               aria-controls="basic-menu"
@@ -196,26 +178,25 @@ const ChatRoom = (props: any) => {
               aria-expanded={Boolean(anchorEl)}
               onClick={handleClick}
             >
-              <Settings sx={{ color: 'black' }} />
+              <Settings className='black' />
             </Button>
             <Menu
               id="basic-menu"
               anchorEl={anchorEl}
               open={Boolean(anchorEl)}
               onClose={handleClose}
-              sx={{ color: 'rgba(255, 255, 255, 0.8)' }}
-            >
+              className='black' >
               <MenuItem onClick={handleClose} aria-label="add friend">
-                <PersonAddAlt sx={{ color: 'black' }} />
+                <PersonAddAlt className='black' />
               </MenuItem>
               <MenuItem onClick={handleClose} aria-label="change password">
-                <Password sx={{ color: 'black' }} />
+                <Password className='black' />
               </MenuItem>
               <MenuItem onClick={handleClose} aria-label="delete room">
-                <Delete sx={{ color: 'black' }} />
+                <Delete className='black' />
               </MenuItem>
               <MenuItem onClick={handleClose} aria-label="leave room">
-                <ExitToApp sx={{ color: 'black' }} />
+                <ExitToApp className='black' />
               </MenuItem>
             </Menu>
           </Typography>
@@ -230,7 +211,7 @@ const ChatRoom = (props: any) => {
               }}
             >
               {messages.length === 0 ? (
-                <div>No Message</div>
+                <div className='black'>No Message</div>
               ) : (
                 <List id="chat-window-messages">{listChatMessages}</List>
               )}
