@@ -117,7 +117,7 @@ export class UserService {
       },
     });
 
-    return (dbUser?.totpSecret ?? null) !== null;
+    return dbUser?.totpSecret?.verified ?? false;
   }
 
   async setAvatar(user: User, url: string | null): Promise<User> {
