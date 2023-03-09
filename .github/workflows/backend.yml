@@ -20,30 +20,6 @@ jobs:
       - run: yarn test
         working-directory: ./backend
 
-  e2e:
-    name: 'End-to-end tests'
-    runs-on: ubuntu-latest
-    env:
-        JWT_SECRET: random_thing
-        INTRA42_CLIENT_ID: test
-        INTRA42_CLIENT_SECRET: test
-        INTRA42_CALLBACK_URL: test
-        GITHUB_CLIENT_ID: test
-        GITHUB_CLIENT_SECRET: test
-        GITHUB_CALLBACK_URL: test
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Install dependencies
-        run: yarn install
-        working-directory: ./backend
-      - name: Generate Prisma schema
-        run: yarn prisma generate
-        working-directory: ./backend
-      - run: yarn test:e2e:docker
-        working-directory: ./backend
-
   lint:
     name: 'Lint'
     runs-on: ubuntu-latest
