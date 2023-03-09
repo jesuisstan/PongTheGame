@@ -1,45 +1,18 @@
-import {
-  SetStateAction,
-  useContext,
-  useEffect,
-  useState,
-  Fragment,
-  useRef
-} from 'react';
+import { 
+  SetStateAction, useContext, useEffect, useState, Fragment, useRef
+      } from 'react';
 import * as React from 'react';
 import {
-  AppBar,
-  Box,
-  Divider,
-  Drawer,
-  List,
-  Toolbar,
-  Typography,
-  ListItem,
-  TextField,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  IconButton,
-  ListItemIcon,
-  ListItemText,
-  ListItemButton,
-  CssBaseline,
-  FormLabel
-} from '@mui/material';
+  AppBar, Box, Divider, Drawer, List, Toolbar, Typography, ListItem,
+	TextField, Button, Dialog, DialogActions, DialogContent, DialogContentText,
+	DialogTitle,
+	IconButton, ListItemIcon, ListItemText, ListItemButton, CssBaseline, FormLabel
+      } from '@mui/material';
 import {
-  ChatRounded,
-  TagRounded,
-  LockRounded,
-  ArrowForwardIos,
-  AddCircleOutline,
-  LockOpenRounded,
-  KeyboardDoubleArrowRightRounded,
-  MailLockRounded
-} from '@mui/icons-material';
+	ChatRounded, TagRounded, LockRounded, ArrowForwardIos,
+	AddCircleOutline,
+	LockOpenRounded, KeyboardDoubleArrowRightRounded, MailLockRounded
+      } from '@mui/icons-material';
 // personal components
 import { UserContext } from '../../contexts/UserContext';
 import { WebSocketContext } from '../../contexts/WebsocketContext';
