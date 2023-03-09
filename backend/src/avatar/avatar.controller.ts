@@ -29,6 +29,7 @@ import { FsExceptionInterceptor } from 'src/avatar/filter/fs-exception.intercept
 import { SessionUser } from 'src/decorator/session-user.decorator';
 import { UserService } from 'src/user/user.service';
 
+@UseGuards(IsAuthenticatedGuard)
 @Controller('/avatar')
 export class AvatarController {
   private readonly logger = new Logger(AvatarController.name);
@@ -39,7 +40,6 @@ export class AvatarController {
   ) {}
 
   @Get('/:id')
-  // @UseGuards(IsAuthenticatedGuard)
   @ApiTags('Avatar')
   @ApiOperation({
     summary: "Get a user's avatar",
@@ -74,7 +74,6 @@ export class AvatarController {
   }
 
   @Post('/upload')
-  @UseGuards(IsAuthenticatedGuard)
   @UseInterceptors(
     FileInterceptor('file', { limits: { fileSize: 100000000 } }),
     FsExceptionInterceptor,
@@ -109,7 +108,6 @@ export class AvatarController {
   }
 
   @Delete('/')
-  @UseGuards(IsAuthenticatedGuard)
   @UseInterceptors(FsExceptionInterceptor)
   @ApiTags('Avatar')
   async deleteAvatar(@SessionUser() user: User) {
