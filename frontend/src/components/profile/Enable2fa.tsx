@@ -106,7 +106,6 @@ const Enable2fa = ({
     await verifyCode();
     setLoadSubmit(false);
     setButtonText(
-      //localStorage.getItem('totpVerified') === 'true' ? 'Done ✔️' : 'Failed ❌'
       user.totpSecret?.verified ? 'Done ✔️' : 'Failed ❌'
     );
     setText('');
