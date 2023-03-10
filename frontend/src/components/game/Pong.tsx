@@ -27,7 +27,6 @@ let ballSpeed = {
   X: DEFAULT_BALL_SPEED_X,
   Y: DEFAULT_BALL_SPEED_Y
 };
-let deltaY = 0;
 let gotWinner = true;
 
 const Pong: React.FC = () => {
@@ -146,14 +145,12 @@ const Pong: React.FC = () => {
 
     if (ballPosition.X >= CANVAS_WIDTH + BALL_RADIUS * 2) {
       increaseScorePlayer1();
-      canvasContext.font = '100px Verdana';
-      canvasContext.fillText('G O A L', CANVAS_WIDTH / 4, CANVAS_HEIGHT / 2);
+      util.printGoal(canvasContext, CANVAS_WIDTH, CANVAS_HEIGHT);
     }
 
     if (ballPosition.X <= -BALL_RADIUS * 2) {
       increaseScorePlayer2();
-      canvasContext.font = '100px Verdana';
-      canvasContext.fillText('G O A L', CANVAS_WIDTH / 4, CANVAS_HEIGHT / 2);
+      util.printGoal(canvasContext, CANVAS_WIDTH, CANVAS_HEIGHT);
     }
 
     // Bounce the ball from the right paddle --->
@@ -163,7 +160,7 @@ const Pong: React.FC = () => {
       ballPosition.Y <= paddle2Y + PADDLE_HEIGHT + BALL_RADIUS
     ) {
       ballSpeed.X = -ballSpeed.X;
-      deltaY = ballPosition.Y - (paddle2Y + PADDLE_HEIGHT / 2);
+      let deltaY = ballPosition.Y - (paddle2Y + PADDLE_HEIGHT / 2);
       ballSpeed.Y = util.roundToTen(deltaY * 0.35);
     }
     if (
@@ -189,7 +186,7 @@ const Pong: React.FC = () => {
       ballPosition.Y <= paddle1Y + PADDLE_HEIGHT + BALL_RADIUS
     ) {
       ballSpeed.X = -ballSpeed.X;
-      deltaY = ballPosition.Y - (paddle1Y + PADDLE_HEIGHT / 2);
+      let deltaY = ballPosition.Y - (paddle1Y + PADDLE_HEIGHT / 2);
       ballSpeed.Y = util.roundToTen(deltaY * 0.35);
     }
     if (
@@ -209,12 +206,11 @@ const Pong: React.FC = () => {
     }
 
     // Bounce the ball from bottom & top --->
-    if (ballPosition.Y >= CANVAS_HEIGHT - BALL_RADIUS) {
+    if (
+      ballPosition.Y >= CANVAS_HEIGHT - BALL_RADIUS ||
+      ballPosition.Y <= BALL_RADIUS
+    ) {
       //console.log('bottom = ' + ballPosition.Y);
-      ballSpeed.Y = -ballSpeed.Y;
-    }
-    if (ballPosition.Y <= BALL_RADIUS) {
-      //console.log('top = ' + ballPosition.Y);
       ballSpeed.Y = -ballSpeed.Y;
     }
   };
