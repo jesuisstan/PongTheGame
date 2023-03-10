@@ -6,7 +6,7 @@ import { UserModule } from 'src/user/user.module';
 
 @Module({
   controllers: [AvatarController],
-  providers: [AvatarService],
+  providers: [],
   imports: [UserModule, TotpModule],
 })
 export class AvatarModule implements NestModule {
