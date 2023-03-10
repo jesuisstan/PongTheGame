@@ -14,4 +14,4 @@ const errorAlert = (text: string) => {
   });
 };
 
-export default errorAlert
+export default errorAlert;

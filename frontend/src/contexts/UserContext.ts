@@ -15,7 +15,7 @@ export const UserContext = createContext<UserContextData>({
     provider: '',
     role: '',
     totpSecret: null,
-    username: '',
+    username: ''
   },
   setUser: (user) => {}
 });

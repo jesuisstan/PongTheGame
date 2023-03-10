@@ -22,7 +22,7 @@
   display: flex;
   align-items: center;
   cursor: pointer;
-  font-family: "Roboto","Helvetica","Arial",sans-serif;
+  font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
   font-weight: 500;
   font-size: 0.875rem;
   line-height: 1.75;
@@ -47,7 +47,7 @@
   display: flex;
   align-items: center;
   cursor: pointer;
-  font-family: "Roboto","Helvetica","Arial",sans-serif;
+  font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
   font-weight: 500;
   font-size: 0.875rem;
   line-height: 1.75;
@@ -73,7 +73,7 @@
   justify-content: center;
   padding: 10px 10px;
   color: whitesmoke;
-  font-family: "Roboto","Helvetica","Arial",sans-serif;
+  font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
   font-weight: 500;
   font-size: 1.2rem;
   line-height: 1.75;
@@ -116,4 +116,3 @@
   height: 21px;
   margin-right: 20px;
 }
-

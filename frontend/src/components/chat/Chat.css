@@ -1,80 +1,79 @@
 #send-msg {
-	text-align: right;
-	font-style: oblique;
-	color: rgb(15, 124, 196);
- }
- 
- #receive-msg {
-	 text-align: left;
-	 font-style: normal;
-	 color: black;
- }
- 
- #chat-window {
-	 height: 70vh;
-	 position: relative;
- 
- }
- #chat-window-messages {
-	 height: 100%;
-	 overflow-y: overlay;
-	 overflow-wrap: break-word;
- }
- 
- .basicCard {
-	 width: 100%;
-	 height: 100%;
-	 margin-top: 44px;
- }
- 
- .chatRoomText {
-	 width: 70vw;
-	 display: flex;
-	 flex-direction: row;
-	 align-items: center;
-	 justify-content: center;
-	 position: absolute;
-	 bottom: 40px;
- }
- 
- .chatRoom {
-	 flex-grow: 1;
-	 padding: 15px;
-	 width: 70vw;
-	 min-width: calc(100vw - 200px);
-	 max-width: auto;
-	 height: calc(100vh - 56px) ;
-	 background-color: rgba(255, 255, 255, 0.8);
- }
- 
- .chatRoomList {
-	 flex-grow: 1;
-	 padding: 5px;
-	 width: 30vw;
-	 min-width: 200px;
-	 max-width: 300px;
-	 background-color: rgba(0, 0, 0, 0.80);
-	 height: calc(100vh - 56px);
- }
- 
- .white {
-	 color: white;
- }
- 
- .limitText {
-	 margin-left: -35px;
-	 width: 100%;
-	 max-width: 100px;
-	 overflow: hidden;
-	 text-overflow: ellipsis;
-	 white-space: nowrap;
- }
- 
- .limitText:hover {
-	 overflow: visible;
-	 color: rgba(228, 98, 139, 0.91);
-	 background-color: rgba(0, 0, 0, 0.815);
-	 min-width: 101%;
-	 display: inline-flex;
-	 vertical-align: middle;
- }
+  text-align: right;
+  font-style: oblique;
+  color: rgb(15, 124, 196);
+}
+
+#receive-msg {
+  text-align: left;
+  font-style: normal;
+  color: black;
+}
+
+#chat-window {
+  height: 70vh;
+  position: relative;
+}
+#chat-window-messages {
+  height: 100%;
+  overflow-y: overlay;
+  overflow-wrap: break-word;
+}
+
+.basicCard {
+  width: 100%;
+  height: 100%;
+  margin-top: 44px;
+}
+
+.chatRoomText {
+  width: 70vw;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  bottom: 40px;
+}
+
+.chatRoom {
+  flex-grow: 1;
+  padding: 15px;
+  width: 70vw;
+  min-width: calc(100vw - 200px);
+  max-width: auto;
+  height: calc(100vh - 56px);
+  background-color: rgba(255, 255, 255, 0.8);
+}
+
+.chatRoomList {
+  flex-grow: 1;
+  padding: 5px;
+  width: 30vw;
+  min-width: 200px;
+  max-width: 300px;
+  background-color: rgba(0, 0, 0, 0.8);
+  height: calc(100vh - 56px);
+}
+
+.white {
+  color: white;
+}
+
+.limitText {
+  margin-left: -35px;
+  width: 100%;
+  max-width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.limitText:hover {
+  overflow: visible;
+  color: rgba(228, 98, 139, 0.91);
+  background-color: rgba(0, 0, 0, 0.815);
+  min-width: 101%;
+  display: inline-flex;
+  vertical-align: middle;
+}

@@ -3,6 +3,7 @@ import { UserContext } from '../../contexts/UserContext';
 import ScoreBar from './ScoreBar';
 import VictoryModal from './VictoryModal';
 import ButtonPong from '../UI/ButtonPong';
+import * as util from './gameUtils';
 import styles from './Game.module.css';
 
 const DEFAULT_WIN_SCORE = 3;
@@ -37,33 +38,8 @@ const Pong: React.FC = () => {
   const [winScore, setWinScore] = useState(DEFAULT_WIN_SCORE);
   const [score, setScore] = useState({ player1: 0, player2: 0 });
 
-  const makeRectangleShape = (
-    canvasContext: CanvasRenderingContext2D,
-    cX: number,
-    cY: number,
-    width: number,
-    height: number,
-    color: string
-  ) => {
-    canvasContext.fillStyle = color;
-    canvasContext.fillRect(cX, cY, width, height);
-  };
-
-  const makeCircleShape = (
-    canvasContext: CanvasRenderingContext2D,
-    cX: number,
-    cY: number,
-    radius: number,
-    color: string
-  ) => {
-    canvasContext.fillStyle = color;
-    canvasContext.beginPath();
-    canvasContext.arc(cX, cY, radius, 90, Math.PI / 2, true);
-    canvasContext.fill();
-  };
-
   const draw = (canvasContext: CanvasRenderingContext2D) => {
-    makeRectangleShape(
+    util.makeRectangleShape(
       canvasContext,
       0,
       0,
@@ -73,7 +49,7 @@ const Pong: React.FC = () => {
     ); // Canvas
     new Array(CANVAS_HEIGHT).fill(0).map((c, i) => {
       if (i % 40 === 0) {
-        makeRectangleShape(
+        util.makeRectangleShape(
           canvasContext,
           CANVAS_WIDTH / 2 - 1,
           i,
@@ -83,7 +59,7 @@ const Pong: React.FC = () => {
         );
       }
     }); // Net
-    makeRectangleShape(
+    util.makeRectangleShape(
       canvasContext,
       0,
       paddle1Y,
@@ -91,7 +67,7 @@ const Pong: React.FC = () => {
       PADDLE_HEIGHT,
       PADDLE_COLOR
     ); // Left Paddle
-    makeRectangleShape(
+    util.makeRectangleShape(
       canvasContext,
       CANVAS_WIDTH - PADDLE_WIDTH,
       paddle2Y,
@@ -99,7 +75,7 @@ const Pong: React.FC = () => {
       PADDLE_HEIGHT,
       PADDLE_COLOR
     ); // Right Paddle
-    makeCircleShape(
+    util.makeCircleShape(
       canvasContext,
       ballPosition.X,
       ballPosition.Y,
@@ -153,14 +129,6 @@ const Pong: React.FC = () => {
     ballSpeed.Y = DEFAULT_BALL_SPEED_Y;
   };
 
-  function roundToFive(num: number) {
-    return Math.round(num / 5) * 5;
-  }
-
-  function roundToTen(num: number) {
-    return Math.round(num / 10) * 10;
-  }
-
   const play = (canvasContext: CanvasRenderingContext2D) => {
     if (gotWinner) {
       setDefaultBallSpeed();
@@ -196,7 +164,7 @@ const Pong: React.FC = () => {
     ) {
       ballSpeed.X = -ballSpeed.X;
       deltaY = ballPosition.Y - (paddle2Y + PADDLE_HEIGHT / 2);
-      ballSpeed.Y = roundToTen(deltaY * 0.35);
+      ballSpeed.Y = util.roundToTen(deltaY * 0.35);
     }
     if (
       ballPosition.X >= CANVAS_WIDTH - PADDLE_WIDTH &&
@@ -222,7 +190,7 @@ const Pong: React.FC = () => {
     ) {
       ballSpeed.X = -ballSpeed.X;
       deltaY = ballPosition.Y - (paddle1Y + PADDLE_HEIGHT / 2);
-      ballSpeed.Y = roundToTen(deltaY * 0.35);
+      ballSpeed.Y = util.roundToTen(deltaY * 0.35);
     }
     if (
       ballPosition.X <= PADDLE_WIDTH &&
@@ -251,17 +219,6 @@ const Pong: React.FC = () => {
     }
   };
 
-  const calculateMousePosition = (
-    canvas: HTMLCanvasElement,
-    mouseEvent: MouseEvent
-  ) => {
-    let rect = canvas!.getBoundingClientRect();
-    let root = document.documentElement;
-    let mouseX = roundToTen(mouseEvent.clientX - rect.left - root.scrollLeft);
-    let mouseY = roundToTen(mouseEvent.clientY - rect.top - root.scrollTop);
-    return { x: mouseX, y: mouseY };
-  };
-
   const handleMouseClick = (evt: MouseEvent) => {
     if (gotWinner) {
       setScore({ player1: 0, player2: 0 });
@@ -287,7 +244,8 @@ const Pong: React.FC = () => {
     canvas!.addEventListener('mousedown', handleMouseClick); // restarts the game when "MOUSE-CLICK"
 
     window.addEventListener('mousemove', (evt) => {
-      let mousePos = calculateMousePosition(canvas!, evt);
+      let mousePos = util.calculateMousePosition(canvas!, evt);
+
       if (mousePos.y < PADDLE_HEIGHT / 2) {
         paddle1Y = 0;
       } else if (mousePos.y > canvas!.height - PADDLE_HEIGHT / 2) {
