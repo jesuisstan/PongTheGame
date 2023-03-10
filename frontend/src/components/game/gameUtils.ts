@@ -41,3 +41,31 @@ export const calculateMousePosition = (
   let mouseY = roundToTen(mouseEvent.clientY - rect.top - root.scrollTop);
   return { x: mouseX, y: mouseY };
 };
+
+export const printGoal = (
+  canvasContext: CanvasRenderingContext2D,
+  canvasWidth: number,
+  canvasHeight: number
+) => {
+  canvasContext.font = '100px Verdana';
+  canvasContext.fillText(
+    'G',
+    canvasWidth / 2 - 35,
+    canvasHeight / 4 - 42
+  );
+  canvasContext.fillText(
+    'O',
+    canvasWidth / 2 - 35,
+    (canvasHeight / 4) * 2 - 42
+  );
+  canvasContext.fillText(
+    'A',
+    canvasWidth / 2 - 35,
+    (canvasHeight / 4) * 3 - 42
+  );
+  canvasContext.fillText(
+    'L',
+    canvasWidth / 2 - 35,
+    (canvasHeight / 4) * 4 - 42
+  );
+};
