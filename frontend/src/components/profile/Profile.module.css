@@ -8,7 +8,7 @@
 }
 
 .box {
-  font-family: "Roboto","Helvetica","Arial",sans-serif;
+  font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
   line-height: 1.75;
   letter-spacing: 0.02857em;
   width: 300px;
@@ -99,4 +99,13 @@
 
 .logo:hover {
   transform: scale(1.4);
+}
+
+.bottomAvatarBox {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+  flex-grow: 1;
+  gap: 10px;
 }

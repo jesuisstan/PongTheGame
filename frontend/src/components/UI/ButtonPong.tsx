@@ -1,16 +1,17 @@
-import { MarginOutlined } from '@mui/icons-material';
 import Button from '@mui/material/Button';
 
 const ButtonPong = ({
   text,
   onClick,
   endIcon,
-  startIcon
+  startIcon,
+  disabled
 }: {
   text: string;
   onClick: React.MouseEventHandler<HTMLButtonElement>;
   endIcon?: React.ReactNode;
   startIcon?: React.ReactNode;
+  disabled?: boolean;
 }) => {
   return (
     <Button
@@ -27,6 +28,7 @@ const ButtonPong = ({
       onClick={onClick}
       endIcon={endIcon}
       startIcon={startIcon}
+      disabled={disabled}
     >
       {text}
     </Button>

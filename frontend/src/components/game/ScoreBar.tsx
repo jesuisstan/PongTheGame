@@ -1,9 +1,9 @@
 import { useContext } from 'react';
 import { UserContext } from '../../contexts/UserContext';
-import styles from './Game.module.css';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
+import Select from '@mui/material/Select';
+import styles from './Game.module.css';
 
 const ScoreBar = ({
   winScore,

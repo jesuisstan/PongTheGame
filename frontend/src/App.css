@@ -1,6 +1,6 @@
 .App {
   text-align: center;
-  font-family: "Roboto","Helvetica","Arial",sans-serif;
+  font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
   font-weight: 500;
   line-height: 1.75;
   letter-spacing: 0.02857em;
@@ -10,7 +10,7 @@
 a {
   color: whitesmoke;
   text-decoration: none;
-  font-family: "Roboto","Helvetica","Arial",sans-serif;
+  font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
   font-weight: 500;
   font-size: 1.2rem;
   line-height: 1.75;
@@ -24,7 +24,7 @@ a:hover {
 h5 {
   font-size: x-large;
   text-transform: uppercase;
-  font-family: "Roboto","Helvetica","Arial",sans-serif;
+  font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
   font-weight: 500;
   line-height: 1.75;
   letter-spacing: 0.02857em;
@@ -41,11 +41,12 @@ h5 {
   text-decoration: underline;
 }
 
-.swal2-container.swal2-backdrop-show, .swal2-container.swal2-noanimation {
+.swal2-container.swal2-backdrop-show,
+.swal2-container.swal2-noanimation {
   z-index: 11000;
 }
 
-body.swal2-shown > [aria-hidden="true"] {
+body.swal2-shown > [aria-hidden='true'] {
   transition: 0.1s filter;
   filter: blur(2px);
 }

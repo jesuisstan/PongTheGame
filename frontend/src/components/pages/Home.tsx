@@ -33,7 +33,7 @@ const Home = () => {
           lastName="Cano"
           description="I made this shit and i wanna die 💀🔫"
           intraNickname="bcano"
-          role="Frontend: chat, home page"
+          role="Frontend: chat, teammate card template"
           github="https://github.com/BarbaraC12"
         />
         <Peer
@@ -49,9 +49,9 @@ const Home = () => {
           style={styles.stan}
           firstName="Stanislav"
           lastName="Krivtsoff"
-          description="'Let's do it!' ⚡"
+          description="Let's do it! ⚡"
           intraNickname="acaren"
-          role="Frontend: profile, login, auth, pong the game, stats"
+          role="Frontend: layout, auth, profile, game, stats"
           github="https://github.com/ichbinstannis"
         />
         <Peer
@@ -60,7 +60,7 @@ const Home = () => {
           lastName="Tanigawa"
           description="'Catch phrase'"
           intraNickname="dtanigaw"
-          role="Backend: chat. DevOps: docker-compose..."
+          role="Backend: chat, docker-compose..."
           github="https://github.com/BarbaraC12"
         />
       </div>
