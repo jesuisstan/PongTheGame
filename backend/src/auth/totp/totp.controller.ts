@@ -27,6 +27,7 @@ import { TotpService } from 'src/auth/totp/totp.service';
 import { SessionUser } from 'src/decorator/session-user.decorator';
 import { UserService } from 'src/user/user.service';
 
+@UseGuards(IsAuthenticatedGuard)
 @Controller('/auth/totp')
 export class TotpController {
   private readonly logger = new Logger(TotpController.name);
@@ -37,7 +38,6 @@ export class TotpController {
   ) {}
 
   @Post('/')
-  @UseGuards(IsAuthenticatedGuard)
   @ApiTags('Authentication/TOTP')
   @ApiOperation({
     summary: 'Enable TOTP for the current user',
@@ -58,7 +58,6 @@ export class TotpController {
   }
 
   @Delete('/')
-  @UseGuards(IsAuthenticatedGuard)
   @ApiTags('Authentication/TOTP')
   @ApiOperation({
     summary: 'Disable TOTP for the current user',
@@ -75,7 +74,6 @@ export class TotpController {
   }
 
   @Post('/activate')
-  @UseGuards(IsAuthenticatedGuard)
   @ApiTags('Authentication/TOTP')
   // @UsePipes(ValidationPipe)
   @ApiOperation({
@@ -107,7 +105,6 @@ export class TotpController {
   }
 
   @Post('/verify')
-  @UseGuards(IsAuthenticatedGuard)
   @ApiTags('Authentication/TOTP')
   @ApiOperation({
     summary: "Verify a code against the user's secret",
