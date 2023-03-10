@@ -7,14 +7,14 @@ import styles from './Game.module.css';
 
 const DEFAULT_WIN_SCORE = 3;
 const DEFAULT_BALL_SPEED_X = 10;
-const DEFAULT_BALL_SPEED_Y = 5;
+const DEFAULT_BALL_SPEED_Y = 10;
 const CANVAS_HEIGHT = 600;
 const CANVAS_WIDTH = 800;
 const FPS = 30;
 const BALL_RADIUS = 10;
-const PADDLE_WIDTH = 10;
+const PADDLE_WIDTH = 20;
 const PADDLE_HEIGHT = CANVAS_HEIGHT / 6;
-const PADDLE_COLOUR = 'rgb(253, 80, 135)';
+const PADDLE_COLOR = 'rgb(253, 80, 135)';
 
 let paddle1Y = CANVAS_HEIGHT / 2 - PADDLE_HEIGHT / 2;
 let paddle2Y = CANVAS_HEIGHT / 2 - PADDLE_HEIGHT / 2;
@@ -36,7 +36,7 @@ const Pong: React.FC = () => {
   const [winner, setWinner] = useState('');
   const [winScore, setWinScore] = useState(DEFAULT_WIN_SCORE);
   const [score, setScore] = useState({ player1: 0, player2: 0 });
-  
+
   const makeRectangleShape = (
     canvasContext: CanvasRenderingContext2D,
     cX: number,
@@ -63,7 +63,14 @@ const Pong: React.FC = () => {
   };
 
   const draw = (canvasContext: CanvasRenderingContext2D) => {
-    makeRectangleShape(canvasContext, 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT, 'black'); // Canvas
+    makeRectangleShape(
+      canvasContext,
+      0,
+      0,
+      CANVAS_WIDTH,
+      CANVAS_HEIGHT,
+      'black'
+    ); // Canvas
     new Array(CANVAS_HEIGHT).fill(0).map((c, i) => {
       if (i % 40 === 0) {
         makeRectangleShape(
@@ -82,7 +89,7 @@ const Pong: React.FC = () => {
       paddle1Y,
       PADDLE_WIDTH,
       PADDLE_HEIGHT,
-      PADDLE_COLOUR
+      PADDLE_COLOR
     ); // Left Paddle
     makeRectangleShape(
       canvasContext,
@@ -90,7 +97,7 @@ const Pong: React.FC = () => {
       paddle2Y,
       PADDLE_WIDTH,
       PADDLE_HEIGHT,
-      PADDLE_COLOUR
+      PADDLE_COLOR
     ); // Right Paddle
     makeCircleShape(
       canvasContext,
@@ -109,18 +116,25 @@ const Pong: React.FC = () => {
         : setWinner('Opponent'); // todo change 'opponent' name
       setOpen(true);
     }
-    ballSpeed.X = ballSpeed.X > 0 ? -10 : 10;
-    ballSpeed.Y = -ballSpeed.Y;
+    ballSpeed.X =
+      ballSpeed.X > 0 ? -DEFAULT_BALL_SPEED_X : DEFAULT_BALL_SPEED_X;
+    ballSpeed.Y =
+      ballSpeed.Y > 0 ? -DEFAULT_BALL_SPEED_Y : DEFAULT_BALL_SPEED_Y;
     ballPosition.X = CANVAS_WIDTH / 2;
     ballPosition.Y = CANVAS_HEIGHT / 2;
   };
 
   const computerAI = () => {
     let paddle2YCenter = paddle2Y + PADDLE_HEIGHT / 2;
+
     if (paddle2YCenter < ballPosition.Y - 40) {
-      paddle2Y += 13;
-    } else if (paddle2YCenter < ballPosition.Y + 40) {
-      paddle2Y -= 13;
+      paddle2Y += 14;
+    } else if (paddle2YCenter < ballPosition.Y + 40 && paddle2Y > 0) {
+      paddle2Y -= 14;
+    } else if (paddle2Y <= 0) {
+      paddle2Y = 0;
+    } else {
+      paddle2Y = paddle2Y;
     }
   };
 
@@ -139,6 +153,14 @@ const Pong: React.FC = () => {
     ballSpeed.Y = DEFAULT_BALL_SPEED_Y;
   };
 
+  function roundToFive(num: number) {
+    return Math.round(num / 5) * 5;
+  }
+
+  function roundToTen(num: number) {
+    return Math.round(num / 10) * 10;
+  }
+
   const play = (canvasContext: CanvasRenderingContext2D) => {
     if (gotWinner) {
       setDefaultBallSpeed();
@@ -156,61 +178,75 @@ const Pong: React.FC = () => {
 
     if (ballPosition.X >= CANVAS_WIDTH + BALL_RADIUS * 2) {
       increaseScorePlayer1();
+      canvasContext.font = '100px Verdana';
+      canvasContext.fillText('G O A L', CANVAS_WIDTH / 4, CANVAS_HEIGHT / 2);
     }
 
     if (ballPosition.X <= -BALL_RADIUS * 2) {
       increaseScorePlayer2();
+      canvasContext.font = '100px Verdana';
+      canvasContext.fillText('G O A L', CANVAS_WIDTH / 4, CANVAS_HEIGHT / 2);
     }
 
     // Bounce the ball from the right paddle --->
     if (
       ballPosition.X === CANVAS_WIDTH - PADDLE_WIDTH - BALL_RADIUS &&
-      ballPosition.Y > paddle2Y - BALL_RADIUS &&
-      ballPosition.Y < paddle2Y + PADDLE_HEIGHT + BALL_RADIUS
+      ballPosition.Y >= paddle2Y - BALL_RADIUS &&
+      ballPosition.Y <= paddle2Y + PADDLE_HEIGHT + BALL_RADIUS
     ) {
       ballSpeed.X = -ballSpeed.X;
       deltaY = ballPosition.Y - (paddle2Y + PADDLE_HEIGHT / 2);
-      console.log('deltaY = ');
+      ballSpeed.Y = roundToTen(deltaY * 0.35);
+    }
+    if (
+      ballPosition.X >= CANVAS_WIDTH - PADDLE_WIDTH &&
+      (ballPosition.Y === paddle2Y - BALL_RADIUS ||
+        ballPosition.Y === paddle2Y + PADDLE_HEIGHT + BALL_RADIUS)
+    ) {
+      console.log('right paddle RIB!');
 
-      ballSpeed.Y = Math.round(deltaY * 0.35);
-      console.log(ballSpeed.Y);
+      ballSpeed.Y = -ballSpeed.Y;
+      let deltaX = CANVAS_WIDTH - ballPosition.X - PADDLE_WIDTH;
+      console.log('Right deltaX = ' + deltaX);
+
+      ballSpeed.X = deltaX !== 0 ? deltaX * 0.35 : -ballSpeed.X;
+
+      console.log('ballSpeed.X = ' + ballSpeed.X);
     }
 
     // Bounce the ball from the left paddle --->
     if (
       ballPosition.X === PADDLE_WIDTH + BALL_RADIUS &&
-      ballPosition.Y > paddle1Y - BALL_RADIUS &&
-      ballPosition.Y < paddle1Y + PADDLE_HEIGHT + BALL_RADIUS
+      ballPosition.Y >= paddle1Y - BALL_RADIUS &&
+      ballPosition.Y <= paddle1Y + PADDLE_HEIGHT + BALL_RADIUS
     ) {
       ballSpeed.X = -ballSpeed.X;
       deltaY = ballPosition.Y - (paddle1Y + PADDLE_HEIGHT / 2);
-      console.log('deltaY = ');
-
-      ballSpeed.Y = Math.round(deltaY * 0.35);
-      console.log(ballSpeed.Y);
+      ballSpeed.Y = roundToTen(deltaY * 0.35);
     }
     if (
-      ballPosition.X < PADDLE_WIDTH &&
-      ballPosition.Y >= paddle1Y &&
-      ballPosition.Y <= paddle1Y + PADDLE_HEIGHT
+      ballPosition.X <= PADDLE_WIDTH &&
+      (ballPosition.Y === paddle1Y - BALL_RADIUS ||
+        ballPosition.Y === paddle1Y + PADDLE_HEIGHT + BALL_RADIUS)
     ) {
+      console.log('RIB!');
+
       ballSpeed.Y = -ballSpeed.Y;
       let deltaX = ballPosition.X - PADDLE_WIDTH;
+      console.log('deltaX = ' + deltaX);
 
-      ballSpeed.X = Math.round(deltaX * 0.35);
-      console.log(ballSpeed.X);
-      console.log(`deltaXXX = ${ballSpeed.X}`);
+      ballSpeed.X = deltaX !== 0 ? deltaX * 0.35 : -ballSpeed.X;
+
+      console.log('ballSpeed.X = ' + ballSpeed.X);
     }
 
     // Bounce the ball from bottom & top --->
     if (ballPosition.Y >= CANVAS_HEIGHT - BALL_RADIUS) {
-      console.log(ballPosition.Y);
-
+      //console.log('bottom = ' + ballPosition.Y);
       ballSpeed.Y = -ballSpeed.Y;
     }
     if (ballPosition.Y <= BALL_RADIUS) {
-      console.log(ballPosition.Y);
-
+      //console.log('top = ' + ballPosition.Y);
       ballSpeed.Y = -ballSpeed.Y;
     }
   };
@@ -221,8 +257,8 @@ const Pong: React.FC = () => {
   ) => {
     let rect = canvas!.getBoundingClientRect();
     let root = document.documentElement;
-    let mouseX = mouseEvent.clientX - rect.left - root.scrollLeft;
-    let mouseY = mouseEvent.clientY - rect.top - root.scrollTop;
+    let mouseX = roundToTen(mouseEvent.clientX - rect.left - root.scrollLeft);
+    let mouseY = roundToTen(mouseEvent.clientY - rect.top - root.scrollTop);
     return { x: mouseX, y: mouseY };
   };
 
@@ -252,8 +288,6 @@ const Pong: React.FC = () => {
 
     window.addEventListener('mousemove', (evt) => {
       let mousePos = calculateMousePosition(canvas!, evt);
-      //console.log(mousePos);
-
       if (mousePos.y < PADDLE_HEIGHT / 2) {
         paddle1Y = 0;
       } else if (mousePos.y > canvas!.height - PADDLE_HEIGHT / 2) {
