@@ -36,7 +36,7 @@
   flex: 1;
   padding: 10px 10px;
   color: whitesmoke;
-  font-family: "Roboto","Helvetica","Arial",sans-serif;
+  font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
   font-weight: 500;
   font-size: 1.2rem;
   line-height: 1.75;
@@ -50,7 +50,7 @@
   flex: 1;
   padding: 10px 10px;
   align-items: center;
-  gap: 21px
+  gap: 21px;
 }
 
 .center {
@@ -100,7 +100,9 @@
 }
 
 .benjamin {
-  background: right/contain content-box border-box no-repeat url('https://avatars.githubusercontent.com/u/14862819?v=4') rgba(245, 245, 245, 0.795);
+  background: right/contain content-box border-box no-repeat
+    url('https://avatars.githubusercontent.com/u/14862819?v=4')
+    rgba(245, 245, 245, 0.795);
   display: flex;
   flex-direction: column;
   min-width: 200px;
@@ -116,7 +118,9 @@
 }
 
 .barbara {
-  background: left/contain content-box border-box no-repeat url('https://avatars.githubusercontent.com/u/55756205?v=4') rgba(245, 245, 245, 0.795);
+  background: left/contain content-box border-box no-repeat
+    url('https://avatars.githubusercontent.com/u/55756205?v=4')
+    rgba(245, 245, 245, 0.795);
   display: flex;
   flex-direction: column;
   min-width: 200px;
@@ -132,7 +136,9 @@
 }
 
 .florian {
-  background: right/contain content-box border-box no-repeat url('https://avatars.githubusercontent.com/u/49709897?v=4') rgba(245, 245, 245, 0.795);
+  background: right/contain content-box border-box no-repeat
+    url('https://avatars.githubusercontent.com/u/49709897?v=4')
+    rgba(245, 245, 245, 0.795);
   display: flex;
   flex-direction: column;
   min-width: 200px;
@@ -148,7 +154,9 @@
 }
 
 .stan {
-  background: left/contain content-box border-box no-repeat url('https://avatars.githubusercontent.com/u/82715902?v=4') rgba(245, 245, 245, 0.795);
+  background: left/contain content-box border-box no-repeat
+    url('https://avatars.githubusercontent.com/u/82715902?v=4')
+    rgba(245, 245, 245, 0.795);
   display: flex;
   flex-direction: column;
   min-width: 200px;
@@ -164,7 +172,9 @@
 }
 
 .daisuke {
-  background: right/contain content-box border-box no-repeat url('https://avatars.githubusercontent.com/u/65622360?v=4') rgba(245, 245, 245, 0.795);
+  background: right/contain content-box border-box no-repeat
+    url('https://avatars.githubusercontent.com/u/65622360?v=4')
+    rgba(245, 245, 245, 0.795);
   display: flex;
   flex-direction: column;
   min-width: 200px;
