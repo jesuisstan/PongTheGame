@@ -90,11 +90,8 @@ const ChatRoom = (props: any) => {
     socket.on('makeOper', ({ roomName, nick }) => {
       console.log(nick + ' is Oper now!')
     })
-    socket.on('banUser', ({ roomName, nick }) => {
-      console.log(nick + ' has been banned!')
-    })
-    socket.on('kickUser', ({ roomName, nick }) => {
-      console.log(nick + ' has been kicked!')
+    socket.on('exception', ({ msg }) => {
+      console.log('ERROR: ' + msg)
     })
 
     // Clean listeners to unsubscribe all callbacks for these events
@@ -105,8 +102,6 @@ const ChatRoom = (props: any) => {
       socket.off('typingMessage')
       socket.off('removePassword')
       socket.off('makeOper')
-      socket.off('banUser')
-      socket.off('kickUser')
     }
   }, [])
 

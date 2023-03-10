@@ -59,6 +59,13 @@ const Chat = () => {
         console.log(userName + ' quit room [' + joinedRoomName + ']')
         setjoinedRoomName('')
       }
+    });
+    socket.on('kickUser', ({ roomName, nick }) => {
+      if (user.nickname === nick) setjoinedRoomName('')
+      console.log(nick + ' has been kicked!')
+    });
+      socket.on('banUser', ({ roomName, nick }) => {
+      console.log(nick + ' has been banned!')
     })
 
     // Clean listeners to unsubscribe all callbacks for these events
@@ -119,7 +126,6 @@ const Chat = () => {
 
   // Join a chatroom if no password has been set
   const joinRoom = (roomName: string) => {
-    try {
     socket.emit(
       'joinRoom',
       { roomName: roomName, nickName: user.nickname },
@@ -127,10 +133,7 @@ const Chat = () => {
         setjoinedRoomName(response);
       }
     );
-    } catch(error) {
-      console.log(error)
-    }
-  };
+  }
 
   // Check if the password is right
   const onPasswordSubmit = () => {
