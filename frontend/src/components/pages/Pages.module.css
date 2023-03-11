@@ -19,6 +19,17 @@
   justify-content: center;
 }
 
+.loader {
+  height: calc(100vh - 50px);
+  align-self: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 21px;
+  color: black;
+  justify-content: center;
+}
+
 .wrapper {
   width: 450px;
   height: 250px;
