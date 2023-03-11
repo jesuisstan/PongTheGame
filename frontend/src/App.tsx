@@ -12,6 +12,7 @@ import Chat from './components/chat/Chat';
 import Game from './components/game/Game';
 import History from './components/pages/History';
 import NotFound from './components/pages/NotFound';
+import PleaseLogin from './components/pages/PleaseLogin';
 import backendAPI from './api/axios-instance';
 import './App.css';
 
@@ -29,7 +30,7 @@ function App() {
     provider: '',
     role: '',
     totpSecret: null,
-    username: '',
+    username: ''
   });
 
   useEffect(() => {
@@ -69,7 +70,7 @@ function App() {
                 <Route path="history" element={<History />} />
                 <Route
                   path="profile"
-                  element={user.provider ? <Profile /> : <Login />}
+                  element={user.provider ? <Profile /> : <PleaseLogin />}
                 />
                 <Route path="*" element={<NotFound />} />
               </Route>
