@@ -4,12 +4,55 @@ import {
   Send, Delete, ArrowBackIosNew, Settings,PersonAddAlt, Password, ExitToApp
       } from '@mui/icons-material';
 import {
+  Avatar,
   Box, Button, Divider, FormControl, Grid, IconButton, List,
-  ListItem, ListItemText, Menu, MenuItem,TextField, Typography
+  ListItem, Menu, MenuItem,TextField, Typography
       } from '@mui/material';
 
 import timeFromNow from './utils/GetTime';
 import './Chat.css';
+import "./bubble.css"
+
+const BubbleL = (message: any, author: string) => {
+  const msg = message ? message : '';
+  const nickname = author ? author : '';
+  const avatar = '';
+  const timestamp = new Date();
+
+  return (
+      <>
+          <div className="msgRowL">
+              <Avatar 
+                  alt={nickname}
+                  className="avatar"
+                  src={avatar}></Avatar>
+              <div>
+                  <div className="nickName">Nickname</div>
+                  <div className="msgLeft">
+                      <p className="msgText">Message la</p>
+                      <div className="msgTime">{timestamp.toLocaleTimeString()}</div>
+                  </div>
+              </div>
+          </div>
+      </> 
+  );
+};
+
+const BubbleR = (message: any) => {
+  const msg = message ? message : '';
+  const timestamp = new Date();
+
+  return (
+      <>
+          <div className="msgRowR">
+              <div className='msgRight'>
+                  <p className="msgText">Message ici</p>
+                  <div className="msgTime">{timestamp.toLocaleTimeString()}</div>
+              </div>
+          </div>
+      </>
+  );
+};
 
 // // All newly created message should have an author and the message itself
 // export type MessagePayload = {
@@ -117,20 +160,10 @@ const ChatRoom = (props: any) => {
     <ListItem key={index}>
       {
         props.user.nickname === msg.author ? (
-          <ListItemText
-            primary={`${msg.data} 
-				- You`}
-            id="send-msg"
-          />
+          <BubbleR message={msg.data} />
         ) : (
-          // | ${timeFromNow(msg.timestamp)}
-          <ListItemText
-            primary={`${props.user.nickname} - 
-				${msg.data}`}
-            id="receive-msg"
-          />
+          <BubbleL message={msg.data} author={msg.author}/>
         )
-        // ${timeFromNow(msg.timestamp)} |
       }
     </ListItem>
   ));
@@ -162,9 +195,9 @@ const ChatRoom = (props: any) => {
               alignItems: 'center'
             }}
           >
-            <IconButton style={{ paddingRight: -1 }}>
+            <IconButton style={{ paddingRight: -1 }} onClick={onReturnClick}>
               <ArrowBackIosNew
-                onClick={onReturnClick}
+                
                 className='black'
                 aria-label="return"
               />
@@ -213,13 +246,13 @@ const ChatRoom = (props: any) => {
               {messages.length === 0 ? (
                 <div className='black'>No Message</div>
               ) : (
-                <List id="chat-window-messages">{listChatMessages}</List>
+                <List>{listChatMessages}</List>
               )}
             </Grid>
             <div className="chatRoomText">
               {
                 // Display message to other users if user is currently typing
-                typingDisplay && <div>{typingDisplay}</div>
+                typingDisplay && <div className='black typingButton'>{typingDisplay}</div>
               }
               <Grid item xs={10}>
                 <FormControl fullWidth onSubmit={onFormSubmit}>
