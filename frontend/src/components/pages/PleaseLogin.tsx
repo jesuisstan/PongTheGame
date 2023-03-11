@@ -18,7 +18,7 @@ const PleaseLogin = () => {
   }, []);
 
   return loading ? (
-    <div className={styles.loader}>
+    <div className={styles.loadSpinner}>
       <p>loading...</p>
       <BarLoader
         color="black"
