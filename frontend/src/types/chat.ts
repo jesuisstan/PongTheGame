@@ -20,3 +20,11 @@ export type ChatRoomType = {
 	messages: Message[];
 	bannedNicks: string[];
 }
+
+export type MemberType = {
+	[nick: string]: {
+		isOnline: boolean;
+		modes: string;
+		lastPinged: Date
+	  }	
+}

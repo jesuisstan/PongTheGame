@@ -1,7 +1,7 @@
 import { SetStateAction, useContext, useEffect, useState } from "react";
 import { UserContext } from "../../contexts/UserContext";
 import { WebSocketContext } from "../../contexts/WebsocketContext";
-import { Message } from "../../types/chat";
+import { MemberType, Message } from "../../types/chat";
 
 // // All newly created message should have an author and the message itself
 // export type MessagePayload = {
@@ -34,6 +34,15 @@ const ChatRoom = (props: any) => {
   const [messageText, setMessageText] = useState<string>('')
   // Checks if the user is oper(=admin) in the chat room
   const [isOper, setIsOper] = useState<boolean>(false)
+  // Array including all members
+  const [members, setMembers] = useState<MemberType[]>([])
+
+
+  socket.emit('findAllMembers', { roomName: props.roomName },
+    (response: SetStateAction<MemberType[]>) => {
+      setMembers(response)
+    }
+  )
 
   // Get all messages from messages array in chat.service
   // and fill the messages variable
@@ -69,6 +78,13 @@ const ChatRoom = (props: any) => {
       setMessages(filteredMessages)
     })
 
+    socket.emit('isUserOper',
+      { roomName: props.roomName, nick: user.nickname },
+      (response: SetStateAction<boolean>) => {
+        setIsOper(response)
+      }
+    )
+
 
   /*************************************************************
    * Event listeners
@@ -80,18 +96,39 @@ const ChatRoom = (props: any) => {
       'createMessage',
       (newMessage: any) => console.log('createMessage event received!') 
     )
-    socket.on('typingMessage', ({ roomName, nick, isTyping }) => {
-      roomName === props.roomName && isTyping ? setTypingDisplay(nick + ' is typing...')
+    socket.on('typingMessage', (
+        roomName: string, nick: string, isTyping: boolean) => {
+      roomName === props.roomName && isTyping ?
+        setTypingDisplay(nick + ' is typing...')
         : setTypingDisplay('')
     })
-    socket.on('removePassword', ({ roomName }) => {
-      console.log('Password from ' + roomName + ' has been removed!')
+    socket.on('removePassword', (roomName: string) => {
+      if (roomName === props.roomName)
+        console.log('Password from ' + roomName + ' has been removed!')
     })
-    socket.on('makeOper', ({ roomName, nick }) => {
-      console.log(nick + ' is Oper now!')
+    socket.on('makeOper', (roomName: string, target: string) => {
+      if (roomName === props.roomName)
+        console.log(target + ' is Oper now!')
     })
-    socket.on('exception', ({ msg }) => {
-      console.log('ERROR: ' + msg)
+    socket.on('joinRoom', (roomName: string, nick: string) => {
+      if (roomName === props.roomName)
+        console.log(nick + ' joined chatroom [' + roomName + ']');
+    });
+    socket.on('quitRoom', (roomName: string, nick: string) => {
+      if (roomName === props.roomName)
+        console.log(nick + ' quit room [' + roomName + ']')
+    });
+    socket.on('kickUser', (roomName: string, target: string) => {
+      if (roomName === props.roomName)
+        console.log(target + ' has been kicked!')
+    });
+      socket.on('banUser', (roomName: string, target: string) => {
+      if (roomName === props.roomName)
+        console.log(target + ' has been banned!')
+    })
+    socket.on('unBanUser', (roomName: string, target: string) => {
+      if (roomName === props.roomName)
+        console.log(target + ' has been unbanned!')
     })
 
     // Clean listeners to unsubscribe all callbacks for these events
@@ -102,6 +139,11 @@ const ChatRoom = (props: any) => {
       socket.off('typingMessage')
       socket.off('removePassword')
       socket.off('makeOper')
+      socket.off('joinRoom')
+      socket.off('quitRoom')
+      socket.off('kickUser')
+      socket.off('banUser')
+      socket.off('unBanUser')
     }
   }, [])
 
@@ -157,8 +199,7 @@ const ChatRoom = (props: any) => {
   const onBlockClick = (target: string) => {
     user.blockedUsers.push(target)
   }
-
-  // When clicking on the 'unblock' button to block a user
+  // When clicking on the 'unblock' button to unblock a user
   const onUnBlockClick = (target: string) => {
     for (var i=0; i < user.blockedUsers.length; ++i)
       if (user.blockedUsers[i] === target)
@@ -176,7 +217,15 @@ const ChatRoom = (props: any) => {
       target: target
     })  
   }
-
+  // When clicking on the 'unban' button to unban a user
+  const onUnBanClick = (target: string) => {
+    socket.emit('unBanUser', {
+      roomName: props.roomName,
+      nick: user.nickname,
+      target: target
+    })  
+  }
+  
   // When clicking on the 'kick' button to kick a user
   const onKickClick = (target: string) => {
     socket.emit('kickUser', {
@@ -185,6 +234,15 @@ const ChatRoom = (props: any) => {
       target: target
     })  
   }
+
+    // When clicking on the 'kick' button to kick a user
+    const onMakeOperClick = (target: string) => {
+      socket.emit('makeOper', {
+        roomName: props.roomName,
+        nick: user.nickname,
+        target: target
+      })  
+    }
 
 
   /*************************************************************
@@ -195,6 +253,19 @@ const ChatRoom = (props: any) => {
         {
             <div>
               <button onClick={ onReturnClick }>return</button>
+
+              <ul>
+                { // Members' list
+                  Object.keys(members).map((nick, index) => (
+                      <li key={ index }>
+                        <>
+                          {members[nick as any].isOnline ? '*' : ''} { nick }
+                        </>
+                      </li>
+                  ))
+                }
+              </ul>
+
               <h2>topic: { props.roomName }</h2>
               {
                 messages.length === 0 ? (<div>No Message</div>) : (
@@ -206,14 +277,40 @@ const ChatRoom = (props: any) => {
                         <p>
                           <>
                           [{ msg.author.nickname }]
+
+                          { // If user is oper(=admin), the button to users oper is displayed 
+                            isOper && (user.nickname !== msg.author.nickname) &&
+                            <button onClick={ () => onMakeOperClick(msg.author.nickname) }>
+                              oper
+                            </button>
+                          }                          
+                          
+                          { // If user is oper(=admin), the button to kick users is displayed 
+                            isOper && (user.nickname !== msg.author.nickname) &&
+                            <button onClick={ () => onKickClick(msg.author.nickname) }>
+                              kick
+                            </button>
+                          }
+                          
                           { // If user is oper(=admin), the button to ban users is displayed 
-                            isOper && <button onClick={ () => onBanClick(msg.author.nickname) }>ban</button>
+                            isOper && (user.nickname !== msg.author.nickname) &&
+                            <button onClick={ () => onBanClick(msg.author.nickname) }>
+                              ban
+                            </button>
+                          }
+                          { // If user is oper(=admin), the button to unban users is displayed 
+                            isOper && (user.nickname !== msg.author.nickname) &&
+                            <button onClick={ () => onUnBanClick(msg.author.nickname) }>
+                              unban
+                            </button>
                           }
                           
                           { // Block button appears if the author of the message
                             // is not the user himself
-                            (user.nickname !== msg.author.nickname)
-                              && <button onClick={ () => onBlockClick(msg.author.nickname) }>block</button>
+                            (user.nickname !== msg.author.nickname) &&
+                              <button onClick={ () => onBlockClick(msg.author.nickname) }>
+                                block
+                              </button>
                           }
                           : { msg.data }
                           </>

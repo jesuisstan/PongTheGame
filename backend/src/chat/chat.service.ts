@@ -9,25 +9,32 @@ export class ChatService {
 
   identify(roomName: string, nick: string, modes: string, online: boolean) {
     const room = this.getChatRoomByName(roomName);
-    if (!room) throw new WsException('identify: unknown room name!');
+    if (!room) throw new WsException({ msg: 'identify: unknown room name!' });
     // Do nothing if user is already identified
     for (const nickName in room.users) {
       if (nickName === nick && room.users[nickName].isOnline === online) return;
     }
-    room.users[nick] = { isOnline: online, modes: modes, lastPinged: new Date() };
+    if (room.users[nick])
+      room.users[nick] = {
+        isOnline: online, modes: room.users[nick].modes += modes, lastPinged: new Date()
+      };
+    else
+      room.users[nick] = {
+        isOnline: online, modes: modes, lastPinged: new Date()
+      };
   }
 
   quitRoom(roomName: string, nick: string) {
     const room = this.getChatRoomByName(roomName);
     if (room) room.users[nick].isOnline = false;
     else
-      throw new WsException('quitRoom: unknown room name!');
+      throw new WsException({ msg: 'quitRoom: unknown room name!' });
   }
 
   getChatRoomByName(name: string) {
     for (const room in this.chatRooms)
       if (this.chatRooms[room].name === name) return this.chatRooms[room];
-    throw new WsException('getChatRoomByName: unknown room name!');
+    throw new WsException({ msg: 'getChatRoomByName: unknown room name!' });
   }
 
   // getUserById(roomName: string, clientId: string) {
@@ -38,38 +45,41 @@ export class ChatService {
 
   // Create a new message object and push it to the messages array
   createMessage(roomName: string, msg: MessageDto) {
-    const message = { ...MessageDto };
     const room = this.getChatRoomByName(roomName);
-    if (room) {
-      room.messages.push(msg);
-      return message;
-    }
-    throw new WsException('createMessage: unknown room name!');
+    if (room) room.messages.push(msg);
+    else
+      throw new WsException({ msg: 'createMessage: unknown room name!' });
   }
 
   // Create a new chat room object and push it to the chat rooms array
   // the creator will get admin privileges
   createChatRoom(room: ChatRoomDto, nick: string) {
-    const chatRoom = { ...ChatRoomDto };
     if (room) {
       // Add room to room array
       this.chatRooms.push(room);
       // Identify creator as the oper(=admin)
       this.identify(room.name, nick, 'o', false);
-      return chatRoom;
     }
-    throw new WsException("createChatRoom: 'room' argument is missing!");
+    else
+      throw new WsException({ msg: "createChatRoom: 'room' argument is missing!" });
   }
 
   // Return all messages from the chatroom
   findAllMessages(roomName: string) {
     const room = this.getChatRoomByName(roomName);
     if (room) return room.messages;
-    throw new WsException('findAllMessages: unknown room name!');
+    throw new WsException({ msg: 'findAllMessages: unknown room name!' });
   }
 
   findAllChatRooms() {
     return this.chatRooms;
+  }
+
+  // Return all members from the chatroom
+  findAllMembers(roomName: string) {
+    const room = this.getChatRoomByName(roomName);
+    if (room) return room.users;
+    throw new WsException({ msg: 'findAllMembers: unknown room name!' });
   }
 
   changePassword(roomName: string, newPassword: string) {
@@ -79,7 +89,7 @@ export class ChatService {
       // If the room wasn't in 'password protected' mode,
       // it gets it
       if (room.modes.search('p') === -1) room.modes = 'p';
-    } else throw new WsException('changePassword: unknown room name!');
+    } else throw new WsException({ msg: 'changePassword: unknown room name!' });
   }
 
   removePassword(roomName: string) {
@@ -87,23 +97,23 @@ export class ChatService {
     if (room) {
       room.password = '';
       room.modes = '';
-    } else throw new WsException('changePassword: unknown room name!');
+    } else throw new WsException({ msg: 'changePassword: unknown room name!' });
   }
 
   isUserOper(roomName: string, nick: string) {
     const room = this.getChatRoomByName(roomName);
     if (room) {
       // Look for oper mode ('o') in user's modes
-      if (room.users[nick].modes.search('o') != -1) return true;
+      if (room.users[nick].modes.search('o') !== -1) return true;
       return false;
     }
-    throw new WsException('isUserOper: unknown room name!');
+    throw new WsException({ msg: 'isUserOper: unknown room name!' });
   }
 
   makeOper(roomName: string, nick: string) {
     const room = this.getChatRoomByName(roomName);
     if (room) room.users[nick].modes += 'o';
-    else throw new WsException('makeOper: unknown room name!');
+    else throw new WsException({ msg: 'makeOper: unknown room name!' });
   }
 
   banUser(roomName: string, nick: string) {
@@ -111,7 +121,18 @@ export class ChatService {
     if (room) {
       if (nick) room.bannedNicks.push(nick);
     }
-    throw new WsException('banUser: unknown room name!');
+    else throw new WsException({ msg: 'banUser: unknown room name!' });
+  }
+
+  unBanUser(roomName: string, nick: string) {
+    const room = this.getChatRoomByName(roomName);
+    if (room) {
+      if (nick)
+        for (var i=0; i < room.bannedNicks.length; ++i)
+          if (room.bannedNicks[i] === nick)
+            room.bannedNicks.splice(i, 1);
+    }
+    else throw new WsException({ msg: 'banUser: unknown room name!' });
   }
 
   // updatePingTime(roomName: string, nick: string) {
@@ -126,7 +147,7 @@ export class ChatService {
 
   getUserLastPingTime(roomName: string, nick: string) {
     const room = this.getChatRoomByName(roomName);
-    if (!room) throw new WsException('getUserLastPingTime: unknown room name!');
+    if (!room) throw new WsException({ msg: 'getUserLastPingTime: unknown room name!' });
     return room.users[nick].lastPinged;
   }
 

@@ -6,6 +6,7 @@ import {
   ConnectedSocket,
   WsException,
 } from '@nestjs/websockets';
+import { plainToClass } from 'class-transformer';
 import { Socket, Server } from 'socket.io';
 import { ChatService } from './chat.service';
 import { ChatRoomDto, MessageDto } from './dto/chat.dto';
@@ -63,6 +64,11 @@ export class ChatGateway {
     return this.chatService.findAllChatRooms();
   }
 
+  @SubscribeMessage('findAllMembers')
+  findAllMembers(@MessageBody('roomName') roomName: string) {
+    return this.chatService.findAllMembers(roomName);
+  }
+
   @SubscribeMessage('joinRoom')
   joinRoom(
     @MessageBody('roomName') roomName: string,
@@ -71,11 +77,12 @@ export class ChatGateway {
     const room = this.chatService.getChatRoomByName(roomName);
     room?.bannedNicks.forEach((nickname) => {
       if (nickname === nick)
-        throw new WsException('joinRoom: User is banned.');
+        throw new WsException({ msg: 'joinRoom: User is banned.' });
     });
     this.chatService.identify(roomName, nick, '', true);
     console.log(room.users);
 
+    this.server.emit('joinRoom', roomName, nick);
     return roomName;
   }
 
@@ -85,7 +92,7 @@ export class ChatGateway {
     @MessageBody('nick') nick: string,
   ) {
     this.chatService.quitRoom(roomName, nick);
-    this.server.emit('quitRoom', nick);
+    this.server.emit('quitRoom', roomName, nick);
   }
 
   // @SubscribeMessage('ping')
@@ -107,7 +114,7 @@ export class ChatGateway {
     @MessageBody('isTyping') isTyping: boolean,
     @ConnectedSocket() client: Socket,
   ) {
-    client.broadcast.emit('typingMessage', { roomName, nick, isTyping });
+    client.broadcast.emit('typingMessage', roomName, nick, isTyping);
   }
 
   @SubscribeMessage('isPasswordProtected')
@@ -133,7 +140,7 @@ export class ChatGateway {
   ) {
     // First, check the current password
     if (this.checkPassword(roomName, currentPassword) === false)
-      throw new WsException('changePassword: wrong password!');
+      throw new WsException({ msg: 'changePassword: wrong password!' });
     this.chatService.changePassword(roomName, newPassword);
   }
 
@@ -160,7 +167,7 @@ export class ChatGateway {
   ) {
     // First, check if the user has the admin rights
     if (this.isUserOper(roomName, nick) === false)
-      throw new WsException('makeOper: user is not oper!');
+      throw new WsException({ msg: 'makeOper: user is not oper!' });
     this.chatService.makeOper(roomName, target);
     this.server.emit('makeOper', roomName, target);
   }
@@ -173,9 +180,22 @@ export class ChatGateway {
   ) {
     // First, check if the user has the admin rights
     if (this.isUserOper(roomName, nick) === false)
-      throw new WsException('banUser: user is not oper!');  
+      throw new WsException({ msg: 'banUser: user is not oper!' });  
     this.chatService.banUser(roomName, target);
     this.server.emit('banUser', roomName, target);
+  }
+
+  @SubscribeMessage('unBanUser')
+  unBanUser(
+    @MessageBody('roomName') roomName: string,
+    @MessageBody('nick') nick: string,
+    @MessageBody('target') target: string,
+  ) {
+    // First, check if the user has the admin rights
+    if (this.isUserOper(roomName, nick) === false)
+      throw new WsException({ msg: 'unBanUser: user is not oper!' });  
+    this.chatService.unBanUser(roomName, target);
+    this.server.emit('unBanUser', roomName, target);
   }
 
   @SubscribeMessage('kickUser')
@@ -186,7 +206,7 @@ export class ChatGateway {
   ) {
     // First, check if the user has the admin rights
     if (this.isUserOper(roomName, nick) === false)
-      throw new WsException('kickUser: user is not oper!');
+      throw new WsException({ msg: 'kickUser: user is not oper!' });
     this.chatService.quitRoom(roomName, target);
     this.server.emit('kickUser', roomName, target);
   }

@@ -49,23 +49,17 @@ const Chat = () => {
     socket.on('createChatRoom', (roomName: string) => {
       console.log('Created new chat room [' + roomName + ']');
     });
-    socket.on('joinRoom', (roomName: string) => {
-      setjoinedRoomName(roomName);
-      console.log(user.nickname + ' joined chatroom [' + roomName + ']');
+    socket.on('quitRoom', (roomName: string, nick: string) => {
+      if (nick === user.nickname) setjoinedRoomName('')
     });
-    socket.on('quitRoom', (userName: string) => {
-      if (userName === user.nickname)
-      {
-        console.log(userName + ' quit room [' + joinedRoomName + ']')
-        setjoinedRoomName('')
-      }
+    socket.on('kickUser', (roomName: string, target: string) => {
+      if (user.nickname === target) setjoinedRoomName('')
     });
-    socket.on('kickUser', ({ roomName, nick }) => {
-      if (user.nickname === nick) setjoinedRoomName('')
-      console.log(nick + ' has been kicked!')
-    });
-      socket.on('banUser', ({ roomName, nick }) => {
-      console.log(nick + ' has been banned!')
+    socket.on('banUser', (roomName: string, target: string) => {
+      if (user.nickname === target) setjoinedRoomName('')
+    })
+    socket.on('exception', ({ msg }) => {
+      console.log('ERROR: ' + msg)
     })
 
     // Clean listeners to unsubscribe all callbacks for these events
@@ -73,8 +67,10 @@ const Chat = () => {
     return () => {
       socket.off('connect');
       socket.off('createChatRoom');
-      socket.off('joinRoom');
       socket.off('quitRoom');
+      socket.off('kickUser');
+      socket.off('banUser');
+      socket.off('exception')
     };
   }, []);
 
