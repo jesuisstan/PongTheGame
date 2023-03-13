@@ -74,6 +74,23 @@ export class WebsocketsService {
         }
     }
 
+    async unregisterSocket(socket: any) {
+        this.sockets = this.sockets.filter((s) => s !== socket);
+        // const actions = this._socketsOnClose.get(socket);
+        // if (actions) {
+        //     actions.forEach((action) => action());
+        // }
+        if (!socket.user) return;
+        await this.prismaService.user.update({
+            where: { id: socket.user.id },
+            // data: { status: 'OFFLINE' },
+        });
+        this.broadcast('user-status', {
+            id: socket.user.id,
+            // status: 'OFFLINE',
+        });
+    }
+
     send(client: any, event: string, data: any) {
         client.send(JSON.stringify({ event: event, data: data }));
     }
