@@ -23,6 +23,8 @@ process.env.DATABASE_URL ??= `postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
+
+  // Define websocket settings for the chat page
   app.useWebSocketAdapter(new SocketAdapter(app));
 
   const config = app.get(ConfigService<Config>);

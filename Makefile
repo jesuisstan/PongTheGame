@@ -16,6 +16,18 @@ up:
 	# sudo echo "127.0.0.1 www.transcendance.fr" >> /etc/hosts
 	$(COMPOSE) up -d --build
 
+# Clone .env file from the private Github repository, copy it to the root directory
+# then remove the cloned directory
+env:
+	rm -rf ft_transcendance_env
+	git clone git@github.com:daisvke/ft_transcendance_env.git
+	cp ft_transcendance_env/.env .
+	rm -rf ft_transcendance_env
+
+# Get the private Github repository containing the .env file
+envrep:
+	git clone git@github.com:daisvke/ft_transcendance_env.git
+
 # Shut all containers down and delete them
 clean:
 	@echo "\033[33mCleaning...\033[0m"

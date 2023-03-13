@@ -19,7 +19,7 @@ services:
     tty: true
 
     working_dir: /app-${FRONTEND_NAME}
-    # Install project dependencies,, then run front
+    # Install project dependencies, then run front
     command: >
             sh -cx "npm install
             && npm run start"
