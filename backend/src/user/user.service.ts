@@ -9,7 +9,7 @@ const USER_SELECT = {
   provider: true,
   nickname: true,
   username: true,
-  blockedUsers: true,
+  // blockedUsers: true,
   role: true,
 };
 
@@ -75,7 +75,7 @@ export class UserService {
       },
     });
 
-    // return this.prisma.user.create({Failed to validate the query: `Unable to match input value to any allowed input type for the field. 
+    // return this.prisma.user.create({Failed to validate the query: `Unable to match input value to any allowed input type for the field.
     //   data: {
     //     profileId,
     //     username,
