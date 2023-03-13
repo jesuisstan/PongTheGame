@@ -18,9 +18,6 @@ import CreateIcon from '@mui/icons-material/Create';
 import DeleteIcon from '@mui/icons-material/Delete';
 import styles from './Profile.module.css';
 
-const URL_TOTP_TOGGLE = String(process.env.REACT_APP_URL_GET_SECRET);
-const URL_AVATAR = String(process.env.REACT_APP_URL_AVATAR);
-
 const Profile = () => {
   const navigate = useNavigate();
   const { user, setUser } = useContext(UserContext);
@@ -30,7 +27,7 @@ const Profile = () => {
 
   const toggleTfa = () => {
     if (user.totpSecret?.verified) {
-      return backendAPI.delete(URL_TOTP_TOGGLE).then(
+      return backendAPI.delete('/auth/totp').then(
         (response) => setUser(response.data),
         (error) => errorAlert('Something went wrong')
       );
@@ -39,7 +36,7 @@ const Profile = () => {
 
   const deleteAvatar = () => {
     if (user.avatar) {
-      return backendAPI.delete(URL_AVATAR).then(
+      return backendAPI.delete('/avatar').then(
         (response) => setUser(response.data),
         (error) => errorAlert('Something went wrong')
       );

@@ -10,9 +10,7 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import styles from './UI.module.css';
 
-const URL_LOGOUT =
-  String(process.env.REACT_APP_URL_BACKEND) +
-  String(process.env.REACT_APP_URL_LOGOUT);
+const URL_LOGOUT =`${process.env.REACT_APP_URL_BACKEND}/auth/logout`;
 
 const MenuBar = () => {
   const navigate = useNavigate();

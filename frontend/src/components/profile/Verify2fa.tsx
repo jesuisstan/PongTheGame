@@ -16,9 +16,6 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import TextField from '@mui/material/TextField';
 import SaveIcon from '@mui/icons-material/Save';
 
-const URL_LOGOUT = String(process.env.REACT_APP_URL_LOGOUT);
-const URL_TOTP_VERIFY = String(process.env.REACT_APP_URL_TOTP_VERIFY);
-
 const modalDialogStyle = {
   maxWidth: 500,
   border: '0px solid #000',
@@ -58,7 +55,7 @@ const Verify2fa = ({
 
       try {
         const user = (
-          await backendAPI.post<User>(URL_TOTP_VERIFY, {
+          await backendAPI.post<User>('/auth/totp/verify', {
             token: text
           })
         ).data;
@@ -73,7 +70,7 @@ const Verify2fa = ({
         setTimeout(() => navigate('/profile'), 500);
       } catch (e) {
         const err = e as AxiosError;
-        backendAPI.get(URL_LOGOUT);
+        backendAPI.get('/auth/logout');
         setButtonText('Failed ❌');
         setTimeout(() => {
           setOpen(false);
@@ -94,7 +91,7 @@ const Verify2fa = ({
         onClose={(event, reason) => {
           if (event && reason === 'closeClick') {
             setOpen(false);
-            backendAPI.get(URL_LOGOUT);
+            backendAPI.get('/auth/logout');
           }
         }}
       >

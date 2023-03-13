@@ -5,25 +5,29 @@ import {
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 import { Response } from 'express';
 import { giveAchievementService } from 'src/achievement/utils/giveachievement.service';
 import { Auth42Guard } from 'src/auth/42/auth42.guard';
 import { AuthService } from 'src/auth/auth.service';
+import { Config } from 'src/config.interface';
 import { SessionUser } from 'src/decorator/session-user.decorator';
 import { convertTime } from 'src/utils/time';
-
-// TODO use config
-const CLIENT_URL = 'http://localhost:3000';
 
 @Controller('/auth/42')
 @ApiTags('Authentication/42')
 export class Auth42Controller {
+  private readonly frontendUrl;
+
   constructor(
     private readonly auth: AuthService,
-    private give: giveAchievementService,
-  ) {}
+    private readonly give: giveAchievementService,
+    config: ConfigService<Config>,
+  ) {
+    this.frontendUrl = config.getOrThrow('FRONTEND_URL');
+  }
 
   @Get('/')
   @ApiOperation({ summary: 'Connect using the 42 OAuth2 API' })
@@ -54,6 +58,6 @@ export class Auth42Controller {
       }),
     });
 
-    return res.redirect(`${CLIENT_URL}/profile`);
+    return res.redirect(`${this.frontendUrl}/profile`);
   }
 }
