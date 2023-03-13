@@ -5,7 +5,7 @@ import {
       } from '@mui/icons-material';
 import {
   Avatar,
-  Box, Button, Divider, FormControl, Grid, IconButton, List,
+  Box, Button, Divider, FormControl, Grid, IconButton, Stack,
   ListItem, Menu, MenuItem,TextField, Typography
       } from '@mui/material';
 
@@ -13,46 +13,7 @@ import timeFromNow from './utils/GetTime';
 import './Chat.css';
 import "./bubble.css"
 
-const BubbleL = (message: any, author: string) => {
-  const msg = message ? message : '';
-  const nickname = author ? author : '';
-  const avatar = '';
-  const timestamp = new Date();
 
-  return (
-      <>
-          <div className="msgRowL">
-              <Avatar 
-                  alt={nickname}
-                  className="avatar"
-                  src={avatar}></Avatar>
-              <div>
-                  <div className="nickName">Nickname</div>
-                  <div className="msgLeft">
-                      <p className="msgText">Message la</p>
-                      <div className="msgTime">{timestamp.toLocaleTimeString()}</div>
-                  </div>
-              </div>
-          </div>
-      </> 
-  );
-};
-
-const BubbleR = (message: any) => {
-  const msg = message ? message : '';
-  const timestamp = new Date();
-
-  return (
-      <>
-          <div className="msgRowR">
-              <div className='msgRight'>
-                  <p className="msgText">Message ici</p>
-                  <div className="msgTime">{timestamp.toLocaleTimeString()}</div>
-              </div>
-          </div>
-      </>
-  );
-};
 
 // // All newly created message should have an author and the message itself
 // export type MessagePayload = {
@@ -156,16 +117,78 @@ const ChatRoom = (props: any) => {
     props.cleanRoomLoginData();
   };
 
+  const BubbleL = (msg: any) => {
+    const messagge = msg.data ? msg.data : '';
+    const nickname = msg.autor.nickname ? msg.autor.nickname : '';
+    const avatar = '';
+    const timestamp = new Date();
+  
+    return (
+        <>
+            <div className="msgRowL">
+                <Avatar 
+                    alt={nickname}
+                    className="avatar"
+                    src={avatar}></Avatar>
+                <div>
+                    <div className="nickName">{nickname}</div>
+                    <div className="msgLeft">
+                        <p className="msgText">{msg}</p>
+                        <div className="msgTime">{timestamp.toLocaleTimeString()}</div>
+                    </div>
+                </div>
+            </div>
+        </> 
+    );
+  };
+  
+  const BubbleR = (msg: any) => {
+    const message = msg.data ? msg.data : '';
+    const timestamp = new Date();
+  
+    return (
+        <>
+            <div className="msgRowR">
+                <div className='msgRight'>
+                    <p className="msgText">{msg}</p>
+                    <div className="msgTime">{timestamp.toLocaleTimeString()}</div>
+                </div>
+            </div>
+        </>
+    );
+  };
+
   const listChatMessages = messages.map((msg, index) => (
-    <ListItem key={index}>
+    <div key={index}>
       {
         props.user.nickname === msg.author ? (
-          <BubbleR message={msg.data} />
+          <>
+            <div className="msgRowR">
+                <div className='msgRight'>
+                    <p className="msgText">{msg.data}</p>
+                    <div className="msgTime">date</div>
+                </div>
+            </div>
+        </>
         ) : (
-          <BubbleL message={msg.data} author={msg.author}/>
+          <>
+          <div className="msgRowL">
+              <Avatar 
+                  alt={msg.autor}
+                  className="avatar"
+                  src={''}></Avatar>
+              <div>
+                  <div className="nickName">{msg.author}</div>
+                  <div className="msgLeft">
+                      <p className="msgText">{msg.data}</p>
+                      <div className="msgTime">date</div>
+                  </div>
+              </div>
+          </div>
+      </> 
         )
       }
-    </ListItem>
+    </div>
   ));
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -246,7 +269,7 @@ const ChatRoom = (props: any) => {
               {messages.length === 0 ? (
                 <div className='black'>No Message</div>
               ) : (
-                <List>{listChatMessages}</List>
+                <Stack>{listChatMessages}</Stack>
               )}
             </Grid>
             <div className="chatRoomText">

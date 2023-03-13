@@ -1,11 +1,12 @@
 
 .msgRowL {
   display: flex;
+  justify-content: flex-start;
   color: black;
 }
 .msgRowR {
   display: flex;
-  justify-content: flex-start;
+  justify-content: flex-end;
   color: black;
 }
 .avatar {
