@@ -34,14 +34,8 @@ export class ChatService {
   getChatRoomByName(name: string) {
     for (const room in this.chatRooms)
       if (this.chatRooms[room].name === name) return this.chatRooms[room];
-    throw new WsException({ msg: 'getChatRoomByName: unknown room name!' });
+    return null;
   }
-
-  // getUserById(roomName: string, clientId: string) {
-  //   const room = this.getChatRoomByName(roomName);
-  //   if (room) return room.users[clientId];
-  //   throw new WsException('getUserById: unknown room name!');
-  // }
 
   // Create a new message object and push it to the messages array
   createMessage(roomName: string, msg: MessageDto) {
@@ -118,9 +112,8 @@ export class ChatService {
 
   banUser(roomName: string, nick: string) {
     const room = this.getChatRoomByName(roomName);
-    if (room) {
+    if (room)
       if (nick) room.bannedNicks.push(nick);
-    }
     else throw new WsException({ msg: 'banUser: unknown room name!' });
   }
 
@@ -133,6 +126,19 @@ export class ChatService {
             room.bannedNicks.splice(i, 1);
     }
     else throw new WsException({ msg: 'banUser: unknown room name!' });
+  }
+
+  isUserBanned(roomName: string, nick: string) {
+    const room = this.getChatRoomByName(roomName);
+
+    if (room) {
+      for (let i=0; i < room.bannedNicks.length; ++i) {
+        if (room.bannedNicks[i] === nick)
+          return true;
+      };
+      return false;
+    }
+    else throw new WsException({ msg: 'isUserBanned: unknown room name!' });
   }
 
   // updatePingTime(roomName: string, nick: string) {

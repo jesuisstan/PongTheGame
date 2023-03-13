@@ -42,6 +42,10 @@ export class ChatGateway {
     @MessageBody('nick') nick: string,
     @MessageBody('mode') mode: string,
   ) {
+    // First, check if the room name already exists
+    const r = this.chatService.getChatRoomByName(room.name);
+    if (r)
+      throw new WsException({ msg: 'createChatRoom: room name is already taken!' });
     // Set 'password protected' mode
     if (room.password) room.modes = 'p';
     // Set 'private' mode. This is a conversation between
@@ -74,13 +78,9 @@ export class ChatGateway {
     @MessageBody('roomName') roomName: string,
     @MessageBody('nickName') nick: string,
   ) {
-    const room = this.chatService.getChatRoomByName(roomName);
-    room?.bannedNicks.forEach((nickname) => {
-      if (nickname === nick)
-        throw new WsException({ msg: 'joinRoom: User is banned.' });
-    });
+    if (this.isUserBanned(roomName, nick) === true)
+      throw new WsException({ msg: 'joinRoom: User is banned.' });
     this.chatService.identify(roomName, nick, '', true);
-    console.log(room.users);
 
     this.server.emit('joinRoom', roomName, nick);
     return roomName;
@@ -180,8 +180,9 @@ export class ChatGateway {
   ) {
     // First, check if the user has the admin rights
     if (this.isUserOper(roomName, nick) === false)
-      throw new WsException({ msg: 'banUser: user is not oper!' });  
+      throw new WsException({ msg: 'banUser: user is not oper!' });
     this.chatService.banUser(roomName, target);
+    this.chatService.quitRoom(roomName, target);
     this.server.emit('banUser', roomName, target);
   }
 
@@ -196,6 +197,14 @@ export class ChatGateway {
       throw new WsException({ msg: 'unBanUser: user is not oper!' });  
     this.chatService.unBanUser(roomName, target);
     this.server.emit('unBanUser', roomName, target);
+  }
+
+  @SubscribeMessage('isUserBanned')
+  isUserBanned(
+    @MessageBody('roomName') roomName: string,
+    @MessageBody('nick') nick: string,
+  ) {
+    return this.chatService.isUserBanned(roomName, nick);
   }
 
   @SubscribeMessage('kickUser')

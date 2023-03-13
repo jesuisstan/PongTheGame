@@ -1,4 +1,4 @@
-import { SetStateAction, useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { UserContext } from '../../contexts/UserContext';
 import { WebSocketContext } from '../../contexts/WebsocketContext';
 import ChatRoom from './ChatRoom';
@@ -24,7 +24,7 @@ const Chat = () => {
   // Array including all chat rooms
   const [chatRooms, setChatRooms] = useState<ChatRoomType[]>([]);
   // Tells whether the user has joined the chatroom
-  const [joinedRoomName, setjoinedRoomName] = useState<string>(user.joinedChatRoom);
+  const joinedRoomName = user.joinedChatRoom;
 
   // Enter in chatroom create mode
   const [chatRoomCreateMode, setChatRoomCreateMode] = useState<boolean>(false);
@@ -36,7 +36,7 @@ const Chat = () => {
   const [isPasswordRight, setIsPasswordRight] = useState<boolean>(false);
   const [clickedRoomToJoin, setclickedRoomToJoin] = useState<string>('');
 
-  socket.emit('findAllChatRooms', {}, (response: SetStateAction<ChatRoomType[]>) => {
+  socket.emit('findAllChatRooms', {}, (response: ChatRoomType[]) => {
     setChatRooms(response);
   });
 
@@ -49,15 +49,6 @@ const Chat = () => {
     socket.on('createChatRoom', (roomName: string) => {
       console.log('Created new chat room [' + roomName + ']');
     });
-    socket.on('quitRoom', (roomName: string, nick: string) => {
-      if (nick === user.nickname) setjoinedRoomName('')
-    });
-    socket.on('kickUser', (roomName: string, target: string) => {
-      if (user.nickname === target) setjoinedRoomName('')
-    });
-    socket.on('banUser', (roomName: string, target: string) => {
-      if (user.nickname === target) setjoinedRoomName('')
-    })
     socket.on('exception', ({ msg }) => {
       console.log('ERROR: ' + msg)
     })
@@ -67,9 +58,6 @@ const Chat = () => {
     return () => {
       socket.off('connect');
       socket.off('createChatRoom');
-      socket.off('quitRoom');
-      socket.off('kickUser');
-      socket.off('banUser');
       socket.off('exception')
     };
   }, []);
@@ -107,12 +95,11 @@ const Chat = () => {
   const onClickJoinRoom = (roomName: string) => {
     // Notify that the user has clicked on a 'join' button
     setclickedRoomToJoin(roomName);
-
     // Check if the corresponding chat room is password protected
     socket.emit(
       'isPasswordProtected',
       { roomName: roomName },
-      (response: SetStateAction<boolean>) => {
+      (response: boolean) => {
         setIsPasswordProtected(response);
       }
     );
@@ -125,19 +112,18 @@ const Chat = () => {
     socket.emit(
       'joinRoom',
       { roomName: roomName, nickName: user.nickname },
-      (response: SetStateAction<any>) => {
-        setjoinedRoomName(response);
+      (response: string) => {
+        user.joinedChatRoom = response;
       }
     );
   }
 
   // Check if the password is right
   const onPasswordSubmit = () => {
-    // e.preventDefault()
     socket.emit(
       'checkPassword',
       { roomName: clickedRoomToJoin, password: inputPassword },
-      (response: SetStateAction<boolean>) => {
+      (response: boolean) => {
         response === true
           ? setIsPasswordRight(true)
           : setIsPasswordRight(false);
@@ -156,7 +142,7 @@ const Chat = () => {
   }
 
   const cleanRoomLoginData = () => {
-    setjoinedRoomName('');
+    user.joinedChatRoom = '';
     setIsPasswordProtected(false);
     setIsPasswordRight(false);
   };
@@ -190,8 +176,8 @@ const Chat = () => {
                     (room.modes.search('i') === -1) 
                     &&
                     <li key={index}>
-                      [{room.name}]: {getMemberNbr(room)} members |{' '}
-                      {room.messages.length} messages
+                      [{room.name}]: {getMemberNbr(room)} member(s) |{' '}
+                      {room.messages.length} message(s)
                       {room.modes.indexOf('p') !== -1
                         ? '| PWD '
                         : ' '}

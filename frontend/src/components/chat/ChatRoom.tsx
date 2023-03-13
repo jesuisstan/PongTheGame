@@ -1,4 +1,4 @@
-import { SetStateAction, useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../contexts/UserContext";
 import { WebSocketContext } from "../../contexts/WebsocketContext";
 import { MemberType, Message } from "../../types/chat";
@@ -22,9 +22,6 @@ const ChatRoom = (props: any) => {
   **************************************************************/
   const socket = useContext(WebSocketContext)
   const { user, setUser } = useContext(UserContext)
-  // Array including all the messages, even the ones from
-  // blocked users/users who blocked the user
-  const [messagesToFilter, setMessagesToFilter] = useState<Message[]>([])
   // Array including all message objects (author + msg) excluding
   // messages from blocked users/users who blocked the user
   const [messages, setMessages] = useState<Message[]>([])
@@ -39,7 +36,7 @@ const ChatRoom = (props: any) => {
 
 
   socket.emit('findAllMembers', { roomName: props.roomName },
-    (response: SetStateAction<MemberType[]>) => {
+    (response: MemberType[]) => {
       setMembers(response)
     }
   )
@@ -48,9 +45,10 @@ const ChatRoom = (props: any) => {
   // and fill the messages variable
   socket.emit('findAllMessages',
     { roomName: props.roomName },
-    (response: SetStateAction<Message[]>) => {
-      // Messages are unfiltered yet
-      setMessagesToFilter(response)
+    (response: Message[]) => {
+      // Array including all the messages, even the ones from
+      // blocked users/users who blocked the user
+      const messagesToFilter = response
 
       for (let i = messagesToFilter.length - 1; i >= 0; --i) {
         // First we filter the recipient's blocked users
@@ -80,7 +78,7 @@ const ChatRoom = (props: any) => {
 
     socket.emit('isUserOper',
       { roomName: props.roomName, nick: user.nickname },
-      (response: SetStateAction<boolean>) => {
+      (response: boolean) => {
         setIsOper(response)
       }
     )
@@ -121,10 +119,12 @@ const ChatRoom = (props: any) => {
     socket.on('kickUser', (roomName: string, target: string) => {
       if (roomName === props.roomName)
         console.log(target + ' has been kicked!')
+      if (target === user.nickname) props.cleanRoomLoginData()
     });
       socket.on('banUser', (roomName: string, target: string) => {
       if (roomName === props.roomName)
         console.log(target + ' has been banned!')
+      if (target === user.nickname) props.cleanRoomLoginData()
     })
     socket.on('unBanUser', (roomName: string, target: string) => {
       if (roomName === props.roomName)
@@ -215,7 +215,7 @@ const ChatRoom = (props: any) => {
       roomName: props.roomName,
       nick: user.nickname,
       target: target
-    })  
+    })
   }
   // When clicking on the 'unban' button to unban a user
   const onUnBanClick = (target: string) => {
@@ -225,6 +225,15 @@ const ChatRoom = (props: any) => {
       target: target
     })  
   }
+
+  const isUserBanned = (nick: string) => {
+    socket.emit('isUserBanned', {
+      roomName: props.roomName,
+      nick: nick
+    }, (response: boolean) => {
+      return response
+    })
+  }
   
   // When clicking on the 'kick' button to kick a user
   const onKickClick = (target: string) => {
@@ -232,10 +241,10 @@ const ChatRoom = (props: any) => {
       roomName: props.roomName,
       nick: user.nickname,
       target: target
-    })  
+    })
   }
 
-    // When clicking on the 'kick' button to kick a user
+    // When clicking on the 'oper' button to make a user oper
     const onMakeOperClick = (target: string) => {
       socket.emit('makeOper', {
         roomName: props.roomName,
@@ -259,7 +268,59 @@ const ChatRoom = (props: any) => {
                   Object.keys(members).map((nick, index) => (
                       <li key={ index }>
                         <>
-                          {members[nick as any].isOnline ? '*' : ''} { nick }
+                          { // Nickname of the member preceeded by its online status
+                            members[nick as any].isOnline ? '*' : '' } { nick }
+
+                          { // Displays if member is oper
+                            String(members[nick as any].modes).search('o') !== -1 ?
+                              ' (admin)' : '' }
+
+                          { // If user is oper(=admin), the button to users oper is displayed 
+                            isOper && (user.nickname !== nick) &&
+                              String(members[nick as any].modes).search('o') === -1 &&
+                            <button onClick={ () => onMakeOperClick(nick) }>
+                              oper
+                            </button>
+                          }                          
+                          
+                          { // If user is oper(=admin), the button to kick users is displayed 
+                            isOper && (user.nickname !== nick) &&
+                              String(members[nick as any].modes).search('o') === -1 &&
+                            <button onClick={ () => onKickClick(nick) }>
+                              kick
+                            </button>
+                          }
+                          
+                          { // If user is oper(=admin), the button to ban users is displayed 
+                            isOper && (user.nickname !== nick) &&
+                              String(members[nick as any].modes).search('o') === -1 &&
+                            <button onClick={ () => onBanClick(nick) }>
+                              ban
+                            </button>
+                          }
+                          { // If user is oper(=admin), the button to unban users is displayed 
+                            isOper && (user.nickname !== nick) &&
+                            String(members[nick as any].modes).search('o') === -1 &&
+                            <button onClick={ () => onUnBanClick(nick) }>
+                              unban
+                            </button>
+                          }
+                          
+                          { // Block button appears if the author of the message
+                            // is not the user himself
+                            (user.nickname !== nick) &&
+                              <button onClick={ () => onBlockClick(nick) }>
+                                block
+                              </button>
+                          }
+
+                          { // Unblock button appears if the author of the message
+                            // is not the user himself
+                            (user.nickname !== nick) &&
+                              <button onClick={ () => onUnBlockClick(nick) }>
+                                unblock
+                              </button>
+                          }
                         </>
                       </li>
                   ))
@@ -276,43 +337,7 @@ const ChatRoom = (props: any) => {
                       <div key={ index }>
                         <p>
                           <>
-                          [{ msg.author.nickname }]
-
-                          { // If user is oper(=admin), the button to users oper is displayed 
-                            isOper && (user.nickname !== msg.author.nickname) &&
-                            <button onClick={ () => onMakeOperClick(msg.author.nickname) }>
-                              oper
-                            </button>
-                          }                          
-                          
-                          { // If user is oper(=admin), the button to kick users is displayed 
-                            isOper && (user.nickname !== msg.author.nickname) &&
-                            <button onClick={ () => onKickClick(msg.author.nickname) }>
-                              kick
-                            </button>
-                          }
-                          
-                          { // If user is oper(=admin), the button to ban users is displayed 
-                            isOper && (user.nickname !== msg.author.nickname) &&
-                            <button onClick={ () => onBanClick(msg.author.nickname) }>
-                              ban
-                            </button>
-                          }
-                          { // If user is oper(=admin), the button to unban users is displayed 
-                            isOper && (user.nickname !== msg.author.nickname) &&
-                            <button onClick={ () => onUnBanClick(msg.author.nickname) }>
-                              unban
-                            </button>
-                          }
-                          
-                          { // Block button appears if the author of the message
-                            // is not the user himself
-                            (user.nickname !== msg.author.nickname) &&
-                              <button onClick={ () => onBlockClick(msg.author.nickname) }>
-                                block
-                              </button>
-                          }
-                          : { msg.data }
+                          [{ msg.author.nickname }] : { msg.data }
                           </>
                         </p>
                       </div>
