@@ -8,9 +8,6 @@ import { Config } from 'src/config.interface';
 import { SessionUser } from 'src/decorator/session-user.decorator';
 import { UserService } from 'src/user/user.service';
 
-// TODO use config
-const CLIENT_URL = 'http://localhost:3000';
-
 @Controller('/auth')
 @ApiTags('Authentication')
 export class AuthController {
