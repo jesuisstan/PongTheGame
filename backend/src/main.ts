@@ -11,6 +11,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { convertTime } from 'src/utils/time';
 import { SocketAdapter } from './chat/socketAdapter';
 import * as cookieParser from 'cookie-parser';
+import { ValidationPipe } from '@nestjs/common';
 
 const {
   POSTGRES_USER,
@@ -34,6 +35,12 @@ async function bootstrap() {
 
   setupSwagger(app);
   setupSession(app, config, prisma);
+
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+    }),
+  );
 
   app.enableCors({
     origin: true,
