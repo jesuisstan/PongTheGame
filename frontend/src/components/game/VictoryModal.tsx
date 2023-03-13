@@ -9,17 +9,19 @@ const modalDialogStyle = {
   maxWidth: 500,
   border: '0px solid #000',
   bgcolor: '#f5f5f5ee',
-  borderRadius: '4px',
+  borderRadius: '4px'
 };
 
 const VictoryModal = ({
   open,
   setOpen,
-  winner
+  winner,
+  score
 }: {
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
   winner: string;
+  score: any;
 }) => {
   return (
     <div>
@@ -45,6 +47,9 @@ const VictoryModal = ({
           <Stack spacing={2}>
             <Typography sx={{ color: 'black' }}>
               {winner} won the round
+            </Typography>
+            <Typography sx={{ color: 'black' }}>
+              Final score - {score.player1} : {score.player2}
             </Typography>
           </Stack>
         </ModalDialog>

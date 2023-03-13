@@ -1,8 +1,9 @@
 import { User } from "./User";
 
 export type Message = {
-	author: User,
+	author: User;
 	data: string;
+	timestamp: Date;
 }
 
 export type ChatRoomType = {
@@ -14,7 +15,7 @@ export type ChatRoomType = {
 		[nick: string]: {
 		  isOnline: boolean;
 		  modes: string;
-		  lastPinged: Date
+		  lastPinged: Date;
 		}
 	  };
 	messages: Message[];
@@ -25,6 +26,6 @@ export type MemberType = {
 	[nick: string]: {
 		isOnline: boolean;
 		modes: string;
-		lastPinged: Date
+		lastPinged: Date;
 	  }	
 }

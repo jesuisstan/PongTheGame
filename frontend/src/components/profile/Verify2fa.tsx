@@ -1,4 +1,10 @@
-import SaveIcon from '@mui/icons-material/Save';
+import { Dispatch, SetStateAction, useContext, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { UserContext } from '../../contexts/UserContext';
+import { AxiosError } from 'axios';
+import { User } from '../../types/User';
+import backendAPI from '../../api/axios-instance';
+import errorAlert from '../UI/errorAlert';
 import FormControl from '@mui/joy/FormControl';
 import FormLabel from '@mui/joy/FormLabel';
 import Modal from '@mui/joy/Modal';
@@ -8,17 +14,10 @@ import Stack from '@mui/joy/Stack';
 import Typography from '@mui/joy/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
 import TextField from '@mui/material/TextField';
-import { AxiosError } from 'axios';
-import { Dispatch, SetStateAction, useContext, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import backendAPI from '../../api/axios-instance';
-import { UserContext } from '../../contexts/UserContext';
-import { User } from '../../types/User';
-import errorAlert from '../UI/errorAlert';
+import SaveIcon from '@mui/icons-material/Save';
 
 const URL_LOGOUT = String(process.env.REACT_APP_URL_LOGOUT);
-const URL_GET_USER = String(process.env.REACT_APP_URL_GET_USER);
-
+const URL_TOTP_VERIFY = String(process.env.REACT_APP_URL_TOTP_VERIFY);
 
 const modalDialogStyle = {
   maxWidth: 500,
@@ -27,7 +26,7 @@ const modalDialogStyle = {
   borderRadius: '4px'
 };
 
-const Validate2fa = ({
+const Verify2fa = ({
   open,
   setOpen
 }: {
@@ -59,7 +58,7 @@ const Validate2fa = ({
 
       try {
         const user = (
-          await backendAPI.post<User>('/auth/totp/verify', {
+          await backendAPI.post<User>(URL_TOTP_VERIFY, {
             token: text
           })
         ).data;
@@ -145,4 +144,4 @@ const Validate2fa = ({
   );
 };
 
-export default Validate2fa;
+export default Verify2fa;

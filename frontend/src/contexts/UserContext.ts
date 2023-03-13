@@ -7,16 +7,17 @@ interface UserContextData {
 }
 
 export const UserContext = createContext<UserContextData>({
-    user: {
-		id: -1,
-		nickname: '',
-		avatar: '',
-		profileId: '',
-		provider: '',
-		username: '',
-		blockedUsers: [],
+  user: {
+    avatar: undefined,
+    id: -1,
+    nickname: '',
+    profileId: '',
+    provider: '',
+    role: '',
+    totpSecret: null,
+    username: '',
+    blockedUsers: [],
 		joinedChatRoom: '',
-    	totpSecret: null
-	  },
-	setUser: (user) => {},
+  },
+  setUser: (user) => {}
 });

@@ -50,7 +50,7 @@ export class GithubController {
 
     res.cookie('access_token', token, {
       maxAge: convertTime({
-        minutes: 30,
+        days: 30,
       }),
     });
     return res.redirect(`${CLIENT_URL}/profile`);

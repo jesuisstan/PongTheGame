@@ -33,7 +33,7 @@ export class ChatGateway {
     this.chatService.createMessage(roomName, msg);
     console.log('message emitted: ' + Object.entries(msg));
     // Broadcast received message to all users
-    this.server.emit('createMessage', msg);
+    this.server.emit('createMessage');
   }
 
   @SubscribeMessage('createChatRoom')
@@ -110,7 +110,7 @@ export class ChatGateway {
   @SubscribeMessage('typingMessage')
   typingMessage(
     @MessageBody('roomName') roomName: string,
-    @MessageBody('nickname') nick: string,
+    @MessageBody('nick') nick: string,
     @MessageBody('isTyping') isTyping: boolean,
     @ConnectedSocket() client: Socket,
   ) {

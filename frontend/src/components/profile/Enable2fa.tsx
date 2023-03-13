@@ -1,4 +1,9 @@
-import SaveIcon from '@mui/icons-material/Save';
+import { Dispatch, SetStateAction, useContext, useState } from 'react';
+import { UserContext } from '../../contexts/UserContext';
+import { User } from '../../types/User';
+import backendAPI from '../../api/axios-instance';
+import errorAlert from '../UI/errorAlert';
+import QRCode from 'qrcode';
 import Modal from '@mui/joy/Modal';
 import ModalClose from '@mui/joy/ModalClose';
 import ModalDialog from '@mui/joy/ModalDialog';
@@ -6,14 +11,10 @@ import Stack from '@mui/joy/Stack';
 import Typography from '@mui/joy/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
 import TextField from '@mui/material/TextField';
-import QRCode from 'qrcode';
-import { Dispatch, SetStateAction, useContext, useState } from 'react';
-import backendAPI from '../../api/axios-instance';
-import { UserContext } from '../../contexts/UserContext';
-import { User } from '../../types/User';
-import errorAlert from '../UI/errorAlert';
+import SaveIcon from '@mui/icons-material/Save';
 import styles from './Profile.module.css';
 
+const URL_TOTP_ACTIVATE = String(process.env.REACT_APP_URL_TOTP_ACTIVATE);
 const URL_TOTP_VERIFY = String(process.env.REACT_APP_URL_TOTP_VERIFY);
 const URL_GET_SECRET = String(process.env.REACT_APP_URL_GET_SECRET);
 const URL_GET_USER = String(process.env.REACT_APP_URL_GET_USER);
@@ -65,16 +66,20 @@ const Enable2fa = ({
     }
   };
 
-  const validateCurrentUser = async () => {
+  const verifyCurrentUser = async () => {
     try {
       const user = (
-        await backendAPI.post<User>('/auth/totp/verify', {
+        await backendAPI.post<User>(URL_TOTP_VERIFY, {
           token: text
         })
       ).data;
+      console.log('user data after 2faVerification = ' + user)
+      console.log(user)
+      console.log('-----------')
+
       //setUser(user);
 
-      // todo lines 77-80 to set user with totpSecret field while /auth/totp/verify doesn't returnes this field
+      // todo lines 82-85 to set user with totpSecret field while /auth/totp/verify doesn't returnes this field
       backendAPI.get(URL_GET_USER).then((response) => {
         setUser(response.data);
       });
@@ -83,10 +88,10 @@ const Enable2fa = ({
     }
   };
 
-  const verifyCode = async () => {
-    return backendAPI.post(URL_TOTP_VERIFY, { token: text }).then(
+  const submitCode = async () => {
+    return backendAPI.post(URL_TOTP_ACTIVATE, { token: text }).then(
       (response) => {
-        validateCurrentUser();
+        verifyCurrentUser();
         setButtonText('Done ✔️');
       },
       (error) => {
@@ -103,10 +108,9 @@ const Enable2fa = ({
   const handleSubmit = async (event: any) => {
     event.preventDefault();
     setLoadSubmit(true);
-    await verifyCode();
+    await submitCode();
     setLoadSubmit(false);
     setButtonText(
-      //localStorage.getItem('totpVerified') === 'true' ? 'Done ✔️' : 'Failed ❌'
       user.totpSecret?.verified ? 'Done ✔️' : 'Failed ❌'
     );
     setText('');
