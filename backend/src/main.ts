@@ -1,8 +1,10 @@
+import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { PrismaSessionStore } from '@quixo3/prisma-session-store';
+import * as cookieParser from 'cookie-parser';
 import * as ExpressSession from 'express-session';
 import * as passport from 'passport';
 import { AppModule } from 'src/app.module';
@@ -10,17 +12,6 @@ import { Config } from 'src/config.interface';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { convertTime } from 'src/utils/time';
 import { SocketAdapter } from './chat/socketAdapter';
-import * as cookieParser from 'cookie-parser';
-import { ValidationPipe } from '@nestjs/common';
-
-const {
-  POSTGRES_USER,
-  POSTGRES_PASSWORD,
-  POSTGRES_PORT,
-  POSTGRES_HOST = 'localhost',
-} = process.env;
-
-process.env.DATABASE_URL ??= `postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/pong?schema=public`;
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
