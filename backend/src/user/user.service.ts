@@ -9,6 +9,7 @@ const USER_SELECT = {
   provider: true,
   nickname: true,
   username: true,
+  blockedUsers: true,
   role: true,
 };
 
@@ -74,7 +75,7 @@ export class UserService {
       },
     });
 
-    // return this.prisma.user.create({
+    // return this.prisma.user.create({Failed to validate the query: `Unable to match input value to any allowed input type for the field. 
     //   data: {
     //     profileId,
     //     username,
@@ -117,7 +118,7 @@ export class UserService {
       },
     });
 
-    return (dbUser?.totpSecret ?? null) !== null;
+    return dbUser?.totpSecret?.verified ?? false;
   }
 
   async setAvatar(user: User, url: string | null): Promise<User> {

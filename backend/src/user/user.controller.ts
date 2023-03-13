@@ -20,6 +20,7 @@ import { SetNicknameDTO } from 'src/user/dto/setNickname.dto';
 import { UserService } from 'src/user/user.service';
 
 @Controller('/user')
+@UseGuards(IsAuthenticatedGuard)
 @ApiTags('Users')
 export class UserController {
   private readonly logger = new Logger(UserController.name);
@@ -28,7 +29,6 @@ export class UserController {
 
   // https://stackoverflow.com/a/71671007
   @Get('/:id(\\d+)')
-  @UseGuards(IsAuthenticatedGuard)
   @ApiOperation({
     summary: 'Find a user by its id',
     parameters: [{ name: 'id', in: 'path' }],
@@ -49,7 +49,6 @@ export class UserController {
   @ApiOperation({
     summary: "Change a user's nickname",
   })
-  @UseGuards(IsAuthenticatedGuard)
   @UsePipes(ValidationPipe)
   @ApiBadRequestResponse({
     description:

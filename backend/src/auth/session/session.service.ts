@@ -12,9 +12,10 @@ export class SessionService {
   }
 
   async createUser(profile: Profile): Promise<User> {
-    const { id, displayName: username, provider, photos } = profile;
+    const { id, provider, photos } = profile;
+    let username: any = profile.displayName;
+    if (username == null) username = profile.username;
     const avatar = photos?.[0].value ?? null;
-
     return this.users.createUser(id, provider, username, avatar ?? null);
   }
 
