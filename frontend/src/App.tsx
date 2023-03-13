@@ -16,8 +16,6 @@ import PleaseLogin from './components/pages/PleaseLogin';
 import backendAPI from './api/axios-instance';
 import './App.css';
 
-const URL_GET_USER = String(process.env.REACT_APP_URL_GET_USER);
-
 function App() {
   // Fetching the socket from its context
   const socket = useContext(WebSocketContext);
@@ -36,7 +34,7 @@ function App() {
   });
 
   useEffect(() => {
-    backendAPI.get(URL_GET_USER).then(
+    backendAPI.get('/auth/getuser').then(
       (response) => {
         setUser(response.data);
       },
