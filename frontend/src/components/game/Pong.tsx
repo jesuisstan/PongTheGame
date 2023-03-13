@@ -1,5 +1,6 @@
 import { useRef, useEffect, useContext, useState, useCallback } from 'react';
 import { UserContext } from '../../contexts/UserContext';
+import { WebSocketContext } from '../../contexts/WebsocketContext';
 import ScoreBar from './ScoreBar';
 import VictoryModal from './VictoryModal';
 import ButtonPong from '../UI/ButtonPong';
@@ -30,12 +31,30 @@ let ballSpeed = {
 let gotWinner = true;
 
 const Pong: React.FC = () => {
+  const socket = useContext(WebSocketContext);
+
   const { user } = useContext(UserContext);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [open, setOpen] = useState(false);
   const [winner, setWinner] = useState('');
   const [winScore, setWinScore] = useState(DEFAULT_WIN_SCORE);
   const [score, setScore] = useState({ player1: 0, player2: 0 });
+
+  useEffect(() => {
+    socket.on('connect', () => {});
+    socket.on('exception', ({ msg }) => {
+      console.log('ERROR: ' + msg)
+    })
+  })
+  // return () => {
+  //   socket.off('connect');
+  //   socket.off('createChatRoom');
+  //   socket.off('exception')
+  // };
+
+  const find_opponents = () => {
+    socket.emit('match_create', () => {});
+  };
 
   const draw = (canvasContext: CanvasRenderingContext2D) => {
     util.makeRectangleShape(
@@ -269,7 +288,7 @@ const Pong: React.FC = () => {
         />
         <ButtonPong
           text="Smth else"
-          onClick={() => console.log('Smth else clicked')}
+          onClick={find_opponents}
         />
       </div>
       <ScoreBar
