@@ -10,6 +10,7 @@ export interface Config {
   BACKEND_PORT: string;
   FRONTEND_URL: string;
 
+  DATABASE_URL: string;
   SESSION_SECRET: string;
   TOTP_SECRET: string;
 }
