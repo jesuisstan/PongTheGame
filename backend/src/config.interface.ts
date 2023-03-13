@@ -8,6 +8,8 @@ export interface Config {
   GITHUB_CALLBACK_URL: string;
 
   BACKEND_PORT: string;
+  FRONTEND_URL: string;
+
   SESSION_SECRET: string;
   TOTP_SECRET: string;
 }
