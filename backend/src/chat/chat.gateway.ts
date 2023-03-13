@@ -11,7 +11,6 @@ import { Socket, Server } from 'socket.io';
 import { ChatService } from './chat.service';
 import { ChatRoomDto, MessageDto } from './dto/chat.dto';
 
-
 // Allow requests from the frontend port
 @WebSocketGateway({
   cors: {
@@ -40,22 +39,29 @@ export class ChatGateway {
   createChatRoom(
     @MessageBody('room') room: ChatRoomDto,
     @MessageBody('nick') nick: string,
-    @MessageBody('mode') mode: string,
+    @MessageBody('user2') user2: string,
   ) {
     // First, check if the room name already exists
     const r = this.chatService.getChatRoomByName(room.name);
-    if (r)
-      throw new WsException({ msg: 'createChatRoom: room name is already taken!' });
+    if (r) {
+      if (!user2)
+        throw new WsException({
+          msg: 'createChatRoom: room name is already taken!',
+        });
+      else return;
+    }
     // Set 'password protected' mode
     if (room.password) room.modes = 'p';
     // Set 'private' mode. This is a conversation between
     // 2 users, which is basically a chat room with 2 users
-    if (mode === 'priv') room.modes = 'i';
+    if (user2) room.modes = 'i';
     // Create a chat room and set user as admin
-    this.chatService.createChatRoom(room, nick);
-    console.log('chatRoom emitted: ' + Object.entries(room));
-    // Broadcast newly created room to all users
-    this.server.emit('createChatRoom', room.name);
+    this.chatService.createChatRoom(room, nick, user2);
+    if (!user2) {
+      console.log('chatRoom emitted: ' + Object.entries(room));
+      // Broadcast newly created room to all users
+      this.server.emit('createChatRoom', room.name);
+    }
   }
 
   @SubscribeMessage('findAllMessages')
@@ -194,7 +200,7 @@ export class ChatGateway {
   ) {
     // First, check if the user has the admin rights
     if (this.isUserOper(roomName, nick) === false)
-      throw new WsException({ msg: 'unBanUser: user is not oper!' });  
+      throw new WsException({ msg: 'unBanUser: user is not oper!' });
     this.chatService.unBanUser(roomName, target);
     this.server.emit('unBanUser', roomName, target);
   }

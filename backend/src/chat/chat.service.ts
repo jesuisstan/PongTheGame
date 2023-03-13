@@ -6,6 +6,7 @@ import { MessageDto, ChatRoomDto } from './dto/chat.dto';
 export class ChatService {
   // Array containing all chatrooms
   chatRooms: ChatRoomDto[] = [];
+  privRooms: ChatRoomDto[] = [];
 
   identify(roomName: string, nick: string, modes: string, online: boolean) {
     const room = this.getChatRoomByName(roomName);
@@ -16,19 +17,22 @@ export class ChatService {
     }
     if (room.users[nick])
       room.users[nick] = {
-        isOnline: online, modes: room.users[nick].modes += modes, lastPinged: new Date()
+        isOnline: online,
+        modes: (room.users[nick].modes += modes),
+        lastPinged: new Date(),
       };
     else
       room.users[nick] = {
-        isOnline: online, modes: modes, lastPinged: new Date()
+        isOnline: online,
+        modes: modes,
+        lastPinged: new Date(),
       };
   }
 
   quitRoom(roomName: string, nick: string) {
     const room = this.getChatRoomByName(roomName);
     if (room) room.users[nick].isOnline = false;
-    else
-      throw new WsException({ msg: 'quitRoom: unknown room name!' });
+    else throw new WsException({ msg: 'quitRoom: unknown room name!' });
   }
 
   getChatRoomByName(name: string) {
@@ -41,21 +45,29 @@ export class ChatService {
   createMessage(roomName: string, msg: MessageDto) {
     const room = this.getChatRoomByName(roomName);
     if (room) room.messages.push(msg);
-    else
-      throw new WsException({ msg: 'createMessage: unknown room name!' });
+    else throw new WsException({ msg: 'createMessage: unknown room name!' });
   }
 
   // Create a new chat room object and push it to the chat rooms array
   // the creator will get admin privileges
-  createChatRoom(room: ChatRoomDto, nick: string) {
+  createChatRoom(room: ChatRoomDto, nick: string, user2: string) {
     if (room) {
       // Add room to room array
       this.chatRooms.push(room);
+
+      // If it is a private conversation
+      if (user2) {
+        this.identify(room.name, nick, '', false);
+        this.identify(room.name, user2, '', false);
+        return;
+      }
+
       // Identify creator as the oper(=admin)
       this.identify(room.name, nick, 'o', false);
-    }
-    else
-      throw new WsException({ msg: "createChatRoom: 'room' argument is missing!" });
+    } else
+      throw new WsException({
+        msg: "createChatRoom: 'room' argument is missing!",
+      });
   }
 
   // Return all messages from the chatroom
@@ -112,33 +124,29 @@ export class ChatService {
 
   banUser(roomName: string, nick: string) {
     const room = this.getChatRoomByName(roomName);
-    if (room)
+    if (room) {
       if (nick) room.bannedNicks.push(nick);
-    else throw new WsException({ msg: 'banUser: unknown room name!' });
+    } else throw new WsException({ msg: 'banUser: unknown room name!' });
   }
 
   unBanUser(roomName: string, nick: string) {
     const room = this.getChatRoomByName(roomName);
     if (room) {
       if (nick)
-        for (var i=0; i < room.bannedNicks.length; ++i)
-          if (room.bannedNicks[i] === nick)
-            room.bannedNicks.splice(i, 1);
-    }
-    else throw new WsException({ msg: 'banUser: unknown room name!' });
+        for (let i = 0; i < room.bannedNicks.length; ++i)
+          if (room.bannedNicks[i] === nick) room.bannedNicks.splice(i, 1);
+    } else throw new WsException({ msg: 'banUser: unknown room name!' });
   }
 
   isUserBanned(roomName: string, nick: string) {
     const room = this.getChatRoomByName(roomName);
 
     if (room) {
-      for (let i=0; i < room.bannedNicks.length; ++i) {
-        if (room.bannedNicks[i] === nick)
-          return true;
-      };
+      for (let i = 0; i < room.bannedNicks.length; ++i) {
+        if (room.bannedNicks[i] === nick) return true;
+      }
       return false;
-    }
-    else throw new WsException({ msg: 'isUserBanned: unknown room name!' });
+    } else throw new WsException({ msg: 'isUserBanned: unknown room name!' });
   }
 
   // updatePingTime(roomName: string, nick: string) {
@@ -153,7 +161,8 @@ export class ChatService {
 
   getUserLastPingTime(roomName: string, nick: string) {
     const room = this.getChatRoomByName(roomName);
-    if (!room) throw new WsException({ msg: 'getUserLastPingTime: unknown room name!' });
+    if (!room)
+      throw new WsException({ msg: 'getUserLastPingTime: unknown room name!' });
     return room.users[nick].lastPinged;
   }
 
