@@ -11,7 +11,6 @@ import { Socket, Server } from 'socket.io';
 import { ChatService } from './chat.service';
 import { ChatRoomDto, MessageDto } from './dto/chat.dto';
 
-
 // Allow requests from the frontend port
 @WebSocketGateway({
   cors: {
@@ -45,7 +44,9 @@ export class ChatGateway {
     // First, check if the room name already exists
     const r = this.chatService.getChatRoomByName(room.name);
     if (r)
-      throw new WsException({ msg: 'createChatRoom: room name is already taken!' });
+      throw new WsException({
+        msg: 'createChatRoom: room name is already taken!',
+      });
     // Set 'password protected' mode
     if (room.password) room.modes = 'p';
     // Set 'private' mode. This is a conversation between
@@ -194,7 +195,7 @@ export class ChatGateway {
   ) {
     // First, check if the user has the admin rights
     if (this.isUserOper(roomName, nick) === false)
-      throw new WsException({ msg: 'unBanUser: user is not oper!' });  
+      throw new WsException({ msg: 'unBanUser: user is not oper!' });
     this.chatService.unBanUser(roomName, target);
     this.server.emit('unBanUser', roomName, target);
   }
