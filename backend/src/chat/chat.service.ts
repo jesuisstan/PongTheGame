@@ -6,6 +6,7 @@ import { MessageDto, ChatRoomDto } from './dto/chat.dto';
 export class ChatService {
   // Array containing all chatrooms
   chatRooms: ChatRoomDto[] = [];
+  privRooms: ChatRoomDto[] = [];
 
   identify(roomName: string, nick: string, modes: string, online: boolean) {
     const room = this.getChatRoomByName(roomName);
@@ -49,10 +50,18 @@ export class ChatService {
 
   // Create a new chat room object and push it to the chat rooms array
   // the creator will get admin privileges
-  createChatRoom(room: ChatRoomDto, nick: string) {
+  createChatRoom(room: ChatRoomDto, nick: string, user2: string) {
     if (room) {
       // Add room to room array
       this.chatRooms.push(room);
+
+      // If it is a private conversation
+      if (user2) {
+        this.identify(room.name, nick, '', false);
+        this.identify(room.name, user2, '', false);
+        return;
+      }
+
       // Identify creator as the oper(=admin)
       this.identify(room.name, nick, 'o', false);
     } else
@@ -115,9 +124,9 @@ export class ChatService {
 
   banUser(roomName: string, nick: string) {
     const room = this.getChatRoomByName(roomName);
-    if (room)
+    if (room) {
       if (nick) room.bannedNicks.push(nick);
-      else throw new WsException({ msg: 'banUser: unknown room name!' });
+    } else throw new WsException({ msg: 'banUser: unknown room name!' });
   }
 
   unBanUser(roomName: string, nick: string) {
