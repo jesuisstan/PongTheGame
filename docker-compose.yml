@@ -64,10 +64,7 @@ services:
     working_dir: /app-${BACKEND_NAME}
     # install project dependencies,
     # then run in dev mode
-    command: sh -cx 'apk add --no-cache curl && yarn install && yarn prisma db push && yarn run test && yarn prisma db seed && yarn run start:debug'
-
-  # yarn prisma studio &
-  # yarn run test
+    command: sh -cx 'apk add --no-cache curl && yarn install && yarn prisma db push && yarn run test && yarn run test:e2e:docker && yarn prisma db seed && yarn run start:debug'
 
     ports:
       - "${BACKEND_PORT}:${BACKEND_PORT}"
