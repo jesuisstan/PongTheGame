@@ -46,14 +46,14 @@ const Pong: React.FC = () => {
   const [trainMode, setTrainMode] = useState(false);
 
   const setDefault = () => {
-    setWinner('')
-    setScore({ player1: 0, player2: 0 })
-    setTrainMode(false)
-    setGamePaused(false)
-    setDefaultBallSpeed()
+    setWinner('');
+    setScore({ player1: 0, player2: 0 });
+    setTrainMode(false);
+    setGamePaused(false);
+    setDefaultBallSpeed();
     paddle1Y = DEFAULT_PADDLE_POSITION;
     paddle2Y = DEFAULT_PADDLE_POSITION;
-  }
+  };
 
   const draw = (canvasContext: CanvasRenderingContext2D) => {
     util.makeRectangleShape(
@@ -240,7 +240,7 @@ const Pong: React.FC = () => {
       return;
     }
 
-    window.addEventListener('mousemove', (evt) => {
+    const paddleMoveListener = (evt: MouseEvent) => {
       let mousePos = util.calculateMousePosition(canvas!, evt);
 
       if (gameOn) {
@@ -252,14 +252,19 @@ const Pong: React.FC = () => {
           paddle1Y = mousePos.y - PADDLE_HEIGHT / 2;
         }
       }
-    });
+    };
+
+    window.addEventListener('mousemove', paddleMoveListener);
 
     const intervalId = setInterval(() => {
       draw(canvasContext);
       play(canvasContext);
     }, 1000 / FPS);
 
-    return () => clearInterval(intervalId);
+    return () => {
+      window.removeEventListener('mousemove', paddleMoveListener);
+      clearInterval(intervalId);
+    };
   }, [score.player1, score.player2, gamePaused, gameOn]);
 
   return (
