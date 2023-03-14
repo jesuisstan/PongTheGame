@@ -24,28 +24,44 @@ export class GameGateway {
               private prisma: PrismaService) {
               }
 
-  @SubscribeMessage('match_create')
-  async match_create() {// Have to wait 2 user rdy
+  @SubscribeMessage('matchmaking')
+  async matchmaking(socket: any, payload: any) {
+    if (!payload || !payload.action) return;
+    switch (payload.action) {
+      case 'join':
+        this.gameService.joinQueue(socket, payload.type);
+        break;
+      case 'cancel':
+        this.gameService.cancelQueue(socket);
+        break;
+      case 'leave':
+        this.gameService.leaveGame(socket);
+        break;
+    }
+  }
+
+  // @SubscribeMessage('match_create')
+  // async match_create() {// Have to wait 2 user rdy
     
-    console.log("Je veux creer un match");
-    // this.gameService.match_create(user);
-    // await this.prisma.
-  }
+  //   console.log("Je veux creer un match");
+  //   // this.gameService.match_create(user);
+  //   // await this.prisma.
+  // }
 
-  @SubscribeMessage('match_join')
-  match_join(){
+  // @SubscribeMessage('match_join')
+  // match_join(){
 
-  }
+  // }
 
-  @SubscribeMessage('match_update')
-  match_update(){
+  // @SubscribeMessage('match_update')
+  // match_update(){
 
-  }
+  // }
 
-  @SubscribeMessage('match_view')
-  match_view(){
+  // @SubscribeMessage('match_view')
+  // match_view(){
 
-  }
+  // }
 
 //   @SubscribeMessage('resetBall')
 //   resetBall() {

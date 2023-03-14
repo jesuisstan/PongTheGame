@@ -6,7 +6,6 @@ import {
   ConnectedSocket,
   WsException,
 } from '@nestjs/websockets';
-import { plainToClass } from 'class-transformer';
 import { Socket, Server } from 'socket.io';
 import { ChatService } from './chat.service';
 import { ChatRoomDto, MessageDto } from './dto/chat.dto';

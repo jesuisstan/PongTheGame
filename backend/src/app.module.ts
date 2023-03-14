@@ -9,6 +9,7 @@ import { StatusController } from 'src/status/status.controller';
 import { UserModule } from 'src/user/user.module';
 import { ChatModule } from './chat/chat.module';
 import { GameModule } from './game/game.module';
+import { WebsocketsModule } from './websockets/websockets.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { GameModule } from './game/game.module';
     ChatModule,
     AvatarModule,
     GameModule,
+    WebsocketsModule,
   ],
   providers: [],
   controllers: [StatusController],

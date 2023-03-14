@@ -4,6 +4,9 @@ import { User } from '@prisma/client';
 @Injectable()
 export class GameService {
     private readonly user: User[] = [];
+    private game_queue = [];
+    games = [];
+    private invitation : number[] = [];
     constructor(){}
 
     // match_create(user: User){

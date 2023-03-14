@@ -5,6 +5,7 @@ import {
 } from '@nestjs/websockets';
 import { Server } from 'http';
 import { WebsocketsService } from './websockets.service';
+import { Socket } from 'socket.io';
 
 @WebSocketGateway()
 export class WebsocketGateway implements OnGatewayConnection {
@@ -12,8 +13,7 @@ export class WebsocketGateway implements OnGatewayConnection {
 
 	@WebSocketServer() server: Server;
 	async afterInit(serv: Server) {
-		serv.on('connection', async (socket : any, req : Request) => {
-			socket['request'] = req;
+		serv.on('connection', async (socket : Socket, req : Request) => {
 			await this.websocketsService.registerSocket(socket);
 		});
 	}
