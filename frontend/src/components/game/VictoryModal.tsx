@@ -16,12 +16,14 @@ const VictoryModal = ({
   open,
   setOpen,
   winner,
-  score
+  score,
+  setDefault
 }: {
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
   winner: string;
   score: any;
+  setDefault: any
 }) => {
   return (
     <div>
@@ -29,7 +31,7 @@ const VictoryModal = ({
         sx={{ color: 'black' }}
         open={open}
         onClose={(event, reason) => {
-          if (event && reason === 'closeClick') setOpen(false);
+          if (event && reason === 'closeClick') {setDefault(); setOpen(false)};
         }}
       >
         <ModalDialog
