@@ -140,15 +140,11 @@ export class ChatGateway {
     @MessageBody('newPassword') newPassword: string,
   ) {
     // First, check the current password
-    if (this.checkPassword(roomName, currentPassword) === false)
+    if (newPassword && this.checkPassword(roomName, currentPassword) === false)
       throw new WsException({ msg: 'changePassword: wrong password!' });
     this.chatService.changePassword(roomName, newPassword);
-  }
-
-  @SubscribeMessage('removePassword')
-  removePassword(@MessageBody('roomName') roomName: string) {
-    this.chatService.removePassword(roomName);
-    this.server.emit('removePassword', roomName);
+    const isDeleted = newPassword ? false : true;
+    this.server.emit('changePassword', roomName, isDeleted);
   }
 
   @SubscribeMessage('isUserOper')

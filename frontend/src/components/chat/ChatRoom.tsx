@@ -56,6 +56,9 @@ const ChatRoom = (props: any) => {
   const [isOper, setIsOper] = useState<boolean>(false)
   // Array including all members
   const [members, setMembers] = useState<MemberType[]>([])
+  // Modify password
+  const [oldPassword, setOldPassword] = useState<string>('');
+  const [newPassword, setNewPassword] = useState<string>('');
 
 
   socket.emit('findAllMembers', { roomName: user.joinedChatRoom },
@@ -124,9 +127,10 @@ const ChatRoom = (props: any) => {
         setTypingDisplay(nick + ' is typing...')
         : setTypingDisplay('')
     })
-    socket.on('removePassword', (roomName: string) => {
-      if (roomName === user.joinedChatRoom)
-        console.log('Password from ' + roomName + ' has been removed!')
+    socket.on('changePassword', (roomName: string, isDeleted: boolean) => {
+      if (roomName === user.joinedChatRoom) {
+        console.log('Password from ' + roomName + ' has been ' + isDeleted);
+      }
     })
     socket.on('makeOper', (roomName: string, target: string) => {
       if (roomName === user.joinedChatRoom)
@@ -161,7 +165,6 @@ const ChatRoom = (props: any) => {
       socket.off('connect')
       socket.off('createMessage')
       socket.off('typingMessage')
-      socket.off('removePassword')
       socket.off('makeOper')
       socket.off('joinRoom')
       socket.off('quitRoom')
@@ -333,7 +336,17 @@ const ChatRoom = (props: any) => {
 
   const handleClose = () => {
     setAnchorEl(null);
+    onReturnClick();
   };
+
+  const handleChangePwd = (deletePwd: boolean) => {
+    socket.emit('changePassword', {
+      roomName: user.joinedChatRoom,
+      currentPassword: oldPassword,
+      newPassword: deletePwd ? '' : newPassword,
+    });
+  };
+
 
   /*************************************************************
    * Render HTML response
@@ -455,10 +468,10 @@ const ChatRoom = (props: any) => {
               <MenuItem onClick={handleClose} aria-label="add friend">
                 <PersonAddAlt sx={{ color: 'black' }} />
               </MenuItem>
-              <MenuItem onClick={handleClose} aria-label="change password">
+              <MenuItem onClick={() => handleChangePwd(false)} aria-label="change password">
                 <Password sx={{ color: 'black' }} />
               </MenuItem>
-              <MenuItem onClick={handleClose} aria-label="delete room">
+              <MenuItem onClick={() => handleChangePwd(true)} aria-label="delete room">
                 <Delete sx={{ color: 'black' }} />
               </MenuItem>
               <MenuItem onClick={handleClose} aria-label="leave room">

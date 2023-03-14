@@ -91,18 +91,19 @@ export class ChatService {
   changePassword(roomName: string, newPassword: string) {
     const room = this.getChatRoomByName(roomName);
     if (room) {
-      room.password = newPassword;
-      // If the room wasn't in 'password protected' mode,
-      // it gets it
-      if (room.modes.search('p') === -1) room.modes = 'p';
-    } else throw new WsException({ msg: 'changePassword: unknown room name!' });
-  }
-
-  removePassword(roomName: string) {
-    const room = this.getChatRoomByName(roomName);
-    if (room) {
-      room.password = '';
-      room.modes = '';
+      // If a new password was given
+      if (newPassword) {
+        room.password = newPassword;
+        // If the room wasn't in 'password protected' mode,
+        // it gets it
+        if (room.modes.search('p') === -1) room.modes += 'p';
+      } else // No given password means we remove the password
+      {
+        room.password = '';
+        if (room.modes.search('p') !== -1)
+          room.modes = room.modes.replace(/p/g, '');
+        console.log('iiiiii' + room.modes);
+      }
     } else throw new WsException({ msg: 'changePassword: unknown room name!' });
   }
 

@@ -80,15 +80,18 @@ const Chat = () => {
   // Tells whether the user has joined the chatroom
   const joinedRoomName = user.joinedChatRoom;
 
-  // Enter in chatroom create mode
+  // Create chat room
   const [chatRoomCreateMode, setChatRoomCreateMode] = useState<boolean>(false);
   const [newChatRoomName, setNewChatRoomName] = useState<string>('');
   const [chatRoomPassword, setChatRoomPassword] = useState<string>('');
+
+  // Join chat room
   const [isPasswordProtected, setIsPasswordProtected] =
     useState<boolean>(false);
   const [inputPassword, setInputPassword] = useState<string>('');
   const [isPasswordRight, setIsPasswordRight] = useState<boolean>(false);
   const [clickedRoomToJoin, setclickedRoomToJoin] = useState<string>('');
+
 
   socket.emit('findAllChatRooms', {}, (response: ChatRoomType[]) => {
     setChatRooms(response);
