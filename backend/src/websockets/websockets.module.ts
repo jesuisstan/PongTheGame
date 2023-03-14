@@ -6,9 +6,8 @@ import { WebsocketsService } from './websockets.service';
 import { JwtModule } from '@nestjs/jwt';
 
 @Module({
-    imports: [PrismaModule, JwtModule.register({})],
-    providers: [WebsocketGateway, WebsocketsService],
-    exports: [WebsocketsService],
+  imports: [PrismaModule, JwtModule.register({})],
+  providers: [WebsocketGateway, WebsocketsService],
+  exports: [WebsocketsService],
 })
-
 export class WebsocketsModule {}

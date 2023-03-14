@@ -31,7 +31,6 @@ export class TotpMiddleware implements NestMiddleware<Request, Response> {
     if (req.session.totpVerified || !(await this.totp.isTotpEnabled(user)))
       return next();
 
-      
     // return res.status(400).json(user).end();
 
     // return next(new BadRequestException('totp authentication required'));
