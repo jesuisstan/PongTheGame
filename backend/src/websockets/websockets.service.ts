@@ -21,7 +21,6 @@ export class WebsocketsService {
     });
     const token = socket.handshake.auth.token;
     if (!token) {
-      console.log('error1');
       this.send(socket, 'error', 'No token found');
       socket.disconnect();
       return;
@@ -31,7 +30,6 @@ export class WebsocketsService {
         secret: this.config.get('JWT_SECRET'),
       });
       if (!verify || !verify.id) {
-        console.log('error2');
         this.send(socket, 'error', 'No user found');
         socket.disconnect();
         return;
@@ -40,7 +38,6 @@ export class WebsocketsService {
         where: { id: verify.id },
       });
       if (!user) {
-        console.log('error3');
         this.send(socket, 'error', 'No user cookie');
         socket.disconnect();
         return;
@@ -53,14 +50,14 @@ export class WebsocketsService {
         return;
       }
 
-      // await this.prismaService.user.update({
-      // where: { id: user.id },
-      // data: { status: 'ONLINE' },
-      // });
-      // this.sendToAll(this.sockets, 'user-status', {
-      // id: user.id,
-      // status: 'ONLINE',
-      // });
+      await this.prismaService.user.update({
+        where: { id: user.id },
+        data: { status: 'ONLINE' },
+      });
+      this.sendToAll(this.sockets, 'user-status', {
+        id: user.id,
+        status: 'ONLINE',
+      });
       socket['user'] = user;
       this.sockets.push(socket);
     } catch (e) {
@@ -72,20 +69,20 @@ export class WebsocketsService {
   }
 
   async unregisterSocket(socket: any) {
-    this.sockets = this.sockets.filter((s) => s !== socket);
-    // const actions = this._socketsOnClose.get(socket);
-    // if (actions) {
-    //     actions.forEach((action) => action());
-    // }
-    // if (!socket.user) return;
-    // await this.prismaService.user.update({
-    //     where: { id: socket.user.id },
-    //     // data: { status: 'OFFLINE' },
-    // });
-    // this.broadcast('user-status', {
-    //     id: socket.user.id,
-    //     // status: 'OFFLINE',
-    // });
+    //   this.sockets = this.sockets.filter((s) => s !== socket);
+    //   // const actions = this._socketsOnClose.get(socket);
+    //   if (actions) {
+    //       actions.forEach((action) => action());
+    //   }
+    //   if (!socket.user) return;
+    //   await this.prismaService.user.update({
+    //       where: { id: socket.user.id },
+    //       data: { status: 'OFFLINE' },
+    //   });
+    //   this.broadcast('user-status', {
+    //       id: socket.user.id,
+    //       status: 'OFFLINE',
+    //   });
   }
 
   send(client: any, event: string, data: any) {
