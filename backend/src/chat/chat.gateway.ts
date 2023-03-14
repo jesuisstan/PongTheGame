@@ -1,22 +1,17 @@
 import {
-  WebSocketGateway,
-  SubscribeMessage,
-  MessageBody,
-  WebSocketServer,
   ConnectedSocket,
+  MessageBody,
+  SubscribeMessage,
+  WebSocketGateway,
+  WebSocketServer,
   WsException,
 } from '@nestjs/websockets';
-import { plainToClass } from 'class-transformer';
-import { Socket, Server } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 import { ChatService } from './chat.service';
 import { ChatRoomDto, MessageDto } from './dto/chat.dto';
 
 // Allow requests from the frontend port
-@WebSocketGateway({
-  cors: {
-    origin: ['http://localhost:' + process.env.FRONTEND_PORT],
-  },
-})
+@WebSocketGateway()
 export class ChatGateway {
   @WebSocketServer()
   server: Server;

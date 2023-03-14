@@ -18,9 +18,6 @@ import CreateIcon from '@mui/icons-material/Create';
 import DeleteIcon from '@mui/icons-material/Delete';
 import styles from './Profile.module.css';
 
-const URL_TOTP_TOGGLE = String(process.env.REACT_APP_URL_GET_SECRET);
-const URL_AVATAR = String(process.env.REACT_APP_URL_AVATAR);
-
 const Profile = () => {
   const navigate = useNavigate();
   const { user, setUser } = useContext(UserContext);
@@ -30,7 +27,7 @@ const Profile = () => {
 
   const toggleTfa = () => {
     if (user.totpSecret?.verified) {
-      return backendAPI.delete(URL_TOTP_TOGGLE).then(
+      return backendAPI.delete('/auth/totp').then(
         (response) => setUser(response.data),
         (error) => errorAlert('Something went wrong')
       );
@@ -39,7 +36,7 @@ const Profile = () => {
 
   const deleteAvatar = () => {
     if (user.avatar) {
-      return backendAPI.delete(URL_AVATAR).then(
+      return backendAPI.delete('/avatar').then(
         (response) => setUser(response.data),
         (error) => errorAlert('Something went wrong')
       );
@@ -58,11 +55,13 @@ const Profile = () => {
           <div className={styles.bottomAvatarBox}>
             <ButtonPong
               text="Change"
+              title="upload new avatar"
               endIcon={<AddAPhotoIcon />}
               onClick={() => setModalAvatarOpen(true)}
             />
             <ButtonPong
               text="Delete"
+              title="set avatar to default"
               endIcon={<DeleteIcon />}
               onClick={deleteAvatar}
               disabled={!user.avatar}
@@ -92,6 +91,7 @@ const Profile = () => {
           <div className={styles.bottom}>
             <ButtonPong
               text={user.totpSecret?.verified ? 'Disable 2FA' : 'Setup 2FA'}
+              title={user.totpSecret?.verified ? 'turn off 2FA' : 'turn on 2FA'}
               endIcon={<ArrowForwardIosIcon />}
               onClick={toggleTfa}
             />
@@ -120,6 +120,7 @@ const Profile = () => {
             <div>
               <ButtonPong
                 text="Change nickname"
+                title="modify nickname"
                 endIcon={<CreateIcon />}
                 onClick={() => setModalNicknameOpen(true)}
               />
@@ -147,6 +148,7 @@ const Profile = () => {
           <div className={styles.bottom}>
             <ButtonPong
               text="Full stats"
+              title="go to match history page"
               onClick={() => navigate('/history')}
               endIcon={<ArrowForwardIosIcon />}
             />

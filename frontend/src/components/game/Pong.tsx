@@ -11,7 +11,7 @@ const DEFAULT_BALL_SPEED_X = 10;
 const DEFAULT_BALL_SPEED_Y = 10;
 const CANVAS_HEIGHT = 600;
 const CANVAS_WIDTH = 800;
-const FPS = 30;
+const FPS = 35;
 const BALL_RADIUS = 10;
 const PADDLE_WIDTH = 20;
 const PADDLE_HEIGHT = CANVAS_HEIGHT / 6;
@@ -34,11 +34,6 @@ const setDefaultBallSpeed = () => {
   ballSpeed.Y = DEFAULT_BALL_SPEED_Y;
 };
 
-const setDefaultPaddlesPosition = () => {
-  paddle1Y = CANVAS_HEIGHT / 2 - PADDLE_HEIGHT / 2;
-  paddle2Y = CANVAS_HEIGHT / 2 - PADDLE_HEIGHT / 2;
-};
-
 const Pong: React.FC = () => {
   const { user } = useContext(UserContext);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -48,6 +43,7 @@ const Pong: React.FC = () => {
   const [winScore, setWinScore] = useState(DEFAULT_WIN_SCORE);
   const [score, setScore] = useState({ player1: 0, player2: 0 });
   const [gamePaused, setGamePaused] = useState(false);
+  const [trainMode, setTrainMode] = useState(false);
 
   const draw = (canvasContext: CanvasRenderingContext2D) => {
     util.makeRectangleShape(
@@ -95,15 +91,22 @@ const Pong: React.FC = () => {
     ); // Right Paddle
   };
 
-  const resetBall = () => {
+  const checkWinner = () => {
     if (score.player1 >= winScore || score.player2 >= winScore) {
-      setGotWinner(true)
+      setGotWinner(true);
 
       score.player1 > score.player2
         ? setWinner(user.nickname)
         : setWinner('Opponent'); // todo change 'opponent' name
       setOpen(true);
+
+      if (trainMode) {
+        setTrainMode(false);
+      }
     }
+  };
+
+  const resetBall = () => {
     ballSpeed.X =
       ballSpeed.X > 0 ? -DEFAULT_BALL_SPEED_X : DEFAULT_BALL_SPEED_X;
     ballSpeed.Y =
@@ -113,26 +116,30 @@ const Pong: React.FC = () => {
   };
 
   const computerAI = () => {
-    let paddle2YCenter = paddle2Y + PADDLE_HEIGHT / 2;
+    if (trainMode) {
+      let paddle2YCenter = paddle2Y + PADDLE_HEIGHT / 2;
 
-    if (paddle2YCenter < ballPosition.Y - 40) {
-      paddle2Y += 14;
-    } else if (paddle2YCenter < ballPosition.Y + 40 && paddle2Y > 0) {
-      paddle2Y -= 14;
-    } else if (paddle2Y <= 0) {
-      paddle2Y = 0;
-    } else {
-      paddle2Y = paddle2Y;
+      if (paddle2YCenter < ballPosition.Y - 40) {
+        paddle2Y += 14;
+      } else if (paddle2YCenter < ballPosition.Y + 40 && paddle2Y > 0) {
+        paddle2Y -= 14;
+      } else if (paddle2Y <= 0) {
+        paddle2Y = 0;
+      } else {
+        paddle2Y = paddle2Y;
+      }
     }
   };
 
   const increaseScorePlayer2 = () => {
     setScore({ ...score, player2: (score.player2 += 1) });
+    checkWinner();
     resetBall();
   };
 
   const increaseScorePlayer1 = () => {
     setScore({ ...score, player1: (score.player1 += 1) });
+    checkWinner();
     resetBall();
   };
 
@@ -148,10 +155,6 @@ const Pong: React.FC = () => {
     } else {
       ballPosition.X += ballSpeed.X;
       ballPosition.Y += ballSpeed.Y;
-    }
-
-    if (score.player1 >= winScore || score.player2 >= winScore) {
-      resetBall();
     }
 
     computerAI();
@@ -181,15 +184,9 @@ const Pong: React.FC = () => {
       (ballPosition.Y === paddle2Y - BALL_RADIUS ||
         ballPosition.Y === paddle2Y + PADDLE_HEIGHT + BALL_RADIUS)
     ) {
-      console.log('right paddle RIB!');
-
       ballSpeed.Y = -ballSpeed.Y;
       let deltaX = CANVAS_WIDTH - ballPosition.X - PADDLE_WIDTH;
-      console.log('Right deltaX = ' + deltaX);
-
       ballSpeed.X = deltaX !== 0 ? deltaX * 0.35 : -ballSpeed.X;
-
-      console.log('ballSpeed.X = ' + ballSpeed.X);
     }
 
     // Bounce the ball from the left paddle --->
@@ -207,15 +204,9 @@ const Pong: React.FC = () => {
       (ballPosition.Y === paddle1Y - BALL_RADIUS ||
         ballPosition.Y === paddle1Y + PADDLE_HEIGHT + BALL_RADIUS)
     ) {
-      console.log('RIB!');
-
       ballSpeed.Y = -ballSpeed.Y;
       let deltaX = ballPosition.X - PADDLE_WIDTH;
-      console.log('deltaX = ' + deltaX);
-
       ballSpeed.X = deltaX !== 0 ? deltaX * 0.35 : -ballSpeed.X;
-
-      console.log('ballSpeed.X = ' + ballSpeed.X);
     }
 
     // Bounce the ball from bottom & top --->
@@ -228,9 +219,10 @@ const Pong: React.FC = () => {
   };
 
   const trainWithComputer = async () => {
+    setTrainMode(true);
     if (gotWinner) {
       setScore({ player1: 0, player2: 0 });
-      setGotWinner(false)
+      setGotWinner(false);
     }
   };
 
@@ -269,11 +261,13 @@ const Pong: React.FC = () => {
       <div className={styles.buttonsBlock}>
         <ButtonPong
           text="train with AI"
+          title="practice with computer"
           disabled={gotWinner ? false : true}
           onClick={trainWithComputer}
         />
         <ButtonPong
           text={gamePaused ? 'unpause' : 'pause'}
+          title={gamePaused ? 'continue the game' : 'set the game on pause'}
           disabled={gotWinner ? true : false}
           onClick={() => {
             setGamePaused(!gamePaused);

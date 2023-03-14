@@ -2,12 +2,14 @@ import Button from '@mui/material/Button';
 
 const ButtonPong = ({
   text,
+  title,
   onClick,
   endIcon,
   startIcon,
   disabled
 }: {
   text: string;
+  title?: string;
   onClick: React.MouseEventHandler<HTMLButtonElement>;
   endIcon?: React.ReactNode;
   startIcon?: React.ReactNode;
@@ -23,6 +25,7 @@ const ButtonPong = ({
           fontWeight: 'Bold'
         }
       }}
+      title={title}
       size="medium"
       variant="contained"
       onClick={onClick}
