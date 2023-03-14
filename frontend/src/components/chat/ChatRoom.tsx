@@ -333,7 +333,17 @@ const ChatRoom = (props: any) => {
 
   const handleClose = () => {
     setAnchorEl(null);
+    onReturnClick();
   };
+
+  const handleChangePwd = () => {
+    socket.emit('changePassword', {
+      roomName: user.joinedChatRoom,
+      currentPassword: '',
+      newPassword: ''
+    })
+  };
+
 
   /*************************************************************
    * Render HTML response
