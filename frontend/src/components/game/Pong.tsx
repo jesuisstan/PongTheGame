@@ -38,12 +38,22 @@ const Pong: React.FC = () => {
   const { user } = useContext(UserContext);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [open, setOpen] = useState(false);
-  const [gotWinner, setGotWinner] = useState(true);
+  const [gameOn, setGameOn] = useState(false);
   const [winner, setWinner] = useState('');
   const [winScore, setWinScore] = useState(DEFAULT_WIN_SCORE);
   const [score, setScore] = useState({ player1: 0, player2: 0 });
   const [gamePaused, setGamePaused] = useState(false);
   const [trainMode, setTrainMode] = useState(false);
+
+  const setDefault = () => {
+    setWinner('')
+    setScore({ player1: 0, player2: 0 })
+    setTrainMode(false)
+    setGamePaused(false)
+    setDefaultBallSpeed()
+    paddle1Y = DEFAULT_PADDLE_POSITION;
+    paddle2Y = DEFAULT_PADDLE_POSITION;
+  }
 
   const draw = (canvasContext: CanvasRenderingContext2D) => {
     util.makeRectangleShape(
@@ -93,16 +103,12 @@ const Pong: React.FC = () => {
 
   const checkWinner = () => {
     if (score.player1 >= winScore || score.player2 >= winScore) {
-      setGotWinner(true);
+      setGameOn(false);
 
       score.player1 > score.player2
         ? setWinner(user.nickname)
         : setWinner('Opponent'); // todo change 'opponent' name
       setOpen(true);
-
-      if (trainMode) {
-        setTrainMode(false);
-      }
     }
   };
 
@@ -148,7 +154,7 @@ const Pong: React.FC = () => {
       util.printPause(canvasContext, CANVAS_WIDTH, CANVAS_HEIGHT);
       return;
     }
-    if (gotWinner) {
+    if (!gameOn) {
       setDefaultBallSpeed();
       paddle2Y = DEFAULT_PADDLE_POSITION;
       return;
@@ -220,9 +226,9 @@ const Pong: React.FC = () => {
 
   const trainWithComputer = async () => {
     setTrainMode(true);
-    if (gotWinner) {
+    if (!gameOn) {
       setScore({ player1: 0, player2: 0 });
-      setGotWinner(false);
+      setGameOn(true);
     }
   };
 
@@ -237,7 +243,7 @@ const Pong: React.FC = () => {
     window.addEventListener('mousemove', (evt) => {
       let mousePos = util.calculateMousePosition(canvas!, evt);
 
-      if (!gotWinner) {
+      if (gameOn) {
         if (mousePos.y < PADDLE_HEIGHT / 2) {
           paddle1Y = 0;
         } else if (mousePos.y > canvas!.height - PADDLE_HEIGHT / 2) {
@@ -254,7 +260,7 @@ const Pong: React.FC = () => {
     }, 1000 / FPS);
 
     return () => clearInterval(intervalId);
-  }, [score.player1, score.player2, gamePaused, gotWinner]);
+  }, [score.player1, score.player2, gamePaused, gameOn]);
 
   return (
     <div className={styles.canvasBlock}>
@@ -262,13 +268,13 @@ const Pong: React.FC = () => {
         <ButtonPong
           text="train with AI"
           title="practice with computer"
-          disabled={gotWinner ? false : true}
+          disabled={gameOn ? true : false}
           onClick={trainWithComputer}
         />
         <ButtonPong
           text={gamePaused ? 'unpause' : 'pause'}
           title={gamePaused ? 'continue the game' : 'set the game on pause'}
-          disabled={gotWinner ? true : false}
+          disabled={gameOn ? false : true}
           onClick={() => {
             setGamePaused(!gamePaused);
           }}
@@ -282,7 +288,7 @@ const Pong: React.FC = () => {
         winScore={winScore}
         setWinScore={setWinScore}
         score={score}
-        gotWinner={gotWinner}
+        gameOn={gameOn}
       ></ScoreBar>
       <canvas
         className={styles.canvas}
@@ -295,6 +301,7 @@ const Pong: React.FC = () => {
         setOpen={setOpen}
         winner={winner}
         score={score}
+        setDefault={setDefault}
       />
     </div>
   );

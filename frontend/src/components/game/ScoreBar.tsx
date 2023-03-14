@@ -9,7 +9,7 @@ const ScoreBar = ({
   winScore,
   setWinScore,
   score,
-  gotWinner
+  gameOn
 }: {
   winScore: number;
   setWinScore: React.Dispatch<React.SetStateAction<number>>;
@@ -17,7 +17,7 @@ const ScoreBar = ({
     player1: number;
     player2: number;
   };
-  gotWinner: boolean;
+  gameOn: boolean;
 }) => {
   const { user } = useContext(UserContext);
 
@@ -40,7 +40,7 @@ const ScoreBar = ({
         >
           <Select
             value={winScore ? winScore : 3}
-            disabled={!gotWinner}
+            disabled={gameOn}
             onChange={(event) => setWinScore(event.target.value as number)}
           >
             <MenuItem value={3}>
