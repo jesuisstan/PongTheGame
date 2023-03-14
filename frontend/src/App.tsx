@@ -55,30 +55,30 @@ function App() {
   return (
     <WebSocketContext.Provider value={socket}>
       <BrowserRouter>
-        <div className="App">
-          <UserContext.Provider value={{ user, setUser }}>
-            <Verify2fa open={open} setOpen={setOpen} />
-            <Routes>
-              <Route path="/" element={<MainLayout />}>
-                <Route index={true} element={<Home />} />
-                <Route
-                  path="login"
-                  element={
-                    !user.provider ? <Login /> : <Navigate to="/profile" />
-                  }
-                />
-                <Route path="chat" element={<Chat />} />
-                <Route path="game" element={<Game />} />
-                <Route path="history" element={<History />} />
-                <Route
-                  path="profile"
-                  element={user.provider ? <Profile /> : <PleaseLogin />}
-                />
-                <Route path="*" element={<NotFound />} />*
-              </Route>
-            </Routes>
-          </UserContext.Provider>
-        </div>
+          <div className="App">
+            <UserContext.Provider value={{ user, setUser }}>
+              <Verify2fa open={open} setOpen={setOpen} />
+              <Routes>
+                <Route path="/" element={<MainLayout />}>
+                  <Route index={true} element={<Home />} />
+                  <Route
+                    path="login"
+                    element={
+                      !user.provider ? <Login /> : <Navigate to="/profile" />
+                    }
+                  />
+                  <Route path="chat" element={<Chat />} />
+                  <Route path="game" element={<Game />} />
+                  <Route path="history" element={<History />} />
+                  <Route
+                    path="profile"
+                    element={user.provider ? <Profile /> : <PleaseLogin />}
+                  />
+                  <Route path="*" element={<NotFound />} />*
+                </Route>
+              </Routes>
+            </UserContext.Provider>
+          </div>
       </BrowserRouter>
     </WebSocketContext.Provider>
   );
