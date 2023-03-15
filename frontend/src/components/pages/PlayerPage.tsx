@@ -19,7 +19,7 @@ const PlayerPage = () => {
     <div className={styles.basicCard}>
       <div className={styles.playerCard}>
         <div className={styles.pcLeft}>
-          <Avatar alt="" src={user.avatar} sx={{ width: 200, height: 200 }} />
+          <Avatar alt="" src={user.avatar} sx={{ width: 150, height: 150 }} />
           <div>
             <Typography
               id="basic-list-demo"
@@ -53,6 +53,21 @@ const PlayerPage = () => {
             Achievements
           </Typography>
           <Typography component="legend">Rating</Typography>
+
+          <Typography component="legend">RatingRatingRatingRatingRating</Typography>
+          <Typography component="legend">Rating</Typography>
+          <Typography component="legend">Rating</Typography>
+          <Typography component="legend">Rating</Typography>
+          <Typography component="legend">Rating</Typography>
+          <Typography component="legend">Rating</Typography>
+          <Typography component="legend">Rating</Typography>
+          <Typography component="legend">Rating</Typography>
+          <Typography component="legend">Rating</Typography>
+          <Typography component="legend">Rating</Typography>
+          <Typography component="legend">Rating</Typography>
+          <Typography component="legend">Rating</Typography>
+          <Typography component="legend">Rating</Typography>
+
           <Rating name="read-only" value={4} readOnly />
         </div>
       </div>
