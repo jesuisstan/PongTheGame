@@ -175,26 +175,6 @@ const Pong: React.FC = () => {
       util.printGoal(canvasContext, CANVAS_WIDTH, CANVAS_HEIGHT);
     }
 
-    // Bounce the ball from the right paddle --->
-    if (
-      ballPosition.X === CANVAS_WIDTH - PADDLE_WIDTH - BALL_RADIUS &&
-      ballPosition.Y >= paddle2Y - BALL_RADIUS &&
-      ballPosition.Y <= paddle2Y + PADDLE_HEIGHT + BALL_RADIUS
-    ) {
-      ballSpeed.X = -ballSpeed.X;
-      let deltaY = ballPosition.Y - (paddle2Y + PADDLE_HEIGHT / 2);
-      ballSpeed.Y = util.roundToTen(deltaY * 0.35);
-    }
-    if (
-      ballPosition.X >= CANVAS_WIDTH - PADDLE_WIDTH &&
-      (ballPosition.Y === paddle2Y - BALL_RADIUS ||
-        ballPosition.Y === paddle2Y + PADDLE_HEIGHT + BALL_RADIUS)
-    ) {
-      ballSpeed.Y = -ballSpeed.Y;
-      let deltaX = CANVAS_WIDTH - ballPosition.X - PADDLE_WIDTH;
-      ballSpeed.X = deltaX !== 0 ? deltaX * 0.35 : -ballSpeed.X;
-    }
-
     // Bounce the ball from the left paddle --->
     if (
       ballPosition.X === PADDLE_WIDTH + BALL_RADIUS &&
@@ -212,6 +192,26 @@ const Pong: React.FC = () => {
     ) {
       ballSpeed.Y = -ballSpeed.Y;
       let deltaX = ballPosition.X - PADDLE_WIDTH;
+      ballSpeed.X = deltaX !== 0 ? deltaX * 0.35 : -ballSpeed.X;
+    }
+
+    // Bounce the ball from the right paddle --->
+    if (
+      ballPosition.X === CANVAS_WIDTH - PADDLE_WIDTH - BALL_RADIUS &&
+      ballPosition.Y >= paddle2Y - BALL_RADIUS &&
+      ballPosition.Y <= paddle2Y + PADDLE_HEIGHT + BALL_RADIUS
+    ) {
+      ballSpeed.X = -ballSpeed.X;
+      let deltaY = ballPosition.Y - (paddle2Y + PADDLE_HEIGHT / 2);
+      ballSpeed.Y = util.roundToTen(deltaY * 0.35);
+    }
+    if (
+      ballPosition.X >= CANVAS_WIDTH - PADDLE_WIDTH &&
+      (ballPosition.Y === paddle2Y - BALL_RADIUS ||
+        ballPosition.Y === paddle2Y + PADDLE_HEIGHT + BALL_RADIUS)
+    ) {
+      ballSpeed.Y = -ballSpeed.Y;
+      let deltaX = CANVAS_WIDTH - ballPosition.X - PADDLE_WIDTH;
       ballSpeed.X = deltaX !== 0 ? deltaX * 0.35 : -ballSpeed.X;
     }
 
