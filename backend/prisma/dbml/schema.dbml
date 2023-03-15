@@ -9,7 +9,6 @@ Table User {
   avatar String
   profileId String [not null]
   provider String [not null]
-  blockedUsers String[] [not null]
   status StatusUser [not null, default: 'ONLINE']
   totpSecret TotpSecret
   role Role [not null, default: 'USER']

@@ -97,8 +97,8 @@ export class ChatService {
         // If the room wasn't in 'password protected' mode,
         // it gets it
         if (room.modes.search('p') === -1) room.modes += 'p';
-      } else // No given password means we remove the password
-      {
+      } // No given password means we remove the password
+      else {
         room.password = '';
         if (room.modes.search('p') !== -1)
           room.modes = room.modes.replace(/p/g, '');

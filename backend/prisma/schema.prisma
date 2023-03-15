@@ -101,7 +101,7 @@ model Match {
 enum MatchState {
   Scheduled
   Started
-  Finished
+  Finished // MEMO Only use this
 }
 
 // https://www.npmjs.com/package/@quixo3/prisma-session-store#Model

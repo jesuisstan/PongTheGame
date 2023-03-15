@@ -1,4 +1,4 @@
-import { Controller, Req } from '@nestjs/common';
+import { Controller, Post } from '@nestjs/common';
 import {
   WebSocketGateway,
   WebSocketServer,
@@ -21,10 +21,14 @@ export class GameGateway {
   server: Server;
 
   constructor(
-    private readonly gameService: GameService,
+    private readonly game: GameService,
     private prisma: PrismaService,
   ) {}
 
+  @Post('')
+  test() {
+    this.game.test();
+  }
   // @SubscribeMessage('matchmaking')
   // async matchmaking(socket: any, payload: any) {
   //   if (!payload || !payload.action) return;
