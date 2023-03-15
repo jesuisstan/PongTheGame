@@ -20,7 +20,7 @@ export class TotpMiddleware implements NestMiddleware<Request, Response> {
   async use(req: Request, res: Response, next: (error?: Error) => void) {
     if (req.user === undefined) throw new UnauthorizedException();
 
-    this.logger.debug(req.user);
+    // this.logger.debug(req.user);
 
     const user = await this.users.findUserById(req.user.id);
 
