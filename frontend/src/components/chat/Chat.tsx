@@ -1,6 +1,10 @@
-import { 
-  SetStateAction, useContext, useEffect, useState, Fragment, useRef
-      } from 'react';
+import {
+  useContext,
+  useEffect,
+  useState,
+  Fragment,
+  useRef
+} from 'react';
 import * as React from 'react';
 import {
   AppBar, Box, Divider, Drawer, List, Toolbar, Typography, ListItem,
@@ -19,6 +23,15 @@ import { WebSocketContext } from '../../contexts/WebsocketContext';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChatRoom from './ChatRoom';
 import PleaseLogin from '../pages/PleaseLogin';
+import { ChatRoomType } from "../../types/chat";
+
+
+/*************************************************************
+ * Chat entrance
+ 
+ * It is the entrance for chat rooms.
+ * Users can create/join chat rooms.
+**************************************************************/
 // import ChanBar from './ChanBar';
 // personal css
 import './Chat.css';
@@ -37,23 +50,28 @@ const Chat = () => {
    * States
    **************************************************************/
   // Fetching the socket from its context
-  const socket = useContext(WebSocketContext);
+  const socket = useContext(WebSocketContext)
   // Fetching the user profile from its context
   const { user, setUser } = useContext(UserContext);
   // Array including all chat rooms
-  const [chatRooms, setChatRooms] = useState<any[]>([]);
+  const [chatRooms, setChatRooms] = useState<ChatRoomType[]>([]);
   // Tells whether the user has joined the chatroom
-  const [joinedRoom, setJoinedRoom] = useState<any>();
-  // Enter in chatroom create mode
+  const joinedRoomName = user.joinedChatRoom;
+
+  // Create chat room
   const [chatRoomCreateMode, setChatRoomCreateMode] = useState<boolean>(false);
   const [newChatRoomName, setNewChatRoomName] = useState<string>('');
   const [chatRoomPassword, setChatRoomPassword] = useState<string>('');
+
+  // Join chat room
   const [isPasswordProtected, setIsPasswordProtected] =
     useState<boolean>(false);
   const [inputPassword, setInputPassword] = useState<string>('');
   const [isPasswordRight, setIsPasswordRight] = useState<boolean>(false);
-  const [joinRoomClicked, setJoinRoomClicked] = useState<string>('');
-  socket.emit('findAllChatRooms', {}, (response: SetStateAction<any[]>) => {
+  const [clickedRoomToJoin, setclickedRoomToJoin] = useState<string>('');
+
+
+  socket.emit('findAllChatRooms', {}, (response: ChatRoomType[]) => {
     setChatRooms(response);
   });
 
@@ -75,44 +93,45 @@ const Chat = () => {
    * Event listeners
    **************************************************************/
   useEffect(() => {
+    // Activate listeners and subscribe to events as the component is mounted
     socket.on('connect', () => console.log('Connected to websocket'));
     socket.on('createChatRoom', (roomName: string) => {
       console.log('Created new chat room [' + roomName + ']');
     });
-    socket.on('joinRoom', (roomName: string) => {
-      setJoinedRoom(roomName);
-      console.log(user.nickname + ' joined chatroom [' + roomName + ']');
-    });
-    // socket.on('quitRoom', (userName: string) => {
-    //   if (userName === user.nickname)
-    //   {
-    //     console.log(userName + ' quit room [' + joinedRoom.name + ']')
-    //     setJoinedRoom('')
-    //   }
-    // })
-    // Clean listeners to avoid multiple activations
+    socket.on('exception', ({ msg }) => {
+      console.log('ERROR: ' + msg)
+    })
+
+    // Clean listeners to unsubscribe all callbacks for these events
+    // before the component is unmounted
     return () => {
       socket.off('connect');
       socket.off('createChatRoom');
-      socket.off('joinRoom');
-      socket.off('quitRoom');
+      socket.off('exception')
     };
   }, []);
+
+  // When clicking on the 'new' button to create a new chat room
   const onNewClick = () => {
     setChatRoomCreateMode(true);
     handleClickOpen();
   };
+  
   const onChatRoomCreateModeSubmit = (e: any) => {
     e.preventDefault();
     if (newChatRoomName)
       socket.emit('createChatRoom', {
-        name: newChatRoomName,
-        modes: '',
-        password: chatRoomPassword,
-        userLimit: 0,
-        users: {},
-        banList: [],
-        messages: []
+        room: {
+          name: newChatRoomName,
+          modes: '',
+          password: chatRoomPassword,
+          userLimit: 0,
+          users: {},
+          messages: [],
+          bannedNicks: []
+        },
+        nick: user.nickname,
+        user2: ''
       });
     setNewChatRoomName('');
     setChatRoomCreateMode(false);
@@ -125,17 +144,14 @@ const Chat = () => {
   };
   const onClickJoinRoom = (roomName: string) => {
     // Notify that the user has clicked on a 'join' button
-    setJoinRoomClicked(roomName);
+    setclickedRoomToJoin(roomName);
     handleClickOpenP();
-    // Check if that the corresponding chat room is password protected
+    // Check if the corresponding chat room is password protected
     socket.emit(
       'isPasswordProtected',
       { roomName: roomName },
-      (response: SetStateAction<boolean>) => {
-        console.log('isprotec?? ' + response);
+      (response: boolean) => {
         setIsPasswordProtected(response);
-        console.log('isprotec2 ?? ' + response);
-        console.log('isprotec3 ?? ' + isPasswordProtected);
       }
     );
     isPasswordProtected === false ? joinRoom(roomName) : onPasswordSubmit();
@@ -144,29 +160,46 @@ const Chat = () => {
   const joinRoom = (roomName: string) => {
     socket.emit(
       'joinRoom',
-      { roomName: roomName, user: user },
-      (response: SetStateAction<any>) => {
-        setJoinedRoom(response);
+      { roomName: roomName, nickName: user.nickname },
+      (response: string) => {
+        user.joinedChatRoom = response;
       }
     );
   };
   // Check if the password is right
   const onPasswordSubmit = () => {
-    // e.preventDefault()
     socket.emit(
       'checkPassword',
-      { roomName: joinRoomClicked, password: inputPassword },
-      (response: SetStateAction<boolean>) => {
+      { roomName: clickedRoomToJoin, password: inputPassword },
+      (response: boolean) => {
         response === true
           ? setIsPasswordRight(true)
           : setIsPasswordRight(false);
       }
     );
-    isPasswordRight ? console.log('wrong password') : joinRoom(joinRoomClicked);
+    if (isPasswordRight) joinRoom(clickedRoomToJoin);
     setInputPassword('');
   };
+
+  const getMemberNbr = (room: ChatRoomType) => {
+    let memberNbr = 0;
+    for (const user in room.users)
+      if (room.users[user].isOnline === true)
+        memberNbr += 1;
+    return memberNbr;
+  }
+
+  const isAuthorizedPrivRoom = (mode: string, users: any) => {
+    if ((mode).indexOf('i') !== -1) {
+      for (const nick in users)
+        if (nick === user.nickname) return true;
+    }
+    else return true;
+    return false;
+  }
+
   const cleanRoomLoginData = () => {
-    setJoinedRoom('');
+    user.joinedChatRoom = '';
     setIsPasswordProtected(false);
     setIsPasswordRight(false);
   };
@@ -199,16 +232,20 @@ const Chat = () => {
               <List>
                 {/* Mapping chatroom array to retrieve all chatrooms with */}
                 {chatRooms.map((room, index) => (
+                  // Check if this isn't a private conversation of other users
+                  isAuthorizedPrivRoom(room.modes, room.users) &&
                   <ListItem key={index} disablePadding>
                     <ListItemIcon sx={{ color: 'white' }}>
-                      {Object.values(room.modes).indexOf('p') !== -1 ? (
+                      {
+                      // TODO => room.modes.indexOf('i') !== -1 ? to find private room
+                      room.modes.indexOf('p') !== -1 ? (
                         <LockRounded />
                       ) : (
                         <TagRounded />
                       )}
                     </ListItemIcon>
-                    {joinRoomClicked === room.name &&
-                      Object.values(room.modes).indexOf('p') !== -1 && (
+                    {clickedRoomToJoin === room.name &&
+                      room.modes.indexOf('p') !== -1 && (
                         <>
                           <Dialog
                             open={openP}
@@ -243,7 +280,11 @@ const Chat = () => {
                     <ListItem onClick={() => onClickJoinRoom(room.name)}>
                       <ListItemText
                         tabIndex={-1}
-                        primary={room.name}
+                        primary={
+                          room.name[0] === '#' ? room.name.slice(1) : room.name
+                          // Slicing the '#' character at position 0 which is
+                          // used for private room names
+                        }
                         className="limitText"
                         sx={{ color: 'white' }}
                       />
@@ -308,11 +349,9 @@ const Chat = () => {
           )}
         </Box>
         <Box component="main" className="chatRoom">
-          {joinedRoom &&
+          {joinedRoomName &&
           ((isPasswordProtected && isPasswordRight) || !isPasswordProtected) ? (
             <ChatRoom
-              user={user}
-              room={joinedRoom}
               cleanRoomLoginData={cleanRoomLoginData}
             />
           ) : (
@@ -327,11 +366,5 @@ const Chat = () => {
     </Fragment>
   );
 };
-
-// // All newly created message should have an author and the message itself
-// export type MessagePayload = {
-// 	author: string
-// 	data: string
-// }
 
 export default Chat;

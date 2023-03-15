@@ -43,7 +43,8 @@
     "test:cov": "jest --coverage --config test/jest-unit.json",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand --config test/jest-unit.json",
     "test:e2e": "node --inspect -r ts-node/register -r tsconfig-paths/register node_modules/.bin/jest --watchAll --no-cache --config ./test/jest-e2e.json",
-    "test:e2e:docker": "node --inspect -r ts-node/register -r tsconfig-paths/register node_modules/.bin/jest --no-cache --config ./test/jest-e2e.json"
+    "test:e2e:docker": "node --inspect -r ts-node/register -r tsconfig-paths/register node_modules/.bin/jest --no-cache --config ./test/jest-e2e.json",
+    "dbml:diagram": "prisma generate --generator='dbml' && dbml-renderer -i 'prisma/dbml/schema.dbml' -o - | convert-svg-to-jpeg --background='#fbfbfb' > prisma/ft_transcendence_diagram.jpeg"
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"
@@ -56,6 +57,7 @@
     "@nestjs/platform-express": "^9.0.0",
     "@nestjs/schematics": "^9.0.0",
     "@nestjs/testing": "^9.0.0",
+    "@softwaretechnik/dbml-renderer": "^1.0.26",
     "@types/cookie-parser": "^1.4.3",
     "@types/express": "^4.17.13",
     "@types/express-session": "^1.17.5",
@@ -69,6 +71,7 @@
     "@types/supertest": "^2.0.11",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "@typescript-eslint/parser": "^5.0.0",
+    "convert-svg-to-jpeg": "^0.6.4",
     "dotenv": "^16.0.3",
     "eslint": "^8.0.1",
     "eslint-config-prettier": "^8.3.0",
@@ -76,7 +79,7 @@
     "jest": "29.3.1",
     "pactum": "^3.3.2",
     "prettier": "^2.3.2",
-    "prisma": "^4.10.1",
+    "prisma": "^4.11.0",
     "prisma-dbml-generator": "^0.10.0",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.2.0",

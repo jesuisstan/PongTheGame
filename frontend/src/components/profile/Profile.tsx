@@ -1,23 +1,22 @@
-import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import CreateIcon from '@mui/icons-material/Create';
+import { useContext, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { UserContext } from '../../contexts/UserContext';
+import EditNickname from './EditNickname';
+import EditAvatar from './EditAvatar';
+import Enable2fa from './Enable2fa';
+import ButtonPong from '../UI/ButtonPong';
+import backendAPI from '../../api/axios-instance';
+import errorAlert from '../UI/errorAlert';
 import List from '@mui/joy/List';
 import ListItem from '@mui/joy/ListItem';
 import Typography from '@mui/joy/Typography';
 import Avatar from '@mui/material/Avatar';
 import Rating from '@mui/material/Rating';
-import { useContext, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import backendAPI from '../../api/axios-instance';
-import { UserContext } from '../../contexts/UserContext';
-import ButtonPong from '../UI/ButtonPong';
-import errorAlert from '../UI/errorAlert';
-import EditAvatar from './EditAvatar';
-import EditNickname from './EditNickname';
-import Enable2fa from './Enable2fa';
+import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import CreateIcon from '@mui/icons-material/Create';
+import DeleteIcon from '@mui/icons-material/Delete';
 import styles from './Profile.module.css';
-
-const URL_TOTP_TOGGLE = String(process.env.REACT_APP_URL_GET_SECRET);
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -28,11 +27,20 @@ const Profile = () => {
 
   const toggleTfa = () => {
     if (user.totpSecret?.verified) {
-      return backendAPI.delete(URL_TOTP_TOGGLE).then(
+      return backendAPI.delete('/auth/totp').then(
         (response) => setUser(response.data),
         (error) => errorAlert('Something went wrong')
       );
     } else setModal2faOpen(true);
+  };
+
+  const deleteAvatar = () => {
+    if (user.avatar) {
+      return backendAPI.delete('/avatar').then(
+        (response) => setUser(response.data),
+        (error) => errorAlert('Something went wrong')
+      );
+    }
   };
 
   return !user.nickname && user.provider ? (
@@ -44,14 +52,22 @@ const Profile = () => {
           <div className={styles.up}>
             <Avatar alt="" src={user.avatar} sx={{ width: 200, height: 200 }} />
           </div>
-          <div className={styles.bottom}>
+          <div className={styles.bottomAvatarBox}>
             <ButtonPong
-              text="Change avatar"
+              text="Change"
+              title="upload new avatar"
               endIcon={<AddAPhotoIcon />}
               onClick={() => setModalAvatarOpen(true)}
             />
-            <EditAvatar open={modalAvatarOpen} setOpen={setModalAvatarOpen} />
+            <ButtonPong
+              text="Delete"
+              title="set avatar to default"
+              endIcon={<DeleteIcon />}
+              onClick={deleteAvatar}
+              disabled={!user.avatar}
+            />
           </div>
+          <EditAvatar open={modalAvatarOpen} setOpen={setModalAvatarOpen} />
         </div>
 
         <div className={styles.box}>
@@ -75,6 +91,7 @@ const Profile = () => {
           <div className={styles.bottom}>
             <ButtonPong
               text={user.totpSecret?.verified ? 'Disable 2FA' : 'Setup 2FA'}
+              title={user.totpSecret?.verified ? 'turn off 2FA' : 'turn on 2FA'}
               endIcon={<ArrowForwardIosIcon />}
               onClick={toggleTfa}
             />
@@ -103,6 +120,7 @@ const Profile = () => {
             <div>
               <ButtonPong
                 text="Change nickname"
+                title="modify nickname"
                 endIcon={<CreateIcon />}
                 onClick={() => setModalNicknameOpen(true)}
               />
@@ -130,6 +148,7 @@ const Profile = () => {
           <div className={styles.bottom}>
             <ButtonPong
               text="Full stats"
+              title="go to match history page"
               onClick={() => navigate('/history')}
               endIcon={<ArrowForwardIosIcon />}
             />

@@ -10,10 +10,6 @@ import Typography from '@mui/joy/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
 import SaveIcon from '@mui/icons-material/Save';
 import backendAPI from '../../api/axios-instance';
-import { User } from '../../types/User';
-
-const URL_UPLOAD_AVATAR = String(process.env.REACT_APP_URL_UPLOAD_AVATAR);
-const URL_GET_USER = String(process.env.REACT_APP_URL_GET_USER);
 
 const modalDialogStyle = {
   maxWidth: 500,
@@ -51,29 +47,24 @@ const EditAvatar = ({
       setLoad(true);
       try {
         const responseUpload = await backendAPI.post(
-          URL_UPLOAD_AVATAR,
+          '/avatar/upload',
           formData,
           {
             headers: { 'Content-Type': 'multipart/form-data' }
           }
         );
-
         setUser(responseUpload.data);
       } catch (error) {
         setOpen(false);
-
         const message = (error as any)?.response?.data?.message ?? 'Something went wrong';
-
         errorAlert(message);
       }
       setLoad(false);
       setButtonText('Done ✔️');
-      console.log('new avatar uploaded');
       setTimeout(() => setOpen(false), 442);
       setTimeout(() => setButtonText('Submit'), 442);
     };
     uploadAvatar(formData);
-
     setFile(undefined);
   };
 

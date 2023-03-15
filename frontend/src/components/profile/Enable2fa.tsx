@@ -1,4 +1,9 @@
-import SaveIcon from '@mui/icons-material/Save';
+import { Dispatch, SetStateAction, useContext, useState } from 'react';
+import { UserContext } from '../../contexts/UserContext';
+import { User } from '../../types/User';
+import backendAPI from '../../api/axios-instance';
+import errorAlert from '../UI/errorAlert';
+import QRCode from 'qrcode';
 import Modal from '@mui/joy/Modal';
 import ModalClose from '@mui/joy/ModalClose';
 import ModalDialog from '@mui/joy/ModalDialog';
@@ -6,17 +11,8 @@ import Stack from '@mui/joy/Stack';
 import Typography from '@mui/joy/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
 import TextField from '@mui/material/TextField';
-import QRCode from 'qrcode';
-import { Dispatch, SetStateAction, useContext, useState } from 'react';
-import backendAPI from '../../api/axios-instance';
-import { UserContext } from '../../contexts/UserContext';
-import { User } from '../../types/User';
-import errorAlert from '../UI/errorAlert';
+import SaveIcon from '@mui/icons-material/Save';
 import styles from './Profile.module.css';
-
-const URL_TOTP_VERIFY = String(process.env.REACT_APP_URL_TOTP_VERIFY);
-const URL_GET_SECRET = String(process.env.REACT_APP_URL_GET_SECRET);
-const URL_GET_USER = String(process.env.REACT_APP_URL_GET_USER);
 
 const modalDialogStyle = {
   maxWidth: 500,
@@ -41,7 +37,7 @@ const Enable2fa = ({
   const [error, setError] = useState('');
 
   const createQRcode = () => {
-    return backendAPI.post(URL_GET_SECRET).then(
+    return backendAPI.post('/auth/totp').then(
       (response) => {
         QRCode.toDataURL(response.data).then(setQrCodeUrl);
       },
@@ -65,17 +61,21 @@ const Enable2fa = ({
     }
   };
 
-  const validateCurrentUser = async () => {
+  const verifyCurrentUser = async () => {
     try {
       const user = (
         await backendAPI.post<User>('/auth/totp/verify', {
           token: text
         })
       ).data;
+      console.log('user data after 2faVerification = ' + user)
+      console.log(user)
+      console.log('-----------')
+
       //setUser(user);
 
-      // todo lines 77-80 to set user with totpSecret field while /auth/totp/verify doesn't returnes this field
-      backendAPI.get(URL_GET_USER).then((response) => {
+      // todo lines 82-85 to set user with totpSecret field while /auth/totp/verify doesn't returnes this field
+      backendAPI.get('/auth/getuser').then((response) => {
         setUser(response.data);
       });
     } catch (e) {
@@ -83,10 +83,10 @@ const Enable2fa = ({
     }
   };
 
-  const verifyCode = async () => {
-    return backendAPI.post(URL_TOTP_VERIFY, { token: text }).then(
+  const submitCode = async () => {
+    return backendAPI.post('/auth/totp/activate', { token: text }).then(
       (response) => {
-        validateCurrentUser();
+        verifyCurrentUser();
         setButtonText('Done ✔️');
       },
       (error) => {
@@ -103,7 +103,7 @@ const Enable2fa = ({
   const handleSubmit = async (event: any) => {
     event.preventDefault();
     setLoadSubmit(true);
-    await verifyCode();
+    await submitCode();
     setLoadSubmit(false);
     setButtonText(
       user.totpSecret?.verified ? 'Done ✔️' : 'Failed ❌'
@@ -146,6 +146,7 @@ const Enable2fa = ({
                   <a
                     href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2&hl=fr&gl=US"
                     target="_blank"
+                    rel='noreferrer'
                   >
                     <img
                       className={styles.logo}
@@ -157,6 +158,7 @@ const Enable2fa = ({
                   <a
                     href="https://apps.apple.com/fr/app/google-authenticator/id388497605"
                     target="_blank"
+                    rel='noreferrer'
                   >
                     <img
                       className={styles.logo}

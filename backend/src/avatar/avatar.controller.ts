@@ -18,6 +18,7 @@ import { IsAuthenticatedGuard } from 'src/auth/auth.guard';
 import { SessionUser } from 'src/decorator/session-user.decorator';
 import { UserService } from 'src/user/user.service';
 
+@UseGuards(IsAuthenticatedGuard)
 @Controller('/avatar')
 export class AvatarController {
   private readonly logger = new Logger(AvatarController.name);
@@ -25,7 +26,6 @@ export class AvatarController {
   constructor(private readonly users: UserService) {}
 
   @Post('/upload')
-  @UseGuards(IsAuthenticatedGuard)
   @UseInterceptors(
     FileInterceptor('file', {
       fileFilter(req: Request, file, callback) {

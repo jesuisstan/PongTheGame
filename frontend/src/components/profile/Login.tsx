@@ -1,11 +1,7 @@
 import styles from './Login.module.css';
 
-const URL_AUTH_42 =
-  String(process.env.REACT_APP_URL_BACKEND) +
-  String(process.env.REACT_APP_URL_AUTH_42);
-const URL_AUTH_GITHUB =
-  String(process.env.REACT_APP_URL_BACKEND) +
-  String(process.env.REACT_APP_URL_AUTH_GITHUB);
+const URL_AUTH_42 = `${process.env.REACT_APP_URL_BACKEND}/auth/42`
+const URL_AUTH_GITHUB =`${process.env.REACT_APP_URL_BACKEND}/auth/github`
 
 const Login = () => {
   const ecole42Auth = () => {
