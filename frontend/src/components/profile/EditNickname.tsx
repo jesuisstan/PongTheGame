@@ -13,8 +13,6 @@ import Typography from '@mui/joy/Typography';
 import errorAlert from '../UI/errorAlert';
 import backendAPI from '../../api/axios-instance';
 
-const URL_SET_NICKNAME = String(process.env.REACT_APP_URL_SET_NICKNAME);
-
 const modalDialogStyle = {
   maxWidth: 500,
   border: '0px solid #000',
@@ -58,7 +56,7 @@ const EditNickname = ({
   const setNickname = (value: string) => {
     return backendAPI
       .patch(
-        URL_SET_NICKNAME,
+        '/user/setnickname',
         { nickname: value }
       )
       .then(

@@ -80,15 +80,18 @@ const Chat = () => {
   // Tells whether the user has joined the chatroom
   const joinedRoomName = user.joinedChatRoom;
 
-  // Enter in chatroom create mode
+  // Create chat room
   const [chatRoomCreateMode, setChatRoomCreateMode] = useState<boolean>(false);
   const [newChatRoomName, setNewChatRoomName] = useState<string>('');
   const [chatRoomPassword, setChatRoomPassword] = useState<string>('');
+
+  // Join chat room
   const [isPasswordProtected, setIsPasswordProtected] =
     useState<boolean>(false);
   const [inputPassword, setInputPassword] = useState<string>('');
   const [isPasswordRight, setIsPasswordRight] = useState<boolean>(false);
   const [clickedRoomToJoin, setclickedRoomToJoin] = useState<string>('');
+
 
   socket.emit('findAllChatRooms', {}, (response: ChatRoomType[]) => {
     setChatRooms(response);
@@ -150,7 +153,7 @@ const Chat = () => {
           bannedNicks: []
         },
         nick: user.nickname,
-        mode: ''
+        user2: ''
       });
     setNewChatRoomName('');
     setChatRoomCreateMode(false);
@@ -208,6 +211,15 @@ const Chat = () => {
     return memberNbr;
   }
 
+  const isAuthorizedPrivRoom = (mode: string, users: any) => {
+    if ((mode).indexOf('i') !== -1) {
+      for (const nick in users)
+        if (nick === user.nickname) return true;
+    }
+    else return true;
+    return false;
+  }
+
   const cleanRoomLoginData = () => {
     user.joinedChatRoom = '';
     setIsPasswordProtected(false);
@@ -242,16 +254,20 @@ const Chat = () => {
               <List>
                 {/* Mapping chatroom array to retrieve all chatrooms with */}
                 {chatRooms.map((room, index) => (
+                  // Check if this isn't a private conversation of other users
+                  isAuthorizedPrivRoom(room.modes, room.users) &&
                   <ListItem key={index} disablePadding>
                     <ListItemIcon sx={{ color: 'white' }}>
-                      {Object.values(room.modes).indexOf('p') !== -1 ? (
+                      {
+                      // TODO => room.modes.indexOf('i') !== -1 ? to find private room
+                      room.modes.indexOf('p') !== -1 ? (
                         <LockRounded />
                       ) : (
                         <TagRounded />
                       )}
                     </ListItemIcon>
                     {clickedRoomToJoin === room.name &&
-                      Object.values(room.modes).indexOf('p') !== -1 && (
+                      room.modes.indexOf('p') !== -1 && (
                         <>
                           <Dialog
                             open={openP}
@@ -286,7 +302,11 @@ const Chat = () => {
                     <ListItem onClick={() => onClickJoinRoom(room.name)}>
                       <ListItemText
                         tabIndex={-1}
-                        primary={room.name}
+                        primary={
+                          room.name[0] === '#' ? room.name.slice(1) : room.name
+                          // Slicing the '#' character at position 0 which is
+                          // used for private room names
+                        }
                         className="limitText"
                         sx={{ color: 'white' }}
                       />

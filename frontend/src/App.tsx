@@ -10,13 +10,12 @@ import Profile from './components/profile/Profile';
 import Verify2fa from './components/profile/Verify2fa';
 import Chat from './components/chat/Chat';
 import Game from './components/game/Game';
+import PlayerPage from './components/pages/PlayerPage';
 import History from './components/pages/History';
 import NotFound from './components/pages/NotFound';
 import PleaseLogin from './components/pages/PleaseLogin';
 import backendAPI from './api/axios-instance';
 import './App.css';
-
-const URL_GET_USER = String(process.env.REACT_APP_URL_GET_USER);
 
 function App() {
   // Fetching the socket from its context
@@ -32,11 +31,11 @@ function App() {
     totpSecret: null,
     username: '',
     blockedUsers: [],
-    joinedChatRoom: '',
+    joinedChatRoom: ''
   });
 
   useEffect(() => {
-    backendAPI.get(URL_GET_USER).then(
+    backendAPI.get('/auth/getuser').then(
       (response) => {
         setUser(response.data);
       },
@@ -55,30 +54,36 @@ function App() {
   return (
     <WebSocketContext.Provider value={socket}>
       <BrowserRouter>
-          <div className="App">
-            <UserContext.Provider value={{ user, setUser }}>
-              <Verify2fa open={open} setOpen={setOpen} />
-              <Routes>
-                <Route path="/" element={<MainLayout />}>
-                  <Route index={true} element={<Home />} />
+        <div className="App">
+          <UserContext.Provider value={{ user, setUser }}>
+            <Verify2fa open={open} setOpen={setOpen} />
+            <Routes>
+              <Route path="/" element={<MainLayout />}>
+                <Route index={true} element={<Home />} />
+                <Route
+                  path="login"
+                  element={
+                    !user.provider ? <Login /> : <Navigate to="/profile" />
+                  }
+                />
+                <Route path="chat" element={<Chat />} />
+                <Route path="game" element={<Game />} />
+                <Route path="history" element={<History />} />
+                <Route
+                  path="profile"
+                  element={user.provider ? <Profile /> : <PleaseLogin />}
+                />
+                <Route path="players">
                   <Route
-                    path="login"
-                    element={
-                      !user.provider ? <Login /> : <Navigate to="/profile" />
-                    }
+                    path=":playerId"
+                    element={user.provider ? <PlayerPage /> : <PleaseLogin />}
                   />
-                  <Route path="chat" element={<Chat />} />
-                  <Route path="game" element={<Game />} />
-                  <Route path="history" element={<History />} />
-                  <Route
-                    path="profile"
-                    element={user.provider ? <Profile /> : <PleaseLogin />}
-                  />
-                  <Route path="*" element={<NotFound />} />*
                 </Route>
-              </Routes>
-            </UserContext.Provider>
-          </div>
+                <Route path="*" element={<NotFound />} />*
+              </Route>
+            </Routes>
+          </UserContext.Provider>
+        </div>
       </BrowserRouter>
     </WebSocketContext.Provider>
   );

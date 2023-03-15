@@ -8,10 +8,9 @@ import styles from './Pages.module.css';
 
 const PleaseLogin = () => {
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setLoading(true);
     setTimeout(() => {
       setLoading(false);
     }, 2200);

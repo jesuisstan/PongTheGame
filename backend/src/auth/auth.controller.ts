@@ -1,18 +1,24 @@
 import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { ApiBadRequestResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 import { Request, Response } from 'express';
 import { IsAuthenticatedGuard } from 'src/auth/auth.guard';
+import { Config } from 'src/config.interface';
 import { SessionUser } from 'src/decorator/session-user.decorator';
 import { UserService } from 'src/user/user.service';
-
-// TODO use config
-const CLIENT_URL = 'http://localhost:3000';
 
 @Controller('/auth')
 @ApiTags('Authentication')
 export class AuthController {
-  constructor(private readonly users: UserService) {}
+  private readonly frontendUrl: string;
+
+  constructor(
+    private readonly users: UserService,
+    config: ConfigService<Config>,
+  ) {
+    this.frontendUrl = config.getOrThrow('FRONTEND_URL');
+  }
 
   @Get('logout')
   @ApiOperation({
@@ -28,7 +34,9 @@ export class AuthController {
         return resolve();
       });
     });
-    return res.clearCookie('access_token').redirect(`${CLIENT_URL}/login`);
+    return res
+      .clearCookie('access_token')
+      .redirect(`${this.frontendUrl}/login`);
   }
 
   @Get('getuser')

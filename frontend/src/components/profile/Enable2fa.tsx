@@ -14,11 +14,6 @@ import TextField from '@mui/material/TextField';
 import SaveIcon from '@mui/icons-material/Save';
 import styles from './Profile.module.css';
 
-const URL_TOTP_ACTIVATE = String(process.env.REACT_APP_URL_TOTP_ACTIVATE);
-const URL_TOTP_VERIFY = String(process.env.REACT_APP_URL_TOTP_VERIFY);
-const URL_GET_SECRET = String(process.env.REACT_APP_URL_GET_SECRET);
-const URL_GET_USER = String(process.env.REACT_APP_URL_GET_USER);
-
 const modalDialogStyle = {
   maxWidth: 500,
   border: '0px solid #000',
@@ -42,7 +37,7 @@ const Enable2fa = ({
   const [error, setError] = useState('');
 
   const createQRcode = () => {
-    return backendAPI.post(URL_GET_SECRET).then(
+    return backendAPI.post('/auth/totp').then(
       (response) => {
         QRCode.toDataURL(response.data).then(setQrCodeUrl);
       },
@@ -69,7 +64,7 @@ const Enable2fa = ({
   const verifyCurrentUser = async () => {
     try {
       const user = (
-        await backendAPI.post<User>(URL_TOTP_VERIFY, {
+        await backendAPI.post<User>('/auth/totp/verify', {
           token: text
         })
       ).data;
@@ -80,7 +75,7 @@ const Enable2fa = ({
       //setUser(user);
 
       // todo lines 82-85 to set user with totpSecret field while /auth/totp/verify doesn't returnes this field
-      backendAPI.get(URL_GET_USER).then((response) => {
+      backendAPI.get('/auth/getuser').then((response) => {
         setUser(response.data);
       });
     } catch (e) {
@@ -89,7 +84,7 @@ const Enable2fa = ({
   };
 
   const submitCode = async () => {
-    return backendAPI.post(URL_TOTP_ACTIVATE, { token: text }).then(
+    return backendAPI.post('/auth/totp/activate', { token: text }).then(
       (response) => {
         verifyCurrentUser();
         setButtonText('Done ✔️');
@@ -151,6 +146,7 @@ const Enable2fa = ({
                   <a
                     href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2&hl=fr&gl=US"
                     target="_blank"
+                    rel='noreferrer'
                   >
                     <img
                       className={styles.logo}
@@ -162,6 +158,7 @@ const Enable2fa = ({
                   <a
                     href="https://apps.apple.com/fr/app/google-authenticator/id388497605"
                     target="_blank"
+                    rel='noreferrer'
                   >
                     <img
                       className={styles.logo}

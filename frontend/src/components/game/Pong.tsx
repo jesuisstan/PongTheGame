@@ -12,14 +12,15 @@ const DEFAULT_BALL_SPEED_X = 10;
 const DEFAULT_BALL_SPEED_Y = 10;
 const CANVAS_HEIGHT = 600;
 const CANVAS_WIDTH = 800;
-const FPS = 30;
+const FPS = 35;
 const BALL_RADIUS = 10;
 const PADDLE_WIDTH = 20;
 const PADDLE_HEIGHT = CANVAS_HEIGHT / 6;
 const PADDLE_COLOR = 'rgb(253, 80, 135)';
+const DEFAULT_PADDLE_POSITION = CANVAS_HEIGHT / 2 - PADDLE_HEIGHT / 2;
 
-let paddle1Y = CANVAS_HEIGHT / 2 - PADDLE_HEIGHT / 2;
-let paddle2Y = CANVAS_HEIGHT / 2 - PADDLE_HEIGHT / 2;
+let paddle1Y = DEFAULT_PADDLE_POSITION;
+let paddle2Y = DEFAULT_PADDLE_POSITION;
 let ballPosition = {
   X: CANVAS_WIDTH / 2,
   Y: CANVAS_HEIGHT / 2
@@ -28,7 +29,11 @@ let ballSpeed = {
   X: DEFAULT_BALL_SPEED_X,
   Y: DEFAULT_BALL_SPEED_Y
 };
-let gotWinner = true;
+
+const setDefaultBallSpeed = () => {
+  ballSpeed.X = DEFAULT_BALL_SPEED_X;
+  ballSpeed.Y = DEFAULT_BALL_SPEED_Y;
+};
 
 const Pong: React.FC = () => {
   const socket = useContext(WebSocketContext);
@@ -36,9 +41,22 @@ const Pong: React.FC = () => {
   const { user } = useContext(UserContext);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [open, setOpen] = useState(false);
+  const [gameOn, setGameOn] = useState(false);
   const [winner, setWinner] = useState('');
   const [winScore, setWinScore] = useState(DEFAULT_WIN_SCORE);
   const [score, setScore] = useState({ player1: 0, player2: 0 });
+  const [gamePaused, setGamePaused] = useState(false);
+  const [trainMode, setTrainMode] = useState(false);
+
+  const setDefault = () => {
+    setWinner('');
+    setScore({ player1: 0, player2: 0 });
+    setTrainMode(false);
+    setGamePaused(false);
+    setDefaultBallSpeed();
+    paddle1Y = DEFAULT_PADDLE_POSITION;
+    paddle2Y = DEFAULT_PADDLE_POSITION;
+  };
 
   useEffect(() => {
     socket.on('connect', () => {});
@@ -77,6 +95,13 @@ const Pong: React.FC = () => {
         );
       }
     }); // Net
+    util.makeCircleShape(
+      canvasContext,
+      ballPosition.X,
+      ballPosition.Y,
+      BALL_RADIUS,
+      'whitesmoke'
+    ); // Ball
     util.makeRectangleShape(
       canvasContext,
       0,
@@ -93,23 +118,20 @@ const Pong: React.FC = () => {
       PADDLE_HEIGHT,
       PADDLE_COLOR
     ); // Right Paddle
-    util.makeCircleShape(
-      canvasContext,
-      ballPosition.X,
-      ballPosition.Y,
-      BALL_RADIUS,
-      'whitesmoke'
-    ); // Ball
   };
 
-  const resetBall = () => {
+  const checkWinner = () => {
     if (score.player1 >= winScore || score.player2 >= winScore) {
-      gotWinner = true;
+      setGameOn(false);
+
       score.player1 > score.player2
         ? setWinner(user.nickname)
         : setWinner('Opponent'); // todo change 'opponent' name
       setOpen(true);
     }
+  };
+
+  const resetBall = () => {
     ballSpeed.X =
       ballSpeed.X > 0 ? -DEFAULT_BALL_SPEED_X : DEFAULT_BALL_SPEED_X;
     ballSpeed.Y =
@@ -119,45 +141,45 @@ const Pong: React.FC = () => {
   };
 
   const computerAI = () => {
-    let paddle2YCenter = paddle2Y + PADDLE_HEIGHT / 2;
+    if (trainMode) {
+      let paddle2YCenter = paddle2Y + PADDLE_HEIGHT / 2;
 
-    if (paddle2YCenter < ballPosition.Y - 40) {
-      paddle2Y += 14;
-    } else if (paddle2YCenter < ballPosition.Y + 40 && paddle2Y > 0) {
-      paddle2Y -= 14;
-    } else if (paddle2Y <= 0) {
-      paddle2Y = 0;
-    } else {
-      paddle2Y = paddle2Y;
+      if (paddle2YCenter < ballPosition.Y - 40) {
+        paddle2Y += 14;
+      } else if (paddle2YCenter < ballPosition.Y + 40 && paddle2Y > 0) {
+        paddle2Y -= 14;
+      } else if (paddle2Y <= 0) {
+        paddle2Y = 0;
+      } else {
+        paddle2Y = paddle2Y;
+      }
     }
   };
 
   const increaseScorePlayer2 = () => {
     setScore({ ...score, player2: (score.player2 += 1) });
+    checkWinner();
     resetBall();
   };
 
   const increaseScorePlayer1 = () => {
     setScore({ ...score, player1: (score.player1 += 1) });
+    checkWinner();
     resetBall();
   };
 
-  const setDefaultBallSpeed = () => {
-    ballSpeed.X = DEFAULT_BALL_SPEED_X;
-    ballSpeed.Y = DEFAULT_BALL_SPEED_Y;
-  };
-
   const play = (canvasContext: CanvasRenderingContext2D) => {
-    if (gotWinner) {
+    if (gamePaused) {
+      util.printPause(canvasContext, CANVAS_WIDTH, CANVAS_HEIGHT);
+      return;
+    }
+    if (!gameOn) {
       setDefaultBallSpeed();
+      paddle2Y = DEFAULT_PADDLE_POSITION;
       return;
     } else {
       ballPosition.X += ballSpeed.X;
       ballPosition.Y += ballSpeed.Y;
-    }
-
-    if (score.player1 >= winScore || score.player2 >= winScore) {
-      resetBall();
     }
 
     computerAI();
@@ -170,32 +192,6 @@ const Pong: React.FC = () => {
     if (ballPosition.X <= -BALL_RADIUS * 2) {
       increaseScorePlayer2();
       util.printGoal(canvasContext, CANVAS_WIDTH, CANVAS_HEIGHT);
-    }
-
-    // Bounce the ball from the right paddle --->
-    if (
-      ballPosition.X === CANVAS_WIDTH - PADDLE_WIDTH - BALL_RADIUS &&
-      ballPosition.Y >= paddle2Y - BALL_RADIUS &&
-      ballPosition.Y <= paddle2Y + PADDLE_HEIGHT + BALL_RADIUS
-    ) {
-      ballSpeed.X = -ballSpeed.X;
-      let deltaY = ballPosition.Y - (paddle2Y + PADDLE_HEIGHT / 2);
-      ballSpeed.Y = util.roundToTen(deltaY * 0.35);
-    }
-    if (
-      ballPosition.X >= CANVAS_WIDTH - PADDLE_WIDTH &&
-      (ballPosition.Y === paddle2Y - BALL_RADIUS ||
-        ballPosition.Y === paddle2Y + PADDLE_HEIGHT + BALL_RADIUS)
-    ) {
-      console.log('right paddle RIB!');
-
-      ballSpeed.Y = -ballSpeed.Y;
-      let deltaX = CANVAS_WIDTH - ballPosition.X - PADDLE_WIDTH;
-      console.log('Right deltaX = ' + deltaX);
-
-      ballSpeed.X = deltaX !== 0 ? deltaX * 0.35 : -ballSpeed.X;
-
-      console.log('ballSpeed.X = ' + ballSpeed.X);
     }
 
     // Bounce the ball from the left paddle --->
@@ -213,15 +209,29 @@ const Pong: React.FC = () => {
       (ballPosition.Y === paddle1Y - BALL_RADIUS ||
         ballPosition.Y === paddle1Y + PADDLE_HEIGHT + BALL_RADIUS)
     ) {
-      console.log('RIB!');
-
       ballSpeed.Y = -ballSpeed.Y;
       let deltaX = ballPosition.X - PADDLE_WIDTH;
-      console.log('deltaX = ' + deltaX);
-
       ballSpeed.X = deltaX !== 0 ? deltaX * 0.35 : -ballSpeed.X;
+    }
 
-      console.log('ballSpeed.X = ' + ballSpeed.X);
+    // Bounce the ball from the right paddle --->
+    if (
+      ballPosition.X === CANVAS_WIDTH - PADDLE_WIDTH - BALL_RADIUS &&
+      ballPosition.Y >= paddle2Y - BALL_RADIUS &&
+      ballPosition.Y <= paddle2Y + PADDLE_HEIGHT + BALL_RADIUS
+    ) {
+      ballSpeed.X = -ballSpeed.X;
+      let deltaY = ballPosition.Y - (paddle2Y + PADDLE_HEIGHT / 2);
+      ballSpeed.Y = util.roundToTen(deltaY * 0.35);
+    }
+    if (
+      ballPosition.X >= CANVAS_WIDTH - PADDLE_WIDTH &&
+      (ballPosition.Y === paddle2Y - BALL_RADIUS ||
+        ballPosition.Y === paddle2Y + PADDLE_HEIGHT + BALL_RADIUS)
+    ) {
+      ballSpeed.Y = -ballSpeed.Y;
+      let deltaX = CANVAS_WIDTH - ballPosition.X - PADDLE_WIDTH;
+      ballSpeed.X = deltaX !== 0 ? deltaX * 0.35 : -ballSpeed.X;
     }
 
     // Bounce the ball from bottom & top --->
@@ -229,22 +239,15 @@ const Pong: React.FC = () => {
       ballPosition.Y >= CANVAS_HEIGHT - BALL_RADIUS ||
       ballPosition.Y <= BALL_RADIUS
     ) {
-      //console.log('bottom = ' + ballPosition.Y);
       ballSpeed.Y = -ballSpeed.Y;
     }
   };
 
-  const handleMouseClick = (evt: MouseEvent) => {
-    if (gotWinner) {
-      setScore({ player1: 0, player2: 0 });
-      gotWinner = false;
-    }
-  };
-
   const trainWithComputer = async () => {
-    if (gotWinner) {
+    setTrainMode(true);
+    if (!gameOn) {
       setScore({ player1: 0, player2: 0 });
-      gotWinner = false;
+      setGameOn(true);
     }
   };
 
@@ -256,35 +259,49 @@ const Pong: React.FC = () => {
       return;
     }
 
-    canvas!.addEventListener('mousedown', handleMouseClick); // restarts the game when "MOUSE-CLICK"
-
-    window.addEventListener('mousemove', (evt) => {
+    const paddleMoveListener = (evt: MouseEvent) => {
       let mousePos = util.calculateMousePosition(canvas!, evt);
 
-      if (mousePos.y < PADDLE_HEIGHT / 2) {
-        paddle1Y = 0;
-      } else if (mousePos.y > canvas!.height - PADDLE_HEIGHT / 2) {
-        paddle1Y = canvas!.height - PADDLE_HEIGHT;
-      } else {
-        paddle1Y = mousePos.y - PADDLE_HEIGHT / 2;
+      if (gameOn) {
+        if (mousePos.y < PADDLE_HEIGHT / 2) {
+          paddle1Y = 0;
+        } else if (mousePos.y > canvas!.height - PADDLE_HEIGHT / 2) {
+          paddle1Y = canvas!.height - PADDLE_HEIGHT;
+        } else {
+          paddle1Y = mousePos.y - PADDLE_HEIGHT / 2;
+        }
       }
-    });
+    };
+
+    window.addEventListener('mousemove', paddleMoveListener);
 
     const intervalId = setInterval(() => {
       draw(canvasContext);
       play(canvasContext);
     }, 1000 / FPS);
 
-    return () => clearInterval(intervalId);
-  }, [score.player1, score.player2]);
+    return () => {
+      window.removeEventListener('mousemove', paddleMoveListener);
+      clearInterval(intervalId);
+    };
+  }, [score.player1, score.player2, gamePaused, gameOn]);
 
   return (
     <div className={styles.canvasBlock}>
       <div className={styles.buttonsBlock}>
-        <ButtonPong text="train with AI" onClick={trainWithComputer} />
         <ButtonPong
-          text="Find opponent"
-          onClick={() => console.log('find opp clicked')}
+          text="train with AI"
+          title="practice with computer"
+          disabled={gameOn ? true : false}
+          onClick={trainWithComputer}
+        />
+        <ButtonPong
+          text={gamePaused ? 'unpause' : 'pause'}
+          title={gamePaused ? 'continue the game' : 'set the game on pause'}
+          disabled={gameOn ? false : true}
+          onClick={() => {
+            setGamePaused(!gamePaused);
+          }}
         />
         <ButtonPong
           text="Smth else"
@@ -295,7 +312,7 @@ const Pong: React.FC = () => {
         winScore={winScore}
         setWinScore={setWinScore}
         score={score}
-        gotWinner={gotWinner}
+        gameOn={gameOn}
       ></ScoreBar>
       <canvas
         className={styles.canvas}
@@ -308,6 +325,7 @@ const Pong: React.FC = () => {
         setOpen={setOpen}
         winner={winner}
         score={score}
+        setDefault={setDefault}
       />
     </div>
   );

@@ -11,8 +11,6 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import SaveIcon from '@mui/icons-material/Save';
 import backendAPI from '../../api/axios-instance';
 
-const URL_UPLOAD_AVATAR = String(process.env.REACT_APP_URL_UPLOAD_AVATAR);
-
 const modalDialogStyle = {
   maxWidth: 500,
   border: '0px solid #000',
@@ -49,7 +47,7 @@ const EditAvatar = ({
       setLoad(true);
       try {
         const responseUpload = await backendAPI.post(
-          URL_UPLOAD_AVATAR,
+          '/avatar/upload',
           formData,
           {
             headers: { 'Content-Type': 'multipart/form-data' }

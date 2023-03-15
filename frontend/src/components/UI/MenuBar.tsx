@@ -1,5 +1,5 @@
 import { useState, useContext } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavigateOptions, NavLink, useNavigate } from 'react-router-dom';
 import { UserContext } from '../../contexts/UserContext';
 import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
@@ -10,9 +10,7 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import styles from './UI.module.css';
 
-const URL_LOGOUT =
-  String(process.env.REACT_APP_URL_BACKEND) +
-  String(process.env.REACT_APP_URL_LOGOUT);
+const URL_LOGOUT = `${process.env.REACT_APP_URL_BACKEND}/auth/logout`;
 
 const MenuBar = () => {
   const navigate = useNavigate();
@@ -23,7 +21,13 @@ const MenuBar = () => {
     setAnchorElUser(event.currentTarget);
   };
 
-  const handleCloseUserMenu = () => {
+  const handleCloseUserMenu = (
+    navigateTo?: string,
+    options?: NavigateOptions
+  ) => {
+    if (navigateTo !== undefined) {
+      navigate(navigateTo, options);
+    }
     setAnchorElUser(null);
   };
 
@@ -31,7 +35,7 @@ const MenuBar = () => {
     if (user.provider) {
       window.location.href = URL_LOGOUT;
     } else {
-      navigate('/login');
+      handleCloseUserMenu('/login');
     }
   };
 
@@ -61,24 +65,22 @@ const MenuBar = () => {
                 horizontal: 'left'
               }}
               open={Boolean(anchorElUser)}
-              onClose={handleCloseUserMenu}
+              onClose={() => handleCloseUserMenu()}
             >
               <MenuItem
                 disabled={user.provider ? false : true}
-                onClick={handleCloseUserMenu}
+                onClick={() => handleCloseUserMenu('/profile')}
               >
-                <div onClick={(event) => navigate('/profile')}>Profile</div>
+                Profile
               </MenuItem>
               <MenuItem
                 disabled={user.provider ? false : true}
-                onClick={handleCloseUserMenu}
+                onClick={() => handleCloseUserMenu('history')}
               >
-                <div onClick={(event) => navigate('/history')}>History</div>
+                History
               </MenuItem>
-              <MenuItem onClick={handleCloseUserMenu}>
-                <div onClick={authenticate}>
-                  {user.provider ? 'Logout' : 'Login'}
-                </div>
+              <MenuItem onClick={() => authenticate()}>
+                {user.provider ? 'Logout' : 'Login'}
               </MenuItem>
             </Menu>
           </Box>

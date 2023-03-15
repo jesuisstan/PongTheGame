@@ -1,48 +1,79 @@
 services:
 
-  # proxy:
-  #   depends_on:
-  #     - client
-  #     - api
-  #   container_name: nginx
-  #   image: nginx:1.23.3
-  #   networks:
-  #     - transcendence
-  #   ports:
-  #     - 443:443
-  #   restart: unless-stopped
+# ---------------------------------------------------------------------------- #
 
   frontend:
-    container_name: ${FRONTEND_NAME}
-    image: ${NODE_VERSION}
+    container_name: frontend
+    image: node:18.13.0-alpine3.16
     stdin_open: true
     tty: true
 
-    working_dir: /app-${FRONTEND_NAME}
-    # Install project dependencies, then run front
+    working_dir: /frontend
     command: >
             sh -cx "npm install
             && npm run start"
-    # Ports should always be strings
     ports:
       - "${FRONTEND_PORT}:${FRONTEND_PORT}"
-    env_file:
-      - .env
+    environment:
+      REACT_APP_URL_BACKEND: ${BACKEND_URL}
+      REACT_APP_MAX_CHATROOM_NBR: ${REACT_APP_MAX_CHATROOM_NBR}
     networks:
       - transcendence
     volumes:
-      - ./${FRONTEND_NAME}:/app-${FRONTEND_NAME}
+      - ./frontend:/frontend
     restart: unless-stopped
+
+# ---------------------------------------------------------------------------- #
+
+  backend:
+    depends_on:
+      database:
+        condition: service_healthy
+    container_name: backend
+    image: node:18.13.0-alpine3.16
+    working_dir: /backend
+    command: sh -cx 'apk add --no-cache curl && yarn install && yarn prisma db push && yarn run test && yarn prisma db seed && yarn run start:debug'
+    # && yarn run test:e2e:docker
+    ports:
+      - "${BACKEND_PORT}:${BACKEND_PORT}"
+      - 5555:5555 # TODO remove is for prisma studio
+    env_file:
+      - .env
+    environment:
+      BACKEND_PORT: ${BACKEND_PORT}
+      FRONTEND_URL: ${FRONTEND_URL}
+      SESSION_SECRET: ${SESSION_SECRET}
+      JWT_SECRET: ${JWT_SECRET}
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database:5432/pong?schema=public
+      INTRA42_CLIENT_ID: ${INTRA42_CLIENT_ID}
+      INTRA42_CLIENT_SECRET: ${INTRA42_CLIENT_SECRET}
+      INTRA42_CALLBACK_URL: ${INTRA42_CALLBACK_URL}
+      GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID}
+      GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
+      GITHUB_CALLBACK_URL: ${GITHUB_CALLBACK_URL}
+    networks:
+      - transcendence
+    volumes:
+      - ./backend:/backend
+      - backend_node_modules:/backend/node_modules/
+    restart: unless-stopped
+    healthcheck:
+      test: curl -fsSL http://localhost:${BACKEND_PORT}/healthcheck
+      interval: 10s
+      timeout: 30s
+      retries: 30
+      start_period: 2s
+
+# ---------------------------------------------------------------------------- #
 
   database:
     container_name: postgres
     image: postgres:15.1-alpine
     ports:
-      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
+      - "5432"
     environment:
-      POSTGRES_PASSWORD: $POSTGRES_PASSWORD
       POSTGRES_USER: $POSTGRES_USER
-      POSTGRES_PORT: $POSTGRES_PORT
+      POSTGRES_PASSWORD: $POSTGRES_PASSWORD
     volumes:
       - db:/var/lib/postgresql/data
     networks:
@@ -55,52 +86,7 @@ services:
       retries: 25
       start_period: 2s
 
-  backend:
-    depends_on:
-      database:
-        condition: service_healthy
-    container_name: ${BACKEND_NAME}
-    image: ${NODE_VERSION}
-    working_dir: /app-${BACKEND_NAME}
-    # install project dependencies,
-    # then run in dev mode
-    command: sh -cx 'apk add --no-cache curl && yarn install && yarn prisma db push && yarn run test && yarn prisma db seed && yarn run start:debug'
-    # && yarn run test:e2e:docker
-    ports:
-      - "${BACKEND_PORT}:${BACKEND_PORT}"
-      - 5555:5555 # TODO remove is for prisma studio
-    env_file:
-      - .env
-    environment:
-      BACKEND_PORT: ${BACKEND_PORT}
-      FRONTEND_PORT: ${BACKEND_PORT}
-      SESSION_SECRET: ${SESSION_SECRET}
-      JWT_SECRET: ${JWT_SECRET}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_HOST: database
-      POSTGRES_PORT: ${POSTGRES_PORT}
-      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST:-database}:${POSTGRES_PORT}/pong?schema=public
-      INTRA42_CLIENT_ID: ${INTRA42_CLIENT_ID}
-      INTRA42_CLIENT_SECRET: ${INTRA42_CLIENT_SECRET}
-      INTRA42_CALLBACK_URL: ${INTRA42_CALLBACK_URL}
-      GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID}
-      GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
-      GITHUB_CALLBACK_URL: ${GITHUB_CALLBACK_URL}
-    networks:
-      - transcendence
-    volumes:
-      - ./${BACKEND_NAME}:/app-${BACKEND_NAME}
-      - backend_node_modules:/app-${BACKEND_NAME}/node_modules/
-    # stdin_open: true
-    # tty: true
-    restart: unless-stopped
-    healthcheck:
-      test: curl -fsSL http://localhost:${BACKEND_PORT}/healthcheck
-      interval: 10s
-      timeout: 30s
-      retries: 30
-      start_period: 2s
+# ---------------------------------------------------------------------------- #
 
   controller:
     container_name: health_controller
@@ -114,9 +100,13 @@ services:
       database:
         condition: service_healthy
 
+# ---------------------------------------------------------------------------- #
+
 volumes:
   db: {}
   backend_node_modules: {}
+
+# ---------------------------------------------------------------------------- #
 
 networks:
   transcendence:
