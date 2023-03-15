@@ -10,6 +10,7 @@ import Profile from './components/profile/Profile';
 import Verify2fa from './components/profile/Verify2fa';
 import Chat from './components/chat/Chat';
 import Game from './components/game/Game';
+import PlayerPage from './components/pages/PlayerPage';
 import History from './components/pages/History';
 import NotFound from './components/pages/NotFound';
 import PleaseLogin from './components/pages/PleaseLogin';
@@ -30,7 +31,7 @@ function App() {
     totpSecret: null,
     username: '',
     blockedUsers: [],
-    joinedChatRoom: '',
+    joinedChatRoom: ''
   });
 
   useEffect(() => {
@@ -72,6 +73,12 @@ function App() {
                   path="profile"
                   element={user.provider ? <Profile /> : <PleaseLogin />}
                 />
+                <Route path="players">
+                  <Route
+                    path=":playerId"
+                    element={user.provider ? <PlayerPage /> : <PleaseLogin />}
+                  />
+                </Route>
                 <Route path="*" element={<NotFound />} />*
               </Route>
             </Routes>
