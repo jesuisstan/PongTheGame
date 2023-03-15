@@ -6,7 +6,6 @@ import {
   Logger,
   NotFoundException,
   Param,
-  ParseIntPipe,
   Patch,
   UseGuards,
   UsePipes,
@@ -27,19 +26,18 @@ export class UserController {
 
   constructor(private readonly users: UserService) {}
 
-  // https://stackoverflow.com/a/71671007
-  @Get('/:id(\\d+)')
+  @Get('/:nickname')
   @ApiOperation({
-    summary: 'Find a user by its id',
-    parameters: [{ name: 'id', in: 'path' }],
+    summary: 'Find a user by its nickname',
+    parameters: [{ name: 'nickame', in: 'path' }],
     responses: {
       '404': {
-        description: 'user with such id was not found',
+        description: 'user with such nickname was not found',
       },
     },
   })
-  async getUserById(@Param('id', ParseIntPipe) id: number) {
-    const user = await this.users.findUserById(id);
+  async getUserByNickname(@Param('nickname') nickname: string) {
+    const user = await this.users.findUserByNickname(nickname);
 
     if (user === null) throw new NotFoundException();
     return user;
