@@ -50,6 +50,7 @@ const PlayerPage = () => {
     <NotFound />
   ) : (
     <div className={styles.basicCard}>
+      <h5>Player statistics</h5>
       <div className={styles.playerCard}>
         <div className={styles.pcLeft}>
           <Avatar

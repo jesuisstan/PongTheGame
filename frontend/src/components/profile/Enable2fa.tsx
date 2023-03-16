@@ -68,9 +68,9 @@ const Enable2fa = ({
           token: text
         })
       ).data;
-      console.log('user data after 2faVerification = ' + user)
-      console.log(user)
-      console.log('-----------')
+      console.log('user data after 2faVerification = ' + user);
+      console.log(user);
+      console.log('-----------');
 
       //setUser(user);
 
@@ -105,9 +105,7 @@ const Enable2fa = ({
     setLoadSubmit(true);
     await submitCode();
     setLoadSubmit(false);
-    setButtonText(
-      user.totpSecret?.verified ? 'Done ✔️' : 'Failed ❌'
-    );
+    setButtonText(user.totpSecret?.verified ? 'Done ✔️' : 'Failed ❌');
     setText('');
     setError('');
     setTimeout(() => setOpen(false), 442);
@@ -141,12 +139,12 @@ const Enable2fa = ({
                 Configuring Google Authenticator
               </Typography>
               <Stack spacing={1}>
-                <li>
-                  Install Google Authenticator:{' '}
+                <Typography>
+                  1. Install Google Authenticator:{' '}
                   <a
                     href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2&hl=fr&gl=US"
                     target="_blank"
-                    rel='noreferrer'
+                    rel="noreferrer"
                   >
                     <img
                       className={styles.logo}
@@ -158,7 +156,7 @@ const Enable2fa = ({
                   <a
                     href="https://apps.apple.com/fr/app/google-authenticator/id388497605"
                     target="_blank"
-                    rel='noreferrer'
+                    rel="noreferrer"
                   >
                     <img
                       className={styles.logo}
@@ -166,12 +164,14 @@ const Enable2fa = ({
                       alt=""
                     />
                   </a>
-                </li>
-                <li>In the authenticator app, select "+" icon</li>
-                <li>
-                  Select "Scan a QR code" and use the phone's camera to scan the
-                  following QR code
-                </li>
+                </Typography>
+                <Typography>
+                  2. In the authenticator app, select "+" icon
+                </Typography>
+                <Typography>
+                  3. Select "Scan a QR code" and use the phone's camera to scan
+                  the following QR code
+                </Typography>
               </Stack>
               <div>
                 <Typography component="h3" sx={{ color: 'rgb(37, 120, 204)' }}>
@@ -201,6 +201,9 @@ const Enable2fa = ({
               <TextField
                 autoFocus
                 required
+                inputRef={(input) => {
+                  if (input != null) input.focus();
+                }}
                 value={text}
                 inputProps={{
                   minLength: 6,
