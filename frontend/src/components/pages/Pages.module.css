@@ -12,7 +12,7 @@
 }
 
 .centeredCard {
-  height: calc(100vh - 50px);
+  height: calc(100vh - 10px);
   align-self: center;
   display: flex;
   align-items: center;
