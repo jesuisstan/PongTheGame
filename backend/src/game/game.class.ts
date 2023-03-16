@@ -16,6 +16,11 @@ export interface Position {
   y: number;
 }
 
+export interface KeyEvent {
+  action: 'release' | 'press';
+  direction: 'up' | 'down';
+}
+
 export interface Profile {
   socket: Socket;
   user: User;
@@ -162,7 +167,7 @@ export class Game {
   private player1: Profile;
   private player2: Profile;
   private status: Status = Status.STARTING;
-  private spectator_sockets: Socket[] = [];
+  private spectator_sockets: any[] = [];
   private start_counter = 10;
   private game_start_time: Date;
   private invitation?;
@@ -292,6 +297,7 @@ export class Game {
     loser: Player,
     timeInSeconds: number,
   ) {
+    timeInSeconds;
     // const winnerXP = 50;
     // const loserXP = 0;
     // let eloChange = 0;
@@ -505,6 +511,70 @@ export class Game {
     // await Promise.all(promises);
   }
 
+  get_players() {
+    return [this.player1.user, this.player2.user];
+  }
+
+  get_player(userId: number): Player | null {
+    if (!this.player1 || !this.player2) return null;
+    if (this.player1.user.id === userId) {
+      return this.game_state.player1;
+    } else if (this.player2.user.id === userId) {
+      return this.game_state.player2;
+    } else {
+      return null;
+    }
+  }
+
+  async leave(userId: number) {
+    const leaved = this.get_player(userId);
+    if (!leaved) return;
+    const otherPlayer =
+      this.game_state.player1.profile.user.id === leaved.profile.user.id
+        ? this.game_state.player2
+        : this.game_state.player1;
+    this.websockets.send(leaved.profile.socket, 'game-aborted', {
+      reason: 'player-left',
+      result: 'lose',
+    });
+    this.websockets.send(otherPlayer.profile.socket, 'game-aborted', {
+      reason: 'player-left',
+      result: 'win',
+    });
+    this.status = Status.ABORTED;
+    if (this.game_start_time) {
+      const now = new Date();
+      const timePlayed = now.getTime() - this.game_start_time.getTime();
+      const timeInSeconds = Math.floor(timePlayed / 1000);
+      this._register_game(otherPlayer, leaved, timeInSeconds);
+    }
+    this._set_players_status('ONLINE');
+    this.end();
+  }
+
+  process_input(userId: number, data: KeyEvent) {
+    const player = this.get_player(userId);
+    if (!player) return;
+    if (data.action === 'press') {
+      player.event = data.direction;
+    }
+    if (data.action === 'release') {
+      player.event = null;
+    }
+  }
+
+  add_spectator(socket: any) {
+    this.spectator_sockets.push(socket);
+  }
+
+  remove_spectator(socket: any) {
+    this.spectator_sockets = this.spectator_sockets.filter((s) => s !== socket);
+  }
+
+  get_spectator(userId: number): Player | null {
+    return this.spectator_sockets.find((s) => s['user'].id === userId);
+  }
+
   private _update_state() {
     this._update_player(this.game_state.player1);
     this._update_player(this.game_state.player2);
@@ -536,6 +606,17 @@ export class Game {
       this.game_state.gameInfos.paddleWidth,
       this.game_state.gameInfos.paddleHeight,
     );
+  }
+
+  get_player_by_name(name: string): Player | null {
+    if (!this.player1 || !this.player2) return null;
+    if (this.player1.user.username === name) {
+      return this.game_state.player1;
+    } else if (this.player2.user.username === name) {
+      return this.game_state.player2;
+    } else {
+      return null;
+    }
   }
 
   private _check_ball_collide_paddle(

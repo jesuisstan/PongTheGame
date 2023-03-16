@@ -1,4 +1,3 @@
-import { Controller, Post } from '@nestjs/common';
 import {
   WebSocketGateway,
   WebSocketServer,
@@ -7,81 +6,86 @@ import {
 import { Server } from 'socket.io';
 import { GameService } from './game.service';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { SessionUser } from 'src/decorator/session-user.decorator';
-import { User } from '@prisma/client';
+import { WebsocketsService } from 'src/websockets/websockets.service';
+import { Socket } from 'socket.io';
 
 @WebSocketGateway({
-  cors: {
-    origin: true,
-  },
+  // cors: {
+  //   origin: true,
+  // },
 })
-@Controller('game')
 export class GameGateway {
   @WebSocketServer()
   server: Server;
 
   constructor(
     private readonly game: GameService,
-    private prisma: PrismaService,
+    private readonly prisma: PrismaService,
+    private readonly websockets: WebsocketsService,
   ) {}
 
-  @Post('')
-  test() {
-    this.game.test();
+  @SubscribeMessage('match_making')
+  async matchmaking(socket: Socket, payload: any) {
+    if (!payload || !payload.action) return;
+    switch (payload.action) {
+      case 'join':
+        this.game.join_queue(socket);
+        break;
+      case 'cancel':
+        this.game.cancel_queue(socket);
+        break;
+      case 'leave':
+        this.game.leave_game(socket);
+        break;
+    }
   }
-  // @SubscribeMessage('matchmaking')
-  // async matchmaking(socket: any, payload: any) {
-  //   if (!payload || !payload.action) return;
-  //   switch (payload.action) {
-  //     case 'join':
-  //       this.gameService.joinQueue(socket, payload.type);
-  //       break;
-  //     case 'cancel':
-  //       this.gameService.cancelQueue(socket);
-  //       break;
-  //     case 'leave':
-  //       this.gameService.leaveGame(socket);
-  //       break;
-  //   }
-  // }
 
-  // @SubscribeMessage('match_create')
-  // async match_create() {// Have to wait 2 user rdy
+  @SubscribeMessage('game_input')
+  async gameInput(socket: any, payload: any) {
+    if (!payload || !payload.action || !payload.direction) return;
+    const game = this.game.get_game_where_player_is(socket.user.id);
+    if (!game) return;
+    game.process_input(socket.user.id, payload);
+  }
 
-  //   console.log("Je veux creer un match");
-  //   // this.gameService.match_create(user);
-  //   // await this.prisma.
-  // }
+  @SubscribeMessage('match_spectate')
+  async spectateMatch(socket: any, payload: any) {
+    if (!payload || !payload.id) return;
+    const game = this.game.get_game_where_player_is(payload.id);
+    if (!game) {
+      this.websockets.send(socket, 'match_spectate', {
+        status: 'error',
+        error: 'Game not found',
+      });
+      return;
+    }
+    this.websockets.send(socket, 'match_spectate', {
+      status: 'success',
+    });
+    game.add_spectator(socket);
+  }
 
-  // @SubscribeMessage('match_join')
-  // match_join(){
+  @SubscribeMessage('match_name_spectate')
+  async spectateMatchName(socket: any, payload: any) {
+    if (!payload || !payload.name) return;
+    const game = this.game.get_game_where_player_is_by_name(payload.name);
+    if (!game) {
+      this.websockets.send(socket, 'match_spectate', {
+        status: 'error',
+        error: 'Game not found',
+      });
+      return;
+    }
+    this.websockets.send(socket, 'match_spectate', {
+      status: 'success',
+    });
+    game.add_spectator(socket);
+  }
 
-  // }
-
-  // @SubscribeMessage('match_update')
-  // match_update(){
-
-  // }
-
-  // @SubscribeMessage('match_view')
-  // match_view(){
-
-  // }
-
-  //   @SubscribeMessage('resetBall')
-  //   resetBall() {
-  //     if (score.player1 >= winScore || score.player2 >= winScore) {
-  //       gotWinner = true;
-  //       score.player1 > score.player2
-  //         ? setWinner(user.nickname)
-  //         : setWinner('Opponent'); // todo change 'opponent' name
-  //       setOpen(true);
-  //     }
-  //     ballSpeed.X =
-  //       ballSpeed.X > 0 ? -DEFAULT_BALL_SPEED_X : DEFAULT_BALL_SPEED_X;
-  //     ballSpeed.Y =
-  //       ballSpeed.Y > 0 ? -DEFAULT_BALL_SPEED_Y : DEFAULT_BALL_SPEED_Y;
-  //     ballPosition.X = CANVAS_WIDTH / 2;
-  //     ballPosition.Y = CANVAS_HEIGHT / 2;
-  //   }
+  @SubscribeMessage('match_spectate_leave')
+  async spectateLeave(socket: any) {
+    const game = this.game.get_game_where_spectator_is(socket.user.id);
+    if (!game) return;
+    game.remove_spectator(socket);
+  }
 }
