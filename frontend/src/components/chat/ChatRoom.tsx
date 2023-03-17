@@ -1,12 +1,12 @@
 import { SetStateAction, useContext, useEffect, useState } from 'react';
-import { WebSocketContext } from '../../contexts/WebsocketContext';
+import { WebSocketContext, socket } from '../../contexts/WebsocketContext';
 import {
-	Send, Delete, ArrowBackIosNew, Settings,PersonAddAlt, Password, ExitToApp
+	Send, Delete, ArrowBackIosNew, Settings,PersonAddAlt, Password, ExitToApp, AdminPanelSettingsTwoTone, StarPurple500Rounded, Mail, Clear, PanTool, PersonAdd
 			} from '@mui/icons-material';
 import {
 	Avatar,
 	Box, Button, Divider, FormControl, Grid, IconButton, Stack,
-	ListItem, Menu, MenuItem,TextField, Typography, CircularProgress, AvatarGroup
+	ListItem, Menu, MenuItem,TextField, Typography, CircularProgress, AvatarGroup, Icon, Chip, Badge, FormLabel, FormGroup, FormControlLabel, Switch, ListItemIcon
 			} from '@mui/material';
 
 import { UserContext } from '../../contexts/UserContext';
@@ -44,7 +44,6 @@ const ChatRoom = (props: any) => {
 	// Modify password
 	const [oldPassword, setOldPassword] = useState<string>('');
 	const [newPassword, setNewPassword] = useState<string>('');
-
 
 	socket.emit('findAllMembers', { roomName: user.joinedChatRoom },
 		(response: MemberType[]) => {
@@ -291,81 +290,13 @@ const ChatRoom = (props: any) => {
 		});
 	}
 
-	const BubbleL = (msg: any) => {
-		const messagge = msg.data ? msg.data : '';
-		const nickname = msg.autor.nickname ? msg.autor.nickname : '';
-		const avatar = '';
-		const timestamp = new Date();
-	
-		return (
-				<>
-						<div className="msgRowL">
-								<Avatar 
-										alt={nickname}
-										className="avatar"
-										src={avatar}></Avatar>
-								<div>
-										<div className="nickName">{nickname}</div>
-										<div className="msgLeft">
-												<p className="msgText">{msg}</p>
-												<div className="msgTime">{timestamp.toLocaleTimeString()}</div>
-										</div>
-								</div>
-						</div>
-				</> 
-		);
-	};
-	
-	const BubbleR = (msg: any) => {
-		const message = msg.data ? msg.data : '';
-		const timestamp = new Date();
-	
-		return (
-				<>
-						<div className="msgRowR">
-								<div className='msgRight'>
-										<p className="msgText">{msg}</p>
-										<div className="msgTime">{timestamp.toLocaleTimeString()}</div>
-								</div>
-						</div>
-				</>
-		);
-	};
 
-	const listChatMessages = messages.map((msg, index) => (
-		<div key={index}>
-			{
-				user.nickname === msg.author.nickname ? (
-					<>
-						<div className="msgRowR">
-								<div className='msgRight'>
-										<p className="msgText">{msg.data}</p>
-										<div className="msgTime">date</div>
-								</div>
-						</div>
-				</>
-				) : (
-					<>
-					<div className="msgRowL">
-							<Avatar 
-									alt={msg.author.username}
-									className="avatar"
-									src={''}></Avatar>
-							<div>
-									<div className="nickName">{msg.author.username}</div>
-									<div className="msgLeft">
-											<p className="msgText">{msg.data}</p>
-											<div className="msgTime">date</div>
-									</div>
-							</div>
-					</div>
-			</> 
-				)
-			}
-		</div>
-	));
+	const handleUsrClick = (event: any) => {
+		setAnchorEl(event.currentTarget);
+	};
 
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+	const [anchorAvatar, setAnchorAvatar] = useState<null | HTMLElement>(null);
 
 	const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
 		setAnchorEl(event.currentTarget);
@@ -384,39 +315,52 @@ const ChatRoom = (props: any) => {
 		});
 	};
 
+	const handleAClick = (event: any) => {
+		setAnchorAvatar(event.currentTarget);
+	};
 
+	const handleAClose = () => {
+		setAnchorAvatar(null);
+	};
+
+	const isUserBlocked = (usr: any) => {
+		for (const blockedUser in user.blockedUsers) {
+				if (user.blockedUsers[usr.nickname])
+						return true;
+		return false;
+	}}
+
+	const [isUserBan, setIsUserBan] = useState<boolean>(false);
+	
+	const isBan = (user: any) => {
+		socket.emit('isUserBanned', { roomName: user.joinedChatRoom, nick: user.nickname },
+		(response: boolean) => {
+			setIsUserBan(response)
+		}
+		)
+	}
+	
 	/*************************************************************
 	 * Render HTML response
-	 **************************************************************/
+	**************************************************************/
 	return (
-			<>
+		<>
 				
 				<>
-					{/* <AvatarGroup>
-					{members.map((avatar, index) => (
-						<Avatar key={avatar.alt} {...avatar} />
-					))}
-					{!!surplus && <Avatar>+{surplus}</Avatar>}
-				</AvatarGroup> */}
 					<ul>
-						{ // Members' list
+
+						{ 
+// ------------- List of Member's in room ------------- 
 							Object.keys(members).map((nick, index) => (
-									<li key={ index }>
+									<p key={ index }>
 										<>
+
 											{ // Nickname of the member preceeded by its online status
 												members[nick as any].isOnline ? '*' : '' } { nick }
 
 											{ // Displays if member is oper
 												String(members[nick as any].modes).search('o') !== -1 ?
-													' (admin)' : '' }
-
-											{ // Unblock button appears if the author of the message
-												// is not the user himself
-												(user.nickname !== nick) &&
-													<button onClick={ () => onPrivMessageClick(nick) }>
-														message
-													</button>
-											}
+													<Icon><StarPurple500Rounded fontSize='small' color="warning"/></Icon> : '' }
 
 											{ // If user is oper(=admin), the button to users oper is displayed 
 												isOper && (user.nickname !== nick) &&
@@ -465,7 +409,7 @@ const ChatRoom = (props: any) => {
 													</button>
 											}
 										</>
-									</li>
+									</p>
 							))
 						}
 					</ul>
@@ -532,11 +476,126 @@ const ChatRoom = (props: any) => {
 								width: '100vw'
 							}}
 						>
-							{messages.length === 0 ? (
-								<div className='black'>No Message</div>
-							) : (
-								<Stack>{listChatMessages}</Stack>
-							)}
+							{
+// -------------- Begin of display messages --------------
+							messages.length === 0 ? 
+// -------------- If no message: Display "No Message" --------------
+							(	<div className='black'>No Message</div> ) : 
+// -------------- If messages: Display messages --------------
+							(
+							<Stack> {
+									messages.map((msg, index) => (
+									<div key={index}>
+										{
+											user.nickname === msg.author.nickname ? (
+												<>
+													<div className="msgRowR">
+															<div className='msgRight'>
+																	<p className="msgText">{msg.data}</p>
+																	<div className="msgTime">Date</div>
+															</div>
+													</div>
+												</>
+											) : (
+												<>
+													<div className="msgRowL">
+													<p>
+{/*// -------------- Avatar Clickable -------------- */}
+													<Button
+														aria-controls="basic-menu"
+														aria-haspopup="true"
+														aria-expanded={Boolean(anchorAvatar)}
+														onClick={handleAClick}
+													>
+{/*// -------------- Avatar Badge -------------- */}
+{/* if is oper Warning R-T <-> if is online success else danger R-B*/}
+														<Badge  color="success" overlap='circular' variant='dot' anchorOrigin={{vertical:'bottom', horizontal:'right' }} >
+														<Badge	color="warning" overlap='circular' variant='dot' anchorOrigin={{vertical:'top', horizontal:'right' }} >
+															<Avatar 
+																alt={msg.author.username}
+																className="avatar"
+																src={msg.author.avatar}
+																onClick={handleAClick}></Avatar>
+														</Badge>
+														</Badge>
+													</Button>
+{/*// -------------- Avatar Menu -------------- */}
+													<Menu
+														anchorEl={anchorAvatar}
+														open={Boolean(anchorAvatar)}
+														onClose={handleAClose}
+														className='black' >
+{/*// -------------- Menu Icon Part -------------- */}
+														<MenuItem aria-label="back">
+															<IconButton >
+																<PersonAdd className='black'/>
+															</IconButton>
+															<IconButton onClick={() => onPrivMessageClick(msg.author.username) } >
+																<Mail className='black'/>
+															</IconButton>
+															<IconButton onClick={ () =>
+																isUserBlocked(msg.author.username)
+																? onUnBlockClick(msg.author.username)
+																: onBlockClick(msg.author.username) } >
+																<PanTool className={!isUserBlocked(msg.author.username)? 'black': 'white'}/>
+															</IconButton>
+															<IconButton onClick={handleAClose}>
+																<Clear className='black'/>
+															</IconButton>
+														</MenuItem>
+{/*// -------------- Menu Switch Part -------------- */}
+														<FormControl component="fieldset">
+															<FormGroup aria-label="position" >
+																<FormControlLabel
+																	value="start"
+																	control={<Switch color="error" />}
+																	label="Operator"
+																	labelPlacement="start"
+																	color='error'
+																/>
+																<FormControlLabel
+																	value="start"
+																	checked={isUserBan? true : false}
+																	control={<Switch color="error" />}
+																	label="Ban user"
+																	labelPlacement="start"
+																	onChange={ 
+																		isUserBan
+																		? (() => onBanClick(msg.author.nickname)) 
+																		: (() => onUnBanClick(msg.author.nickname)) 
+																		}
+																/>
+																<FormControlLabel
+																	value="start"
+																	control={<Switch color="error" />}
+																	label="Block "
+																	labelPlacement="start"
+																	onChange={
+																		isUserBlocked(msg.author.nickname) === false 
+																		? (() => onBlockClick(msg.author.nickname))
+																		: (() => onUnBlockClick(msg.author.nickname))}
+																/>
+															</FormGroup>
+														</FormControl>
+													</Menu>
+{/*// -------------- End Avatar / Menu -------------- */}
+													</p>							
+														<div>
+																<div className="nickName">{msg.author.username}</div>
+																<div className="msgLeft">
+																		<p className="msgText">{msg.data}</p>
+																		<div className="msgTime">Date</div>
+																</div>
+														</div>
+													</div>
+												</> 
+											)
+										}
+									</div>
+								))}</Stack>
+							)
+// -------------- End of message display ----------------
+							}
 						</Grid>
 						<div className="chatRoomText">
 							<div className='typingButton'>
