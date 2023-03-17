@@ -11,7 +11,6 @@ import Verify2fa from './components/profile/Verify2fa';
 import Chat from './components/chat/Chat';
 import Game from './components/game/Game';
 import PlayerPage from './components/pages/PlayerPage';
-import History from './components/pages/History';
 import NotFound from './components/pages/NotFound';
 import PleaseLogin from './components/pages/PleaseLogin';
 import backendAPI from './api/axios-instance';
@@ -68,14 +67,13 @@ function App() {
                 />
                 <Route path="chat" element={<Chat />} />
                 <Route path="game" element={<Game />} />
-                <Route path="history" element={<History />} />
                 <Route
                   path="profile"
                   element={user.provider ? <Profile /> : <PleaseLogin />}
                 />
-                <Route path="players">
+                <Route path="players" element={<PlayerPage />}>
                   <Route
-                    path=":playerId"
+                    path=":playerNickname"
                     element={user.provider ? <PlayerPage /> : <PleaseLogin />}
                   />
                 </Route>

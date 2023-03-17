@@ -149,7 +149,7 @@ const Profile = () => {
             <ButtonPong
               text="Full stats"
               title="go to match history page"
-              onClick={() => navigate('/history')}
+              onClick={() => navigate(`/players/${user.nickname}`)}
               endIcon={<ArrowForwardIosIcon />}
             />
           </div>

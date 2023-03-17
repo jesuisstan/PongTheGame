@@ -54,12 +54,15 @@ const Verify2fa = ({
       setLoad(true);
 
       try {
-        const user = (
+        const userData = (
           await backendAPI.post<User>('/auth/totp/verify', {
             token: text
           })
         ).data;
-        setUser(user);
+        console.log('user data after verif: '); //todo
+        console.log(userData);
+        
+        setUser(userData);
         setButtonText('Done ✔️');
         setText('');
         setError('');

@@ -12,7 +12,7 @@
 }
 
 .centeredCard {
-  height: calc(100vh - 50px);
+  height: calc(100vh - 10px);
   align-self: center;
   display: flex;
   align-items: center;
@@ -201,9 +201,10 @@
 }
 
 .playerCard {
-  margin-top: 42px;
+  margin-top: 21px;
   align-self: center;
   display: flex;
+  flex-direction: row;
   align-items: flex-start;
   justify-content: space-evenly;
   gap: 42px;

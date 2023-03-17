@@ -93,6 +93,7 @@
 .logo {
   width: 4%;
   height: 4%;
+  min-height: 19px;
   margin-left: 5px;
   margin-right: 5px;
 }
