@@ -86,7 +86,7 @@ export class WebsocketsService {
   }
 
   send(client: any, event: string, data: any) {
-    client.send(JSON.stringify({ event: event, data: data }));
+    client.emit(event, data);
   }
 
   getSockets(usersId: number[]) {

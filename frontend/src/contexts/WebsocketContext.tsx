@@ -4,13 +4,14 @@ import { createContext } from "react";
 function get_cookie_access_token()
 {
     const cookies : string[] = document.cookie.split("=");
+    console.log(process.env.REACT_APP_URL_BACKEND)
     if (cookies[0] !== "access_token")
         return (null);
     return (cookies[1]);
 }
 
 // Create a new websocket connected to the backend port 
-export const socket = io('http://localhost:' + process.env.REACT_APP_BACKEND_PORT, {
+export const socket = io(process.env.REACT_APP_URL_BACKEND, {
     auth : {token : get_cookie_access_token()},
 })
 // Define context with the previous socket

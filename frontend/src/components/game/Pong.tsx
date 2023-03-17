@@ -6,328 +6,223 @@ import VictoryModal from './VictoryModal';
 import ButtonPong from '../UI/ButtonPong';
 import * as util from './gameUtils';
 import styles from './Game.module.css';
+import useWebSocket from 'react-use-websocket';
+import { Player_game, Props_game, Game_state } from './game.interface';
+import { draw_state } from './gameUtils';
+import { construct } from 'ramda';
+import React from 'react';
 
-const DEFAULT_WIN_SCORE = 3;
-const DEFAULT_BALL_SPEED_X = 10;
-const DEFAULT_BALL_SPEED_Y = 10;
-const CANVAS_HEIGHT = 600;
-const CANVAS_WIDTH = 800;
-const FPS = 35;
-const BALL_RADIUS = 10;
-const PADDLE_WIDTH = 20;
-const PADDLE_HEIGHT = CANVAS_HEIGHT / 6;
-const PADDLE_COLOR = 'rgb(253, 80, 135)';
-const DEFAULT_PADDLE_POSITION = CANVAS_HEIGHT / 2 - PADDLE_HEIGHT / 2;
+// const DEFAULT_WIN_SCORE = 3;
+// const DEFAULT_BALL_SPEED_X = 10;
+// const DEFAULT_BALL_SPEED_Y = 10;
+// const CANVAS_HEIGHT = 600;
+// const CANVAS_WIDTH = 800;
+// const FPS = 35;
+// const BALL_RADIUS = 10;
+// const PADDLE_WIDTH = 20;
+// const PADDLE_HEIGHT = CANVAS_HEIGHT / 6;
+// const PADDLE_COLOR = 'rgb(253, 80, 135)';
+// const DEFAULT_PADDLE_POSITION = CANVAS_HEIGHT / 2 - PADDLE_HEIGHT / 2;
 
-let paddle1Y = DEFAULT_PADDLE_POSITION;
-let paddle2Y = DEFAULT_PADDLE_POSITION;
-let ballPosition = {
-  X: CANVAS_WIDTH / 2,
-  Y: CANVAS_HEIGHT / 2
-};
-let ballSpeed = {
-  X: DEFAULT_BALL_SPEED_X,
-  Y: DEFAULT_BALL_SPEED_Y
-};
+// let paddle1Y = DEFAULT_PADDLE_POSITION;
+// let paddle2Y = DEFAULT_PADDLE_POSITION;
+// let ballPosition = {
+//   X: CANVAS_WIDTH / 2,
+//   Y: CANVAS_HEIGHT / 2
+// };
+// let ballSpeed = {
+//   X: DEFAULT_BALL_SPEED_X,
+//   Y: DEFAULT_BALL_SPEED_Y
+// };
 
-const setDefaultBallSpeed = () => {
-  ballSpeed.X = DEFAULT_BALL_SPEED_X;
-  ballSpeed.Y = DEFAULT_BALL_SPEED_Y;
-};
+// const setDefaultBallSpeed = () => {
+//   ballSpeed.X = DEFAULT_BALL_SPEED_X;
+//   ballSpeed.Y = DEFAULT_BALL_SPEED_Y;
+// };
 
-const Pong: React.FC = () => {
-  const socket = useContext(WebSocketContext);
+function Pong(props : Props_game) {
+	var game_state : Game_state= {
+		gameInfos : {originalWidth : 0, originalHeight : 0, paddleHeight : 0, paddleWidth : 0, ballRadius : 0, time : 0},
+		player1 : {infos : {infos : {name : "", profile_picture : ""}, score : 0}, current : false, paddle : {x : 0, y : 0},},
+		player2 : {infos : {infos : {name : "", profile_picture : ""}, score : 0}, current : false, paddle : {x : 0, y : 0},},
+		ball : { x: 0, y : 0}};
+	const socket = useContext(WebSocketContext);
+	
+  const [time, set_time] = useState(300);
+  const canvas_ref = useRef<HTMLCanvasElement>(null);
+  const [players, set_players] = useState<Player_game[]>(
+		props.spectator || !props.players ? [] : [...props.players],
+	);
+  const state_ref = useRef(false);
 
-  const { user } = useContext(UserContext);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [open, setOpen] = useState(false);
-  const [gameOn, setGameOn] = useState(false);
-  const [winner, setWinner] = useState('');
-  const [winScore, setWinScore] = useState(DEFAULT_WIN_SCORE);
-  const [score, setScore] = useState({ player1: 0, player2: 0 });
-  const [gamePaused, setGamePaused] = useState(false);
-  const [trainMode, setTrainMode] = useState(false);
 
-  const setDefault = () => {
-    setWinner('');
-    setScore({ player1: 0, player2: 0 });
-    setTrainMode(false);
-    setGamePaused(false);
-    setDefaultBallSpeed();
-    paddle1Y = DEFAULT_PADDLE_POSITION;
-    paddle2Y = DEFAULT_PADDLE_POSITION;
-  };
-
-  useEffect(() => {
-    socket.on('connect', () => {});
-    socket.on('exception', ({ msg }) => {
-      console.log('ERROR: ' + msg)
-    })
+  socket.on('match_get_ball', (args) => {
+	game_state.ball.x = args.ball.x;
+	game_state.ball.y = args.ball.y;
   })
-  // return () => {
-  //   socket.off('connect');
-  //   socket.off('createChatRoom');
-  //   socket.off('exception')
-  // };
 
-  const find_opponents = () => {
-    socket.emit('match_create', () => {});
-  };
+  socket.on('match_get_user', (args) => {
+	if (!game_state.player1 || !game_state.player1.infos) {
+		game_state.player1.infos.infos.name = args.name;
+		game_state.player1.infos.infos.profile_picture = args.picture
+		game_state.player1.infos.score = 0;
+		game_state.player1.paddle.x = args.x;
+		game_state.player1.paddle.y = args.y;
+	}
+	else{
+		game_state.player2.infos.infos.name = args.name;
+		game_state.player2.infos.infos.profile_picture = args.picture
+		game_state.player2.infos.score = 0;
+		game_state.player2.paddle.x = args.x;
+		game_state.player2.paddle.y = args.y;
+	}
+  })
 
-  const draw = (canvasContext: CanvasRenderingContext2D) => {
-    util.makeRectangleShape(
-      canvasContext,
-      0,
-      0,
-      CANVAS_WIDTH,
-      CANVAS_HEIGHT,
-      'black'
-    ); // Canvas
-    new Array(CANVAS_HEIGHT).fill(0).map((c, i) => {
-      if (i % 40 === 0) {
-        util.makeRectangleShape(
-          canvasContext,
-          CANVAS_WIDTH / 2 - 1,
-          i,
-          2,
-          32,
-          'rgba(37, 120, 204, 0.5)'
-        );
-      }
-    }); // Net
-    util.makeCircleShape(
-      canvasContext,
-      ballPosition.X,
-      ballPosition.Y,
-      BALL_RADIUS,
-      'whitesmoke'
-    ); // Ball
-    util.makeRectangleShape(
-      canvasContext,
-      0,
-      paddle1Y,
-      PADDLE_WIDTH,
-      PADDLE_HEIGHT,
-      PADDLE_COLOR
-    ); // Left Paddle
-    util.makeRectangleShape(
-      canvasContext,
-      CANVAS_WIDTH - PADDLE_WIDTH,
-      paddle2Y,
-      PADDLE_WIDTH,
-      PADDLE_HEIGHT,
-      PADDLE_COLOR
-    ); // Right Paddle
-  };
+  socket.on('match_get_game_infos', (args) => {
+	game_state.gameInfos.originalHeight = args.originalHeight;
+	game_state.gameInfos.originalWidth = args.originalWidth;
+	game_state.gameInfos.paddleHeight = args.height;
+	game_state.gameInfos.paddleWidth = args.width;
+	game_state.gameInfos.time = args.time;
+  })
 
-  const checkWinner = () => {
-    if (score.player1 >= winScore || score.player2 >= winScore) {
-      setGameOn(false);
+  socket.on('match_start', (args) => {
+	if (props.spectator) {
+		set_players([
+			{
+				infos: {
+					name: game_state.player1.infos.infos.name,
+					profile_picture: game_state.player1.infos.infos.profile_picture,
+				},
+				score: game_state.player1.infos.score,
+			},
+			{
+				infos: {
+					name: game_state.player2.infos.infos.name,
+					profile_picture: game_state.player2.infos.infos.profile_picture,
+				},
+				score: game_state.player2.infos.score,
+			},
+		]);
+	set_players([
+		{ ...players[0], score: game_state.player1.infos.score },
+		{ ...players[1], score: game_state.player2.infos.score },
+	]
+	);
+	}
+	draw_state(game_state, canvas_ref);
+})
 
-      score.player1 > score.player2
-        ? setWinner(user.nickname)
-        : setWinner('Opponent'); // todo change 'opponent' name
-      setOpen(true);
-    }
-  };
+	// socket.on('match_starting', (args) => {
+	// 	if (is_game_state_event(props))
+	// 		draw_state(args.data, canvas_ref);
 
-  const resetBall = () => {
-    ballSpeed.X =
-      ballSpeed.X > 0 ? -DEFAULT_BALL_SPEED_X : DEFAULT_BALL_SPEED_X;
-    ballSpeed.Y =
-      ballSpeed.Y > 0 ? -DEFAULT_BALL_SPEED_Y : DEFAULT_BALL_SPEED_Y;
-    ballPosition.X = CANVAS_WIDTH / 2;
-    ballPosition.Y = CANVAS_HEIGHT / 2;
-  };
+	// })
+//   const { send_message } : any = useWebSocket(process.env.REACT_APP_URL_BACKEND, {
+// 		share: true,
+// 		onMessage: ({ data }) => {
+// 			data = JSON.parse(data);
+// 			if (is_game_state_event(data)) {
+// 				set_time(data.data.gameInfos.time);
+// 				if (props.spectator) {
+// 					set_players([
+// 						{
+// 							infos: {
+// 								name: data.data.player1.name,
+// 								profile_picture:
+// 									data.data.player1.profile_picture,
+// 							},
+// 							score: data.data.player1.score,
+// 						},
+// 						{
+// 							infos: {
+// 								name: data.data.player2.name,
+// 								profile_picture:
+// 									data.data.player2.profile_picture,
+// 							},
+// 							score: data.data.player2.score,
+// 						},
+// 					]);
+// 				} else {
+// 					set_players([
+// 						{ ...players[0], score: data.data.player1.score },
+// 						{ ...players[1], score: data.data.player2.score },
+// 					]);
+// 				}
+// 				draw_state(data.data, canvas_ref);
+// 			}
+// 			if (is_game_result_message(data) && props.endMatch) {
+// 				props.endMatch(data.data);
+// 			}
+// 		},
+// 		filter: ({ data }) => {
+// 			return (
+// 				is_game_state_event(JSON.parse(data)) ||
+// 				is_game_result_message(JSON.parse(data))
+// 			);
+// 		},
+// 	});
 
-  const computerAI = () => {
-    if (trainMode) {
-      let paddle2YCenter = paddle2Y + PADDLE_HEIGHT / 2;
+  function on_key_release(event: KeyboardEvent) {
+		on_key(event, 'release');
+	}
 
-      if (paddle2YCenter < ballPosition.Y - 40) {
-        paddle2Y += 14;
-      } else if (paddle2YCenter < ballPosition.Y + 40 && paddle2Y > 0) {
-        paddle2Y -= 14;
-      } else if (paddle2Y <= 0) {
-        paddle2Y = 0;
-      } else {
-        paddle2Y = paddle2Y;
-      }
-    }
-  };
+	function on_key_press(event: KeyboardEvent) {
+		on_key(event, 'press');
+	}
 
-  const increaseScorePlayer2 = () => {
-    setScore({ ...score, player2: (score.player2 += 1) });
-    checkWinner();
-    resetBall();
-  };
-
-  const increaseScorePlayer1 = () => {
-    setScore({ ...score, player1: (score.player1 += 1) });
-    checkWinner();
-    resetBall();
-  };
-
-  const play = (canvasContext: CanvasRenderingContext2D) => {
-    if (gamePaused) {
-      util.printPause(canvasContext, CANVAS_WIDTH, CANVAS_HEIGHT);
-      return;
-    }
-    if (!gameOn) {
-      setDefaultBallSpeed();
-      paddle2Y = DEFAULT_PADDLE_POSITION;
-      return;
-    } else {
-      ballPosition.X += ballSpeed.X;
-      ballPosition.Y += ballSpeed.Y;
-    }
-
-    computerAI();
-
-    if (ballPosition.X >= CANVAS_WIDTH + BALL_RADIUS * 2) {
-      increaseScorePlayer1();
-      util.printGoal(canvasContext, CANVAS_WIDTH, CANVAS_HEIGHT);
-    }
-
-    if (ballPosition.X <= -BALL_RADIUS * 2) {
-      increaseScorePlayer2();
-      util.printGoal(canvasContext, CANVAS_WIDTH, CANVAS_HEIGHT);
-    }
-
-    // Bounce the ball from the left paddle --->
-    if (
-      ballPosition.X === PADDLE_WIDTH + BALL_RADIUS &&
-      ballPosition.Y >= paddle1Y - BALL_RADIUS &&
-      ballPosition.Y <= paddle1Y + PADDLE_HEIGHT + BALL_RADIUS
-    ) {
-      ballSpeed.X = -ballSpeed.X;
-      let deltaY = ballPosition.Y - (paddle1Y + PADDLE_HEIGHT / 2);
-      ballSpeed.Y = util.roundToTen(deltaY * 0.35);
-    }
-    if (
-      ballPosition.X <= PADDLE_WIDTH &&
-      (ballPosition.Y === paddle1Y - BALL_RADIUS ||
-        ballPosition.Y === paddle1Y + PADDLE_HEIGHT + BALL_RADIUS)
-    ) {
-      ballSpeed.Y = -ballSpeed.Y;
-      let deltaX = ballPosition.X - PADDLE_WIDTH;
-      ballSpeed.X = deltaX !== 0 ? deltaX * 0.35 : -ballSpeed.X;
-    }
-
-    // Bounce the ball from the right paddle --->
-    if (
-      ballPosition.X === CANVAS_WIDTH - PADDLE_WIDTH - BALL_RADIUS &&
-      ballPosition.Y >= paddle2Y - BALL_RADIUS &&
-      ballPosition.Y <= paddle2Y + PADDLE_HEIGHT + BALL_RADIUS
-    ) {
-      ballSpeed.X = -ballSpeed.X;
-      let deltaY = ballPosition.Y - (paddle2Y + PADDLE_HEIGHT / 2);
-      ballSpeed.Y = util.roundToTen(deltaY * 0.35);
-    }
-    if (
-      ballPosition.X >= CANVAS_WIDTH - PADDLE_WIDTH &&
-      (ballPosition.Y === paddle2Y - BALL_RADIUS ||
-        ballPosition.Y === paddle2Y + PADDLE_HEIGHT + BALL_RADIUS)
-    ) {
-      ballSpeed.Y = -ballSpeed.Y;
-      let deltaX = CANVAS_WIDTH - ballPosition.X - PADDLE_WIDTH;
-      ballSpeed.X = deltaX !== 0 ? deltaX * 0.35 : -ballSpeed.X;
-    }
-
-    // Bounce the ball from bottom & top --->
-    if (
-      ballPosition.Y >= CANVAS_HEIGHT - BALL_RADIUS ||
-      ballPosition.Y <= BALL_RADIUS
-    ) {
-      ballSpeed.Y = -ballSpeed.Y;
-    }
-  };
-
-  const trainWithComputer = async () => {
-    setTrainMode(true);
-    if (!gameOn) {
-      setScore({ player1: 0, player2: 0 });
-      setGameOn(true);
-    }
-  };
+  function on_key(event: KeyboardEvent, action: string) {
+		switch (event.key) {
+			case 'ArrowUp':
+				socket.emit('match_game_input', { action: action, direction: 'up' })
+				break;
+			case 'ArrowDown':
+				socket.emit('match_game_input', { action: action, direction: 'down' })
+				break;
+		}
+	}
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-    const canvasContext = canvas?.getContext('2d');
+		if (!state_ref.current) {
+			state_ref.current = true;
+			if (props.spectator) {
+				return () => {
+					socket.emit('match_spectate_leave', { })
+				};
+			}
+			window.addEventListener('keydown', on_key_press);
+			window.addEventListener('keyup', on_key_release);
 
-    if (!canvasContext) {
-      return;
-    }
-
-    const paddleMoveListener = (evt: MouseEvent) => {
-      let mousePos = util.calculateMousePosition(canvas!, evt);
-
-      if (gameOn) {
-        if (mousePos.y < PADDLE_HEIGHT / 2) {
-          paddle1Y = 0;
-        } else if (mousePos.y > canvas!.height - PADDLE_HEIGHT / 2) {
-          paddle1Y = canvas!.height - PADDLE_HEIGHT;
-        } else {
-          paddle1Y = mousePos.y - PADDLE_HEIGHT / 2;
-        }
-      }
-    };
-
-    window.addEventListener('mousemove', paddleMoveListener);
-
-    const intervalId = setInterval(() => {
-      draw(canvasContext);
-      play(canvasContext);
-    }, 1000 / FPS);
-
-    return () => {
-      window.removeEventListener('mousemove', paddleMoveListener);
-      clearInterval(intervalId);
-    };
-  }, [score.player1, score.player2, gamePaused, gameOn]);
-
+			return () => {
+				window.removeEventListener('keydown', on_key_press);
+				window.removeEventListener('keyup', on_key_release);
+			};
+		}
+	}, []);
+ 
   return (
-    <div className={styles.canvasBlock}>
-      <div className={styles.buttonsBlock}>
-        <ButtonPong
-          text="train with AI"
-          title="practice with computer"
-          disabled={gameOn ? true : false}
-          onClick={trainWithComputer}
-        />
-        <ButtonPong
-          text={gamePaused ? 'unpause' : 'pause'}
-          title={gamePaused ? 'continue the game' : 'set the game on pause'}
-          disabled={gameOn ? false : true}
-          onClick={() => {
-            setGamePaused(!gamePaused);
-          }}
-        />
-        <ButtonPong
-          text="Smth else"
-          onClick={find_opponents}
-        />
-      </div>
-      <ScoreBar
-        winScore={winScore}
-        setWinScore={setWinScore}
-        score={score}
-        gameOn={gameOn}
-      ></ScoreBar>
-      <canvas
-        className={styles.canvas}
-        ref={canvasRef}
-        width={CANVAS_WIDTH}
-        height={CANVAS_HEIGHT}
-      />
-      <VictoryModal
-        open={open}
-        setOpen={setOpen}
-        winner={winner}
-        score={score}
-        setDefault={setDefault}
-      />
-    </div>
+    <div className="game">
+			{players.length > 0 && (
+				<div>
+					<div>
+						{/* <PlayerCard
+							player={players[0]}
+							position={PlayerPosition.LEFT}
+							type={PlayerCardType.DURING_GAME}
+						/> */}
+						{/* <Timer time={time} /> */}
+						{/* <PlayerCard
+							player={players[1]}
+							position={PlayerPosition.RIGHT}
+							type={PlayerCardType.DURING_GAME}
+						/> */}
+					</div>
+					<div>
+						<canvas ref={canvas_ref}  />
+					</div>
+				</div>
+			)}
+		</div>
   );
 };
 

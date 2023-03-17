@@ -40,7 +40,7 @@ export class GameGateway {
     }
   }
 
-  @SubscribeMessage('game_input')
+  @SubscribeMessage('match_game_input')
   async gameInput(socket: any, payload: any) {
     if (!payload || !payload.action || !payload.direction) return;
     const game = this.game.get_game_where_player_is(socket.user.id);

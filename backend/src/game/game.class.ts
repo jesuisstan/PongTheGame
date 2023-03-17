@@ -38,7 +38,6 @@ export interface Ball {
   direction: Position;
   velocity: number;
   collidable: boolean;
-  portalUsable: boolean;
 }
 
 export interface GameInfos {
@@ -168,7 +167,7 @@ export class Game {
   private player2: Profile;
   private status: Status = Status.STARTING;
   private spectator_sockets: any[] = [];
-  private start_counter = 10;
+  private start_counter = 5;
   private game_start_time: Date;
   private invitation?;
   private game_state: GameState;
@@ -197,12 +196,43 @@ export class Game {
     while (this.start_counter > 0) {
       await this._wait(1000);
       this.start_counter--;
-      this._send_to_players('match-starting', { time: this.start_counter });
+      this._send_to_players('match_starting', { time: this.start_counter });
     }
-    this._send_to_players('match-starting', { time: this.start_counter });
+    this._send_to_players('match_starting', { time: this.start_counter });
     this.status = Status.PLAYING;
     this._set_players_status('PLAYING');
     this.game_start_time = new Date();
+    this._send_to_players('match_get_ball', {
+      ball: {
+        x: this.game_state.ball.position.x,
+        y: this.game_state.ball.position.y,
+      },
+    });
+
+    this._send_to_players('match_get_user', {
+      name: this.game_state.player1.profile.user.nickname,
+      picture: this.game_state.player1.profile.user.avatar,
+      x: this.game_state.player1.paddle.x,
+      y: this.game_state.player1.paddle.y,
+    });
+
+    this._send_to_players('match_get_user', {
+      name: this.game_state.player2.profile.user.nickname,
+      picture: this.game_state.player2.profile.user.avatar,
+      x: this.game_state.player2.paddle.x,
+      y: this.game_state.player2.paddle.y,
+    });
+
+    this._send_to_players('match_get_game_infos', {
+      width: this.game_state.gameInfos.paddleWidth,
+      height: this.game_state.gameInfos.paddleHeight,
+      originalHeight: this.game_state.gameInfos.height,
+      originalWidth: this.game_state.gameInfos.width,
+      time: 0,
+    });
+
+    this._send_to_players('match_start', {});
+
     // if (this.invitation) { // TODO add for the invit
     // this.websockets.sendToAllUsers(
     // 	this.invitation.message.channel.participants.map(
@@ -319,171 +349,27 @@ export class Game {
     const user2 = this.player2.user;
     const is_user2_winner = user2.id === winner.profile.user.id;
 
-    // MEMO TEST THIS
-    console.log({ winner });
-    console.log({ loser });
-    console.log({ is_user1_winner });
-    console.log({ is_user2_winner });
     this._set_players_status('ONLINE');
 
-    // await this.prisma.match.create({
-    //   data: {
-    //     state: 'Finished',
-    //     startDate: this.game_start_time.toString(),
-    //     endDate: new Date().toString(),
-    //     entries: [
-    //       {
-    //         userId: this.player1.user.id,
-    //       },
-    //       {
-    //         userId: this.player2.user.id,
-    //       },
-    //     ],
-    //   },
-    // });
-    // promises.push(
-    // 	this._prismaService.user.update({
-    // 		where: { id: winner.profile.user.id },
-    // 		data: {
-    // 			profile: {
-    // 				update: {
-    // 					xp: {
-    // 						increment: winnerXP,
-    // 					},
-    // 					elo: {
-    // 						increment: eloChange,
-    // 					},
-    // 					wonMatches: {
-    // 						increment: 1,
-    // 					},
-    // 				},
-    // 			},
-    // 		},
-    // 	}),
-    // );
-    // promises.push(
-    // 	this._prismaService.user.update({
-    // 		where: { id: loser.profile.user.id },
-    // 		data: {
-    // 			profile: {
-    // 				update: {
-    // 					xp: {
-    // 						increment: loserXP,
-    // 					},
-    // 					elo: {
-    // 						increment: -eloChange,
-    // 					},
-    // 					lostMatches: {
-    // 						increment: 1,
-    // 					},
-    // 				},
-    // 			},
-    // 		},
-    // 	}),
-    // );
-    // this._achievementsService.progressAchievements(
-    // 	winner.profile.user.profile.id,
-    // 	[
-    // 		AchievementType.NEW_SUBJECT,
-    // 		AchievementType.WHEATLEY,
-    // 		AchievementType.P_BODY,
-    // 		AchievementType.GLADOS,
-    // 		AchievementType.APPRENTICE,
-    // 		AchievementType.LEARNER,
-    // 		AchievementType.EXPERT,
-    // 		AchievementType.STREAKER,
-    // 		AchievementType.MASTER_STREAKER,
-    // 	],
-    // 	1,
-    // );
-    // this._achievementsService.progressAchievements(
-    // 	loser.profile.user.profile.id,
-    // 	[
-    // 		AchievementType.WHEATLEY,
-    // 		AchievementType.P_BODY,
-    // 		AchievementType.GLADOS,
-    // 	],
-    // 	1,
-    // );
-    // this._achievementsService.setAchievements(
-    // 	loser.profile.user.profile.id,
-    // 	[AchievementType.STREAKER, AchievementType.MASTER_STREAKER],
-    // 	0,
-    // );
-    // this._achievementsService.progressAchievements(
-    // 	user1.profile.id,
-    // 	[AchievementType.BOUNCER, AchievementType.PROFFESIONAL_BOUNCER],
-    // 	this._bounceP1,
-    // );
-    // this._achievementsService.progressAchievements(
-    // 	user2.profile.id,
-    // 	[AchievementType.BOUNCER, AchievementType.PROFFESIONAL_BOUNCER],
-    // 	this._bounceP2,
-    // );
-    // this._achievementsService.progressAchievements(
-    // 	user1.profile.id,
-    // 	[AchievementType.PORTALS_USER, AchievementType.PORTALS_ADDICT],
-    // 	this._portalsUsedP1,
-    // );
-    // this._achievementsService.progressAchievements(
-    // 	user2.profile.id,
-    // 	[AchievementType.PORTALS_USER, AchievementType.PORTALS_ADDICT],
-    // 	this._portalsUsedP2,
-    // );
-    // this._achievementsService.setAchievements(
-    // 	winner.profile.user.profile.id,
-    // 	[
-    // 		AchievementType.CHAMPION,
-    // 		AchievementType.MASTER,
-    // 		AchievementType.LEGEND,
-    // 	],
-    // 	winner.profile.user.profile.elo + eloChange,
-    // );
-    // this._achievementsService.setAchievements(
-    // 	loser.profile.user.profile.id,
-    // 	[
-    // 		AchievementType.CHAMPION,
-    // 		AchievementType.MASTER,
-    // 		AchievementType.LEGEND,
-    // 	],
-    // 	winner.profile.user.profile.elo - eloChange,
-    // );
-    // if (timeInSeconds > GameParams.GAME_TIME) {
-    // 	this._achievementsService.setAchievement(
-    // 		winner.profile.user.profile.id,
-    // 		AchievementType.ENDURANT,
-    // 		1,
-    // 	);
-    // 	this._achievementsService.setAchievement(
-    // 		loser.profile.user.profile.id,
-    // 		AchievementType.ENDURANT,
-    // 		1,
-    // 	);
-    // }
-    // if (timeInSeconds > 10 * 60) {
-    // 	this._achievementsService.setAchievement(
-    // 		winner.profile.user.profile.id,
-    // 		AchievementType.SEMI_MARATHON,
-    // 		1,
-    // 	);
-    // 	this._achievementsService.setAchievement(
-    // 		loser.profile.user.profile.id,
-    // 		AchievementType.SEMI_MARATHON,
-    // 		1,
-    // 	);
-    // }
-    // if (timeInSeconds > 20 * 60) {
-    // 	this._achievementsService.setAchievement(
-    // 		winner.profile.user.profile.id,
-    // 		AchievementType.MARATHON,
-    // 		1,
-    // 	);
-    // 	this._achievementsService.setAchievement(
-    // 		loser.profile.user.profile.id,
-    // 		AchievementType.MARATHON,
-    // 		1,
-    // 	);
-    // }
+    await this.prisma.match.create({
+      data: {
+        state: 'Finished',
+        startDate: this.game_start_time.toISOString(),
+        endDate: new Date().toISOString(),
+        entries: {
+          create: [
+            {
+              userId: winner.profile.user.id,
+              score: winner.score,
+            },
+            {
+              userId: loser.profile.user.id,
+              score: loser.score,
+            },
+          ],
+        },
+      },
+    });
 
     // if (this.invitation) {
     // 	this._websocketsService.sendToAllUsers(

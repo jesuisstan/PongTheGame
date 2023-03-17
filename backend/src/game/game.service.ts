@@ -27,7 +27,7 @@ export class GameService {
     });
     if (!user) return;
     socket.user.profile = user.profileId;
-    this.register_quit(socket);
+    // this.register_quit(socket);
     this.game_queue.push(socket);
     this._treat_queue(this.game_queue);
   }
@@ -70,15 +70,17 @@ export class GameService {
     if (queue.length >= 2) {
       const player1: any = queue.shift();
       const player2: any = queue.shift();
+      // console.log({player1})
+      console.log(player1.user);
       const msg = {
         action: 'match',
         player1: {
-          name: player1.user.name,
-          profile_picture: player1.user.profile.picture,
+          name: player1.nickname,
+          profile_picture: player1.user.avatar,
         },
         player2: {
-          name: player2.user.name,
-          profile_picture: player2.user.profile.picture,
+          name: player2.nickname,
+          profile_picture: player2.user.avatar,
         },
       };
       this.websocket.send(player1, 'matchmaking', msg);
