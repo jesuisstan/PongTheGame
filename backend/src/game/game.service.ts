@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { User } from '@prisma/client';
-import { AchievementService } from 'src/achievement/achievement.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { WebsocketsService } from 'src/websockets/websockets.service';
 import { Game } from './game.class';
 import { Socket } from 'socket.io';
+import { giveAchievementService } from 'src/achievement/utils/giveachievement.service';
 
 @Injectable()
 export class GameService {
@@ -16,7 +16,7 @@ export class GameService {
   constructor(
     private readonly websocket: WebsocketsService,
     private readonly prisma: PrismaService,
-    private readonly achievement: AchievementService,
+    private readonly achievement: giveAchievementService,
   ) {}
 
   async join_queue(socket: any) {

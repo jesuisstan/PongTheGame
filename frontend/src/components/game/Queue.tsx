@@ -4,17 +4,13 @@ import { useContext } from 'react';
 import { Game_status } from './Game';
 import Load from './Load';
 
-interface Queue_props {
+export interface Queue_props {
 	set_game_state: (gameState: Game_status) => void;
 	join_match: (player1: Player_info, player2: Player_info) => void;
 }
 
 function Queue(props: Queue_props) {
     const socket = useContext(WebSocketContext);
-
-	function is_queue_event(data: any) {
-		return data.event === 'matchmaking' && data.data.action === 'match';
-	}
 
 	function cancel_queue() {
 		props.set_game_state(Game_status.LOBBY);

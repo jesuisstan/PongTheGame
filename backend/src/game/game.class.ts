@@ -2,7 +2,7 @@ import { User } from '@prisma/client';
 import { Socket } from 'socket.io';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { WebsocketsService } from 'src/websockets/websockets.service';
-import { AchievementService } from 'src/achievement/achievement.service';
+import { giveAchievementService } from 'src/achievement/utils/giveachievement.service';
 
 export enum Status {
   STARTING = 'starting',
@@ -56,19 +56,20 @@ export interface GameState {
 }
 
 export const Default_params = {
-  GAME_WIDTH: 1600,
-  GAME_HEIGHT: 900,
+  GAME_WIDTH: 800,
+  GAME_HEIGHT: 600,
   PADDLE_MOVE_SPEED: 10,
   PADDLE_OFFSET: 50,
   PADDLE_BORDER: 2,
-  PADDLE_HEIGHT: 120,
-  PADDLE_WIDTH: 10,
-  BALL_RADIUS: 15,
+  PADDLE_HEIGHT: 600 / 6,
+  PADDLE_WIDTH: 20,
+  BALL_RADIUS: 10,
   BALL_DEFAULT_SPEED: 10,
   BALL_SPEED_INCREASE: 0.6,
-  BALL_MAX_SPEED: 18,
+  BALL_MAX_SPEED: 10,
   BALL_PERTURBATOR: 0.2,
-  GAME_TIME: 300,
+  GAME_TIME: 3, // TODO change for 300
+  DEFAULT_PADDLE_POSITION: 600 / 2 - 300 / 6 / 2,
 };
 
 export function get_default_game_state(
@@ -117,16 +118,17 @@ export function get_default_game_state(
       velocity: Default_params.BALL_DEFAULT_SPEED,
       portalUsable: true,
     },
-    portals: [],
   };
   return res;
 }
 
 export function convert_state_to_sendable(
   state: GameState,
+  status: Status,
   timeInSeconds: number,
 ) {
   const res = {
+    status: status,
     gameInfos: {
       originalWidth: state.gameInfos.width,
       originalHeight: state.gameInfos.height,
@@ -162,7 +164,7 @@ export function convert_state_to_sendable(
 export class Game {
   private websockets: WebsocketsService;
   private prisma: PrismaService;
-  private achievements: AchievementService;
+  private achievements: giveAchievementService;
   private player1: Profile;
   private player2: Profile;
   private status: Status = Status.STARTING;
@@ -176,7 +178,7 @@ export class Game {
   constructor(
     private readonly prismaService: PrismaService,
     websockets: WebsocketsService,
-    achievements: AchievementService,
+    achievements: giveAchievementService,
     player1: Profile,
     player2: Profile,
     invitation?: any,
@@ -202,36 +204,6 @@ export class Game {
     this.status = Status.PLAYING;
     this._set_players_status('PLAYING');
     this.game_start_time = new Date();
-    this._send_to_players('match_get_ball', {
-      ball: {
-        x: this.game_state.ball.position.x,
-        y: this.game_state.ball.position.y,
-      },
-    });
-
-    this._send_to_players('match_get_user', {
-      name: this.game_state.player1.profile.user.nickname,
-      picture: this.game_state.player1.profile.user.avatar,
-      x: this.game_state.player1.paddle.x,
-      y: this.game_state.player1.paddle.y,
-    });
-
-    this._send_to_players('match_get_user', {
-      name: this.game_state.player2.profile.user.nickname,
-      picture: this.game_state.player2.profile.user.avatar,
-      x: this.game_state.player2.paddle.x,
-      y: this.game_state.player2.paddle.y,
-    });
-
-    this._send_to_players('match_get_game_infos', {
-      width: this.game_state.gameInfos.paddleWidth,
-      height: this.game_state.gameInfos.paddleHeight,
-      originalHeight: this.game_state.gameInfos.height,
-      originalWidth: this.game_state.gameInfos.width,
-      time: 0,
-    });
-
-    this._send_to_players('match_start', {});
 
     // if (this.invitation) { // TODO add for the invit
     // this.websockets.sendToAllUsers(
@@ -260,7 +232,7 @@ export class Game {
 
   private async _game() {
     while (this.status === Status.PLAYING) {
-      await this._wait(20);
+      await this._wait(30);
       const now = new Date();
       const timePlayed = now.getTime() - this.game_start_time.getTime();
       const timeInSeconds = Math.floor(timePlayed / 1000);
@@ -292,31 +264,29 @@ export class Game {
         ? this.game_state.player2
         : this.game_state.player1;
     this._register_game(winner, loser, timeInSeconds);
-    const res = {
-      winner: {
-        id: winner.profile.user.id,
-        name: winner.profile.user.username,
-        profile_picture: winner.profile.user.avatar,
-        score: winner.score,
-        position:
-          winner.profile.user.id === this.game_state.player1.profile.user.id
-            ? 1
-            : 2,
-      },
-      loser: {
-        id: loser.profile.user.id,
-        name: loser.profile.user.username,
-        profile_picture: loser.profile.user.avatar,
-        score: loser.score,
-        position:
-          loser.profile.user.id === this.game_state.player1.profile.user.id
-            ? 1
-            : 2,
-      },
-      duration: timeInSeconds,
-    };
-    this._send_to_players('game-result', res);
-    this.websockets.sendToAll(this.spectator_sockets, 'game-result', res);
+    // const res = {
+    //   winner: {
+    //     id: winner.profile.user.id,
+    //     name: winner.profile.user.username,
+    //     profile_picture: winner.profile.user.avatar,
+    //     score: winner.score,
+    //     position:
+    //       winner.profile.user.id === this.game_state.player1.profile.user.id
+    //         ? 1
+    //         : 2,
+    //   },
+    //   loser: {
+    //     id: loser.profile.user.id,
+    //     name: loser.profile.user.username,
+    //     profile_picture: loser.profile.user.avatar,
+    //     score: loser.score,
+    //     position:
+    //       loser.profile.user.id === this.game_state.player1.profile.user.id
+    //         ? 1
+    //         : 2,
+    //   },
+    //   duration: timeInSeconds,
+    // };
     this.end();
   }
 
@@ -344,11 +314,6 @@ export class Game {
     // 	eloChange = score;
     // }
 
-    const user1 = this.player1.user;
-    const is_user1_winner = user1.id === winner.profile.user.id;
-    const user2 = this.player2.user;
-    const is_user2_winner = user2.id === winner.profile.user.id;
-
     this._set_players_status('ONLINE');
 
     await this.prisma.match.create({
@@ -370,31 +335,26 @@ export class Game {
         },
       },
     });
+    await this.prisma.stats.update({
+      where: {
+        userId: winner.profile.user.id,
+      },
+      data: {
+        nb_win: +1,
+        nb_game: +1,
+      },
+    });
 
-    // if (this.invitation) {
-    // 	this._websocketsService.sendToAllUsers(
-    // 		this.invitation.message.channel.participants.map(
-    // 			(p) => p.userId,
-    // 		),
-    // 		'chat-delete',
-    // 		{
-    // 			type: 'invitation',
-    // 			createdBy: this.invitation.createdBy.name,
-    // 			channel: this.invitation.message.channel.id,
-    // 		},
-    // 	);
-    // 	promises.push(
-    // 		this._prismaService.matchInvitation.deleteMany({
-    // 			where: { id: this.invitation.id },
-    // 		}),
-    // 	);
-    // 	promises.push(
-    // 		this._prismaService.messageOnChannel.deleteMany({
-    // 			where: { id: this.invitation.message.id },
-    // 		}),
-    // 	);
-    // }
-    // await Promise.all(promises);
+    await this.prisma.stats.update({
+      where: {
+        userId: loser.profile.user.id,
+      },
+      data: {
+        nb_game: +1,
+      },
+    });
+    await this.achievements.getAchievement(this.player1.user);
+    await this.achievements.getAchievement(this.player2.user);
   }
 
   get_players() {
@@ -592,7 +552,11 @@ export class Game {
   }
 
   private _send_state_to_spectators(timeInSeconds: number) {
-    const res = convert_state_to_sendable(this.game_state, timeInSeconds);
+    const res = convert_state_to_sendable(
+      this.game_state,
+      this.status,
+      timeInSeconds,
+    );
     this.websockets.sendToAll(this.spectator_sockets, 'game-state', res);
   }
 
@@ -672,12 +636,16 @@ export class Game {
   }
 
   private _send_state_to_players(timeInSeconds: number) {
-    const res = convert_state_to_sendable(this.game_state, timeInSeconds);
+    const res = convert_state_to_sendable(
+      this.game_state,
+      this.status,
+      timeInSeconds,
+    );
     res.player1.current = true;
-    this.websockets.send(this.player1.socket, 'game-state', res);
+    this.websockets.send(this.player1.socket, 'match_game_state', res);
     res.player1.current = false;
     res.player2.current = true;
-    this.websockets.send(this.player2.socket, 'game-state', res);
+    this.websockets.send(this.player2.socket, 'match_game_state', res);
   }
 
   private _send_to_players(event: string, data: any) {

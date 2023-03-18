@@ -103,9 +103,7 @@ const Game = () => {
 			{game_state === Game_status.PLAYING && (
 				<Pong spectator={false} players={players} endMatch={endMatch} />
 			)}
-			{/* {game_state === Game_status.RESULTS && result && (
-				<GameResult result={result} />
-			)} */}
+			{/* {} */}
 			{game_state === Game_status.SPECTATE && (
 				<Pong spectator={true} endMatch={endMatch} />
 			)}

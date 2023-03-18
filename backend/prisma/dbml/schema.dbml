@@ -13,12 +13,21 @@ Table User {
   totpSecret TotpSecret
   role Role [not null, default: 'USER']
   matchEntries MatchEntry [not null]
+  stats Statistique [not null]
   friends Friends [not null]
   achievement Achievements [not null]
 
   indexes {
     (profileId, provider) [unique]
   }
+}
+
+Table Statistique {
+  id Int [pk, increment]
+  nb_game Int [not null, default: 0]
+  nb_win Int [not null, default: 0]
+  User User [not null]
+  userId Int [unique, not null]
 }
 
 Table TotpSecret {
@@ -85,6 +94,8 @@ Enum MatchState {
   Started
   Finished
 }
+
+Ref: Statistique.userId > User.id
 
 Ref: TotpSecret.userId - User.id
 

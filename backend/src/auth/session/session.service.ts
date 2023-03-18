@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { User } from '@prisma/client';
+import { User, Stats } from '@prisma/client';
 import { Profile } from 'passport';
 import { UserService } from 'src/user/user.service';
 
@@ -8,7 +8,9 @@ export class SessionService {
   constructor(private readonly users: UserService) {}
 
   async validateUser(profile: Profile): Promise<User> {
-    return (await this.findUser(profile)) ?? this.createUser(profile);
+    const user: User = await this.createUser(profile);
+    await this.createStats(user.id);
+    return (await this.findUser(profile)) ?? user;
   }
 
   async createUser(profile: Profile): Promise<User> {
@@ -17,6 +19,11 @@ export class SessionService {
     if (username == null) username = profile.username;
     const avatar = photos?.[0].value ?? null;
     return this.users.createUser(id, provider, username, avatar ?? null);
+  }
+
+  async createStats(UserId: number): Promise<Stats> {
+    // MEMO check if i keep that
+    return this.users.createStats(UserId);
   }
 
   async findUser(profile: Profile): Promise<User | null> {
