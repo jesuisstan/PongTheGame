@@ -5,8 +5,10 @@ import styles from './Pages.module.css';
 const Home = () => {
   return (
     <div className={styles.basicCard}>
-      <h5>Why?</h5>
-      <p>Thanks to this website, you will play Ping-Pong with others</p>
+      <div style={{marginTop: '21px'}}>
+        <h5>Why?</h5>
+        <p>Thanks to this website, you will play Ping-Pong with others</p>
+      </div>
       <div className={styles.aboutHeader}>
         <Typography
           id="basic-list-demo"
@@ -52,7 +54,7 @@ const Home = () => {
           description="Let's do it! ⚡"
           intraNickname="acaren"
           role="Frontend: layout, auth, profile, game, stats"
-          github="https://github.com/ichbinstannis"
+          github="https://github.com/jesuisstan"
         />
         <Peer
           style={styles.daisuke}

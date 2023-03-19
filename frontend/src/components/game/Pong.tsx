@@ -3,6 +3,7 @@ import { UserContext } from '../../contexts/UserContext';
 import ScoreBar from './ScoreBar';
 import VictoryModal from './VictoryModal';
 import ButtonPong from '../UI/ButtonPong';
+import { Player } from '../../types/Player';
 import * as util from './gameUtils';
 import styles from './Game.module.css';
 
@@ -39,6 +40,17 @@ const Pong: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [open, setOpen] = useState(false);
   const [gameOn, setGameOn] = useState(false);
+  const [player2, setPlayer2] = useState<Player>({
+    achievements: null,
+    avatar: undefined,
+    id: -1,
+    matchHistory: null,
+    nickname: 'AI',
+    profileId: '',
+    provider: '',
+    role: '',
+    username: ''
+  });
   const [winner, setWinner] = useState('');
   const [winScore, setWinScore] = useState(DEFAULT_WIN_SCORE);
   const [score, setScore] = useState({ player1: 0, player2: 0 });
@@ -107,7 +119,7 @@ const Pong: React.FC = () => {
 
       score.player1 > score.player2
         ? setWinner(user.nickname)
-        : setWinner('Opponent'); // todo change 'opponent' name
+        : setWinner(player2.nickname);
       setOpen(true);
     }
   };
@@ -294,6 +306,7 @@ const Pong: React.FC = () => {
         setWinScore={setWinScore}
         score={score}
         gameOn={gameOn}
+        player2={player2}
       ></ScoreBar>
       <canvas
         className={styles.canvas}
