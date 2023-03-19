@@ -1,5 +1,6 @@
 import { useContext } from 'react';
 import { UserContext } from '../../contexts/UserContext';
+import { Player } from '../../types/Player';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
@@ -9,7 +10,8 @@ const ScoreBar = ({
   winScore,
   setWinScore,
   score,
-  gameOn
+  gameOn,
+  player2
 }: {
   winScore: number;
   setWinScore: React.Dispatch<React.SetStateAction<number>>;
@@ -18,6 +20,7 @@ const ScoreBar = ({
     player2: number;
   };
   gameOn: boolean;
+  player2: Player;
 }) => {
   const { user } = useContext(UserContext);
 
@@ -52,7 +55,10 @@ const ScoreBar = ({
           </Select>
         </FormControl>
       </div>
-      <div>Opponent: {score.player2}</div> {/*todo change name to other player*/}
+      <div>
+        {player2.nickname}: {score.player2}
+      </div>{' '}
+      {/*todo change name to other player*/}
     </div>
   );
 };
