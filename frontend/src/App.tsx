@@ -10,7 +10,7 @@ import Profile from './components/profile/Profile';
 import Verify2fa from './components/profile/Verify2fa';
 import Chat from './components/chat/Chat';
 import Game from './components/game/Game';
-import PlayerPage from './components/pages/PlayerPage';
+import PlayerCard from './components/pages/PlayerCard/PlayerCard';
 import NotFound from './components/pages/NotFound';
 import PleaseLogin from './components/pages/PleaseLogin';
 import backendAPI from './api/axios-instance';
@@ -71,10 +71,10 @@ function App() {
                   path="profile"
                   element={user.provider ? <Profile /> : <PleaseLogin />}
                 />
-                <Route path="players" element={<PlayerPage />}>
+                <Route path="players" element={<PlayerCard />}>
                   <Route
                     path=":playerNickname"
-                    element={user.provider ? <PlayerPage /> : <PleaseLogin />}
+                    element={user.provider ? <PlayerCard /> : <PleaseLogin />}
                   />
                 </Route>
                 <Route path="*" element={<NotFound />} />*
