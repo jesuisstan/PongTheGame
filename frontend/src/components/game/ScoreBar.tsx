@@ -58,7 +58,6 @@ const ScoreBar = ({
       <div>
         {player2.nickname}: {score.player2}
       </div>{' '}
-      {/*todo change name to other player*/}
     </div>
   );
 };
