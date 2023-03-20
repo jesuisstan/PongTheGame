@@ -28,6 +28,7 @@ model User {
 
   // MatchEntry
   matchEntries MatchEntry[]
+
   stats       Stats[]
   friends     Friends[]
   achievement Achievement[]
@@ -77,6 +78,16 @@ model Achievement {
   @@map("Achievements")
 }
 
+model Stats {
+  id          Int    @id @default(autoincrement())
+  nb_game     Int    @default(0)
+  nb_win      Int    @default(0)
+
+  User        User   @relation(fields: [userId], references: [id])
+  userId      Int    @unique
+
+  @@map("Statistique")
+}
 model Friends {
   user      User     @relation(fields: [friendId], references: [id])
   friendId  Int      @id

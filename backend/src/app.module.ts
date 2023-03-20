@@ -10,6 +10,8 @@ import { UserModule } from 'src/user/user.module';
 import { ChatModule } from './chat/chat.module';
 import { GameModule } from './game/game.module';
 import { WebsocketsModule } from './websockets/websockets.module';
+import { StatsModule } from './stats/stats.module';
+
 
 @Module({
   imports: [
@@ -26,6 +28,7 @@ import { WebsocketsModule } from './websockets/websockets.module';
     AvatarModule,
     GameModule,
     WebsocketsModule,
+    StatsModule,
   ],
   providers: [],
   controllers: [StatusController],

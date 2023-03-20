@@ -13,17 +13,16 @@ export class SessionService {
     return (await this.findUser(profile)) ?? user;
   }
 
+  async createStats(UserId: number): Promise<Stats> {
+    return this.users.createStats(UserId);
+  }
+
   async createUser(profile: Profile): Promise<User> {
     const { id, provider, photos } = profile;
     let username: any = profile.displayName;
     if (username == null) username = profile.username;
     const avatar = photos?.[0].value ?? null;
     return this.users.createUser(id, provider, username, avatar ?? null);
-  }
-
-  async createStats(UserId: number): Promise<Stats> {
-    // MEMO check if i keep that
-    return this.users.createStats(UserId);
   }
 
   async findUser(profile: Profile): Promise<User | null> {

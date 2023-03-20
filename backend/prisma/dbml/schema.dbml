@@ -48,6 +48,14 @@ Table Achievements {
   userId Int
 }
 
+Table Statistique {
+  id Int [pk, increment]
+  nb_game Int [not null, default: 0]
+  nb_win Int [not null, default: 0]
+  User User [not null]
+  userId Int [unique, not null]
+}
+
 Table Friends {
   user User [not null]
   friendId Int [pk]
@@ -100,6 +108,8 @@ Ref: Statistique.userId > User.id
 Ref: TotpSecret.userId - User.id
 
 Ref: Achievements.userId > User.id
+
+Ref: Statistique.userId > User.id
 
 Ref: Friends.friendId > User.id
 
