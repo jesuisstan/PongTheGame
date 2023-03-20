@@ -76,6 +76,7 @@ const Profile = () => {
               level="body3"
               textTransform="uppercase"
               fontWeight="lg"
+              textColor="rgb(37, 120, 204)"
             >
               Auth
             </Typography>
@@ -107,6 +108,7 @@ const Profile = () => {
               level="body3"
               textTransform="uppercase"
               fontWeight="lg"
+              textColor="rgb(37, 120, 204)"
             >
               Info
             </Typography>
@@ -138,6 +140,7 @@ const Profile = () => {
               level="body3"
               textTransform="uppercase"
               fontWeight="lg"
+              textColor="rgb(37, 120, 204)"
             >
               Briefs
             </Typography>
@@ -146,7 +149,6 @@ const Profile = () => {
               aria-labelledby="basic-list"
             >
               <ListItem>Wins: {0}</ListItem>
-              <ListItem>Draws: {0}</ListItem>
               <ListItem>Loses: {0}</ListItem>
             </List>
           </div>
