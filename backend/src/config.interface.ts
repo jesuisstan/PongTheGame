@@ -13,4 +13,5 @@ export interface Config {
   DATABASE_URL: string;
   SESSION_SECRET: string;
   TOTP_SECRET: string;
+  JWT_SECRET: string;
 }
