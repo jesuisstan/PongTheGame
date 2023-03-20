@@ -8,9 +8,12 @@ export class SessionService {
   constructor(private readonly users: UserService) {}
 
   async validateUser(profile: Profile): Promise<User> {
+    const user_found = await this.findUser(profile);
+    if (user_found)
+      return user_found
     const user: User = await this.createUser(profile);
     await this.createStats(user.id);
-    return (await this.findUser(profile)) ?? user;
+    return (user);
   }
 
   async createStats(UserId: number): Promise<Stats> {

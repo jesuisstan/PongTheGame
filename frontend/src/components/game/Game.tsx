@@ -14,7 +14,6 @@ export enum Game_status {
 	LOBBY = 'lobby',
 	BEGIN_GAME = 'begin_game',
 	QUEUE = 'queue',
-	PREGAME = 'pregame',
 	PLAYING = 'playing',
 	SPECTATE = 'spectate',
 }
@@ -25,7 +24,6 @@ const Game = () => {
 
   const { user, setUser } = useContext(UserContext);
   const state_ref = useRef(Game_status.LOBBY);
-  // const [gameState, set_game_state] = useState(Game_state.LOBBY);
   const [result, set_result] = useState<Game_result | null>(null);
   const [game_state, set_game_state] = useState(Game_status.LOBBY);
   const [players, set_players] = useState<Game_player[]>([]);

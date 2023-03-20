@@ -68,7 +68,7 @@ export const Default_params = {
   BALL_SPEED_INCREASE: 0.6,
   BALL_MAX_SPEED: 10,
   BALL_PERTURBATOR: 0.2,
-  GAME_TIME: 3, // TODO change for 300
+  GAME_TIME: 100, // TODO change for 300
   DEFAULT_PADDLE_POSITION: 600 / 2 - 300 / 6 / 2,
 };
 
@@ -232,7 +232,7 @@ export class Game {
 
   private async _game() {
     while (this.status === Status.PLAYING) {
-      await this._wait(30);
+      await this._wait(100);
       const now = new Date();
       const timePlayed = now.getTime() - this.game_start_time.getTime();
       const timeInSeconds = Math.floor(timePlayed / 1000);

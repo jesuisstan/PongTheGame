@@ -171,14 +171,29 @@ export function draw_state(state: Game_state, canvasRef: any) {
 	ctx.canvas.width = state.gameInfos.originalWidth;
 	ctx.canvas.height = state.gameInfos.originalHeight;
 
-	ctx.fillStyle = '#d9d9d9';
+	ctx.fillStyle = '#000000';
 	ctx.beginPath();
 	ctx.rect(0, 0, canvas.width, canvas.height);
 	ctx.fill();
 
-	drawBall(ctx, '#000000', state.ball, state.gameInfos);
+	drawBall(ctx, '#ffffff', state.ball, state.gameInfos);
 
-	drawPaddle(ctx, state.player1, '#ffb800', state.gameInfos);
-	drawPaddle(ctx, state.player2, '#17c0e9', state.gameInfos);
+	drawPaddle(ctx, state.player1, '#abcdef', state.gameInfos);
+	drawPaddle(ctx, state.player2, '#fedcba', state.gameInfos);
+
+}
+
+export function draw_state_2(state: Game_state, canvasRef: any) {
+	if (!canvasRef.current) return;
+	const canvas: any = canvasRef.current;
+	const ctx = canvas.getContext('2d');
+
+  // ctx.fillStyle = '#000000';
+	// ctx.rect(0, 0, canvas.width, canvas.height);
+  ctx.fill();
+	drawBall(ctx, '#ffffff', state.ball, state.gameInfos);
+
+	drawPaddle(ctx, state.player1, '#abcdef', state.gameInfos);
+	drawPaddle(ctx, state.player2, '#fedcba', state.gameInfos);
 
 }
