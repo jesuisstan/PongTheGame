@@ -1,9 +1,11 @@
 import { useRef, useEffect, useContext, useState, useCallback } from 'react';
 import { UserContext } from '../../contexts/UserContext';
 import ScoreBar from './ScoreBar';
+import GameBar from './GameBar';
 import VictoryModal from './VictoryModal';
 import ButtonPong from '../UI/ButtonPong';
 import { Player } from '../../types/Player';
+import { Score } from '../../types/Score';
 import * as util from './gameUtils';
 import styles from './Game.module.css';
 
@@ -18,6 +20,12 @@ const PADDLE_WIDTH = 20;
 const PADDLE_HEIGHT = CANVAS_HEIGHT / 6;
 const PADDLE_COLOR = 'rgb(253, 80, 135)';
 const DEFAULT_PADDLE_POSITION = CANVAS_HEIGHT / 2 - PADDLE_HEIGHT / 2;
+
+const OBSTACLE_HEIGHT = PADDLE_HEIGHT;
+const OBSTACLE_WIDTH = PADDLE_WIDTH;
+const OBSTACLE_SPEED = 10;
+let obstacleX = CANVAS_WIDTH / 2 - OBSTACLE_WIDTH / 2;
+let obstacleY = 0;
 
 let paddle1Y = DEFAULT_PADDLE_POSITION;
 let paddle2Y = DEFAULT_PADDLE_POSITION;
@@ -53,14 +61,16 @@ const Pong: React.FC = () => {
   });
   const [winner, setWinner] = useState('');
   const [winScore, setWinScore] = useState(DEFAULT_WIN_SCORE);
-  const [score, setScore] = useState({ player1: 0, player2: 0 });
+  const [score, setScore] = useState<Score>({ player1: 0, player2: 0 });
   const [gamePaused, setGamePaused] = useState(false);
   const [trainMode, setTrainMode] = useState(false);
+  const [hardMode, setHardMode] = useState(false);
 
   const setDefault = () => {
     setWinner('');
     setScore({ player1: 0, player2: 0 });
     setTrainMode(false);
+    setHardMode(false);
     setGamePaused(false);
     setDefaultBallSpeed();
     paddle1Y = DEFAULT_PADDLE_POSITION;
@@ -111,6 +121,18 @@ const Pong: React.FC = () => {
       PADDLE_HEIGHT,
       PADDLE_COLOR
     ); // Right Paddle
+
+    // if hard mode enabled --->
+    if (hardMode) {
+      util.makeRectangleShape(
+        canvasContext,
+        obstacleX,
+        obstacleY,
+        OBSTACLE_WIDTH,
+        OBSTACLE_HEIGHT,
+        'rgba(37, 120, 204, 0.5)'
+      ); // bonus obstacle
+    }
   };
 
   const checkWinner = () => {
@@ -142,9 +164,20 @@ const Pong: React.FC = () => {
       } else if (paddle2YCenter < ballPosition.Y + 40 && paddle2Y > 0) {
         paddle2Y -= 14;
       } else if (paddle2Y <= 0) {
-        paddle2Y = 0;
+        paddle2Y = 10;
       } else {
         paddle2Y = paddle2Y;
+      }
+    }
+  };
+
+  const obstacleRun = () => {
+    if (hardMode) {
+      if (obstacleY < CANVAS_HEIGHT - OBSTACLE_HEIGHT) {
+        obstacleY += OBSTACLE_SPEED;
+      }
+      if (obstacleY === CANVAS_HEIGHT - OBSTACLE_HEIGHT) {
+        obstacleY = 0;
       }
     }
   };
@@ -176,6 +209,7 @@ const Pong: React.FC = () => {
     }
 
     computerAI();
+    obstacleRun();
 
     if (ballPosition.X >= CANVAS_WIDTH + BALL_RADIUS * 2) {
       increaseScorePlayer1();
@@ -185,6 +219,14 @@ const Pong: React.FC = () => {
     if (ballPosition.X <= -BALL_RADIUS * 2) {
       increaseScorePlayer2();
       util.printGoal(canvasContext, CANVAS_WIDTH, CANVAS_HEIGHT);
+    }
+
+    // Bounce the ball from bottom & top --->
+    if (
+      ballPosition.Y >= CANVAS_HEIGHT - BALL_RADIUS ||
+      ballPosition.Y <= BALL_RADIUS
+    ) {
+      ballSpeed.Y = -ballSpeed.Y;
     }
 
     // Bounce the ball from the left paddle --->
@@ -227,20 +269,45 @@ const Pong: React.FC = () => {
       ballSpeed.X = deltaX !== 0 ? deltaX * 0.35 : -ballSpeed.X;
     }
 
-    // Bounce the ball from bottom & top --->
-    if (
-      ballPosition.Y >= CANVAS_HEIGHT - BALL_RADIUS ||
-      ballPosition.Y <= BALL_RADIUS
-    ) {
-      ballSpeed.Y = -ballSpeed.Y;
-    }
-  };
+    if (hardMode) {
+      // Bounce the ball from the obstacle --->
+      if (
+        (ballPosition.X === obstacleX - BALL_RADIUS ||
+          ballPosition.X === obstacleX + PADDLE_WIDTH + BALL_RADIUS) &&
+        ballPosition.Y >= obstacleY - BALL_RADIUS &&
+        ballPosition.Y <= obstacleY + OBSTACLE_HEIGHT + BALL_RADIUS
+      ) {
+        ballSpeed.X = -ballSpeed.X;
+        let deltaY = ballPosition.Y - (obstacleY + OBSTACLE_HEIGHT / 2);
+        ballSpeed.Y = util.roundToTen(deltaY * 0.35);
+      }
+      // from up ribs
+      if (
+        ballPosition.X <= obstacleX + OBSTACLE_WIDTH + BALL_RADIUS &&
+        ballPosition.X >= obstacleX - BALL_RADIUS &&
+        (ballPosition.Y === obstacleY - BALL_RADIUS ||
+          ballPosition.Y === obstacleY + OBSTACLE_HEIGHT + BALL_RADIUS)
+      ) {
+        ballSpeed.Y = -ballSpeed.Y;
+      }
 
-  const trainWithComputer = async () => {
-    setTrainMode(true);
-    if (!gameOn) {
-      setScore({ player1: 0, player2: 0 });
-      setGameOn(true);
+      // Bounce the ball from the right obstacle --->
+      //if (
+      //  (ballPosition.X === obstacleRightX + PADDLE_WIDTH + BALL_RADIUS ||
+      //    ballPosition.X === obstacleRightX - BALL_RADIUS) &&
+      //  ballPosition.Y <= obstacleRightY + PADDLE_HEIGHT + BALL_RADIUS
+      //) {
+      //  ballSpeed.X = -ballSpeed.X;
+      //  let deltaY = ballPosition.Y - (obstacleRightY + PADDLE_HEIGHT / 2);
+      //  ballSpeed.Y = util.roundToTen(deltaY * 0.35);
+      //}
+      //if (
+      //  ballPosition.X <= obstacleRightX + PADDLE_WIDTH + BALL_RADIUS &&
+      //  ballPosition.X >= obstacleRightX - BALL_RADIUS &&
+      //  ballPosition.Y === obstacleRightY + PADDLE_HEIGHT + BALL_RADIUS
+      //) {
+      //  ballSpeed.Y = -ballSpeed.Y;
+      //}
     }
   };
 
@@ -277,30 +344,20 @@ const Pong: React.FC = () => {
       window.removeEventListener('mousemove', paddleMoveListener);
       clearInterval(intervalId);
     };
-  }, [score.player1, score.player2, gamePaused, gameOn]);
+  }, [score.player1, score.player2, gamePaused, gameOn, hardMode]);
 
   return (
     <div className={styles.canvasBlock}>
-      <div className={styles.buttonsBlock}>
-        <ButtonPong
-          text="train with AI"
-          title="practice with computer"
-          disabled={gameOn ? true : false}
-          onClick={trainWithComputer}
-        />
-        <ButtonPong
-          text={gamePaused ? 'unpause' : 'pause'}
-          title={gamePaused ? 'continue the game' : 'set the game on pause'}
-          disabled={gameOn ? false : true}
-          onClick={() => {
-            setGamePaused(!gamePaused);
-          }}
-        />
-        <ButtonPong
-          text="Find opponent"
-          onClick={() => console.log('find opp clicked')}
-        />
-      </div>
+      <GameBar
+        setTrainMode={setTrainMode}
+        setScore={setScore}
+        gameOn={gameOn}
+        setGameOn={setGameOn}
+        gamePaused={gamePaused}
+        setGamePaused={setGamePaused}
+        hardMode={hardMode}
+        setHardMode={setHardMode}
+      ></GameBar>
       <ScoreBar
         winScore={winScore}
         setWinScore={setWinScore}
