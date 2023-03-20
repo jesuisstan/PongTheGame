@@ -56,7 +56,8 @@ const PlayerCard = () => {
       }
     );
   }, []);
-
+ console.log(achievements);
+ 
   return !user.provider ? (
     <PleaseLogin />
   ) : player.id === -1 ? (
