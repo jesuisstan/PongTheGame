@@ -12,17 +12,17 @@ export async function insert_achievement() {
     {
       Name: 'Newbie',
       Title: 'First Game',
-      Description: 'Play first Game',
+      Description: 'Play for the first time',
     },
     {
       Name: 'Player',
       Title: 'Play 10 Games',
-      Description: 'Play 10 Games',
+      Description: 'Play 10 games',
     },
     {
       Name: 'Challenger',
       Title: 'Play 42 Games',
-      Description: 'Play 42 Games',
+      Description: 'Play 42 games',
     },
     {
       Name: 'Red',
@@ -32,32 +32,32 @@ export async function insert_achievement() {
     {
       Name: 'Master',
       Title: 'Win 10 Games',
-      Description: 'Win 10 Games',
+      Description: 'Win 10 games',
     },
     {
       Name: 'Super Saiyan',
       Title: 'Win 42 Games',
-      Description: 'Congrats, You win 42 Games',
+      Description: 'Win 42 games',
     },
     {
       Name: 'Custom',
       Title: 'Change Avatar',
-      Description: 'You change your profile',
+      Description: 'Change avatar',
     },
     {
       Name: 'Mode User',
-      Title: 'use 2 different Game modes',
+      Title: 'use 2 different game modes',
       Description: 'Play 2 different game modes',
     }, // MEMO Not sur to keep it
     {
       Name: 'Friend Of Maurice',
       Title: 'Get One Friend',
-      Description: 'Get at least one Friend',
+      Description: 'Get at least one friend',
     },
     {
       Name: 'Super Popstar',
       Title: 'More Friends',
-      Description: 'Get 42 Friends',
+      Description: 'Get 42 friends',
     },
     {
       Name: 'I See U',
@@ -72,7 +72,7 @@ export async function insert_achievement() {
     {
       Name: "I'm your Father",
       Title: 'Achievements everywhere * 2',
-      Description: 'Get 20 Achievement',
+      Description: 'Get all achievements',
     },
     // {Name : "", Title : "", Description : ""},
   ];

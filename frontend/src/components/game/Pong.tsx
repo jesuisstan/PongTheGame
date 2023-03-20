@@ -49,10 +49,8 @@ const Pong: React.FC = () => {
   const [open, setOpen] = useState(false);
   const [gameOn, setGameOn] = useState(false);
   const [player2, setPlayer2] = useState<Player>({
-    achievements: null,
     avatar: undefined,
     id: -1,
-    matchHistory: null,
     nickname: 'AI',
     profileId: '',
     provider: '',
