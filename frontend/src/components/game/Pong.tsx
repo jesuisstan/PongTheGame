@@ -3,10 +3,9 @@ import { UserContext } from '../../contexts/UserContext';
 import ScoreBar from './ScoreBar';
 import GameBar from './GameBar';
 import VictoryModal from './VictoryModal';
-import ButtonPong from '../UI/ButtonPong';
 import { Player } from '../../types/Player';
 import { Score } from '../../types/Score';
-import * as util from './gameUtils';
+import * as util from './utils/gameUtils';
 import styles from './Game.module.css';
 
 const DEFAULT_WIN_SCORE = 3;
@@ -152,22 +151,29 @@ const Pong: React.FC = () => {
     ballPosition.X = CANVAS_WIDTH / 2;
     ballPosition.Y = CANVAS_HEIGHT / 2;
     if (bonusMode) {
-      obstacleY = 0
+      obstacleY = 0;
     }
   };
 
   const computerAI = () => {
     if (trainMode) {
       let paddle2YCenter = paddle2Y + PADDLE_HEIGHT / 2;
+      let distanceThreshold = BALL_RADIUS * 2; // adjust this to change the paddle's reaction time
 
-      if (paddle2YCenter < ballPosition.Y - 40) {
-        paddle2Y += 14;
-      } else if (paddle2YCenter < ballPosition.Y + 40 && paddle2Y > 0) {
-        paddle2Y -= 14;
-      } else if (paddle2Y <= 0) {
-        paddle2Y = 10;
-      } else {
-        paddle2Y = paddle2Y;
+      let distanceToBall = Math.abs(paddle2YCenter - ballPosition.Y);
+      if (distanceToBall > distanceThreshold) {
+        if (paddle2YCenter < ballPosition.Y) {
+          paddle2Y += 15;
+        } else {
+          paddle2Y -= 15;
+        }
+      }
+
+      // Make sure paddle stays within bounds of the canvas
+      if (paddle2Y < 0) {
+        paddle2Y = 0;
+      } else if (paddle2Y > CANVAS_HEIGHT - PADDLE_HEIGHT) {
+        paddle2Y = CANVAS_HEIGHT - PADDLE_HEIGHT;
       }
     }
   };

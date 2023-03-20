@@ -26,9 +26,6 @@ const MatchHistoryBlock = ({ player }: { player: Player }) => {
         Wins: {0}
       </Typography>
       <Typography textAlign="left" component="legend">
-        Draws: {0}
-      </Typography>
-      <Typography textAlign="left" component="legend">
         Loses: {0}
       </Typography>
     </div>

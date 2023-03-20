@@ -1,10 +1,10 @@
 import { Dispatch, SetStateAction, useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { UserContext } from '../../contexts/UserContext';
+import { UserContext } from '../../../contexts/UserContext';
 import { AxiosError } from 'axios';
-import { User } from '../../types/User';
-import backendAPI from '../../api/axios-instance';
-import errorAlert from '../UI/errorAlert';
+import { User } from '../../../types/User';
+import backendAPI from '../../../api/axios-instance';
+import errorAlert from '../../UI/errorAlert';
 import FormControl from '@mui/joy/FormControl';
 import FormLabel from '@mui/joy/FormLabel';
 import Modal from '@mui/joy/Modal';
