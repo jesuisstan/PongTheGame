@@ -63,23 +63,17 @@ const Enable2fa = ({
 
   const verifyCurrentUser = async () => {
     try {
-      const user = (
+      const userData = (
         await backendAPI.post<User>('/auth/totp/verify', {
           token: text
         })
       ).data;
-      console.log('user data after 2faVerification = ' + user);
-      console.log(user);
-      console.log('-----------');
+      console.log(`user data --->`);
+      console.log(userData);
 
-      //setUser(user);
-
-      // todo lines 82-85 to set user with totpSecret field while /auth/totp/verify doesn't returnes this field
-      backendAPI.get('/auth/getuser').then((response) => {
-        setUser(response.data);
-      });
+      setUser(userData);
     } catch (e) {
-      setButtonText('Failed to get user data');
+      errorAlert('Failed to get user data');
     }
   };
 
