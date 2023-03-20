@@ -24,7 +24,7 @@ const AchievementsBlock = ({
           title={item.Description}
           sx={{
             '&:hover': {
-              textDecoration: 'underline',
+              transform: 'scale(1.1)',
               cursor: 'wait'
             }
           }}
