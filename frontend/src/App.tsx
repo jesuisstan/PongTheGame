@@ -17,7 +17,6 @@ import backendAPI from './api/axios-instance';
 import './App.css';
 
 function App() {
-  // Fetching the socket from its context
   const socket = useContext(WebSocketContext);
   const [open, setOpen] = useState(false);
   const [user, setUser] = useState<User>({
@@ -41,7 +40,6 @@ function App() {
       (error) => {
         if (error.response?.status === 400) {
           setOpen(true);
-          // 2fa is enabled and was not verified
         }
       }
     );
