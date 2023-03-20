@@ -13,13 +13,13 @@ const USER_SELECT = {
   role: true,
 };
 
-function userSelect(includeTotp: boolean) {
-  return includeTotp
+function userSelect(includeTfaEnabled: boolean) {
+  return includeTfaEnabled
     ? {
         ...USER_SELECT,
         totpSecret: {
           select: {
-            verified: includeTotp,
+            verified: includeTfaEnabled,
           },
         },
       }
@@ -40,16 +40,17 @@ export class UserService {
     });
   }
 
-  async findUserByNickname(nickname: string) {
+  async findUserByNickname(nickname: string, includeTfaEnabled = false) {
     return this.prisma.user.findUnique({
       where: { nickname },
-      select: USER_SELECT,
+      select: userSelect(includeTfaEnabled),
     });
   }
 
   async findUserByProfileId(
     provider: string,
     profileId: string,
+    includeTfaEnabled = false,
   ): Promise<User | null> {
     return this.prisma.user.findUnique({
       where: {
@@ -58,7 +59,7 @@ export class UserService {
           provider,
         },
       },
-      select: USER_SELECT,
+      select: userSelect(includeTfaEnabled),
     });
   }
 
