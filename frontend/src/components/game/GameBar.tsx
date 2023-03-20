@@ -13,8 +13,8 @@ const GameBar = ({
   setGameOn,
   gamePaused,
   setGamePaused,
-  hardMode,
-  setHardMode
+  bonusMode,
+  setBonusMode
 }: {
   setTrainMode: React.Dispatch<React.SetStateAction<boolean>>;
   setScore: React.Dispatch<React.SetStateAction<Score>>;
@@ -22,8 +22,8 @@ const GameBar = ({
   setGameOn: React.Dispatch<React.SetStateAction<boolean>>;
   gamePaused: boolean;
   setGamePaused: React.Dispatch<React.SetStateAction<boolean>>;
-  hardMode: boolean;
-  setHardMode: React.Dispatch<React.SetStateAction<boolean>>;
+  bonusMode: boolean;
+  setBonusMode: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const { user } = useContext(UserContext);
 
@@ -48,11 +48,11 @@ const GameBar = ({
         control={
           <Switch
             disabled={gameOn ? true : false}
-            checked={hardMode}
-            onClick={() => setHardMode(!hardMode)}
+            checked={bonusMode}
+            onClick={() => setBonusMode(!bonusMode)}
           />
         }
-        label="Hard mode"
+        label="Bonus mode"
       />
       <ButtonPong
         text={gamePaused ? 'unpause' : 'pause'}

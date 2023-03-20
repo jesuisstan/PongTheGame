@@ -21,7 +21,7 @@ const PADDLE_HEIGHT = CANVAS_HEIGHT / 6;
 const PADDLE_COLOR = 'rgb(253, 80, 135)';
 const DEFAULT_PADDLE_POSITION = CANVAS_HEIGHT / 2 - PADDLE_HEIGHT / 2;
 
-const OBSTACLE_HEIGHT = PADDLE_HEIGHT;
+const OBSTACLE_HEIGHT = PADDLE_HEIGHT * 2;
 const OBSTACLE_WIDTH = PADDLE_WIDTH;
 const OBSTACLE_SPEED = 10;
 let obstacleX = CANVAS_WIDTH / 2 - OBSTACLE_WIDTH / 2;
@@ -64,13 +64,13 @@ const Pong: React.FC = () => {
   const [score, setScore] = useState<Score>({ player1: 0, player2: 0 });
   const [gamePaused, setGamePaused] = useState(false);
   const [trainMode, setTrainMode] = useState(false);
-  const [hardMode, setHardMode] = useState(false);
+  const [bonusMode, setBonusMode] = useState(false);
 
   const setDefault = () => {
     setWinner('');
     setScore({ player1: 0, player2: 0 });
     setTrainMode(false);
-    setHardMode(false);
+    setBonusMode(false);
     setGamePaused(false);
     setDefaultBallSpeed();
     paddle1Y = DEFAULT_PADDLE_POSITION;
@@ -123,7 +123,7 @@ const Pong: React.FC = () => {
     ); // Right Paddle
 
     // if hard mode enabled --->
-    if (hardMode) {
+    if (bonusMode) {
       util.makeRectangleShape(
         canvasContext,
         obstacleX,
@@ -153,6 +153,9 @@ const Pong: React.FC = () => {
       ballSpeed.Y > 0 ? -DEFAULT_BALL_SPEED_Y : DEFAULT_BALL_SPEED_Y;
     ballPosition.X = CANVAS_WIDTH / 2;
     ballPosition.Y = CANVAS_HEIGHT / 2;
+    if (bonusMode) {
+      obstacleY = 0
+    }
   };
 
   const computerAI = () => {
@@ -172,12 +175,11 @@ const Pong: React.FC = () => {
   };
 
   const obstacleRun = () => {
-    if (hardMode) {
-      if (obstacleY < CANVAS_HEIGHT - OBSTACLE_HEIGHT) {
+    if (bonusMode) {
+      if (obstacleY < CANVAS_HEIGHT) {
         obstacleY += OBSTACLE_SPEED;
-      }
-      if (obstacleY === CANVAS_HEIGHT - OBSTACLE_HEIGHT) {
-        obstacleY = 0;
+      } else if (obstacleY >= CANVAS_HEIGHT - OBSTACLE_HEIGHT) {
+        obstacleY = -OBSTACLE_HEIGHT;
       }
     }
   };
@@ -269,7 +271,7 @@ const Pong: React.FC = () => {
       ballSpeed.X = deltaX !== 0 ? deltaX * 0.35 : -ballSpeed.X;
     }
 
-    if (hardMode) {
+    if (bonusMode) {
       // Bounce the ball from the obstacle --->
       if (
         (ballPosition.X === obstacleX - BALL_RADIUS ||
@@ -281,14 +283,27 @@ const Pong: React.FC = () => {
         let deltaY = ballPosition.Y - (obstacleY + OBSTACLE_HEIGHT / 2);
         ballSpeed.Y = util.roundToTen(deltaY * 0.35);
       }
-      // from up ribs
+      // from obstacle's ribs
+      //if (
+      //  (ballPosition.X <= obstacleX + OBSTACLE_WIDTH + BALL_RADIUS &&
+      //  ballPosition.X >= obstacleX - BALL_RADIUS) &&
+      //  (ballPosition.Y === obstacleY - BALL_RADIUS ||
+      //    ballPosition.Y === obstacleY + OBSTACLE_HEIGHT + BALL_RADIUS)
+      //) {
+      //  ballSpeed.Y = -ballSpeed.Y;
+      //}
       if (
-        ballPosition.X <= obstacleX + OBSTACLE_WIDTH + BALL_RADIUS &&
         ballPosition.X >= obstacleX - BALL_RADIUS &&
-        (ballPosition.Y === obstacleY - BALL_RADIUS ||
-          ballPosition.Y === obstacleY + OBSTACLE_HEIGHT + BALL_RADIUS)
+        ballPosition.X <= obstacleX + OBSTACLE_WIDTH + BALL_RADIUS &&
+        ballPosition.Y === obstacleY + OBSTACLE_HEIGHT + BALL_RADIUS
+
+        //ballPosition.X <= obstacleX + OBSTACLE_WIDTH + BALL_RADIUS &&
+        //ballPosition.X >= obstacleX - BALL_RADIUS &&
+        //(ballPosition.Y === obstacleY - BALL_RADIUS ||
+        //  ballPosition.Y === obstacleY + OBSTACLE_HEIGHT + BALL_RADIUS)
       ) {
         ballSpeed.Y = -ballSpeed.Y;
+        //OBSTACLE_SPEED = -OBSTACLE_SPEED
       }
 
       // Bounce the ball from the right obstacle --->
@@ -344,7 +359,7 @@ const Pong: React.FC = () => {
       window.removeEventListener('mousemove', paddleMoveListener);
       clearInterval(intervalId);
     };
-  }, [score.player1, score.player2, gamePaused, gameOn, hardMode]);
+  }, [score.player1, score.player2, gamePaused, gameOn, bonusMode]);
 
   return (
     <div className={styles.canvasBlock}>
@@ -355,8 +370,8 @@ const Pong: React.FC = () => {
         setGameOn={setGameOn}
         gamePaused={gamePaused}
         setGamePaused={setGamePaused}
-        hardMode={hardMode}
-        setHardMode={setHardMode}
+        bonusMode={bonusMode}
+        setBonusMode={setBonusMode}
       ></GameBar>
       <ScoreBar
         winScore={winScore}
