@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { UserContext } from '../../../contexts/UserContext';
 import PleaseLogin from '../PleaseLogin';
 import NotFound from '../NotFound';
@@ -14,10 +14,8 @@ import styles from './PlayerCard.module.css';
 const PlayerCard = () => {
   const { user, setUser } = useContext(UserContext);
   const [player, setPlayer] = useState<Player>({
-    achievements: null,
     avatar: undefined,
     id: -1,
-    matchHistory: null,
     nickname: '',
     profileId: '',
     provider: '',
@@ -26,14 +24,21 @@ const PlayerCard = () => {
   });
   const [achievements, setAchievements] = useState(
     Array<{ id: -1; Name: ''; Description: '' }>
-  ); // todo temp option
-
+  );
   let { playerNickname } = useParams();
 
   useEffect(() => {
     backendAPI.get(`/user/${playerNickname}`).then(
       (response) => {
         setPlayer(response.data);
+        backendAPI.get(`/achievements/${response.data.profileId}`).then(
+          (response) => {
+            setAchievements(response.data);
+          },
+          (error) => {
+            errorAlert(`Failed to get player's achievements`);
+          }
+        );
       },
       (error) => {
         if (error.response?.status === 404) {
@@ -45,19 +50,6 @@ const PlayerCard = () => {
     );
   }, []);
 
-  useEffect(() => {
-    backendAPI.get(`/achievements`).then(
-      (response) => {
-        setAchievements(response.data);
-        console.log(typeof response.data);
-      },
-      (error) => {
-        console.log('achtung!');
-      }
-    );
-  }, []);
- console.log(achievements);
- 
   return !user.provider ? (
     <PleaseLogin />
   ) : player.id === -1 ? (
@@ -69,7 +61,7 @@ const PlayerCard = () => {
       </div>
       <div className={styles.playerCard}>
         <InfoBlock player={player} />
-        <AchievementsBlock player={player} achievements={achievements} />
+        <AchievementsBlock achievements={achievements} />
         <MatchHistoryBlock player={player} />
       </div>
     </div>

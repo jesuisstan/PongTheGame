@@ -3,10 +3,9 @@ import { UserContext } from '../../contexts/UserContext';
 import ScoreBar from './ScoreBar';
 import GameBar from './GameBar';
 import VictoryModal from './VictoryModal';
-import ButtonPong from '../UI/ButtonPong';
 import { Player } from '../../types/Player';
 import { Score } from '../../types/Score';
-import * as util from './gameUtils';
+import * as util from './utils/gameUtils';
 import styles from './Game.module.css';
 
 const DEFAULT_WIN_SCORE = 3;
@@ -49,10 +48,8 @@ const Pong: React.FC = () => {
   const [open, setOpen] = useState(false);
   const [gameOn, setGameOn] = useState(false);
   const [player2, setPlayer2] = useState<Player>({
-    achievements: null,
     avatar: undefined,
     id: -1,
-    matchHistory: null,
     nickname: 'AI',
     profileId: '',
     provider: '',
@@ -154,22 +151,29 @@ const Pong: React.FC = () => {
     ballPosition.X = CANVAS_WIDTH / 2;
     ballPosition.Y = CANVAS_HEIGHT / 2;
     if (bonusMode) {
-      obstacleY = 0
+      obstacleY = 0;
     }
   };
 
   const computerAI = () => {
     if (trainMode) {
       let paddle2YCenter = paddle2Y + PADDLE_HEIGHT / 2;
+      let distanceThreshold = BALL_RADIUS * 2; // adjust this to change the paddle's reaction time
 
-      if (paddle2YCenter < ballPosition.Y - 40) {
-        paddle2Y += 14;
-      } else if (paddle2YCenter < ballPosition.Y + 40 && paddle2Y > 0) {
-        paddle2Y -= 14;
-      } else if (paddle2Y <= 0) {
-        paddle2Y = 10;
-      } else {
-        paddle2Y = paddle2Y;
+      let distanceToBall = Math.abs(paddle2YCenter - ballPosition.Y);
+      if (distanceToBall > distanceThreshold) {
+        if (paddle2YCenter < ballPosition.Y) {
+          paddle2Y += 15;
+        } else {
+          paddle2Y -= 15;
+        }
+      }
+
+      // Make sure paddle stays within bounds of the canvas
+      if (paddle2Y < 0) {
+        paddle2Y = 0;
+      } else if (paddle2Y > CANVAS_HEIGHT - PADDLE_HEIGHT) {
+        paddle2Y = CANVAS_HEIGHT - PADDLE_HEIGHT;
       }
     }
   };
@@ -272,7 +276,7 @@ const Pong: React.FC = () => {
     }
 
     if (bonusMode) {
-      // Bounce the ball from the obstacle --->
+      // Bounce the ball from the obstacle
       if (
         (ballPosition.X === obstacleX - BALL_RADIUS ||
           ballPosition.X === obstacleX + PADDLE_WIDTH + BALL_RADIUS) &&
@@ -283,46 +287,18 @@ const Pong: React.FC = () => {
         let deltaY = ballPosition.Y - (obstacleY + OBSTACLE_HEIGHT / 2);
         ballSpeed.Y = util.roundToTen(deltaY * 0.35);
       }
-      // from obstacle's ribs
-      //if (
-      //  (ballPosition.X <= obstacleX + OBSTACLE_WIDTH + BALL_RADIUS &&
-      //  ballPosition.X >= obstacleX - BALL_RADIUS) &&
-      //  (ballPosition.Y === obstacleY - BALL_RADIUS ||
-      //    ballPosition.Y === obstacleY + OBSTACLE_HEIGHT + BALL_RADIUS)
-      //) {
-      //  ballSpeed.Y = -ballSpeed.Y;
-      //}
+
+      // Bounce from obstacle's ribs
       if (
         ballPosition.X >= obstacleX - BALL_RADIUS &&
         ballPosition.X <= obstacleX + OBSTACLE_WIDTH + BALL_RADIUS &&
-        ballPosition.Y === obstacleY + OBSTACLE_HEIGHT + BALL_RADIUS
-
-        //ballPosition.X <= obstacleX + OBSTACLE_WIDTH + BALL_RADIUS &&
-        //ballPosition.X >= obstacleX - BALL_RADIUS &&
-        //(ballPosition.Y === obstacleY - BALL_RADIUS ||
-        //  ballPosition.Y === obstacleY + OBSTACLE_HEIGHT + BALL_RADIUS)
+        (ballPosition.Y === obstacleY - BALL_RADIUS ||
+          ballPosition.Y === obstacleY + OBSTACLE_HEIGHT + BALL_RADIUS)
       ) {
         ballSpeed.Y = -ballSpeed.Y;
-        //OBSTACLE_SPEED = -OBSTACLE_SPEED
+        let deltaX = ballPosition.X - (obstacleX + OBSTACLE_WIDTH / 2);
+        ballSpeed.X = util.roundToTen(deltaX * 0.35);
       }
-
-      // Bounce the ball from the right obstacle --->
-      //if (
-      //  (ballPosition.X === obstacleRightX + PADDLE_WIDTH + BALL_RADIUS ||
-      //    ballPosition.X === obstacleRightX - BALL_RADIUS) &&
-      //  ballPosition.Y <= obstacleRightY + PADDLE_HEIGHT + BALL_RADIUS
-      //) {
-      //  ballSpeed.X = -ballSpeed.X;
-      //  let deltaY = ballPosition.Y - (obstacleRightY + PADDLE_HEIGHT / 2);
-      //  ballSpeed.Y = util.roundToTen(deltaY * 0.35);
-      //}
-      //if (
-      //  ballPosition.X <= obstacleRightX + PADDLE_WIDTH + BALL_RADIUS &&
-      //  ballPosition.X >= obstacleRightX - BALL_RADIUS &&
-      //  ballPosition.Y === obstacleRightY + PADDLE_HEIGHT + BALL_RADIUS
-      //) {
-      //  ballSpeed.Y = -ballSpeed.Y;
-      //}
     }
   };
 

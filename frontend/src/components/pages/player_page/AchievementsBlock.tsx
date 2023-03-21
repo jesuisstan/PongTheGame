@@ -1,13 +1,16 @@
-import { Player } from '../../../types/Player';
+import { useState } from 'react';
+import AchievementsListModal from './AchievementsListModal';
+import ButtonPong from '../../UI/ButtonPong';
 import Typography from '@mui/joy/Typography';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 
 const AchievementsBlock = ({
-  player,
   achievements
 }: {
-  player: Player;
   achievements: Array<{ id: -1; Name: ''; Description: '' }>;
 }) => {
+  const [open, setOpen] = useState(false);
+
   return (
     <div style={{ minWidth: '210px' }}>
       <Typography
@@ -32,6 +35,15 @@ const AchievementsBlock = ({
           {item.Name}
         </Typography>
       ))}
+      <div style={{ marginTop: '21px' }}>
+        <ButtonPong
+          text="possible"
+          title={'Show all possible achievements'}
+          onClick={() => setOpen(true)}
+          endIcon={<VisibilityIcon />}
+        />
+        <AchievementsListModal open={open} setOpen={setOpen} />
+      </div>
     </div>
   );
 };

@@ -68,12 +68,9 @@ const Enable2fa = ({
           token: text
         })
       ).data;
-      console.log(`user data --->`);
-      console.log(userData);
-
       setUser(userData);
     } catch (e) {
-      errorAlert('Failed to get user data');
+      setButtonText('Failed ❌');
     }
   };
 
@@ -99,7 +96,6 @@ const Enable2fa = ({
     setLoadSubmit(true);
     await submitCode();
     setLoadSubmit(false);
-    setButtonText(user.totpSecret?.verified ? 'Done ✔️' : 'Failed ❌');
     setText('');
     setError('');
     setTimeout(() => setOpen(false), 442);

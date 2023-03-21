@@ -5,19 +5,18 @@ import { WebSocketContext } from './contexts/WebsocketContext';
 import { User } from './types/User';
 import MainLayout from './components/UI/MainLayout';
 import Home from './components/pages/Home';
-import Login from './components/profile/Login';
+import Login from './components/profile/login/Login';
 import Profile from './components/profile/Profile';
-import Verify2fa from './components/profile/Verify2fa';
+import Verify2fa from './components/profile/login/Verify2fa';
 import Chat from './components/chat/Chat';
 import Game from './components/game/Game';
-import PlayerCard from './components/pages/PlayerCard/PlayerCard';
+import PlayerCard from './components/pages/player_page/PlayerCard';
 import NotFound from './components/pages/NotFound';
 import PleaseLogin from './components/pages/PleaseLogin';
 import backendAPI from './api/axios-instance';
 import './App.css';
 
 function App() {
-  // Fetching the socket from its context
   const socket = useContext(WebSocketContext);
   const [open, setOpen] = useState(false);
   const [user, setUser] = useState<User>({
@@ -41,7 +40,6 @@ function App() {
       (error) => {
         if (error.response?.status === 400) {
           setOpen(true);
-          // 2fa is enabled and was not verified
         }
       }
     );
