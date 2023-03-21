@@ -22,9 +22,10 @@ const DEFAULT_PADDLE_POSITION = CANVAS_HEIGHT / 2 - PADDLE_HEIGHT / 2;
 
 const OBSTACLE_HEIGHT = PADDLE_HEIGHT * 2;
 const OBSTACLE_WIDTH = PADDLE_WIDTH;
-const OBSTACLE_SPEED = 10;
+const OBSTACLE_SPEED = 5;
+let obstacleDirection = 1;
 let obstacleX = CANVAS_WIDTH / 2 - OBSTACLE_WIDTH / 2;
-let obstacleY = 0;
+let obstacleY = -OBSTACLE_HEIGHT;
 
 let paddle1Y = DEFAULT_PADDLE_POSITION;
 let paddle2Y = DEFAULT_PADDLE_POSITION;
@@ -151,7 +152,7 @@ const Pong: React.FC = () => {
     ballPosition.X = CANVAS_WIDTH / 2;
     ballPosition.Y = CANVAS_HEIGHT / 2;
     if (bonusMode) {
-      obstacleY = 0;
+      obstacleY = -OBSTACLE_HEIGHT;
     }
   };
 
@@ -163,9 +164,9 @@ const Pong: React.FC = () => {
       let distanceToBall = Math.abs(paddle2YCenter - ballPosition.Y);
       if (distanceToBall > distanceThreshold) {
         if (paddle2YCenter < ballPosition.Y) {
-          paddle2Y += 15;
+          paddle2Y += 10;
         } else {
-          paddle2Y -= 15;
+          paddle2Y -= 10;
         }
       }
 
@@ -180,10 +181,18 @@ const Pong: React.FC = () => {
 
   const obstacleRun = () => {
     if (bonusMode) {
-      if (obstacleY < CANVAS_HEIGHT) {
-        obstacleY += OBSTACLE_SPEED;
-      } else if (obstacleY >= CANVAS_HEIGHT - OBSTACLE_HEIGHT) {
-        obstacleY = -OBSTACLE_HEIGHT;
+      if (obstacleDirection > 0) {
+        if (obstacleY < CANVAS_HEIGHT + OBSTACLE_HEIGHT) {
+          obstacleY += OBSTACLE_SPEED;
+        } else {
+          obstacleY = -OBSTACLE_HEIGHT;
+        }
+      } else {
+        if (obstacleY > -OBSTACLE_HEIGHT) {
+          obstacleY -= OBSTACLE_SPEED;
+        } else {
+          obstacleY = CANVAS_HEIGHT + OBSTACLE_HEIGHT;
+        }
       }
     }
   };
@@ -286,6 +295,7 @@ const Pong: React.FC = () => {
         ballSpeed.X = -ballSpeed.X;
         let deltaY = ballPosition.Y - (obstacleY + OBSTACLE_HEIGHT / 2);
         ballSpeed.Y = util.roundToTen(deltaY * 0.35);
+        obstacleDirection *= -1
       }
 
       // Bounce from obstacle's ribs
@@ -295,9 +305,10 @@ const Pong: React.FC = () => {
         (ballPosition.Y === obstacleY - BALL_RADIUS ||
           ballPosition.Y === obstacleY + OBSTACLE_HEIGHT + BALL_RADIUS)
       ) {
+        obstacleDirection *= -1
         ballSpeed.Y = -ballSpeed.Y;
-        let deltaX = ballPosition.X - (obstacleX + OBSTACLE_WIDTH / 2);
-        ballSpeed.X = util.roundToTen(deltaX * 0.35);
+        //let deltaX = ballPosition.X - (obstacleX + OBSTACLE_WIDTH / 2);
+        //ballSpeed.X = util.roundToTen(deltaX * 0.35);
       }
     }
   };
