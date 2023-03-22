@@ -37,52 +37,57 @@ function Pong(props: Props_game) {
         break;
     }
   }
-
-  socket.on('match_game_state', (args) => {
-    if (props.spectator) {
-      set_players([
-        {
-          infos: {
-            name: args.player1.infos.infos.name,
-            profile_picture: args.player1.infos.infos.profile_picture
-          },
-          score: args.player1.infos.score
-        },
-        {
-          infos: {
-            name: args.player2.infos.infos.name,
-            profile_picture: args.player2.infos.infos.profile_picture
-          },
-          score: args.player2.infos.score
-        }
-      ]);
-    } else {
-      if (players.length === 0) {
+  const foo1 = () => {
+    socket.on('match_game_state', (args) => {
+      if (props.spectator) {
         set_players([
-          { ...players[0], score: args.player1.score },
-          { ...players[1], score: args.player2.score }
+          {
+            infos: {
+              name: args.player1.infos.infos.name,
+              profile_picture: args.player1.infos.infos.profile_picture
+            },
+            score: args.player1.infos.score
+          },
+          {
+            infos: {
+              name: args.player2.infos.infos.name,
+              profile_picture: args.player2.infos.infos.profile_picture
+            },
+            score: args.player2.infos.score
+          }
         ]);
+      } else {
+        if (players.length === 0) {
+          set_players([
+            { ...players[0], score: args.player1.score },
+            { ...players[1], score: args.player2.score }
+          ]);
+        }
       }
-    }
-    if (!already_draw) {
-      draw_state(args, canvas_ref);
-      set_already_draw(true);
-    } else {
-      draw_state_2(args, canvas_ref);
-    }
-    if (args.status === 'ended') {
-      props.set_game_state(Game_status.LOBBY);
-      // TODO clear the canvas for reprint the lobby
-      alert('Game_finished');
-    }
-  });
+      if (!already_draw) {
+        draw_state(args, canvas_ref);
+        set_already_draw(true);
+      } else {
+        draw_state_2(args, canvas_ref);
+      }
+      if (args.status === 'ended') {
+        props.set_game_state(Game_status.LOBBY);
+        // TODO clear the canvas for reprint the lobby
+        alert('Game_finished');
+      }
+    });
+  };
 
-  socket.on('game_aborted', (args) => {
-    alert(args.reason);
-    // TODO need to clear canvas adn change alert for something else
-  });
+  const foo2 =() => {
+    socket.on('game_aborted', (args) => {
+      alert(args.reason);
+      // TODO need to clear canvas adn change alert for something else
+    });
+
+  }
 
   useEffect(() => {
+    
     if (!state_ref.current) {
       state_ref.current = true;
       if (props.spectator) {
@@ -92,7 +97,17 @@ function Pong(props: Props_game) {
       }
       window.addEventListener('keydown', on_key_press);
       window.addEventListener('keyup', on_key_release);
+      
+      const intervalId = setInterval(() => {
+        foo1();
+        foo2();
+      }, 1000 / 30);
 
+      return () => {
+       	//window.removeEventListener('keydown', on_key_press);
+       	//window.removeEventListener('keyup', on_key_release);
+        clearInterval(intervalId);
+      };
       // return () => {
       // 	window.removeEventListener('keydown', on_key_press);
       // 	window.removeEventListener('keyup', on_key_release);
@@ -115,7 +130,7 @@ function Pong(props: Props_game) {
       <ScoreBar
         winScore={5}
         //setWinScore={setWinScore}
-				players={players}
+        //players={players}
         //score={score}
         //gameOn={gameOn}
       ></ScoreBar>
