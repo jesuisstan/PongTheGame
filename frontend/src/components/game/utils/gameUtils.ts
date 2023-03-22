@@ -1,4 +1,5 @@
-import { Game_infos, Game_state, Player, Position } from "./game.interface";
+import { Game_infos, Game_state, Player, Position } from "../game.interface";
+
 
 export const makeRectangleShape = (
   canvasContext: CanvasRenderingContext2D,
@@ -151,6 +152,32 @@ function drawPaddle(
 	);
 }
 
+function clearPaddle(
+	ctx: any,
+	player: Position,
+	color: string,
+	gameInfos: Game_infos,
+) {
+	if (player) {
+		drawRect(
+			ctx,
+			'#ff0000',
+			player.x - 2,
+			player.y - 2,
+			gameInfos.paddleWidth + 4,
+			gameInfos.paddleHeight + 4,
+		);
+	}
+	drawRect(
+		ctx,
+		color,
+		player.x,
+		player.y,
+		gameInfos.paddleWidth,
+		gameInfos.paddleHeight,
+	);
+}
+
 function drawBall(
 	ctx: any,
 	color: string,
@@ -180,20 +207,23 @@ export function draw_state(state: Game_state, canvasRef: any) {
 
 	drawPaddle(ctx, state.player1, '#abcdef', state.gameInfos);
 	drawPaddle(ctx, state.player2, '#fedcba', state.gameInfos);
-
+  return ctx;
 }
 
-export function draw_state_2(state: Game_state, canvasRef: any) {
+export function draw_state_2(ctx : any , last_state : Position[], actual_state: Game_state, canvasRef: any) {
 	if (!canvasRef.current) return;
-	const canvas: any = canvasRef.current;
-	const ctx = canvas.getContext('2d');
+	// const canvas: any = canvasRef.current;// check if is that
+	// const ctx = canvas.getContext('2d');
 
-  // ctx.fillStyle = '#000000';
-	// ctx.rect(0, 0, canvas.width, canvas.height);
-  ctx.fill();
-	drawBall(ctx, '#ffffff', state.ball, state.gameInfos);
 
-	drawPaddle(ctx, state.player1, '#abcdef', state.gameInfos);
-	drawPaddle(ctx, state.player2, '#fedcba', state.gameInfos);
+  drawBall(ctx, '#000000', last_state[2], actual_state.gameInfos);
+
+	clearPaddle(ctx, last_state[0], '#000000', actual_state.gameInfos);
+	clearPaddle(ctx, last_state[1], '#000000', actual_state.gameInfos);
+
+	drawBall(ctx, '#ffffff', actual_state.ball, actual_state.gameInfos);
+
+	drawPaddle(ctx, actual_state.player1, '#abcdef', actual_state.gameInfos);
+	drawPaddle(ctx, actual_state.player2, '#fedcba', actual_state.gameInfos);
 
 }

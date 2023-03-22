@@ -60,15 +60,7 @@ export interface Player {
 	current: boolean;
 	paddle: Position;
 }
-  
-// export interface Game_infos {
-// width: number;
-// height: number;
-// paddleHeight: number;
-// paddleWidth: number;
-// ballRadius: number;
-// }
-  
+
 export interface Game_state {
 gameInfos: Game_infos;
 player1: Player;
