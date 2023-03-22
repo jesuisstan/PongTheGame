@@ -1,4 +1,4 @@
-import { Game_infos, Game_state, Player, Position } from "./game.interface";
+import { Game_infos, Game_state, Player, Position } from "../game.interface";
 
 export const makeRectangleShape = (
   canvasContext: CanvasRenderingContext2D,
