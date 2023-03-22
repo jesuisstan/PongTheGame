@@ -55,7 +55,7 @@ const Profile = () => {
             <ButtonPong
               text="Change"
               title="upload new avatar"
-              endIcon={<AddAPhotoIcon />}
+              startIcon={<AddAPhotoIcon />}
               onClick={() => setModalAvatarOpen(true)}
             />
             <ButtonPong
