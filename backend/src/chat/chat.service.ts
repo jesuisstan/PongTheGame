@@ -19,13 +19,11 @@ export class ChatService {
       room.users[nick] = {
         isOnline: online,
         modes: (room.users[nick].modes += modes),
-        lastPinged: new Date(),
       };
     else
       room.users[nick] = {
         isOnline: online,
         modes: modes,
-        lastPinged: new Date(),
       };
   }
 
@@ -102,7 +100,6 @@ export class ChatService {
         room.password = '';
         if (room.modes.search('p') !== -1)
           room.modes = room.modes.replace(/p/g, '');
-        console.log('iiiiii' + room.modes);
       }
     } else throw new WsException({ msg: 'changePassword: unknown room name!' });
   }
@@ -148,23 +145,6 @@ export class ChatService {
       }
       return false;
     } else throw new WsException({ msg: 'isUserBanned: unknown room name!' });
-  }
-
-  // updatePingTime(roomName: string, nick: string) {
-  //   const room = this.getChatRoomByName(roomName);
-  //   if (room) {
-  //     if (nick) {
-  //       room.users[nick].lastPinged = new Date();
-  //     }
-  //   }
-  //   throw new WsException('updatePingTime: unknown room name!');
-  // }
-
-  getUserLastPingTime(roomName: string, nick: string) {
-    const room = this.getChatRoomByName(roomName);
-    if (!room)
-      throw new WsException({ msg: 'getUserLastPingTime: unknown room name!' });
-    return room.users[nick].lastPinged;
   }
 
   getChatRooms() {

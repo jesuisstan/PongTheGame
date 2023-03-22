@@ -79,8 +79,6 @@ const ChatRoom = (props: any) => {
         // First we filter the recipient's blocked users
         let found = false;
         for (const blockedUser in user.blockedUsers) {
-            console.log('author: ' + messagesToFilter[i].author.nickname + ' user: ' + user.blockedUsers[blockedUser])
-
           if (messagesToFilter[i].author.nickname === user.blockedUsers[blockedUser])
           {
             messagesToFilter.splice(i, 1);
@@ -129,6 +127,7 @@ const ChatRoom = (props: any) => {
     })
     socket.on('changePassword', (roomName: string, isDeleted: boolean) => {
       if (roomName === user.joinedChatRoom) {
+        const status = isDeleted ? 'deleted' : 'modified';
         console.log('Password from ' + roomName + ' has been ' + isDeleted);
       }
     })

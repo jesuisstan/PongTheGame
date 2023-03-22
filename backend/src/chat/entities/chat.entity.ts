@@ -14,7 +14,6 @@ export class ChatRoom {
     [nick: string]: {
       isOnline: boolean;
       modes: string;
-      lastPinged: Date;
     };
   };
   messages: Message[];

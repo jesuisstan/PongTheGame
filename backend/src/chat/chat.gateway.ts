@@ -96,18 +96,6 @@ export class ChatGateway {
     this.server.emit('quitRoom', roomName, nick);
   }
 
-  // @SubscribeMessage('ping')
-  // ping() {
-  //   const rooms = this.chatService.getChatRooms();
-  //   for (const room in rooms)
-  //   {
-  //     for (const user in rooms[room])
-  //       this.server.emit('ping',
-  //         { rooms[room].name, user },
-  //       )
-  //   }
-  // }
-
   @SubscribeMessage('typingMessage')
   typingMessage(
     @MessageBody('roomName') roomName: string,
