@@ -7,14 +7,13 @@ import ButtonPong from '../UI/ButtonPong';
 import * as util from './gameUtils';
 import styles from './Game.module.css';
 import useWebSocket from 'react-use-websocket';
-import { Player_game, Props_game, Game_state } from './game.interface';
+import { Player_game, Props_game, Game_state, Game_status } from './game.interface';
 import { draw_state, draw_state_2 } from './gameUtils';
 import { construct } from 'ramda';
 import React from 'react';
 import { Queue_props } from './Queue';
-import { Game_status } from './Game';
 
-function Pong(props : Props_game, queue : Queue_props) {
+function Pong(props : Props_game) {
 
 	const socket = useContext(WebSocketContext);
 	const [already_draw, set_already_draw] = useState<boolean>(false);
@@ -81,7 +80,16 @@ function Pong(props : Props_game, queue : Queue_props) {
 			draw_state_2(args, canvas_ref);
 		}
 		if (args.status === 'ended')
-			queue.set_game_state(Game_status.LOBBY);
+		{
+			props.set_game_state(Game_status.LOBBY);
+			// TODO clear the canvas for reprint the lobby 
+			alert('Game_finished');
+		}
+	})
+
+	socket.on('game_aborted', (args) => {
+		alert(args.reason);
+		// TODO need to clear canvas adn change alert for something else
 	})
 
   useEffect(() => {
@@ -96,8 +104,6 @@ function Pong(props : Props_game, queue : Queue_props) {
 			}
 			window.addEventListener('keydown', on_key_press);
 			window.addEventListener('keyup', on_key_release);
-
-			console.log("useEffect")
 
 			// return () => {
 			// 	window.removeEventListener('keydown', on_key_press);

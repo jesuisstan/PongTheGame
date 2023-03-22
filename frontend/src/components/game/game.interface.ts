@@ -39,13 +39,22 @@ export interface Props_game {
   players?: Player_game[];
 	endMatch?: (result: Result_game) => void;
 	spectator: boolean;
+	set_game_state: (gameState: Game_status) => void;
 }
 
 export interface Position {
 x: number;
 y: number;
 }
-  
+
+export enum Game_status {
+	LOBBY = 'lobby',
+	BEGIN_GAME = 'begin_game',
+	QUEUE = 'queue',
+	PLAYING = 'playing',
+	SPECTATE = 'spectate',
+}
+
 export interface Player {
 	infos: Player_game;
 	current: boolean;

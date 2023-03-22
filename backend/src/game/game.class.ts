@@ -3,57 +3,7 @@ import { Socket } from 'socket.io';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { WebsocketsService } from 'src/websockets/websockets.service';
 import { giveAchievementService } from 'src/achievement/utils/giveachievement.service';
-
-export enum Status {
-  STARTING = 'starting',
-  PLAYING = 'playing',
-  ENDED = 'ended',
-  ABORTED = 'aborted',
-}
-
-export interface Position {
-  x: number;
-  y: number;
-}
-
-export interface KeyEvent {
-  action: 'release' | 'press';
-  direction: 'up' | 'down';
-}
-
-export interface Profile {
-  socket: Socket;
-  user: User;
-}
-
-export interface Player {
-  profile: Profile;
-  paddle: Position;
-  score: number;
-  event: 'up' | 'down' | null;
-}
-
-export interface Ball {
-  position: Position;
-  direction: Position;
-  velocity: number;
-  collidable: boolean;
-}
-
-export interface GameInfos {
-  width: number;
-  height: number;
-  paddleHeight: number;
-  paddleWidth: number;
-  ballRadius: number;
-}
-
-export interface GameState {
-  gameInfos: GameInfos;
-  player1: Player;
-  player2: Player;
-  ball: Ball;
-}
+import { Ball, GameState, KeyEvent, Player, Position, Profile, Status } from './Interface';
 
 export const Default_params = {
   GAME_WIDTH: 800,
@@ -68,7 +18,7 @@ export const Default_params = {
   BALL_SPEED_INCREASE: 0.6,
   BALL_MAX_SPEED: 10,
   BALL_PERTURBATOR: 0.2,
-  GAME_TIME: 100, // TODO change for 300
+  GAME_TIME: 240, // TODO change for 300
   DEFAULT_PADDLE_POSITION: 600 / 2 - 300 / 6 / 2,
 };
 
@@ -232,7 +182,7 @@ export class Game {
 
   private async _game() {
     while (this.status === Status.PLAYING) {
-      await this._wait(100);
+      await this._wait(20);
       const now = new Date();
       const timePlayed = now.getTime() - this.game_start_time.getTime();
       const timeInSeconds = Math.floor(timePlayed / 1000);
@@ -241,7 +191,10 @@ export class Game {
       this._send_state_to_spectators(timeInSeconds);
       if (timeInSeconds >= Default_params.GAME_TIME) {
         if (this.game_state.player1.score != this.game_state.player2.score)
-          this.status = Status.ENDED;
+        {
+          this.status = Status.ENDED
+          this._send_state_to_players(timeInSeconds);
+        }
       }
     }
     if (this.status === Status.ABORTED) {
@@ -340,8 +293,8 @@ export class Game {
         userId: winner.profile.user.id,
       },
       data: {
-        nb_win: +1,
-        nb_game: +1,
+        nb_win: { increment : 1},
+        nb_game: { increment : 1},
       },
     });
 
@@ -350,7 +303,7 @@ export class Game {
         userId: loser.profile.user.id,
       },
       data: {
-        nb_game: +1,
+        nb_game:{ increment : 1},
       },
     });
     await this.achievements.getAchievement(this.player1.user);
@@ -379,12 +332,12 @@ export class Game {
       this.game_state.player1.profile.user.id === leaved.profile.user.id
         ? this.game_state.player2
         : this.game_state.player1;
-    this.websockets.send(leaved.profile.socket, 'game-aborted', {
-      reason: 'player-left',
+    this.websockets.send(leaved.profile.socket, 'game_aborted', {
+      reason: 'player_left',
       result: 'lose',
     });
-    this.websockets.send(otherPlayer.profile.socket, 'game-aborted', {
-      reason: 'player-left',
+    this.websockets.send(otherPlayer.profile.socket, 'game_aborted', {
+      reason: 'player_left',
       result: 'win',
     });
     this.status = Status.ABORTED;
@@ -617,11 +570,11 @@ export class Game {
       },
       data: { status: status },
     });
-    this.websockets.broadcast('user-status', {
+    this.websockets.broadcast('user_status', {
       id: this.player1.user.id,
       status: status,
     });
-    this.websockets.broadcast('user-status', {
+    this.websockets.broadcast('user_status', {
       id: this.player2.user.id,
       status: status,
     });

@@ -1,7 +1,6 @@
-import { Player_info } from './game.interface';
+import { Game_status, Player_info } from './game.interface';
 import { WebSocketContext } from '../../contexts/WebsocketContext';
 import { useContext } from 'react';
-import { Game_status } from './Game';
 import Load from './Load';
 
 export interface Queue_props {

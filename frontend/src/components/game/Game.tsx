@@ -3,20 +3,12 @@ import { UserContext } from '../../contexts/UserContext';
 import PleaseLogin from '../pages/PleaseLogin';
 import styles from './Game.module.css';
 import Pong from './Pong';
-import { Game_player, Game_result, Player_info } from './game.interface';
+import { Game_player, Game_result, Game_status, Player_info } from './game.interface';
 import ButtonPong from '../UI/ButtonPong';
 import { WebSocketContext } from '../../contexts/WebsocketContext';
 import Start_game from './Start_game';
 import Button from '@mui/material/Button';
 import Queue from './Queue';
-
-export enum Game_status {
-	LOBBY = 'lobby',
-	BEGIN_GAME = 'begin_game',
-	QUEUE = 'queue',
-	PLAYING = 'playing',
-	SPECTATE = 'spectate',
-}
 
 
 const Game = () => {
@@ -54,10 +46,6 @@ const Game = () => {
   function endMatch(result: Game_result) {
 		set_result(result);
 		set_game_state(Game_status.LOBBY);
-	}
-
-  function is_game_aborted_event(data: any): boolean {
-		return data.event === 'game-aborted';
 	}
 
 
@@ -99,11 +87,11 @@ const Game = () => {
 				<Start_game players={players} set_game_state={set_game_state} />
 			)}
 			{game_state === Game_status.PLAYING && (
-				<Pong spectator={false} players={players} endMatch={endMatch} />
+				<Pong spectator={false} players={players} set_game_state={set_game_state} endMatch={endMatch} />
 			)}
 			{/* {} */}
 			{game_state === Game_status.SPECTATE && (
-				<Pong spectator={true} endMatch={endMatch} />
+				<Pong spectator={true} set_game_state={set_game_state} endMatch={endMatch} />
 			)}
 		</div>
     </div>

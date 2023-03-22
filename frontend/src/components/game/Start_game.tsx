@@ -1,8 +1,7 @@
 
 import { useContext, useEffect, useState } from 'react';
 import { WebSocketContext } from '../../contexts/WebsocketContext';
-import { Game_status } from './Game';
-import { Game_player } from './game.interface';
+import { Game_player, Game_status } from './game.interface';
 
 interface Start_game_props {
 	players: Game_player[];
