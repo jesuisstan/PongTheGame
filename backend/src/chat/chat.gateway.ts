@@ -23,8 +23,10 @@ export class ChatGateway {
     @MessageBody('roomName') roomName: string,
     @MessageBody('message') msg: MessageDto,
   ) {
-    // Create a message object using the create method from chat.service
-    this.chatService.createMessage(roomName, msg);
+    // Create a message object using the create method from chat.service,
+    // but only is the user hasn't been muted
+    if (this.chatService.isUserMuted(roomName, msg.author.nickname) === false)
+      this.chatService.createMessage(roomName, msg);
     console.log('message emitted: ' + Object.entries(msg));
     // Broadcast received message to all users
     this.server.emit('createMessage');
@@ -95,18 +97,6 @@ export class ChatGateway {
     this.chatService.quitRoom(roomName, nick);
     this.server.emit('quitRoom', roomName, nick);
   }
-
-  // @SubscribeMessage('ping')
-  // ping() {
-  //   const rooms = this.chatService.getChatRooms();
-  //   for (const room in rooms)
-  //   {
-  //     for (const user in rooms[room])
-  //       this.server.emit('ping',
-  //         { rooms[room].name, user },
-  //       )
-  //   }
-  // }
 
   @SubscribeMessage('typingMessage')
   typingMessage(
@@ -215,5 +205,33 @@ export class ChatGateway {
       throw new WsException({ msg: 'kickUser: user is not oper!' });
     this.chatService.quitRoom(roomName, target);
     this.server.emit('kickUser', roomName, target);
+  }
+
+  // Give a target user the muted status
+  @SubscribeMessage('muteUser')
+  muteUser(
+    @MessageBody('roomName') roomName: string,
+    @MessageBody('nick') nick: string,
+    @MessageBody('target') target: string,
+    @MessageBody('mute') mute: boolean,
+  ) {
+    // First, check if the user has the admin rights
+    if (this.isUserOper(roomName, nick) === false)
+      throw new WsException({ msg: 'muteUser: user is not oper!' });
+    if (mute === true) {
+      this.chatService.muteUser(roomName, target);
+      this.server.emit('muteUser', roomName, target);
+    } else {
+      this.chatService.unMuteUser(roomName, target);
+      this.server.emit('unMuteUser', roomName, target);        
+    }
+  }
+
+  @SubscribeMessage('isUserMuted')
+  isUserMuted(
+    @MessageBody('roomName') roomName: string,
+    @MessageBody('nick') nick: string,
+  ) {
+    return this.chatService.isUserMuted(roomName, nick);
   }
 }
