@@ -15,7 +15,7 @@ import {
 import {
 	ChatRounded, TagRounded, LockRounded, ArrowForwardIos,
 	AddCircleOutline,
-	LockOpenRounded, KeyboardDoubleArrowRightRounded, MailLockRounded
+	LockOpenRounded, KeyboardDoubleArrowRightRounded, MailLockRounded, PersonRounded, Person2Rounded
       } from '@mui/icons-material';
 // personal components
 import { UserContext } from '../../contexts/UserContext';
@@ -197,7 +197,7 @@ const Chat = () => {
     else return true;
     return false;
   }
-
+  
   const cleanRoomLoginData = () => {
     user.joinedChatRoom = '';
     setIsPasswordProtected(false);
@@ -205,7 +205,8 @@ const Chat = () => {
   };
   /*************************************************************
    * Render HTML response
-   **************************************************************/
+  **************************************************************/
+
   return !user.provider ? (
     <PleaseLogin />
   ) : (
@@ -238,11 +239,12 @@ const Chat = () => {
                     <ListItemIcon sx={{ color: 'white' }}>
                       {
                       // TODO => room.modes.indexOf('i') !== -1 ? to find private room
-                      room.modes.indexOf('p') !== -1 ? (
+                      room.modes === "p" ? (
                         <LockRounded />
-                      ) : (
+                      ) : room.modes === "i" ? (
+                        <Person2Rounded />) : (
                         <TagRounded />
-                      )}
+                      ) }
                     </ListItemIcon>
                     {clickedRoomToJoin === room.name &&
                       room.modes.indexOf('p') !== -1 && (

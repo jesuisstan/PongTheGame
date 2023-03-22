@@ -1,7 +1,7 @@
 import { SetStateAction, useContext, useEffect, useState } from 'react';
 import { WebSocketContext, socket } from '../../contexts/WebsocketContext';
 import {
-	Send, Delete, ArrowBackIosNew, Settings,PersonAddAlt, Password, ExitToApp, AdminPanelSettingsTwoTone, StarPurple500Rounded, Mail, Clear, PanTool, PersonAdd
+	Send, Delete, ArrowBackIosNew, Settings,PersonAddAlt, Password, ExitToApp, AdminPanelSettingsTwoTone, StarPurple500Rounded, Mail, Clear, PanTool, PersonAdd, Room
 			} from '@mui/icons-material';
 import {
 	Avatar,
@@ -12,6 +12,7 @@ import {
 import { UserContext } from '../../contexts/UserContext';
 import { MemberType, Message } from "../../types/chat";
 import timeFromNow from './utils/GetTime';
+import AvatarBadge from './utils/AvatarBadge';
 import './Chat.css';
 import "./bubble.css"
 
@@ -339,82 +340,69 @@ const ChatRoom = (props: any) => {
 		}
 		)
 	}
+	console.log(members);
 	
 	/*************************************************************
 	 * Render HTML response
 	**************************************************************/
 	return (
 		<>
-				
-				<>
-					<ul>
-
-						{ 
+			<>
+					<Stack direction="row" spacing={1}>
+					{ 
 // ------------- List of Member's in room ------------- 
-							Object.keys(members).map((nick, index) => (
-									<p key={ index }>
-										<>
+				Object.keys(members).map((nick, index) => (
+						<p key={ index }>
+							<>
 
-											{ // Nickname of the member preceeded by its online status
-												members[nick as any].isOnline ? '*' : '' } { nick }
-
-											{ // Displays if member is oper
-												String(members[nick as any].modes).search('o') !== -1 ?
-													<Icon><StarPurple500Rounded fontSize='small' color="warning"/></Icon> : '' }
-
-											{ // If user is oper(=admin), the button to users oper is displayed 
-												isOper && (user.nickname !== nick) &&
-													String(members[nick as any].modes).search('o') === -1 &&
-												<button onClick={ () => onMakeOperClick(nick) }>
-													oper
-												</button>
-											}                          
-											
-											{ // If user is oper(=admin), the button to kick users is displayed 
-												isOper && (user.nickname !== nick) &&
-													String(members[nick as any].modes).search('o') === -1 &&
-												<button onClick={ () => onKickClick(nick) }>
-													kick
-												</button>
-											}
-											
-											{ // If user is oper(=admin), the button to ban users is displayed 
-												isOper && (user.nickname !== nick) &&
-													String(members[nick as any].modes).search('o') === -1 &&
-												<button onClick={ () => onBanClick(nick) }>
-													ban
-												</button>
-											}
-											{ // If user is oper(=admin), the button to unban users is displayed 
-												isOper && (user.nickname !== nick) &&
-												String(members[nick as any].modes).search('o') === -1 &&
-												<button onClick={ () => onUnBanClick(nick) }>
-													unban
-												</button>
-											}
-											
-											{ // Block button appears if the author of the message
-												// is not the user himself
-												(user.nickname !== nick) &&
-													<button onClick={ () => onBlockClick(nick) }>
-														block
-													</button>
-											}
-
-											{ // Unblock button appears if the author of the message
-												// is not the user himself
-												(user.nickname !== nick) &&
-													<button onClick={ () => onUnBlockClick(nick) }>
-														unblock
-													</button>
-											}
-										</>
-									</p>
-							))
-						}
-					</ul>
+{/* ----------------------------------------------------------------
+					HERE FIND HOW TO DISPLAY THE AVATAR OF THE USER
+		---------------------------------------------------------------- */}
+							<AvatarBadge
+								nickname='Nom'
+								online={members[nick as any].isOnline.isOnline}
+								admin={isOper && (user.nickname !== nick) &&
+									String(members[nick as any].modes).search('o') === -1}
+								oper={String(members[nick as any].modes).search('o') !== -1} 
+								avatar=""
+								look={false}/>		
+{/* // If user is oper(=admin), the button to kick users is displayed 
+	// If user is oper(=admin), the button to ban users is displayed 
+	// If user is oper(=admin), the button to unban users is displayed  */}
+							{/* { 
+								isOper && (user.nickname !== nick) &&
+								String(members[nick as any].modes).search('o') === -1 &&
+								<>
+								<button onClick={ () => onKickClick(nick) }>
+									kick
+								</button>
+								<button onClick={ () => onBanClick(nick) }>
+									ban
+								</button>
+								<button onClick={ () => onUnBanClick(nick) }>
+									unban
+								</button>
+									</>
+							} */}
+{/* // is not the user himself 
+		//Block button appears if the author of the message
+		// Unblock button appears if the author of the message */}
+							{/* { 
+								(user.nickname !== nick) &&
+								<>
+								<button onClick={ () => onBlockClick(nick) }>
+									block
+								</button>
+								<button onClick={ () => onUnBlockClick(nick) }>
+									unblock
+								</button>
+								</>
+							} */}
+							</>
+						</p>
+						))}
+					</Stack> 
 				</>
-
 		<>
 			<div>
 				<Box>
@@ -508,16 +496,16 @@ const ChatRoom = (props: any) => {
 														onClick={handleAClick}
 													>
 {/*// -------------- Avatar Badge -------------- */}
-{/* if is oper Warning R-T <-> if is online success else danger R-B*/}
-														<Badge  color="success" overlap='circular' variant='dot' anchorOrigin={{vertical:'bottom', horizontal:'right' }} >
-														<Badge	color="warning" overlap='circular' variant='dot' anchorOrigin={{vertical:'top', horizontal:'right' }} >
-															<Avatar 
-																alt={msg.author.username}
-																className="avatar"
-																src={msg.author.avatar}
-																onClick={handleAClick}></Avatar>
-														</Badge>
-														</Badge>
+{/* ----------------------------------------------------------------
+ HERE ADD FUNCTION TO CHECK IF IS ONLINE, IF IS OPER, IF IS ADMIN
+    ---------------------------------------------------------------- */}
+													<AvatarBadge
+														nickname={msg.author.nickname}
+														online={true}
+														admin={false}
+														oper={true} 
+														avatar={msg.author.avatar}
+														look={true}/>
 													</Button>
 {/*// -------------- Avatar Menu -------------- */}
 													<Menu
@@ -530,14 +518,14 @@ const ChatRoom = (props: any) => {
 															<IconButton >
 																<PersonAdd className='black'/>
 															</IconButton>
-															<IconButton onClick={() => onPrivMessageClick(msg.author.username) } >
+															<IconButton onClick={() => onPrivMessageClick(msg.author.nickname) } >
 																<Mail className='black'/>
 															</IconButton>
 															<IconButton onClick={ () =>
-																isUserBlocked(msg.author.username)
-																? onUnBlockClick(msg.author.username)
-																: onBlockClick(msg.author.username) } >
-																<PanTool className={!isUserBlocked(msg.author.username)? 'black': 'white'}/>
+																isUserBlocked(msg.author.nickname)
+																? onUnBlockClick(msg.author.nickname)
+																: onBlockClick(msg.author.nickname) } >
+																<PanTool className={!isUserBlocked(msg.author.nickname)? 'black': 'white'}/>
 															</IconButton>
 															<IconButton onClick={handleAClose}>
 																<Clear className='black'/>
@@ -581,10 +569,13 @@ const ChatRoom = (props: any) => {
 {/*// -------------- End Avatar / Menu -------------- */}
 													</p>							
 														<div>
-																<div className="nickName">{msg.author.username}</div>
+																{/* <div className="nickName">{msg.author.nickname}</div> */}
 																<div className="msgLeft">
 																		<p className="msgText">{msg.data}</p>
-																		<div className="msgTime">Date</div>
+{/* ----------------------------------------------------------------
+					HERE FIND WHY TIME IS NOT DISPLAYED WITH TIMEFROMNOW()
+		---------------------------------------------------------------- */}		
+																		<div className="msgTime">{timeFromNow(msg.timestamp)}</div>
 																</div>
 														</div>
 													</div>

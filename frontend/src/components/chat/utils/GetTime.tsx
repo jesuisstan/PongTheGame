@@ -1,3 +1,5 @@
+import React from 'react';
+
 export default function timeFromNow(date: Date) {
   const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
   let interval = Math.floor(seconds / 31536000);
@@ -20,7 +22,7 @@ export default function timeFromNow(date: Date) {
   if (interval >= 1) {
     return interval + ' min ago';
   }
-  if (seconds < 15) {
+  if (seconds < 35) {
     return 'now';
   }
   return Math.floor(seconds) + ' sec';
