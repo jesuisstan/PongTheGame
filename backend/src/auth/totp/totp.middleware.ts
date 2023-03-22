@@ -20,19 +20,13 @@ export class TotpMiddleware implements NestMiddleware<Request, Response> {
   async use(req: Request, res: Response, next: (error?: Error) => void) {
     if (req.user === undefined) throw new UnauthorizedException();
 
-    // this.logger.debug(req.user);
-
     const user = await this.users.findUserById(req.user.id);
 
-    // this.logger.debug(user);
-    // this.logger.debug(req.session);
     if (user === null) throw new UnauthorizedException();
 
     if (req.session.totpVerified || !(await this.totp.isTotpEnabled(user)))
       return next();
 
-    // return res.status(400).json(user).end();
-
-    // return next(new BadRequestException('totp authentication required'));
+    return res.status(400).json(user).end();
   }
 }

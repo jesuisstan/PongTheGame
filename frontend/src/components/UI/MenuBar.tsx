@@ -75,7 +75,7 @@ const MenuBar = () => {
               </MenuItem>
               <MenuItem
                 disabled={user.provider ? false : true}
-                onClick={() => handleCloseUserMenu('history')}
+                onClick={() => handleCloseUserMenu(`/players/${user.nickname}`)}
               >
                 History
               </MenuItem>

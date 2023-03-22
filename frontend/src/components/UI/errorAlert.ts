@@ -10,7 +10,7 @@ const errorAlert = (text: string) => {
     text: text,
     showCloseButton: true,
     color: 'whitesmoke',
-    background: 'black'
+    background: 'black',
   });
 };
 

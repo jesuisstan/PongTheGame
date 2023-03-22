@@ -14,6 +14,19 @@ const USER_SELECT = {
   status: true,
 };
 
+function userSelect(includeTfaEnabled: boolean) {
+  return includeTfaEnabled
+    ? {
+        ...USER_SELECT,
+        totpSecret: {
+          select: {
+            verified: includeTfaEnabled,
+          },
+        },
+      }
+    : USER_SELECT;
+}
+
 @Injectable()
 export class UserService {
   constructor(private readonly prisma: PrismaService) {}
@@ -22,33 +35,23 @@ export class UserService {
     id: number,
     includeTfaEnabled = false,
   ): Promise<User | null> {
-    const select = includeTfaEnabled
-      ? {
-          ...USER_SELECT,
-          totpSecret: {
-            select: {
-              verified: includeTfaEnabled,
-            },
-          },
-        }
-      : USER_SELECT;
-
     return this.prisma.user.findUnique({
       where: { id },
-      select,
+      select: userSelect(includeTfaEnabled),
     });
   }
 
-  async findUserByNickname(nickname: string) {
+  async findUserByNickname(nickname: string, includeTfaEnabled = false) {
     return this.prisma.user.findUnique({
       where: { nickname },
-      select: USER_SELECT,
+      select: userSelect(includeTfaEnabled),
     });
   }
 
   async findUserByProfileId(
     provider: string,
     profileId: string,
+    includeTfaEnabled = false,
   ): Promise<User | null> {
     return this.prisma.user.findUnique({
       where: {
@@ -57,7 +60,7 @@ export class UserService {
           provider,
         },
       },
-      select: USER_SELECT,
+      select: userSelect(includeTfaEnabled),
     });
   }
 
@@ -75,24 +78,6 @@ export class UserService {
         avatar,
       },
     });
-
-    // return this.prisma.user.create({Failed to validate the query: `Unable to match input value to any allowed input type for the field.
-    //   data: {
-    //     profileId,
-    //     username,
-    //     provider,
-    //     profileAvatar,
-    //     avatar: null,
-    //   },
-    //   select: {
-    //     avatar: true,
-    //     id: true,
-    //     username: true,
-    //     nickname: true,
-    //     profileId: true,
-    //     provider: true,
-    //   },
-    // });
   }
 
   async createStats(UserId: number): Promise<Stats> {
@@ -113,7 +98,7 @@ export class UserService {
       where: {
         id,
       },
-      select: USER_SELECT,
+      select: userSelect(true),
     });
   }
 
@@ -140,6 +125,7 @@ export class UserService {
       where: {
         id,
       },
+      select: userSelect(true),
     });
   }
 
@@ -156,7 +142,7 @@ export class UserService {
         },
       },
       where: { id },
-      select: USER_SELECT,
+      select: userSelect(true),
     });
   }
 
@@ -170,7 +156,7 @@ export class UserService {
         },
       },
       where: { id },
-      select: USER_SELECT,
+      select: userSelect(true),
     });
   }
 }

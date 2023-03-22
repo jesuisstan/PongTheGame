@@ -1,16 +1,17 @@
 import { Injectable } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
+import { Config } from 'src/config.interface';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly jwt: JwtService,
-    private config: ConfigService,
+    private config: ConfigService<Config>,
   ) {}
 
   async signToken(id: number): Promise<string> {
-    const secret = this.config.get('JWT_SECRET');
+    const secret = this.config.getOrThrow('JWT_SECRET');
 
     const token = await this.jwt.signAsync(
       { id: id },

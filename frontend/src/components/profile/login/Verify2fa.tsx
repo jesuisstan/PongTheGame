@@ -1,10 +1,10 @@
 import { Dispatch, SetStateAction, useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { UserContext } from '../../contexts/UserContext';
+import { UserContext } from '../../../contexts/UserContext';
 import { AxiosError } from 'axios';
-import { User } from '../../types/User';
-import backendAPI from '../../api/axios-instance';
-import errorAlert from '../UI/errorAlert';
+import { User } from '../../../types/User';
+import backendAPI from '../../../api/axios-instance';
+import errorAlert from '../../UI/errorAlert';
 import FormControl from '@mui/joy/FormControl';
 import FormLabel from '@mui/joy/FormLabel';
 import Modal from '@mui/joy/Modal';
@@ -54,12 +54,15 @@ const Verify2fa = ({
       setLoad(true);
 
       try {
-        const user = (
+        const userData = (
           await backendAPI.post<User>('/auth/totp/verify', {
             token: text
           })
         ).data;
-        setUser(user);
+        console.log('user data after verif: '); //todo
+        console.log(userData);
+        
+        setUser(userData);
         setButtonText('Done ✔️');
         setText('');
         setError('');

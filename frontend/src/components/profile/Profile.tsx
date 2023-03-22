@@ -11,7 +11,6 @@ import List from '@mui/joy/List';
 import ListItem from '@mui/joy/ListItem';
 import Typography from '@mui/joy/Typography';
 import Avatar from '@mui/material/Avatar';
-import Rating from '@mui/material/Rating';
 import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import CreateIcon from '@mui/icons-material/Create';
@@ -77,6 +76,7 @@ const Profile = () => {
               level="body3"
               textTransform="uppercase"
               fontWeight="lg"
+              textColor="rgb(37, 120, 204)"
             >
               Auth
             </Typography>
@@ -108,6 +108,7 @@ const Profile = () => {
               level="body3"
               textTransform="uppercase"
               fontWeight="lg"
+              textColor="rgb(37, 120, 204)"
             >
               Info
             </Typography>
@@ -139,17 +140,23 @@ const Profile = () => {
               level="body3"
               textTransform="uppercase"
               fontWeight="lg"
+              textColor="rgb(37, 120, 204)"
             >
               Briefs
             </Typography>
-            <Typography component="legend">Rating</Typography>
-            <Rating name="read-only" value={4} readOnly />
+            <List
+              sx={{ display: 'flex', alignItems: 'center' }}
+              aria-labelledby="basic-list"
+            >
+              <ListItem>Wins: {0}</ListItem>
+              <ListItem>Loses: {0}</ListItem>
+            </List>
           </div>
           <div className={styles.bottom}>
             <ButtonPong
               text="Full stats"
               title="go to match history page"
-              onClick={() => navigate('/history')}
+              onClick={() => navigate(`/players/${user.nickname}`)}
               endIcon={<ArrowForwardIosIcon />}
             />
           </div>

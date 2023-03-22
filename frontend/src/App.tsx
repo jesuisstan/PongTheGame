@@ -5,20 +5,18 @@ import { WebSocketContext } from './contexts/WebsocketContext';
 import { User } from './types/User';
 import MainLayout from './components/UI/MainLayout';
 import Home from './components/pages/Home';
-import Login from './components/profile/Login';
+import Login from './components/profile/login/Login';
 import Profile from './components/profile/Profile';
-import Verify2fa from './components/profile/Verify2fa';
+import Verify2fa from './components/profile/login/Verify2fa';
 import Chat from './components/chat/Chat';
 import Game from './components/game/Game';
-import PlayerPage from './components/pages/PlayerPage';
-import History from './components/pages/History';
+import PlayerCard from './components/pages/player_page/PlayerCard';
 import NotFound from './components/pages/NotFound';
 import PleaseLogin from './components/pages/PleaseLogin';
 import backendAPI from './api/axios-instance';
 import './App.css';
 
 function App() {
-  // Fetching the socket from its context
   const socket = useContext(WebSocketContext);
   const [open, setOpen] = useState(false);
   const [user, setUser] = useState<User>({
@@ -42,7 +40,6 @@ function App() {
       (error) => {
         if (error.response?.status === 400) {
           setOpen(true);
-          // 2fa is enabled and was not verified
         }
       }
     );
@@ -68,15 +65,14 @@ function App() {
                 />
                 <Route path="chat" element={<Chat />} />
                 <Route path="game" element={<Game />} />
-                <Route path="history" element={<History />} />
                 <Route
                   path="profile"
                   element={user.provider ? <Profile /> : <PleaseLogin />}
                 />
-                <Route path="players">
+                <Route path="players" element={<PlayerCard />}>
                   <Route
-                    path=":playerId"
-                    element={user.provider ? <PlayerPage /> : <PleaseLogin />}
+                    path=":playerNickname"
+                    element={user.provider ? <PlayerCard /> : <PleaseLogin />}
                   />
                 </Route>
                 <Route path="*" element={<NotFound />} />*

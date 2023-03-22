@@ -1,17 +1,7 @@
-import { useRef, useEffect, useContext, useState, useCallback } from 'react';
-import { UserContext } from '../../contexts/UserContext';
+import { useRef, useEffect, useContext, useState } from 'react';
 import { WebSocketContext } from '../../contexts/WebsocketContext';
-import ScoreBar from './ScoreBar';
-import VictoryModal from './VictoryModal';
-import ButtonPong from '../UI/ButtonPong';
-import * as util from './gameUtils';
-import styles from './Game.module.css';
-import useWebSocket from 'react-use-websocket';
-import { Player_game, Props_game, Game_state, Game_status } from './game.interface';
-import { draw_state, draw_state_2 } from './gameUtils';
-import { construct } from 'ramda';
-import React from 'react';
-import { Queue_props } from './Queue';
+import { Player_game, Props_game, Game_status } from './game.interface';
+import { draw_state, draw_state_2 } from './utils/gameUtils';
 
 function Pong(props : Props_game) {
 

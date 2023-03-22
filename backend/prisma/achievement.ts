@@ -5,64 +5,64 @@ export async function insert_achievement() {
   console.log('Creation achievement');
   const achievements: Prisma.AchievementCreateInput[] = [
     {
-      Name: 'Login',
+      Name: 'Welcome',
       Title: 'First Login',
-      Description: "You'r login for the first time",
+      Description: "Login for the first time",
     },
     {
       Name: 'Newbie',
       Title: 'First Game',
-      Description: 'You play your first Game.',
+      Description: 'Play for the first time',
     },
     {
       Name: 'Player',
       Title: 'Play 10 Games',
-      Description: 'You play 10 Games.',
+      Description: 'Play 10 games',
     },
     {
       Name: 'Challenger',
-      Title: 'Play 100 Games',
-      Description: 'You play 100 Games.',
+      Title: 'Play 42 Games',
+      Description: 'Play 42 games',
     },
     {
       Name: 'Red',
       Title: 'Win One Game',
-      Description: 'Congrats, You win your first Game0.',
+      Description: 'Win for the first time',
     },
     {
       Name: 'Master',
       Title: 'Win 10 Games',
-      Description: 'Congrats, You win 10 Games',
+      Description: 'Win 10 games',
     },
     {
-      Name: 'Super Saiyen',
-      Title: 'Win 100 Games',
-      Description: 'Congrats, You win 100 Games',
+      Name: 'Super Saiyan',
+      Title: 'Win 42 Games',
+      Description: 'Win 42 games',
     },
     {
       Name: 'Custom',
       Title: 'Change Avatar',
-      Description: 'You change your profile',
+      Description: 'Change avatar',
     },
     {
-      Name: 'ModUser',
-      Title: 'use 2 differents Game mod',
-      Description: 'Play 2 game mod differents',
+      Name: 'Mode User',
+      Title: 'use 2 different game modes',
+      Description: 'Play 2 different game modes',
     }, // MEMO Not sur to keep it
     {
-      Name: 'FriendOfMaurice',
+      Name: 'Friend Of Maurice',
       Title: 'Get One Friend',
-      Description: 'get at leats one Friend',
+      Description: 'Get at least one friend',
     },
     {
-      Name: 'Super Popstart',
+      Name: 'Super Popstar',
       Title: 'More Friends',
-      Description: 'Get 42 Friends',
+      Description: 'Get 42 friends',
     },
     {
       Name: 'I See U',
       Title: 'Be Admin',
-      Description: 'The dark side is not for everyone.',
+      Description: 'The dark side is not for everyone',
     }, // Give only if with the request
     {
       Name: 'Collector',
@@ -72,7 +72,7 @@ export async function insert_achievement() {
     {
       Name: "I'm your Father",
       Title: 'Achievements everywhere * 2',
-      Description: 'Get 20 Achievement',
+      Description: 'Get all achievements',
     },
     // {Name : "", Title : "", Description : ""},
   ];
