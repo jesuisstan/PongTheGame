@@ -54,6 +54,8 @@ const ChatRoom = (props: any) => {
   const [messageText, setMessageText] = useState<string>('')
   // Checks if the user is oper(=admin) in the chat room
   const [isOper, setIsOper] = useState<boolean>(false)
+  // Checks if the user is muted in the chat room
+  const [isMuted, setIsMuted] = useState<boolean>(false)
   // Array including all members
   const [members, setMembers] = useState<MemberType[]>([])
   // Modify password
@@ -108,6 +110,13 @@ const ChatRoom = (props: any) => {
       }
     )
 
+    socket.emit('isUserMuted',
+    { roomName: user.joinedChatRoom, nick: user.nickname },
+    (response: boolean) => {
+      setIsMuted(response)
+    }
+  )
+
 
   /*************************************************************
    * Event listeners
@@ -156,6 +165,15 @@ const ChatRoom = (props: any) => {
     socket.on('unBanUser', (roomName: string, target: string) => {
       if (roomName === user.joinedChatRoom)
         console.log(target + ' has been unbanned!')
+    })
+    socket.on('muteUser', (roomName: string, target: string) => {
+      if (roomName === user.joinedChatRoom)
+        console.log(target + ' has been muted!')
+      if (target === user.nickname) props.cleanRoomLoginData()
+    })
+    socket.on('unMuteUser', (roomName: string, target: string) => {
+      if (roomName === user.joinedChatRoom)
+        console.log(target + ' has been unmuted!')
     })
 
     // Clean listeners to unsubscribe all callbacks for these events
@@ -285,6 +303,26 @@ const ChatRoom = (props: any) => {
       nick: user.nickname,
       target: target
     })  
+  }
+
+  // When clicking on the 'mute' button to mute a user
+  const onMuteUserClick = (target: string) => {
+    socket.emit('muteUser', {
+      roomName: user.joinedChatRoom,
+      nick: user.nickname,
+      target: target,
+      mute: true
+    })  
+  }
+
+  // When clicking on the 'unmute' button to unmute a user
+  const onUnMuteUserClick = (target: string) => {
+    socket.emit('muteUser', {
+      roomName: user.joinedChatRoom,
+      nick: user.nickname,
+      target: target,
+      mute: false
+    })
   }
 
   // When clicking on the 'message' button to send a private

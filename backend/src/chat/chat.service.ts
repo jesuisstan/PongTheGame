@@ -150,4 +150,28 @@ export class ChatService {
   getChatRooms() {
     return this.chatRooms;
   }
+
+  muteUser(roomName: string, nick: string) {
+    const room = this.getChatRoomByName(roomName);
+    if (room) room.users[nick].modes += 'm';
+    else throw new WsException({ msg: 'muteUser: unknown room name!' });  
+  }
+
+  unMuteUser(roomName: string, nick: string) {
+    const room = this.getChatRoomByName(roomName);
+    if (room)
+      if (room.users[nick].modes.search('m') !==   -1)
+        room.users[nick].modes.replace(/m/g, '');
+    else throw new WsException({ msg: 'unMuteUser: unknown room name!' });  
+  }
+
+  isUserMuted(roomName: string, nick: string) {
+    const room = this.getChatRoomByName(roomName);
+    if (room) {
+      // Look for mute mode ('m') in user's modes
+      if (room.users[nick].modes.search('m') !== -1) return true;
+      return false;
+    }
+    throw new WsException({ msg: 'isUserMuted: unknown room name!' });
+  }
 }
