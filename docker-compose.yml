@@ -1,0 +1,115 @@
+services:
+
+# ---------------------------------------------------------------------------- #
+
+  frontend:
+    container_name: frontend
+    image: node:18.13.0-alpine3.16
+    stdin_open: true
+    tty: true
+
+    working_dir: /frontend
+    command: >
+            sh -cx "npm install
+            && npm run start"
+    ports:
+      - "${FRONTEND_PORT}:${FRONTEND_PORT}"
+    environment:
+      REACT_APP_URL_BACKEND: ${BACKEND_URL}
+      REACT_APP_MAX_CHATROOM_NBR: ${REACT_APP_MAX_CHATROOM_NBR}
+    networks:
+      - transcendence
+    volumes:
+      - ./frontend:/frontend
+    restart: unless-stopped
+
+# ---------------------------------------------------------------------------- #
+
+  backend:
+    depends_on:
+      database:
+        condition: service_healthy
+    container_name: backend
+    image: node:18.13.0-alpine3.16
+    working_dir: /backend
+    command: sh -cx 'apk add --no-cache curl && yarn install && yarn prisma db push && yarn run test && yarn prisma db seed && yarn run start:debug'
+
+  # yarn prisma studio &
+  # yarn run test
+
+    ports:
+      - "${BACKEND_PORT}:${BACKEND_PORT}"
+      - 5555:5555 # TODO remove is for prisma studio
+    env_file:
+      - .env
+    environment:
+      BACKEND_PORT: ${BACKEND_PORT}
+      FRONTEND_URL: ${FRONTEND_URL}
+      SESSION_SECRET: ${SESSION_SECRET}
+      JWT_SECRET: ${JWT_SECRET}
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database:5432/pong?schema=public
+      INTRA42_CLIENT_ID: ${INTRA42_CLIENT_ID}
+      INTRA42_CLIENT_SECRET: ${INTRA42_CLIENT_SECRET}
+      INTRA42_CALLBACK_URL: ${INTRA42_CALLBACK_URL}
+      GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID}
+      GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
+      GITHUB_CALLBACK_URL: ${GITHUB_CALLBACK_URL}
+    networks:
+      - transcendence
+    volumes:
+      - ./backend:/backend
+      - backend_node_modules:/backend/node_modules/
+    restart: unless-stopped
+    healthcheck:
+      test: curl -fsSL http://localhost:${BACKEND_PORT}/healthcheck
+      interval: 10s
+      timeout: 50s
+      retries: 40
+      start_period: 2s
+
+# ---------------------------------------------------------------------------- #
+
+  database:
+    container_name: postgres
+    image: postgres:15.1-alpine
+    ports:
+      - "5432"
+    environment:
+      POSTGRES_USER: $POSTGRES_USER
+      POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+    volumes:
+      - db:/var/lib/postgresql/data
+    networks:
+      - transcendence
+    restart: unless-stopped
+    healthcheck:
+      test: pg_isready -U ${POSTGRES_USER}
+      interval: 10s
+      timeout: 2s
+      retries: 25
+      start_period: 2s
+
+# ---------------------------------------------------------------------------- #
+
+  controller:
+    container_name: health_controller
+    image: hello-world
+    restart: 'no'
+    networks:
+      - transcendence
+    depends_on:
+      backend:
+        condition: service_healthy
+      database:
+        condition: service_healthy
+
+# ---------------------------------------------------------------------------- #
+
+volumes:
+  db: {}
+  backend_node_modules: {}
+
+# ---------------------------------------------------------------------------- #
+
+networks:
+  transcendence:

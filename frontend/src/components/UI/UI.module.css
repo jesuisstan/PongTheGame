@@ -1,0 +1,88 @@
+.navibar {
+  position: fixed;
+  top: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: row;
+  z-index: 1;
+  width: 100%;
+  height: 44px;
+}
+
+.left {
+  flex: 1;
+  padding-left: 60px;
+  padding-right: 21px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.right {
+  flex: 1;
+  padding-left: 21px;
+  padding-right: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 21px;
+}
+
+.center {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  justify-content: space-between;
+  margin: auto;
+}
+
+.logo {
+  width: 189px;
+  height: 42px;
+}
+
+.burger {
+  color: whitesmoke;
+  font-weight: 500;
+  font-size: 1.5rem;
+  padding-right: 10px;
+}
+
+.nickname {
+  margin-left: 21px;
+  color: whitesmoke;
+  font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
+  line-height: 1.75;
+  letter-spacing: 0.02857em;
+  font-weight: 500;
+  font-size: 1rem;
+  letter-spacing: 0.02857em;
+}
+
+.footerBasic {
+  position: fixed;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+  width: 100%;
+  height: 12px;
+  padding: 5px;
+}
+
+.copyright {
+  margin-top: 0px;
+  margin-bottom: 0px;
+  text-align: center;
+  font-size: 10px;
+}
+
+.footerLink:link,
+.footerLink:visited {
+  font-size: 10px;
+}

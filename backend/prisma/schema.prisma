@@ -1,0 +1,106 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl"]
+}
+
+generator dbml {
+  projectDatabaseType = "PostgreSQL"
+  provider            = "prisma-dbml-generator"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int     @id @default(autoincrement())
+  nickname  String? @unique
+  username  String
+  avatar    String?
+  profileId String
+  provider  String
+  // blockedUsers  String[]
+
+  totpSecret TotpSecret?
+  role       Role        @default(USER)
+
+  // MatchEntry
+  matchEntries MatchEntry[]
+
+  friends     Friends[]
+  achievement Achievement[]
+
+  @@unique([profileId, provider])
+}
+
+model TotpSecret {
+  id       Int     @id @default(autoincrement())
+  secret   String
+  verified Boolean @default(false)
+
+  // User
+  userId Int?  @unique
+  user   User? @relation(fields: [userId], references: [id])
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model Achievement {
+  id          Int     @id @default(autoincrement())
+  Name        String  @unique
+  Title       String  @unique // MEMO Check if needed to keep the title ?
+  Description String
+  icon_path   String? // TODO Remove the ? when we got the picture
+  User        User?   @relation(fields: [userId], references: [id])
+  userId      Int?
+
+  @@map("Achievements")
+}
+
+model Friends {
+  user      User     @relation(fields: [friendId], references: [id])
+  friendId  Int      @id
+  addedDate DateTime @default(now())
+}
+
+// model GithubUser {
+//   user User?
+// }
+
+model MatchEntry {
+  id    Int @id @default(autoincrement())
+  score Int
+
+  // User
+  userId Int
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  matchId Int
+  match   Match @relation(fields: [matchId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+}
+
+model Match {
+  id        Int          @id @default(autoincrement())
+  entries   MatchEntry[]
+  state     MatchState
+  startDate DateTime?
+  endDate   DateTime?
+}
+
+enum MatchState {
+  Scheduled
+  Started
+  Finished
+}
+
+// https://www.npmjs.com/package/@quixo3/prisma-session-store#Model
+model Session {
+  id        String   @id
+  sid       String   @unique
+  data      String
+  expiresAt DateTime
+}

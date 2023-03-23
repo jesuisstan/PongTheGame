@@ -1,2 +1,10 @@
 .env
 /private
+/database
+/ft_transcendence_env
+yarn-error.log
+yarn-debug.log
+/package.json
+/package-lock.json
+/node_modules
+/yarn.lock

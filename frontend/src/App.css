@@ -1,0 +1,57 @@
+.App {
+  text-align: center;
+  font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
+  font-weight: 500;
+  line-height: 1.75;
+  letter-spacing: 0.02857em;
+  color: whitesmoke;
+}
+
+a {
+  color: whitesmoke;
+  text-decoration: none;
+  font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
+  font-weight: 500;
+  font-size: 1.2rem;
+  line-height: 1.75;
+  letter-spacing: 0.02857em;
+}
+
+a:hover {
+  color: rgba(253, 80, 135, 0.91);
+}
+
+h5 {
+  font-size: x-large;
+  text-transform: uppercase;
+  font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
+  font-weight: 500;
+  line-height: 1.75;
+  letter-spacing: 0.02857em;
+}
+
+.image {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.active {
+  color: rgb(37, 120, 204);
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+.swal2-container.swal2-backdrop-show,
+.swal2-container.swal2-noanimation {
+  z-index: 11000;
+}
+
+body.swal2-shown > [aria-hidden='true'] {
+  transition: 0.1s filter;
+}
+
+.baseCard {
+  width: 100%;
+  height: 100%;
+  margin-top: 50px;
+}

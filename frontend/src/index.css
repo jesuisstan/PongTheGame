@@ -1,0 +1,17 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Roboto', 'Helvetica', 'Arial',
+    sans-serif;
+  color: whitesmoke;
+  background: linear-gradient(
+      to bottom right,
+      black,
+      rgba(253, 80, 135, 0.91),
+      black
+    )
+    fixed;
+}
