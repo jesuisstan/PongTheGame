@@ -40,29 +40,34 @@ function Pong(props: Props_game) {
   }
   const foo1 = () => {
     socket.on('match_game_state', (args) => {
-      if (props.spectator) {
-        set_players([
-          {
-            infos: {
-              name: args.player1.infos.infos.name,
-              profile_picture: args.player1.infos.infos.profile_picture
-            },
-            score: args.player1.infos.score
-          },
-          {
-            infos: {
-              name: args.player2.infos.infos.name,
-              profile_picture: args.player2.infos.infos.profile_picture
-            },
-            score: args.player2.infos.score
-          }
-        ]);
-      } else {
-        if (players.length === 0) {
-          players.push({infos : args.player1.infos, score : args.player1.score});
-          players.push({infos : args.player2.infos, score : args.player2.score});
-        }
-      }
+      // if (props.spectator) {
+        // For specator mode need to check the current He need to be false for the player1 and player 2
+        players.push({infos : args.player1.infos, score : args.player1.score});
+        players.push({infos : args.player2.infos, score : args.player2.score});
+        set_time(args.gameInfos.time);
+        // set_players([
+        //   {
+        //     infos: {
+        //       name: args.player1.infos.infos.name,
+        //       profile_picture: args.player1.infos.infos.profile_picture
+        //     },
+        //     score: args.player1.infos.score
+        //   },
+        //   {
+        //     infos: {
+        //       name: args.player2.infos.infos.name,
+        //       profile_picture: args.player2.infos.infos.profile_picture
+        //     },
+        //     score: args.player2.infos.score
+        //   }
+        // ]);
+      // } else {
+      //   if (players.length === 0) {
+          // players.push({infos : args.player1.infos, score : args.player1.score});
+          // players.push({infos : args.player2.infos, score : args.player2.score});
+          // set_time(args.gameInfos.time);
+      //   }
+      // }
       draw_state(args, canvas_ref);
       if (args.status === 'ended') {
         props.set_game_state(Game_status.LOBBY);
