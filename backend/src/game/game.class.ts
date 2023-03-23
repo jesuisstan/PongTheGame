@@ -3,7 +3,15 @@ import { Socket } from 'socket.io';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { WebsocketsService } from 'src/websockets/websockets.service';
 import { giveAchievementService } from 'src/achievement/utils/giveachievement.service';
-import { Ball, GameState, KeyEvent, Player, Position, Profile, Status } from './Interface';
+import {
+  Ball,
+  GameState,
+  KeyEvent,
+  Player,
+  Position,
+  Profile,
+  Status,
+} from './Interface';
 
 export const Default_params = {
   GAME_WIDTH: 800,
@@ -18,7 +26,7 @@ export const Default_params = {
   BALL_SPEED_INCREASE: 0.6,
   BALL_MAX_SPEED: 10,
   BALL_PERTURBATOR: 0.2,
-  GAME_TIME: 100, // TODO change for 300
+  GAME_TIME: 300, // TODO change for 300
   DEFAULT_PADDLE_POSITION: 600 / 2 - 300 / 6 / 2,
 };
 
@@ -92,9 +100,9 @@ export function convert_state_to_sendable(
         x: state.player1.paddle.x,
         y: state.player1.paddle.y,
       },
-      infos : {
-        name : state.player2.profile.user.nickname,
-        profile_picture : state.player2.profile.user.avatar,
+      infos: {
+        name: state.player2.profile.user.nickname,
+        profile_picture: state.player2.profile.user.avatar,
       },
       score: state.player1.score,
       current: false,
@@ -104,9 +112,9 @@ export function convert_state_to_sendable(
         x: state.player2.paddle.x,
         y: state.player2.paddle.y,
       },
-      infos : {
-        name : state.player2.profile.user.nickname,
-        profile_picture : state.player2.profile.user.avatar,
+      infos: {
+        name: state.player2.profile.user.nickname,
+        profile_picture: state.player2.profile.user.avatar,
       },
       score: state.player2.score,
       current: false,
@@ -190,7 +198,7 @@ export class Game {
 
   private async _game() {
     while (this.status === Status.PLAYING) {
-      await this._wait(60);
+      await this._wait(35);
       const now = new Date();
       const timePlayed = now.getTime() - this.game_start_time.getTime();
       const timeInSeconds = Math.floor(timePlayed / 1000);
@@ -198,9 +206,8 @@ export class Game {
       this._send_state_to_players(timeInSeconds);
       this._send_state_to_spectators(timeInSeconds);
       if (timeInSeconds >= Default_params.GAME_TIME) {
-        if (this.game_state.player1.score != this.game_state.player2.score)
-        {
-          this.status = Status.ENDED
+        if (this.game_state.player1.score != this.game_state.player2.score) {
+          this.status = Status.ENDED;
           this._send_state_to_players(timeInSeconds);
         }
       }
@@ -225,29 +232,6 @@ export class Game {
         ? this.game_state.player2
         : this.game_state.player1;
     this._register_game(winner, loser, timeInSeconds);
-    // const res = {
-    //   winner: {
-    //     id: winner.profile.user.id,
-    //     name: winner.profile.user.username,
-    //     profile_picture: winner.profile.user.avatar,
-    //     score: winner.score,
-    //     position:
-    //       winner.profile.user.id === this.game_state.player1.profile.user.id
-    //         ? 1
-    //         : 2,
-    //   },
-    //   loser: {
-    //     id: loser.profile.user.id,
-    //     name: loser.profile.user.username,
-    //     profile_picture: loser.profile.user.avatar,
-    //     score: loser.score,
-    //     position:
-    //       loser.profile.user.id === this.game_state.player1.profile.user.id
-    //         ? 1
-    //         : 2,
-    //   },
-    //   duration: timeInSeconds,
-    // };
     this.end();
   }
 
@@ -301,8 +285,8 @@ export class Game {
         userId: winner.profile.user.id,
       },
       data: {
-        nb_win: { increment : 1},
-        nb_game: { increment : 1},
+        nb_win: { increment: 1 },
+        nb_game: { increment: 1 },
       },
     });
 
@@ -311,7 +295,7 @@ export class Game {
         userId: loser.profile.user.id,
       },
       data: {
-        nb_game:{ increment : 1},
+        nb_game: { increment: 1 },
       },
     });
     await this.achievements.getAchievement(this.player1.user);

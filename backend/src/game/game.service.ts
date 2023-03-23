@@ -32,8 +32,40 @@ export class GameService {
     this._treat_queue(this.game_queue);
   }
 
+  async create_friend_game(sockets: any, Invite_id: number) {
+    this.invitation.push(Invite_id);
+
+    console.log(sockets[0].user.profile);
+    // sockets[0].user.profile = (
+    // 	await this.prisma.user.findUnique({
+    // 		where: { id: sockets[0].user.id },
+    // 		include: { profile: true },
+    // 	})
+    // )['profile'];
+    // sockets[1].user.profile = (
+    // 	await this.prisma.user.findUnique({
+    // 		where: { id: sockets[1].user.id },
+    // 		include: { profile: true },
+    // 	})
+    // )['profile'];
+    // sockets.forEach((socket : any) => this.register_quit(socket));
+    // const game = new Game(
+    // 	this.prisma,
+    // 	this.websocket,
+    // 	this.achievement,
+    // 	{ socket: sockets[0], user: sockets[0].user },
+    // 	{ socket: sockets[1], user: sockets[1].user },
+    // 	this.invitation,
+    // );
+    // this.games.push(game);
+
+    // game.start(() => {
+    // 	this.games.splice(this.games.indexOf(game), 1);
+    // });
+  }
+
   // private async _delete_user_invitations(userId: number) {
-  // 	const invitation = await this.prismaService.matchInvitation.findUnique({
+  // 	const invitation = await this.prisma.matchInvitation.findUnique({
   // 		where: { createdById: userId },
   // 		include: {
   // 			createdBy: true,
@@ -101,12 +133,9 @@ export class GameService {
 
   register_quit(socket: Socket) {
     this.websocket.registerOnClose(socket, () => {
-			this.cancel_queue(socket);
-			this.leave_game(socket);
-		});
-
-    // this.cancel_queue(socket);
-    // this.leave_game(socket);
+      this.cancel_queue(socket);
+      this.leave_game(socket);
+    });
   }
 
   cancel_queue(socket: any) {
@@ -132,11 +161,4 @@ export class GameService {
   get_game_where_spectator_is(userId: number) {
     return this.games.find((game: Game) => game.get_spectator(userId) != null);
   }
-  // match_create(user: User){
-  //     if (this.user.length == 0){
-  //         this.user[0] = user;
-  //         return "Waiting screen"; // TODO NEED TO ADD A CANCEL BUTTON
-  //     }
-  //     // console.log(this.user[0]);
-  // }
 }

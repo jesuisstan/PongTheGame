@@ -77,6 +77,18 @@ function Pong(props: Props_game) {
     });
   };
 
+  socket.emit('invitation_notification', (args : any) => {
+    // TODO print a little notification for the invitation game
+  })
+
+  // function accept_invit() {
+  //   socket.emit('match_invitation_accept', () => {})
+
+  // }
+  // socket.emit('match_invitation_accept', (args : any) => {
+    // TODO probably gonna launch the game or redirect IDK
+  // })
+
   const foo2 =() => {
     socket.on('game_aborted', (args) => {
       console.log(args.reason);
