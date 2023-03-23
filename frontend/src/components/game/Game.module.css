@@ -8,6 +8,14 @@
   overflow: auto;
 }
 
+.centered {
+  height: calc(100vh - 10px);
+  align-self: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .buttonsBlock {
   margin-bottom: 21px;
   display: flex;

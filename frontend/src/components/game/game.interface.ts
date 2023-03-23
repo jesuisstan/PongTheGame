@@ -43,8 +43,8 @@ export interface Props_game {
 }
 
 export interface Position {
-x: number;
-y: number;
+	x: number;
+	y: number;
 }
 
 export enum Game_status {

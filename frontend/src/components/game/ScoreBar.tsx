@@ -1,6 +1,7 @@
 import { useContext } from 'react';
 import { UserContext } from '../../contexts/UserContext';
 import { Player } from '../../types/Player';
+import { Player_game, Props_game, Game_status } from './game.interface';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
@@ -9,25 +10,27 @@ import styles from './Game.module.css';
 const ScoreBar = ({
   winScore,
   setWinScore,
+  players,
   score,
   gameOn,
-  player2
 }: {
   winScore: number;
-  setWinScore: React.Dispatch<React.SetStateAction<number>>;
-  score: {
+  setWinScore?: React.Dispatch<React.SetStateAction<number>>;
+  players?: Player_game[];
+  score?: {
     player1: number;
     player2: number;
   };
-  gameOn: boolean;
-  player2: Player;
+  gameOn?: boolean;
 }) => {
   const { user } = useContext(UserContext);
+console.log(players);
 
   return (
     <div className={styles.scoreBar}>
       <div>
-        {user.nickname}: {score.player1}
+        {/*{user.nickname}: {score.player1}*/}
+        {/*{players[0].infos.name}: {players[0].score}*/}
       </div>
       <div className={styles.scoreSelector}>
         <div>Win score: </div>
@@ -44,7 +47,8 @@ const ScoreBar = ({
           <Select
             value={winScore ? winScore : 3}
             disabled={gameOn}
-            onChange={(event) => setWinScore(event.target.value as number)}
+            //onChange={(event) => setWinScore(event.target.value as number)}
+            onChange={(event) => console.log('changed...')}
           >
             <MenuItem value={3}>
               <em>3</em>
@@ -56,7 +60,7 @@ const ScoreBar = ({
         </FormControl>
       </div>
       <div>
-        {player2.nickname}: {score.player2}
+        {/*{players[1].infos.name}: {players[1].score}*/}
       </div>{' '}
     </div>
   );

@@ -1,6 +1,5 @@
 import { Game_infos, Game_state, Player, Position } from "../game.interface";
 
-
 export const makeRectangleShape = (
   canvasContext: CanvasRenderingContext2D,
   cX: number,
@@ -210,20 +209,20 @@ export function draw_state(state: Game_state, canvasRef: any) {
   return ctx;
 }
 
-export function draw_state_2(ctx : any , last_state : Position[], actual_state: Game_state, canvasRef: any) {
-	if (!canvasRef.current) return;
-	// const canvas: any = canvasRef.current;// check if is that
-	// const ctx = canvas.getContext('2d');
+// export function draw_state_2(ctx : any , last_state : Position[], actual_state: Game_state, canvasRef: any) {
+// 	if (!canvasRef.current) return;
+// 	// const canvas: any = canvasRef.current;// check if is that
+// 	// const ctx = canvas.getContext('2d');
 
 
-  drawBall(ctx, '#000000', last_state[2], actual_state.gameInfos);
+//   drawBall(ctx, '#000000', last_state[2], actual_state.gameInfos);
 
-	clearPaddle(ctx, last_state[0], '#000000', actual_state.gameInfos);
-	clearPaddle(ctx, last_state[1], '#000000', actual_state.gameInfos);
+// 	clearPaddle(ctx, last_state[0], '#000000', actual_state.gameInfos);
+// 	clearPaddle(ctx, last_state[1], '#000000', actual_state.gameInfos);
 
-	drawBall(ctx, '#ffffff', actual_state.ball, actual_state.gameInfos);
+// 	drawBall(ctx, '#ffffff', actual_state.ball, actual_state.gameInfos);
 
-	drawPaddle(ctx, actual_state.player1, '#abcdef', actual_state.gameInfos);
-	drawPaddle(ctx, actual_state.player2, '#fedcba', actual_state.gameInfos);
+// 	drawPaddle(ctx, actual_state.player1, '#abcdef', actual_state.gameInfos);
+// 	drawPaddle(ctx, actual_state.player2, '#fedcba', actual_state.gameInfos);
 
-}
+// }

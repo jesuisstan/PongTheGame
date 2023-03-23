@@ -54,7 +54,7 @@ export class WebsocketsService {
         where: { id: user.id },
         data: { status: 'ONLINE' },
       });
-      this.sendToAll(this.sockets, 'user-status', {
+      this.sendToAll(this.sockets, 'user_status', {
         id: user.id,
         status: 'ONLINE',
       });
