@@ -3,6 +3,7 @@ export default function timeFromNow(timestamp: Date) {
   const now = new Date();
   const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
   let interval = Math.floor(seconds / 31536000);
+  
   if (interval >= 1) {
     return interval + ' years ago';
   }
