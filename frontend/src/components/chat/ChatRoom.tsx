@@ -1,23 +1,23 @@
 import { SetStateAction, useContext, useEffect, useState } from 'react';
 import { WebSocketContext, socket } from '../../contexts/WebsocketContext';
 import {
-	Send, Delete, ArrowBackIosNew, Settings,PersonAddAlt, Password, ExitToApp, AdminPanelSettingsTwoTone, StarPurple500Rounded, Mail, Clear, PanTool, PersonAdd, Room
-			} from '@mui/icons-material';
+	Send, Delete, ArrowBackIosNew, Settings,PersonAddAlt, Password,
+	ExitToApp, Mail, Clear, PanTool, PersonAdd, VolumeUp, VolumeOff, Room
+	} from '@mui/icons-material';
 import {
-	Avatar,
 	Box, Button, Divider, FormControl, Grid, IconButton, Stack,
-	ListItem, Menu, MenuItem,TextField, Typography, CircularProgress, AvatarGroup, Icon, Chip, Badge, FormLabel, FormGroup, FormControlLabel, Switch, ListItemIcon
+	Menu, MenuItem,TextField, Typography, CircularProgress,
+	AvatarGroup, FormGroup, FormControlLabel, Switch
 			} from '@mui/material';
 
+// personal components
 import { UserContext } from '../../contexts/UserContext';
 import { MemberType, Message } from "../../types/chat";
-import timeFromNow from './utils/GetTime';
+import timeFromNow from './utils/timeFromNow';
 import AvatarBadge from './utils/AvatarBadge';
+
+// personal css
 import './Chat.css';
-import "./bubble.css"
-
-
-
 
 /*************************************************************
  * Chat room
@@ -340,7 +340,6 @@ const ChatRoom = (props: any) => {
 		}
 		)
 	}
-	console.log(members);
 	
 	/*************************************************************
 	 * Render HTML response
@@ -348,24 +347,28 @@ const ChatRoom = (props: any) => {
 	return (
 		<>
 			<>
-					<Stack direction="row" spacing={1}>
+				{ 
+					// if private message don't display the list of member
+					user.joinedChatRoom[0] === "#"
+					? <></> 
+					: <Stack direction="row" spacing={1}>
 					{ 
 // ------------- List of Member's in room ------------- 
 				Object.keys(members).map((nick, index) => (
-						<p key={ index }>
+					<div key={ index }>
 							<>
 
 {/* ----------------------------------------------------------------
 					HERE FIND HOW TO DISPLAY THE AVATAR OF THE USER
-		---------------------------------------------------------------- */}
+				---------------------------------------------------------------- */}
 							<AvatarBadge
 								nickname='Nom'
 								online={members[nick as any].isOnline.isOnline}
 								admin={isOper && (user.nickname !== nick) &&
 									String(members[nick as any].modes).search('o') === -1}
-								oper={String(members[nick as any].modes).search('o') !== -1} 
-								avatar=""
-								look={false}/>		
+									oper={String(members[nick as any].modes).search('o') !== -1} 
+									avatar=""
+									look={false}/>		
 {/* // If user is oper(=admin), the button to kick users is displayed 
 	// If user is oper(=admin), the button to ban users is displayed 
 	// If user is oper(=admin), the button to unban users is displayed  */}
@@ -391,17 +394,18 @@ const ChatRoom = (props: any) => {
 								(user.nickname !== nick) &&
 								<>
 								<button onClick={ () => onBlockClick(nick) }>
-									block
+								block
 								</button>
 								<button onClick={ () => onUnBlockClick(nick) }>
-									unblock
+								unblock
 								</button>
 								</>
 							} */}
 							</>
-						</p>
+						</div>
 						))}
 					</Stack> 
+					}
 				</>
 		<>
 			<div>
@@ -424,7 +428,7 @@ const ChatRoom = (props: any) => {
 								aria-label="return"
 							/>
 						</IconButton>
-						Lets chat here ! #{user.joinedChatRoom}
+						Lets chat here ! {user.joinedChatRoom}
 						<Button
 							id="basic-button"
 							aria-controls="basic-menu"
@@ -440,18 +444,21 @@ const ChatRoom = (props: any) => {
 							open={Boolean(anchorEl)}
 							onClose={handleClose}
 							className='black' >
-							<MenuItem onClick={handleClose} aria-label="add friend">
-								<PersonAddAlt className='black' />
-							</MenuItem>
-							<MenuItem onClick={() => handleChangePwd(false)} aria-label="change password">
-								<Password sx={{ color: 'black' }} />
-							</MenuItem>
-							<MenuItem onClick={() => handleChangePwd(true)} aria-label="delete room">
-								<Delete sx={{ color: 'black' }} />
-							</MenuItem>
-							<MenuItem onClick={handleClose} aria-label="leave room">
-								<ExitToApp className='black' />
-							</MenuItem>
+							<>
+						{ user.joinedChatRoom[0] === "#" 
+						? <></>
+						:	<><MenuItem onClick={() => handleChangePwd(false)} aria-label="change password">
+									<Password sx={{ color: 'black' }} />
+								</MenuItem>
+								<MenuItem onClick={() => handleChangePwd(true)} aria-label="delete password">
+									<Delete sx={{ color: 'black' }} />
+								</MenuItem>
+							</>
+						}
+								<MenuItem onClick={onReturnClick} aria-label="leave room">
+									<ExitToApp className='black' />
+								</MenuItem>
+							</>
 						</Menu>
 					</Typography>
 					<Divider />
@@ -487,7 +494,7 @@ const ChatRoom = (props: any) => {
 											) : (
 												<>
 													<div className="msgRowL">
-													<p>
+													<>
 {/*// -------------- Avatar Clickable -------------- */}
 													<Button
 														aria-controls="basic-menu"
@@ -517,6 +524,17 @@ const ChatRoom = (props: any) => {
 														<MenuItem aria-label="back">
 															<IconButton >
 																<PersonAdd className='black'/>
+															</IconButton>
+															{/* <IconButton onClick={ () => 
+																isUserMuted(msg.author.nickname) 
+																? onUnMuteClick(msg.author.nickname)
+																: onMuteClick(msg.author.nickname)} >
+																{isUserMuted(msg.author.nickname)
+																? <VolumeOff className='black'/>
+																: <VolumeUp className='black'/>}
+															</IconButton> */}
+															<IconButton >
+																<VolumeOff className='black'/>
 															</IconButton>
 															<IconButton onClick={() => onPrivMessageClick(msg.author.nickname) } >
 																<Mail className='black'/>
@@ -567,7 +585,7 @@ const ChatRoom = (props: any) => {
 														</FormControl>
 													</Menu>
 {/*// -------------- End Avatar / Menu -------------- */}
-													</p>							
+													</>							
 														<div>
 																{/* <div className="nickName">{msg.author.nickname}</div> */}
 																<div className="msgLeft">

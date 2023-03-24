@@ -1,7 +1,7 @@
-import React from 'react';
-
-export default function timeFromNow(date: Date) {
-  const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
+export default function timeFromNow(timestamp: Date) {
+  const date = new Date(timestamp);
+  const now = new Date();
+  const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
   let interval = Math.floor(seconds / 31536000);
   if (interval >= 1) {
     return interval + ' years ago';

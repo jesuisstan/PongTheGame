@@ -1,29 +1,25 @@
 import {
-  useContext,
-  useEffect,
-  useState,
-  Fragment,
-  useRef
-} from 'react';
+  useContext, useEffect, useState, Fragment, useRef
+      } from 'react';
 import * as React from 'react';
 import {
-  AppBar, Box, Divider, Drawer, List, Toolbar, Typography, ListItem,
-	TextField, Button, Dialog, DialogActions, DialogContent, DialogContentText,
-	DialogTitle,
-	IconButton, ListItemIcon, ListItemText, ListItemButton, CssBaseline, FormLabel
+  Box, List, ListItem, TextField, Button, Dialog, DialogActions,
+  DialogContent, DialogContentText,	DialogTitle, ListItemIcon,
+  ListItemText, ListItemButton, CssBaseline, ListItemSecondaryAction
       } from '@mui/material';
 import {
-	ChatRounded, TagRounded, LockRounded, ArrowForwardIos,
-	AddCircleOutline,
-	LockOpenRounded, KeyboardDoubleArrowRightRounded, MailLockRounded, PersonRounded, Person2Rounded
+	TagRounded, LockRounded, ArrowForwardIos, AddCircleOutline,
+	LockOpenRounded, Person2Rounded
       } from '@mui/icons-material';
+
 // personal components
 import { UserContext } from '../../contexts/UserContext';
 import { WebSocketContext } from '../../contexts/WebsocketContext';
-import MenuIcon from '@mui/icons-material/Menu';
 import ChatRoom from './ChatRoom';
 import PleaseLogin from '../pages/PleaseLogin';
 import { ChatRoomType } from "../../types/chat";
+// personal css
+import './Chat.css';
 
 
 /*************************************************************
@@ -32,9 +28,6 @@ import { ChatRoomType } from "../../types/chat";
  * It is the entrance for chat rooms.
  * Users can create/join chat rooms.
 **************************************************************/
-// import ChanBar from './ChanBar';
-// personal css
-import './Chat.css';
 
 interface WinProps {
   window?: () => Window;
@@ -235,10 +228,11 @@ const Chat = () => {
                 {chatRooms.map((room, index) => (
                   // Check if this isn't a private conversation of other users
                   isAuthorizedPrivRoom(room.modes, room.users) &&
+                  <>
                   <ListItem key={index} disablePadding>
                     <ListItemIcon sx={{ color: 'white' }}>
                       {
-                      // TODO => room.modes.indexOf('i') !== -1 ? to find private room
+                        // TODO => room.modes.indexOf('i') !== -1 ? to find private room
                       room.modes === "p" ? (
                         <LockRounded />
                       ) : room.modes === "i" ? (
@@ -279,7 +273,7 @@ const Chat = () => {
                           </Dialog>
                         </>
                       )}
-                    <ListItem onClick={() => onClickJoinRoom(room.name)}>
+                    <ListItemButton onClick={() => onClickJoinRoom(room.name)}>
                       <ListItemText
                         tabIndex={-1}
                         primary={
@@ -289,12 +283,13 @@ const Chat = () => {
                         }
                         className="limitText"
                         sx={{ color: 'white' }}
-                      />
-                      <ListItemButton sx={{ color: 'white' }}>
+                        />
+                      <ListItemIcon sx={{ color: 'white' }}>
                         <ArrowForwardIos />
-                      </ListItemButton>
-                    </ListItem>
+                      </ListItemIcon>
+                    </ListItemButton>
                   </ListItem>
+                  </>
                 ))}
               </List>
             </Box>
