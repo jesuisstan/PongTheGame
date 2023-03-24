@@ -38,12 +38,21 @@ function Pong(props: Props_game) {
         break;
     }
   }
+
   const foo1 = () => {
     socket.on('match_game_state', (args) => {
       // if (props.spectator) {
       // For specator mode need to check the current He need to be false for the player1 and player 2
-      players.push({ infos: args.player1.infos, score: args.player1.score });
-      players.push({ infos: args.player2.infos, score: args.player2.score });
+      if (players.length == 0) {
+        //players.push({ infos: args.player1.infos, score: args.player1.score });
+        //players.push({ infos: args.player2.infos, score: args.player2.score });
+        console.log(`pl1 name = ` + args.player1.infos.name);
+        
+        set_players([
+          { ...players[0], infos: args.player1.infos, score: args.player1.score  },
+          { ...players[1], infos: args.player2.infos, score: args.player2.score }
+        ]);
+      }
       set_time(args.gameInfos.time);
       // set_players([
       //   {
@@ -102,18 +111,14 @@ function Pong(props: Props_game) {
 
       return () => {
         clearInterval(intervalId);
-        window.removeEventListener('keydown', on_key_press);
-        window.removeEventListener('keyup', on_key_release);
+        //window.removeEventListener('keydown', on_key_press);
+        //window.removeEventListener('keyup', on_key_release);
       };
-      // return () => {
-      // 	window.removeEventListener('keydown', on_key_press);
-      // 	window.removeEventListener('keyup', on_key_release);
-      // };
     }
   }, [players]);
-  console.log('players out of useEffect');
+  //console.log('players out of useEffect');
 
-  console.log(players);
+  //console.log(players);
 
   return (
     <div className={styles.canvasBlock}>
@@ -127,13 +132,16 @@ function Pong(props: Props_game) {
 					</div>
 				</div>
 					)} */}
-      <ScoreBar
+      {players.length > 0 && <ScoreBar
         winScore={5}
         //setWinScore={setWinScore}
-        //players={players}
+        players={players}
         //score={score}
         //gameOn={gameOn}
-      ></ScoreBar>
+        //p1n={players![0].infos.name}
+        //p1s={players![0].score}
+
+      ></ScoreBar>}
       <canvas
         className={styles.canvas}
         id="test"
