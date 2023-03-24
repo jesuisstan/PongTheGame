@@ -28,6 +28,7 @@ export const Default_params = {
   BALL_PERTURBATOR: 0.2,
   GAME_TIME: 300, // TODO change for 300
   DEFAULT_PADDLE_POSITION: 600 / 2 - 300 / 6 / 2,
+  WINING_SCORE: 5,
 };
 
 export function get_default_game_state(
@@ -41,6 +42,7 @@ export function get_default_game_state(
       paddleHeight: Default_params.PADDLE_HEIGHT,
       paddleWidth: Default_params.PADDLE_WIDTH,
       ballRadius: Default_params.BALL_RADIUS,
+      // winningScore : // TODO Wining score
     },
     player1: {
       profile: player1,
@@ -94,6 +96,7 @@ export function convert_state_to_sendable(
       paddleHeight: state.gameInfos.paddleHeight,
       ballRadius: state.gameInfos.ballRadius,
       time: Default_params.GAME_TIME - timeInSeconds,
+      // gameResult //TODO add winning socre
     },
     player1: {
       paddle: {
@@ -148,6 +151,7 @@ export class Game {
     player1: Profile,
     player2: Profile,
     invitation?: any,
+    winningScore?: number,
   ) {
     this.prisma = prismaService;
     this.websockets = websockets;
@@ -157,6 +161,7 @@ export class Game {
     this.game_state = get_default_game_state(player1, player2);
     this._reset_ball(this.game_state.ball);
     this.invitation = invitation;
+    // this.game_state. // TODO add winningscore
   }
 
   async start(onEnd: () => void) {
@@ -205,11 +210,15 @@ export class Game {
       this._update_state();
       this._send_state_to_players(timeInSeconds);
       this._send_state_to_spectators(timeInSeconds);
-      if (timeInSeconds >= Default_params.GAME_TIME) {
-        if (this.game_state.player1.score != this.game_state.player2.score) {
-          this.status = Status.ENDED;
-          this._send_state_to_players(timeInSeconds);
-        }
+      // if (timeInSeconds >= Default_params.GAME_TIME
+      if (
+        this.game_state.player1.score == Default_params.WINING_SCORE ||
+        this.game_state.player2.score == Default_params.WINING_SCORE
+      ) {
+        // if (this.game_state.player1.score != this.game_state.player2.score) {
+        this.status = Status.ENDED;
+        this._send_state_to_players(timeInSeconds);
+        // }
       }
     }
     if (this.status === Status.ABORTED) {
@@ -587,7 +596,7 @@ export class Game {
       timeInSeconds,
     );
     res.player1.current = true;
-    console.log({res});
+    console.log({ res });
     this.websockets.send(this.player1.socket, 'match_game_state', res);
     res.player1.current = false;
     res.player2.current = true;
