@@ -38,7 +38,6 @@ export class UserController {
   })
   async getUserByNickname(@Param('nickname') nickname: string) {
     const user = await this.users.findUserByNickname(nickname);
-
     if (user === null) throw new NotFoundException();
     return user;
   }
