@@ -7,7 +7,7 @@ export async function insert_achievement() {
     {
       Name: 'Welcome',
       Title: 'First Login',
-      Description: "Login for the first time",
+      Description: 'Login for the first time',
     },
     {
       Name: 'Newbie',
