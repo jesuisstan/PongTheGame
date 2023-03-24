@@ -3,21 +3,13 @@ import {
   WebSocketServer,
   SubscribeMessage,
 } from '@nestjs/websockets';
-import { Server } from 'socket.io';
 import { GameService } from './game.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { WebsocketsService } from 'src/websockets/websockets.service';
 import { Socket } from 'socket.io';
 
-@WebSocketGateway({
-  // cors: {
-  //   origin: true,
-  // },
-})
+@WebSocketGateway()
 export class GameGateway {
-  @WebSocketServer()
-  server: Server;
-
   constructor(
     private readonly game: GameService,
     private readonly prisma: PrismaService,

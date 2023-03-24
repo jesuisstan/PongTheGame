@@ -1,12 +1,9 @@
-import { User } from '@prisma/client';
-import { Socket } from 'socket.io';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { WebsocketsService } from 'src/websockets/websockets.service';
 import { giveAchievementService } from 'src/achievement/utils/giveachievement.service';
 import {
   Ball,
   GameState,
-  InvitationState,
   KeyEvent,
   Player,
   Position,
@@ -27,7 +24,7 @@ export const Default_params = {
   BALL_SPEED_INCREASE: 0.6,
   BALL_MAX_SPEED: 10,
   BALL_PERTURBATOR: 0.2,
-  GAME_TIME: 300, // TODO change for 300
+  GAME_TIME: 300,
   DEFAULT_PADDLE_POSITION: 600 / 2 - 300 / 6 / 2,
   WINING_SCORE: 5,
 };
@@ -35,6 +32,7 @@ export const Default_params = {
 export function get_default_game_state(
   player1: Profile,
   player2: Profile,
+  winingScore: number,
 ): GameState {
   const res = {
     gameInfos: {
@@ -43,7 +41,7 @@ export function get_default_game_state(
       paddleHeight: Default_params.PADDLE_HEIGHT,
       paddleWidth: Default_params.PADDLE_WIDTH,
       ballRadius: Default_params.BALL_RADIUS,
-      //winingScore: this.game_state.gameInfos.WinScore, // TODO Wining score
+      winingScore: winingScore,
     },
     player1: {
       profile: player1,
@@ -160,10 +158,14 @@ export class Game {
     this.achievements = achievements;
     this.player1 = player1;
     this.player2 = player2;
-    this.game_state = get_default_game_state(player1, player2);
+    this.game_state = get_default_game_state(
+      player1,
+      player2,
+      Default_params.WINING_SCORE,
+    );
     this._reset_ball(this.game_state.ball);
     this.invitation = invitation;
-    this.game_state.gameInfos.WinScore = winningScore; // TODO add winningscore
+    this.game_state.gameInfos.WinScore = winningScore;
   }
 
   async start(onEnd: () => void) {
@@ -212,19 +214,21 @@ export class Game {
     this._game();
   }
 
-  private _result_string(winner : Player, loser : Player){
-    const res = { winner: {
-      id: winner.profile.user.id,
-      name: winner.profile.user.nickname,
-      avatar: winner.profile.user.avatar,
-      score: winner.score,
-    },
-    loser: {
-      id: loser.profile.user.id,
-      name: loser.profile.user.nickname,
-      avatar:  loser.profile.user.avatar,
-      score: loser.score,
-    }}
+  private _result_string(winner: Player, loser: Player) {
+    const res = {
+      winner: {
+        id: winner.profile.user.id,
+        name: winner.profile.user.nickname,
+        avatar: winner.profile.user.avatar,
+        score: winner.score,
+      },
+      loser: {
+        id: loser.profile.user.id,
+        name: loser.profile.user.nickname,
+        avatar: loser.profile.user.avatar,
+        score: loser.score,
+      },
+    };
     return res;
   }
 
@@ -292,8 +296,8 @@ export class Game {
 
     this._set_players_status('ONLINE');
     const res = this._result_string(winner, loser);
-    this.websockets.send(this.player1.socket, "match_result", res);
-    this.websockets.send(this.player2.socket, "match_result", res);
+    this.websockets.send(this.player1.socket, 'match_result', res);
+    this.websockets.send(this.player2.socket, 'match_result', res);
     await this.prisma.match.update({
       where: { id: this.id_game },
       data: {

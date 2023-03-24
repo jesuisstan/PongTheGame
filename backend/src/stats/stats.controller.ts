@@ -14,7 +14,7 @@ import { StatsService } from './stats.service';
 export class StatsController {
   constructor(private StatsService: StatsService) {}
 
-  @Get('/:id')
+  @Get('/:Nickname')
   @UseGuards(IsAuthenticatedGuard)
   @ApiOperation({
     summary: 'Get a user stats by its id',
@@ -23,7 +23,7 @@ export class StatsController {
   @ApiResponse({ status: 400, description: 'User Not found' })
   @ApiResponse({ status: 400, description: 'Stats Not found' })
   @ApiResponse({ status: 401, description: 'Not authorized' })
-  async getUserStatsById(@Param('id', ParseIntPipe) id: number) {
-    return this.StatsService.UserStats(id);
+  async getUserStatsById(@Param('Nickname') Nickname: string) {
+    return this.StatsService.UserStats(Nickname);
   }
 }

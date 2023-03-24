@@ -5,16 +5,18 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class StatsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async UserStats(UserId: number): Promise<{
+  async UserStats(Nickname: string): Promise<{
     match_play: number;
     match_win: number;
     match_lose: number;
   } | null> {
-    if (!(await this.prisma.user.findUnique({ where: { id: UserId } })))
-      throw new NotFoundException('User not found');
+    const user = await this.prisma.user.findUnique({
+      where: { nickname: Nickname },
+    });
+    if (!user) throw new NotFoundException('User not found');
     const stats: any = await this.prisma.stats.findUnique({
       where: {
-        userId: UserId,
+        userId: user.id,
       },
       select: {
         nb_game: true,

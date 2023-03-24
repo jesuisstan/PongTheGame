@@ -16,7 +16,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
       jwtFromRequest: ExtractJwt.fromExtractors([
         JwtStrategy.fromCookie,
         ExtractJwt.fromAuthHeaderAsBearerToken(),
-      ]), // MEMO http://www.passportjs.org/packages/passport-jwt/#extracting-the-jwt-from-the-request
+      ]),
       ignoreExpiration: false,
       secretOrKey: config.getOrThrow('JWT_SECRET'),
     });

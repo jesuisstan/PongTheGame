@@ -19,7 +19,6 @@ export class giveAchievementService {
   }
 
   async custom(user: User) {
-    // TODO add this in the right request
     await this.prisma.achievement.update({
       where: {
         Title: 'Change Avatar',
@@ -60,10 +59,10 @@ export class giveAchievementService {
           userId: user.id,
         },
       });
-    } else if (game.nb_game == 100) {
+    } else if (game.nb_game == 42) {
       await this.prisma.achievement.update({
         where: {
-          Title: 'Play 100 Games',
+          Title: 'Play 42 Games',
         },
         data: {
           userId: user.id,
@@ -100,10 +99,10 @@ export class giveAchievementService {
           userId: user.id,
         },
       });
-    } else if (game.nb_win == 100) {
+    } else if (game.nb_win == 42) {
       await this.prisma.achievement.update({
         where: {
-          Title: 'Win 100 Games',
+          Title: 'Win 42 Games',
         },
         data: {
           userId: user.id,
@@ -129,7 +128,7 @@ export class giveAchievementService {
   // 	{
   // 		await this.prisma.achievement.update({
   // 			where : {
-  // 				Title : "Get 42 Friends",
+  // 				Title : "More Friends",
   // 			},
   // 			data : {
   // 				userId : user.id,

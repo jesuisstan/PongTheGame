@@ -104,7 +104,7 @@ export class UserService {
       },
       select: userSelect(true),
     });
-    this.websocket.modifyTheNickname(user_modif.id);
+    this.websocket.modifyTheUserSocket(user_modif.id);
     return user_modif;
   }
 

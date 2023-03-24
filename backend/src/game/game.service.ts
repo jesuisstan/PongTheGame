@@ -8,7 +8,6 @@ import { giveAchievementService } from 'src/achievement/utils/giveachievement.se
 
 @Injectable()
 export class GameService {
-  private readonly user: User[] = [];
   private game_queue: Socket[] = [];
   games: Game[] = [];
   private invitation: number[] = [];
@@ -20,10 +19,8 @@ export class GameService {
   ) {}
 
   async join_queue(socket: any) {
-    // type = type.toUpperCase();
     const user: User | null = await this.prisma.user.findUnique({
       where: { id: socket.user.id },
-      // include: { profile: true },
     });
     if (!user) return;
     socket.user.profile = user.profileId;
@@ -51,33 +48,16 @@ export class GameService {
       },
     });
 
-    id[0]; // Je mettre attente
-    id[1]; // jenvoie notif
-
     console.log(this.websocket.getSockets([id[0]]));
     const notif_socket = this.websocket.getSockets([id[1]]);
     this.websocket.send(notif_socket, 'game_invite_notification', {}); // MEMO emit for the notification
-    // TODO probably send the player who send the invited + WINING score for create the game after
-
-    // const game = new Game( // TODO Change this to other function
-    // 	this.prisma,
-    // 	this.websocket,
-    // 	this.achievement,
-    // 	{ socket: sockets[0], user: sockets[0].user },
-    // 	{ socket: sockets[1], user: sockets[1].user },
-    // 	this.invitation,
-    // );
-    // this.games.push(game);
-
-    // game.start(() => {
-    // 	this.games.splice(this.games.indexOf(game), 1);
-    // });
+    // TODO probably send the player who send the invited + WINING_SCORE for create the game after
   }
 
   async game_friend_start(id: number[]) {
     // need to get hte socket from the id
     const sockets: any = this.websocket.getSockets(id);
-    const game = new Game( // TODO Change this to other function
+    const game = new Game(
       this.prisma,
       this.websocket,
       this.achievement,
@@ -119,8 +99,6 @@ export class GameService {
       };
       this.websocket.send(player1, 'matchmaking', msg);
       this.websocket.send(player2, 'matchmaking', msg);
-      // this._delete_user_invitations(player1.user.id);
-      // this._delete_user_invitations(player2.user.id);
       const game = new Game(
         this.prisma,
         this.websocket,

@@ -71,7 +71,7 @@ model Achievement {
   Name        String  @unique
   Title       String  @unique
   Description String
-  icon_path   String? // TODO Remove the ? when we got the picture
+  icon_path   String?
   User        User?   @relation(fields: [userId], references: [id])
   userId      Int?
 
