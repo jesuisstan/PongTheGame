@@ -44,42 +44,23 @@ function Pong(props: Props_game) {
       // if (props.spectator) {
       // For specator mode need to check the current He need to be false for the player1 and player 2
       if (players.length == 0) {
-        //players.push({ infos: args.player1.infos, score: args.player1.score });
-        //players.push({ infos: args.player2.infos, score: args.player2.score });
-        console.log(`pl1 name = ` + args.player1.infos.name);
-        
         set_players([
-          { ...players[0], infos: args.player1.infos, score: args.player1.score  },
-          { ...players[1], infos: args.player2.infos, score: args.player2.score }
+          {
+            ...players[0],
+            infos: args.player1.infos,
+            score: args.player1.score
+          },
+          {
+            ...players[1],
+            infos: args.player2.infos,
+            score: args.player2.score
+          }
         ]);
       }
       set_time(args.gameInfos.time);
-      // set_players([
-      //   {
-      //     infos: {
-      //       name: args.player1.infos.infos.name,
-      //       profile_picture: args.player1.infos.infos.profile_picture
-      //     },
-      //     score: args.player1.infos.score
-      //   },
-      //   {
-      //     infos: {
-      //       name: args.player2.infos.infos.name,
-      //       profile_picture: args.player2.infos.infos.profile_picture
-      //     },
-      //     score: args.player2.infos.score
-      //   }
-      // ]);
-      // } else {
-      //   if (players.length === 0) {
-      // players.push({infos : args.player1.infos, score : args.player1.score});
-      // players.push({infos : args.player2.infos, score : args.player2.score});
-      // set_time(args.gameInfos.time);
-      //   }
-      // }
       draw_state(args, canvas_ref);
       if (args.status === 'ended') {
-        props.set_game_state(Game_status.LOBBY);
+        props.set_game_state(Game_status.ENDED);
         // TODO clear the canvas for reprint the lobby
         console.log('Game_finished');
       }
@@ -119,7 +100,7 @@ function Pong(props: Props_game) {
   //console.log('players out of useEffect');
 
   //console.log(players);
-
+  let winScore = 5; // todo temp value. Request from server
   return (
     <div className={styles.canvasBlock}>
       {/* {players.length > 0 && (
@@ -132,16 +113,13 @@ function Pong(props: Props_game) {
 					</div>
 				</div>
 					)} */}
-      {players.length > 0 && <ScoreBar
-        winScore={5}
-        //setWinScore={setWinScore}
-        players={players}
-        //score={score}
-        //gameOn={gameOn}
-        //p1n={players![0].infos.name}
-        //p1s={players![0].score}
-
-      ></ScoreBar>}
+      {players.length > 0 && (
+        <ScoreBar
+          winScore={winScore}
+          players={players}
+          //gameOn={gameOn}
+        ></ScoreBar>
+      )}
       <canvas
         className={styles.canvas}
         id="test"

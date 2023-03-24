@@ -36,6 +36,7 @@
 
 .scoreBar {
   background-color: black;
+  border-top: 2px solid rgba(37, 120, 204, 0.5);
   border-bottom: 2px solid rgba(37, 120, 204, 0.5);
   display: flex;
   flex-direction: row;
