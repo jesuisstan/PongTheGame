@@ -43,7 +43,7 @@ export function get_default_game_state(
       paddleHeight: Default_params.PADDLE_HEIGHT,
       paddleWidth: Default_params.PADDLE_WIDTH,
       ballRadius: Default_params.BALL_RADIUS,
-      winingScore: this.game_state.gameInfos.WinScore, // TODO Wining score
+      //winingScore: this.game_state.gameInfos.WinScore, // TODO Wining score
     },
     player1: {
       profile: player1,
@@ -106,7 +106,7 @@ export function convert_state_to_sendable(
       },
       infos: {
         name: state.player1.profile.user.nickname,
-        profile_picture: state.player1.profile.user.avatar,
+        avatar: state.player1.profile.user.avatar,
       },
       score: state.player1.score,
       current: false,
@@ -118,7 +118,7 @@ export function convert_state_to_sendable(
       },
       infos: {
         name: state.player2.profile.user.nickname,
-        profile_picture: state.player2.profile.user.avatar,
+        avatar: state.player2.profile.user.avatar,
       },
       score: state.player2.score,
       current: false,
@@ -216,13 +216,13 @@ export class Game {
     const res = { winner: {
       id: winner.profile.user.id,
       name: winner.profile.user.nickname,
-      profile_picture: winner.profile.user.avatar,
+      avatar: winner.profile.user.avatar,
       score: winner.score,
     },
     loser: {
       id: loser.profile.user.id,
       name: loser.profile.user.nickname,
-      profile_picture:  loser.profile.user.avatar,
+      avatar:  loser.profile.user.avatar,
       score: loser.score,
     }}
     return res;

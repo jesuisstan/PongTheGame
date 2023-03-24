@@ -19,18 +19,14 @@ export interface Player_game {
 
 export interface Result_game {
 	winner: {
-		id: number;
 		name: string;
-		profile_picture: string;
+		avatar: string;
 		score: number;
-		position: 1 | 2;
 	};
 	loser: {
-		id: number;
 		name: string;
-		profile_picture: string;
+		avatar: string;
 		score: number;
-		position: 1 | 2;
 	};
 	duration: number;
 }
@@ -73,14 +69,14 @@ export interface Game_result {
 	winner: {
 		id: number;
 		name: string;
-		profile_picture: string;
+		avatar: string;
 		score: number;
 		position: 1 | 2;
 	};
 	loser: {
 		id: number;
 		name: string;
-		profile_picture: string;
+		avatar: string;
 		score: number;
 		position: 1 | 2;
 	};
