@@ -29,8 +29,7 @@ console.log(players);
   return (
     <div className={styles.scoreBar}>
       <div>
-        {/*{user.nickname}: {score.player1}*/}
-        {/*{players[0].infos.name}: {players[0].score}*/}
+        {/*{players![0].infos.name}: {players![0].score}*/}
       </div>
       <div className={styles.scoreSelector}>
         <div>Win score: </div>
@@ -60,7 +59,7 @@ console.log(players);
         </FormControl>
       </div>
       <div>
-        {/*{players[1].infos.name}: {players[1].score}*/}
+        {/*{players![1].infos.name}: {players![1].score}*/}
       </div>{' '}
     </div>
   );

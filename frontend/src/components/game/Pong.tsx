@@ -41,31 +41,31 @@ function Pong(props: Props_game) {
   const foo1 = () => {
     socket.on('match_game_state', (args) => {
       // if (props.spectator) {
-        // For specator mode need to check the current He need to be false for the player1 and player 2
-        players.push({infos : args.player1.infos, score : args.player1.score});
-        players.push({infos : args.player2.infos, score : args.player2.score});
-        set_time(args.gameInfos.time);
-        // set_players([
-        //   {
-        //     infos: {
-        //       name: args.player1.infos.infos.name,
-        //       profile_picture: args.player1.infos.infos.profile_picture
-        //     },
-        //     score: args.player1.infos.score
-        //   },
-        //   {
-        //     infos: {
-        //       name: args.player2.infos.infos.name,
-        //       profile_picture: args.player2.infos.infos.profile_picture
-        //     },
-        //     score: args.player2.infos.score
-        //   }
-        // ]);
+      // For specator mode need to check the current He need to be false for the player1 and player 2
+      players.push({ infos: args.player1.infos, score: args.player1.score });
+      players.push({ infos: args.player2.infos, score: args.player2.score });
+      set_time(args.gameInfos.time);
+      // set_players([
+      //   {
+      //     infos: {
+      //       name: args.player1.infos.infos.name,
+      //       profile_picture: args.player1.infos.infos.profile_picture
+      //     },
+      //     score: args.player1.infos.score
+      //   },
+      //   {
+      //     infos: {
+      //       name: args.player2.infos.infos.name,
+      //       profile_picture: args.player2.infos.infos.profile_picture
+      //     },
+      //     score: args.player2.infos.score
+      //   }
+      // ]);
       // } else {
       //   if (players.length === 0) {
-          // players.push({infos : args.player1.infos, score : args.player1.score});
-          // players.push({infos : args.player2.infos, score : args.player2.score});
-          // set_time(args.gameInfos.time);
+      // players.push({infos : args.player1.infos, score : args.player1.score});
+      // players.push({infos : args.player2.infos, score : args.player2.score});
+      // set_time(args.gameInfos.time);
       //   }
       // }
       draw_state(args, canvas_ref);
@@ -77,16 +77,14 @@ function Pong(props: Props_game) {
     });
   };
 
-  const foo2 =() => {
+  const foo2 = () => {
     socket.on('game_aborted', (args) => {
       console.log(args.reason);
       // TODO need to clear canvas adn change alert for something else
     });
-
-  }
+  };
 
   useEffect(() => {
-    
     if (!state_ref.current) {
       state_ref.current = true;
       if (props.spectator) {
@@ -96,16 +94,16 @@ function Pong(props: Props_game) {
       }
       window.addEventListener('keydown', on_key_press);
       window.addEventListener('keyup', on_key_release);
-      
+
       const intervalId = setInterval(() => {
         foo1();
         foo2();
       }, 1000 / 30);
 
       return () => {
-       	//window.removeEventListener('keydown', on_key_press);
-       	//window.removeEventListener('keyup', on_key_release);
         clearInterval(intervalId);
+        window.removeEventListener('keydown', on_key_press);
+        window.removeEventListener('keyup', on_key_release);
       };
       // return () => {
       // 	window.removeEventListener('keydown', on_key_press);
@@ -113,6 +111,9 @@ function Pong(props: Props_game) {
       // };
     }
   }, [players]);
+  console.log('players out of useEffect');
+
+  console.log(players);
 
   return (
     <div className={styles.canvasBlock}>
