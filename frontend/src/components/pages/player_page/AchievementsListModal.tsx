@@ -51,9 +51,9 @@ const AchievementsListModal = ({
             Possible achievements:
           </Typography>
           {achievements.map((item, index) => (
-            <Typography>
+            <Typography key={item.id}>
               {index + 1}.{' '}
-              <Typography key={item.id} sx={{ color: 'rgb(37, 120, 204)' }}>
+              <Typography sx={{ color: 'rgb(37, 120, 204)' }}>
                 "{item.Name}".{' '}
                 <Typography sx={{ color: 'black' }}>
                   {item.Description}.

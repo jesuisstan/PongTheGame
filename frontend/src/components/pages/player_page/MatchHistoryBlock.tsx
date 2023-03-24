@@ -1,7 +1,33 @@
+import { useEffect, useState } from 'react';
 import { Player } from '../../../types/Player';
+import { MatchHistory } from '../../../types/MatchHistory';
+import backendAPI from '../../../api/axios-instance';
+import errorAlert from '../../UI/errorAlert';
 import Typography from '@mui/joy/Typography';
 
 const MatchHistoryBlock = ({ player }: { player: Player }) => {
+  const [matchHistory, setMatchHistory] = useState<MatchHistory>({
+    played: '-',
+    wins: '-',
+    loses: '-'
+  });
+
+  useEffect(() => {
+    backendAPI.get(`/stats/${player.id}`).then(
+      (response) => {
+        setMatchHistory((prevState) => ({
+          ...prevState,
+          played: response.data.match_play,
+          wins: response.data.match_win,
+          loses: response.data.match_lose
+        }));
+      },
+      (error) => {
+        errorAlert(`Failed to get player's match history`);
+      }
+    );
+  }, []);
+
   return (
     <div style={{ minWidth: '210px' }}>
       <Typography
@@ -12,7 +38,9 @@ const MatchHistoryBlock = ({ player }: { player: Player }) => {
       >
         Match history
       </Typography>
-      <Typography component="legend">Games played: {0}</Typography>
+      <Typography component="legend">
+        Games played: {matchHistory.played}
+      </Typography>
       <Typography
         mt={2}
         level="h1"
@@ -23,10 +51,10 @@ const MatchHistoryBlock = ({ player }: { player: Player }) => {
         Including:
       </Typography>
       <Typography textAlign="left" component="legend">
-        Wins: {0}
+        Wins: {matchHistory.wins}
       </Typography>
       <Typography textAlign="left" component="legend">
-        Loses: {0}
+        Loses: {matchHistory.loses}
       </Typography>
     </div>
   );
