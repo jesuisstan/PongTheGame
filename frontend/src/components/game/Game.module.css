@@ -40,18 +40,27 @@
   border-bottom: 2px solid rgba(37, 120, 204, 0.5);
   display: flex;
   flex-direction: row;
-  /*gap: 42px;*/
   align-items: center;
   flex: 1;
-  margin: auto;
-  justify-content: space-around;
 }
 
-.scoreSelector {
-  background-color: black;
+.left {
+  flex: 1;
   display: flex;
-  flex-direction: row;
-  gap: 15px;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
+}
+
+.right {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.center {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

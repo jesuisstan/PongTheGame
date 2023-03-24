@@ -82,6 +82,7 @@ const Game = () => {
           <VictoryModal
             open={!open}
             setOpen={setOpen}
+            gameResult={result}
             setGameState={set_game_state}
           />
         )}
