@@ -1,15 +1,28 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import AchievementsListModal from './AchievementsListModal';
 import ButtonPong from '../../UI/ButtonPong';
+import { Player } from '../../../types/Player';
+import backendAPI from '../../../api/axios-instance';
+import errorAlert from '../../UI/errorAlert';
 import Typography from '@mui/joy/Typography';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 
-const AchievementsBlock = ({
-  achievements
-}: {
-  achievements: Array<{ id: -1; Name: ''; Description: '' }>;
-}) => {
+const AchievementsBlock = ({ player }: { player: Player }) => {
   const [open, setOpen] = useState(false);
+  const [achievements, setAchievements] = useState(
+    Array<{ id: -1; Name: ''; Description: '' }>
+  );
+
+  useEffect(() => {
+    backendAPI.get(`/achievements/${player.nickname}`).then(
+      (response) => {
+        setAchievements(response.data);
+      },
+      (error) => {
+        errorAlert(`Failed to get player's achievements`);
+      }
+    );
+  }, []);
 
   return (
     <div style={{ minWidth: '210px' }}>
