@@ -212,6 +212,22 @@ export class Game {
     this._game();
   }
 
+  private _result_string(winner : Player, loser : Player){
+    const res = { winner: {
+      id: winner.profile.user.id,
+      name: winner.profile.user.nickname,
+      profile_picture: winner.profile.user.avatar,
+      score: winner.score,
+    },
+    loser: {
+      id: loser.profile.user.id,
+      name: loser.profile.user.nickname,
+      profile_picture:  loser.profile.user.avatar,
+      score: loser.score,
+    }}
+    return res;
+  }
+
   private async _game() {
     while (this.status === Status.PLAYING) {
       await this._wait(45);
@@ -221,15 +237,12 @@ export class Game {
       this._update_state();
       this._send_state_to_players(timeInSeconds);
       this._send_state_to_spectators(timeInSeconds);
-      // if (timeInSeconds >= Default_params.GAME_TIME
       if (
         this.game_state.player1.score == Default_params.WINING_SCORE ||
         this.game_state.player2.score == Default_params.WINING_SCORE
       ) {
-        // if (this.game_state.player1.score != this.game_state.player2.score) {
         this.status = Status.ENDED;
         this._send_state_to_players(timeInSeconds);
-        // }
       }
     }
     if (this.status === Status.ABORTED) {
@@ -278,7 +291,9 @@ export class Game {
     // }
 
     this._set_players_status('ONLINE');
-
+    const res = this._result_string(winner, loser);
+    this.websockets.send(this.player1.socket, "match_result", res);
+    this.websockets.send(this.player2.socket, "match_result", res);
     await this.prisma.match.update({
       where: { id: this.id_game },
       data: {

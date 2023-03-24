@@ -47,6 +47,9 @@ const Game = () => {
   }, [game_state]);
 
   function endMatch(result: Game_result) {
+    socket.on("match_result", (args) => {
+      // Args get all the data you need for the result;
+    })
     set_result(result);
     set_game_state(Game_status.LOBBY);
   }
