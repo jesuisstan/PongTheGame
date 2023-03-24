@@ -20,7 +20,7 @@ const Game = () => {
 
   const { user, setUser } = useContext(UserContext);
   const state_ref = useRef(Game_status.LOBBY);
-  const [result, set_result] = useState<Game_result | null>(null);
+  const [result, setResult] = useState<Game_result | null>(null);
   const [game_state, set_game_state] = useState(Game_status.LOBBY);
   const [players, set_players] = useState<Game_player[]>([]);
   const [open, setOpen] = useState(false);
@@ -48,11 +48,11 @@ const Game = () => {
     state_ref.current = game_state;
   }, [game_state]);
 
-  function endMatch(result: Game_result) {
-    socket.on("match_result", (args) => {
-      // Args get all the data you need for the result;
-    })
-    set_result(result);
+  socket.on('match_result', (args) => {
+    setResult(args);
+  });
+
+  function endMatch() {
     set_game_state(Game_status.LOBBY);
   }
 
@@ -91,7 +91,6 @@ const Game = () => {
             endMatch={endMatch}
           />
         )}
-        {/* {} */}
         {game_state === Game_status.SPECTATE && (
           <Pong
             spectator={true}

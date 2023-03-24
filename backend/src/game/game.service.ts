@@ -110,11 +110,11 @@ export class GameService {
         action: 'match',
         player1: {
           name: player1.nickname,
-          profile_picture: player1.user.avatar,
+          avatar: player1.user.avatar,
         },
         player2: {
           name: player2.nickname,
-          profile_picture: player2.user.avatar,
+          avatar: player2.user.avatar,
         },
       };
       this.websocket.send(player1, 'matchmaking', msg);
