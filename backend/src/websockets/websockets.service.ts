@@ -68,19 +68,19 @@ export class WebsocketsService {
     }
   }
 
-  registerOnClose(socket : any, action: () => void) {
-		this._socketsOnClose.set(socket, [
-			...(this._socketsOnClose.get(socket) || []),
-			action,
-		]);
-	}
+  registerOnClose(socket: any, action: () => void) {
+    this._socketsOnClose.set(socket, [
+      ...(this._socketsOnClose.get(socket) || []),
+      action,
+    ]);
+  }
 
   async unregisterSocket(socket: any) {
     this.sockets = this.sockets.filter((s) => s !== socket);
-      const actions = this._socketsOnClose.get(socket);
-      if (actions) {
-          actions.forEach((action : () => void) => action());
-      }
+    const actions = this._socketsOnClose.get(socket);
+    if (actions) {
+      actions.forEach((action: () => void) => action());
+    }
     if (!socket.user) return;
     await this.prismaService.user.update({
       where: { id: socket.user.id },

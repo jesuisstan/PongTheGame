@@ -52,11 +52,21 @@ const Game = () => {
     set_game_state(Game_status.LOBBY);
   }
 
+  function accept_invit() {
+    socket.emit('match_invitation_accept', () => {})
+  }
+
   return !user.provider ? (
     <PleaseLogin />
   ) : (
     <div className={styles.parent}>
       <div className={styles.canvasBlock}>
+        <ButtonPong
+          text="accept invit"
+          onClick={() => {
+            accept_invit();
+          }}
+        />
         {game_state === Game_status.LOBBY && (
           <ButtonPong
             text="test pong"
