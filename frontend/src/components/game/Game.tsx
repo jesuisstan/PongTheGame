@@ -12,8 +12,8 @@ import {
 import ButtonPong from '../UI/ButtonPong';
 import { WebSocketContext } from '../../contexts/WebsocketContext';
 import Start_game from './Start_game';
-import Button from '@mui/material/Button';
 import Queue from './Queue';
+import VictoryModal from './VictoryModal';
 
 const Game = () => {
   const socket = useContext(WebSocketContext);
@@ -23,6 +23,7 @@ const Game = () => {
   const [result, set_result] = useState<Game_result | null>(null);
   const [game_state, set_game_state] = useState(Game_status.LOBBY);
   const [players, set_players] = useState<Game_player[]>([]);
+  const [open, setOpen] = useState(false);
 
   socket.on('matchmaking', (args) => {
     set_game_state(Game_status.BEGIN_GAME);
@@ -53,7 +54,7 @@ const Game = () => {
   }
 
   function accept_invit() {
-    socket.emit('match_invitation_accept', () => {})
+    socket.emit('match_invitation_accept', () => {});
   }
 
   return !user.provider ? (
@@ -61,18 +62,27 @@ const Game = () => {
   ) : (
     <div className={styles.parent}>
       <div className={styles.canvasBlock}>
-        <ButtonPong
-          text="accept invit"
-          onClick={() => {
-            accept_invit();
-          }}
-        />
+        {game_state === Game_status.LOBBY && (
+          <ButtonPong
+            text="accept invit"
+            onClick={() => {
+              accept_invit();
+            }}
+          />
+        )}
         {game_state === Game_status.LOBBY && (
           <ButtonPong
             text="test pong"
             onClick={() => {
               join_queu();
             }}
+          />
+        )}
+        {game_state === Game_status.ENDED && (
+          <VictoryModal
+            open={!open}
+            setOpen={setOpen}
+            setGameState={set_game_state}
           />
         )}
         {game_state === Game_status.QUEUE && (

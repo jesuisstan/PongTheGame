@@ -53,6 +53,7 @@ export enum Game_status {
 	QUEUE = 'queue',
 	PLAYING = 'playing',
 	SPECTATE = 'spectate',
+	ENDED='ended',
 }
 
 export interface Player {

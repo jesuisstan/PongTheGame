@@ -1,4 +1,5 @@
 import { SetStateAction, Dispatch } from 'react';
+import { Game_status } from './game.interface';
 import Modal from '@mui/joy/Modal';
 import ModalDialog from '@mui/joy/ModalDialog';
 import ModalClose from '@mui/joy/ModalClose';
@@ -15,15 +16,15 @@ const modalDialogStyle = {
 const VictoryModal = ({
   open,
   setOpen,
+  setGameState,
   winner,
-  score,
-  setDefault
+  score
 }: {
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
-  winner: string;
-  score: any;
-  setDefault: any
+  setGameState: React.Dispatch<React.SetStateAction<Game_status>>;
+  winner?: string;
+  score?: any;
 }) => {
   return (
     <div>
@@ -31,7 +32,10 @@ const VictoryModal = ({
         sx={{ color: 'black' }}
         open={open}
         onClose={(event, reason) => {
-          if (event && reason === 'closeClick') {setDefault(); setOpen(false)};
+          if (event && reason === 'closeClick') {
+            setGameState(Game_status.LOBBY);
+            setOpen(false);
+          }
         }}
       >
         <ModalDialog
@@ -50,9 +54,7 @@ const VictoryModal = ({
             <Typography sx={{ color: 'black' }}>
               {winner} won the round
             </Typography>
-            <Typography sx={{ color: 'black' }}>
-              Final score - {score.player1} : {score.player2}
-            </Typography>
+            <Typography sx={{ color: 'black' }}>Final score -</Typography>
           </Stack>
         </ModalDialog>
       </Modal>
