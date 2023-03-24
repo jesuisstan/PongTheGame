@@ -101,8 +101,8 @@ export function convert_state_to_sendable(
         y: state.player1.paddle.y,
       },
       infos: {
-        name: state.player2.profile.user.nickname,
-        profile_picture: state.player2.profile.user.avatar,
+        name: state.player1.profile.user.nickname,
+        profile_picture: state.player1.profile.user.avatar,
       },
       score: state.player1.score,
       current: false,
@@ -587,6 +587,7 @@ export class Game {
       timeInSeconds,
     );
     res.player1.current = true;
+    console.log({res});
     this.websockets.send(this.player1.socket, 'match_game_state', res);
     res.player1.current = false;
     res.player2.current = true;
