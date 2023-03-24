@@ -32,24 +32,34 @@ export class GameService {
     this._treat_queue(this.game_queue);
   }
 
-  async create_friend_game(sockets: any, Invite_id: number) {
-    this.invitation.push(Invite_id);
+  async create_friend_game(id: number[]) {
+    this.invitation.push(id[1]);
 
-    console.log(sockets[0].user.profile);
-    // sockets[0].user.profile = (
-    // 	await this.prisma.user.findUnique({
-    // 		where: { id: sockets[0].user.id },
-    // 		include: { profile: true },
-    // 	})
-    // )['profile'];
-    // sockets[1].user.profile = (
-    // 	await this.prisma.user.findUnique({
-    // 		where: { id: sockets[1].user.id },
-    // 		include: { profile: true },
-    // 	})
-    // )['profile'];
-    // sockets.forEach((socket : any) => this.register_quit(socket));
-    // const game = new Game(
+    await this.prisma.user.update({
+      where: {
+        id: id[0],
+      },
+      data: {
+        invitation: {
+          create: [
+            {
+              id: id[1],
+              sendToId: id[1],
+            },
+          ],
+        },
+      },
+    });
+
+    id[0]; // Je mettre attente
+    id[1]; // jenvoie notif
+
+    console.log(this.websocket.getSockets([id[0]]));
+    const notif_socket = this.websocket.getSockets([id[1]]);
+    this.websocket.send(notif_socket, 'game_invite_notification', {}); // MEMO emit for the notification
+    // TODO probably send the player who send the invited + WINING score for create the game after
+
+    // const game = new Game( // TODO Change this to other function
     // 	this.prisma,
     // 	this.websocket,
     // 	this.achievement,
@@ -64,39 +74,33 @@ export class GameService {
     // });
   }
 
-  // private async _delete_user_invitations(userId: number) {
-  // 	const invitation = await this.prisma.matchInvitation.findUnique({
-  // 		where: { createdById: userId },
-  // 		include: {
-  // 			createdBy: true,
-  // 			message: {
-  // 				include: {
-  // 					channel: {
-  // 						include: {
-  // 							participants: true,
-  // 						},
-  // 					},
-  // 				},
-  // 			},
-  // 		},
-  // 	});
-  // 	if (!invitation) return;
-  // 	await this.prismaService.messageOnChannel.delete({
-  // 		where: { id: invitation.message.id },
-  // 	});
-  // 	await this.prismaService.matchInvitation.delete({
-  // 		where: { id: invitation.id },
-  // 	});
-  // 	this.websocketsService.sendToAllUsers(
-  // 		invitation.message.channel.participants.map((p) => p.userId),
-  // 		'chat-delete',
-  // 		{
-  // 			type: 'invitation',
-  // 			createdBy: invitation.createdBy.name,
-  // 			channel: invitation.message.channel.id,
-  // 		},
-  // 	);
-  // }
+  async game_friend_start(id: number[]) {
+    // need to get hte socket from the id
+    const sockets: any = this.websocket.getSockets(id);
+    const game = new Game( // TODO Change this to other function
+      this.prisma,
+      this.websocket,
+      this.achievement,
+      { socket: sockets[0], user: sockets[0].user },
+      { socket: sockets[1], user: sockets[1].user },
+      this.invitation,
+    );
+    this.games.push(game);
+
+    game.start(() => {
+      this.games.splice(this.games.indexOf(game), 1);
+    });
+  }
+  private async _delete_user_invitations(userId: number[]) {
+    this.invitation.splice(this.invitation.indexOf(userId[1]), 1);
+    // TODO check how to delete the game
+    // await this.prisma.matchInvitation.delete({ // FIXME Dosent work check
+    //   where :
+    //   {
+    //     sendToId : userId[1],
+    //   }
+    // });
+  }
 
   private _treat_queue(queue: Socket[]) {
     if (queue.length >= 2) {

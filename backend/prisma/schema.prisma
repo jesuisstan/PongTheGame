@@ -14,7 +14,7 @@ datasource db {
 }
 
 model User {
-  id        Int     @id @default(autoincrement())
+  id        Int     @id @default(autoincrement()) 
   nickname  String? @unique
   username  String
   avatar    String?
@@ -32,7 +32,7 @@ model User {
   stats       Stats[]
   friends     Friends[]
   achievement Achievement[]
-
+  invitation  MatchInvitation[]
   @@unique([profileId, provider])
 }
 
@@ -106,6 +106,22 @@ model Match {
   state     MatchState
   startDate DateTime?
   endDate   DateTime?
+}
+
+model MatchInvitation {
+    id          Int                  @id @default(autoincrement())
+    // createdBy   User                 @relation(fields: [createdById], references: [id])
+    // createdById Int                  
+    sendToId    Int                  
+    sendTo      User                 @relation(fields: [sendToId], references: [id])
+    status      InvitationState @default(Pending)
+
+}
+
+enum InvitationState {
+  Pending
+  Started
+  Finished
 }
 
 enum MatchState {

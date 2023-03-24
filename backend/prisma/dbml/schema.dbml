@@ -16,6 +16,7 @@ Table User {
   stats Statistique [not null]
   friends Friends [not null]
   achievement Achievements [not null]
+  invitation MatchInvitation [not null]
 
   indexes {
     (profileId, provider) [unique]
@@ -71,6 +72,13 @@ Table Match {
   endDate DateTime
 }
 
+Table MatchInvitation {
+  id Int [pk, increment]
+  sendToId Int [not null]
+  sendTo User [not null]
+  status InvitationState [not null, default: 'Pending']
+}
+
 Table Session {
   id String [pk]
   sid String [unique, not null]
@@ -87,6 +95,12 @@ Enum StatusUser {
 Enum Role {
   USER
   ADMIN
+}
+
+Enum InvitationState {
+  Pending
+  Started
+  Finished
 }
 
 Enum MatchState {
@@ -106,3 +120,5 @@ Ref: Friends.friendId > User.id
 Ref: MatchEntry.userId > User.id [delete: Cascade]
 
 Ref: MatchEntry.matchId > Match.id [delete: Cascade]
+
+Ref: MatchInvitation.sendToId > User.id

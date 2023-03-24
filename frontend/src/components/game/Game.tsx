@@ -49,12 +49,11 @@ const Game = () => {
   }, [game_state]);
 
   function endMatch(result: Game_result) {
+    socket.on("match_result", (args) => {
+      // Args get all the data you need for the result;
+    })
     set_result(result);
     set_game_state(Game_status.LOBBY);
-  }
-
-  function accept_invit() {
-    socket.emit('match_invitation_accept', () => {});
   }
 
   return !user.provider ? (
@@ -62,14 +61,6 @@ const Game = () => {
   ) : (
     <div className={styles.parent}>
       <div className={styles.canvasBlock}>
-        {game_state === Game_status.LOBBY && (
-          <ButtonPong
-            text="accept invit"
-            onClick={() => {
-              accept_invit();
-            }}
-          />
-        )}
         {game_state === Game_status.LOBBY && (
           <ButtonPong
             text="test pong"

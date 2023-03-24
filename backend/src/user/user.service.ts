@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { User, Stats } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { WebsocketsService } from 'src/websockets/websockets.service';
 
 const USER_SELECT = {
   avatar: true,
@@ -29,7 +30,10 @@ function userSelect(includeTfaEnabled: boolean) {
 
 @Injectable()
 export class UserService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly websocket: WebsocketsService,
+  ) {}
 
   async findUserById(
     id: number,
@@ -91,7 +95,7 @@ export class UserService {
   async setUserNickname(user: User, nickname: string): Promise<User> {
     const { id } = user;
 
-    return this.prisma.user.update({
+    const user_modif: User = await this.prisma.user.update({
       data: {
         nickname,
       },
@@ -100,6 +104,8 @@ export class UserService {
       },
       select: userSelect(true),
     });
+    this.websocket.modifyTheNickname(user_modif.id);
+    return user_modif;
   }
 
   async hasTotpSecret(user: User): Promise<boolean> {
