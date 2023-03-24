@@ -82,27 +82,27 @@ export class GameGateway {
     game.add_spectator(socket);
   }
 
-  @SubscribeMessage('match_send_invitation') // Send match invitation
-  async invitation_match(socket: any, payload: any) {
-    // Inside the payload need to have the second user socket
-    this.websockets.send(
-      payload.opponent.socket[1],
-      'invitation_notification',
-      {},
-    ); // TODO send invitation to a user
-    // this.game.create_friend_game([socket, payload.opponent.socket], payload.opponent.socket.id)
-    // const game = this.game.get_game_where_spectator_is(socket.user.id);
-    // if (!game) return;
-    // game.remove_spectator(socket);
-  }
+  // @SubscribeMessage('match_send_invitation') // Send match invitation
+  // async invitation_match(socket: any, payload: any) {
+  //   // Inside the payload need to have the second user socket
+  //   this.websockets.send(
+  //     payload.opponent.socket[1],
+  //     'invitation_notification',
+  //     {},
+  //   ); // TODO send invitation to a user
+  //   // this.game.create_friend_game([socket, payload.opponent.socket], payload.opponent.socket.id)
+  //   // const game = this.game.get_game_where_spectator_is(socket.user.id);
+  //   // if (!game) return;
+  //   // game.remove_spectator(socket);
+  // }
 
-  @SubscribeMessage('match_invitation_accept')
-  async invitation_match_accept(socket: any, payload: any) {
-    // Inside the payload need to have the second user socket
-    console.log(socket);
-    console.log(payload);
-    // this.game.create_friend_game([socket, payload.opponent.socket], payload.opponent.socket.id);
-  }
+  // @SubscribeMessage('match_invitation_accept')
+  // async invitation_match_accept(socket: any, payload: any) {
+  //   // Inside the payload need to have the second user socket
+  //   console.log(socket);
+  //   console.log(payload);
+  //   // this.game.create_friend_game([socket, payload.opponent.socket], payload.opponent.socket.id);
+  // }
 
   @SubscribeMessage('match_spectate_leave')
   async spectateLeave(socket: any) {

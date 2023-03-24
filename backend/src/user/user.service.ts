@@ -30,8 +30,10 @@ function userSelect(includeTfaEnabled: boolean) {
 
 @Injectable()
 export class UserService {
-  constructor(private readonly prisma: PrismaService,
-    private readonly websocket: WebsocketsService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly websocket: WebsocketsService,
+  ) {}
 
   async findUserById(
     id: number,
@@ -93,7 +95,7 @@ export class UserService {
   async setUserNickname(user: User, nickname: string): Promise<User> {
     const { id } = user;
 
-    const user_modif : User = await this.prisma.user.update({
+    const user_modif: User = await this.prisma.user.update({
       data: {
         nickname,
       },
@@ -103,8 +105,8 @@ export class UserService {
       select: userSelect(true),
     });
     this.websocket.modifyTheNickname(user_modif.id);
-    return user_modif
-  };
+    return user_modif;
+  }
 
   async hasTotpSecret(user: User): Promise<boolean> {
     const { id } = user;

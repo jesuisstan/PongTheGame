@@ -68,13 +68,13 @@ export class WebsocketsService {
     }
   }
 
-  async modifyTheNickname(id : number) {
-    const socket : any = this.getSockets([id])[0];
+  async modifyTheNickname(id: number) {
+    const socket: any = this.getSockets([id])[0];
     const user = await this.prismaService.user.findUnique({
       where: { id: id },
     });
     socket['user'] = user;
-    return ;
+    return;
   }
 
   registerOnClose(socket: any, action: () => void) {

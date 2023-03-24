@@ -6,6 +6,7 @@ import { giveAchievementService } from 'src/achievement/utils/giveachievement.se
 import {
   Ball,
   GameState,
+  InvitationState,
   KeyEvent,
   Player,
   Position,
@@ -42,7 +43,7 @@ export function get_default_game_state(
       paddleHeight: Default_params.PADDLE_HEIGHT,
       paddleWidth: Default_params.PADDLE_WIDTH,
       ballRadius: Default_params.BALL_RADIUS,
-      // winningScore : // TODO Wining score
+      winingScore: this.game_state.gameInfos.WinScore, // TODO Wining score
     },
     player1: {
       profile: player1,
@@ -96,7 +97,7 @@ export function convert_state_to_sendable(
       paddleHeight: state.gameInfos.paddleHeight,
       ballRadius: state.gameInfos.ballRadius,
       time: Default_params.GAME_TIME - timeInSeconds,
-      // gameResult //TODO add winning socre
+      WinScore: state.gameInfos.WinScore,
     },
     player1: {
       paddle: {
@@ -141,11 +142,12 @@ export class Game {
   private start_counter = 5;
   private game_start_time: Date;
   private invitation?;
+  private id_game: number;
   private game_state: GameState;
   private end: () => void;
 
   constructor(
-    private readonly prismaService: PrismaService,
+    prismaService: PrismaService,
     websockets: WebsocketsService,
     achievements: giveAchievementService,
     player1: Profile,
@@ -161,7 +163,7 @@ export class Game {
     this.game_state = get_default_game_state(player1, player2);
     this._reset_ball(this.game_state.ball);
     this.invitation = invitation;
-    // this.game_state. // TODO add winningscore
+    this.game_state.gameInfos.WinScore = winningScore; // TODO add winningscore
   }
 
   async start(onEnd: () => void) {
@@ -176,34 +178,43 @@ export class Game {
     this._set_players_status('PLAYING');
     this.game_start_time = new Date();
 
-    // if (this.invitation) { // TODO add for the invit
-    // this.websockets.sendToAllUsers(
-    // 	this.invitation.message.channel.participants.map(
-    // 		(p : any) => p.userId,
-    // 	),
-    // 	'chat-edit',
-    // 	{
-    // 		// type: 'invitation',
-    // 		createdBy: this.invitation.createdBy.name,
-    // 		channel: this.invitation.message.channelId,
-    // 		// result: MathInvitationStatus.PLAYING,
-    // 	},
-    // );
-    // await this.prisma.matchInvitation.update({
-    // 	where: {
-    // 		id: this.invitation.id,
-    // 	},
-    // 	data: {
-    // 		status: MathInvitationStatus.PLAYING,
-    // 	},
-    // });
-    // }
+    if (this.invitation) {
+      // await this.prisma.matchInvitation.update({ // TODO update the status
+      //   where: {
+      //     id: this.invitation.id,
+      //   },
+      //   data: {
+      //     status: InvitationState.PLAYING,
+      //   },
+      // });
+    }
+    this.id_game = (
+      await this.prisma.match.create({
+        data: {
+          state: 'Started',
+          startDate: this.game_start_time.toISOString(),
+          endDate: new Date().toISOString(),
+          entries: {
+            create: [
+              {
+                userId: this.player1.user.id,
+                score: 0,
+              },
+              {
+                userId: this.player2.user.id,
+                score: 0,
+              },
+            ],
+          },
+        },
+      })
+    ).id;
     this._game();
   }
 
   private async _game() {
     while (this.status === Status.PLAYING) {
-      await this._wait(35);
+      await this._wait(45);
       const now = new Date();
       const timePlayed = now.getTime() - this.game_start_time.getTime();
       const timeInSeconds = Math.floor(timePlayed / 1000);
@@ -244,8 +255,6 @@ export class Game {
     this.end();
   }
 
-  // TODO add this fonction
-
   private async _register_game(
     winner: Player,
     loser: Player,
@@ -270,10 +279,10 @@ export class Game {
 
     this._set_players_status('ONLINE');
 
-    await this.prisma.match.create({
+    await this.prisma.match.update({
+      where: { id: this.id_game },
       data: {
         state: 'Finished',
-        startDate: this.game_start_time.toISOString(),
         endDate: new Date().toISOString(),
         entries: {
           create: [
@@ -596,7 +605,6 @@ export class Game {
       timeInSeconds,
     );
     res.player1.current = true;
-    console.log({ res });
     this.websockets.send(this.player1.socket, 'match_game_state', res);
     res.player1.current = false;
     res.player2.current = true;

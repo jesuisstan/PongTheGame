@@ -8,6 +8,12 @@ export enum Status {
   ABORTED = 'aborted',
 }
 
+export enum InvitationState {
+  PENDING = 'Pending',
+  PLAYING = 'playing',
+  FINISHED = 'Finished',
+}
+
 export interface Position {
   x: number;
   y: number;
@@ -43,6 +49,7 @@ export interface GameInfos {
   paddleHeight: number;
   paddleWidth: number;
   ballRadius: number;
+  WinScore?: number;
 }
 
 export interface GameState {
