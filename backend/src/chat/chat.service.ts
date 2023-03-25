@@ -19,13 +19,11 @@ export class ChatService {
       room.users[nick] = {
         isOnline: online,
         modes: (room.users[nick].modes += modes),
-        lastPinged: new Date(),
       };
     else
       room.users[nick] = {
         isOnline: online,
         modes: modes,
-        lastPinged: new Date(),
       };
   }
 
@@ -97,12 +95,11 @@ export class ChatService {
         // If the room wasn't in 'password protected' mode,
         // it gets it
         if (room.modes.search('p') === -1) room.modes += 'p';
-      } else // No given password means we remove the password
-      {
+      } // No given password means we remove the password
+      else {
         room.password = '';
         if (room.modes.search('p') !== -1)
           room.modes = room.modes.replace(/p/g, '');
-        console.log('iiiiii' + room.modes);
       }
     } else throw new WsException({ msg: 'changePassword: unknown room name!' });
   }
@@ -150,24 +147,31 @@ export class ChatService {
     } else throw new WsException({ msg: 'isUserBanned: unknown room name!' });
   }
 
-  // updatePingTime(roomName: string, nick: string) {
-  //   const room = this.getChatRoomByName(roomName);
-  //   if (room) {
-  //     if (nick) {
-  //       room.users[nick].lastPinged = new Date();
-  //     }
-  //   }
-  //   throw new WsException('updatePingTime: unknown room name!');
-  // }
-
-  getUserLastPingTime(roomName: string, nick: string) {
-    const room = this.getChatRoomByName(roomName);
-    if (!room)
-      throw new WsException({ msg: 'getUserLastPingTime: unknown room name!' });
-    return room.users[nick].lastPinged;
-  }
-
   getChatRooms() {
     return this.chatRooms;
+  }
+
+  muteUser(roomName: string, nick: string) {
+    const room = this.getChatRoomByName(roomName);
+    if (room) room.users[nick].modes += 'm';
+    else throw new WsException({ msg: 'muteUser: unknown room name!' });
+  }
+
+  unMuteUser(roomName: string, nick: string) {
+    const room = this.getChatRoomByName(roomName);
+    if (room)
+      if (room.users[nick].modes.search('m') !== -1)
+        room.users[nick].modes.replace(/m/g, '');
+      else throw new WsException({ msg: 'unMuteUser: unknown room name!' });
+  }
+
+  isUserMuted(roomName: string, nick: string) {
+    const room = this.getChatRoomByName(roomName);
+    if (room) {
+      // Look for mute mode ('m') in user's modes
+      if (room.users[nick].modes.search('m') !== -1) return true;
+      return false;
+    }
+    throw new WsException({ msg: 'isUserMuted: unknown room name!' });
   }
 }

@@ -1,12 +1,12 @@
 import {
-  NotFoundException,
   BadRequestException,
   Injectable,
+  NotFoundException,
 } from '@nestjs/common';
 import { Achievement } from '@prisma/client';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { AchievementDTO } from 'src/achievement/dto/achievement.dto';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class AchievementService {
@@ -77,10 +77,12 @@ export class AchievementService {
     return;
   }
 
-  async userAchievement(id: number): Promise<{ achievement: Achievement[] }> {
+  async userAchievement(
+    Nickname: string,
+  ): Promise<{ achievement: Achievement[] }> {
     const user = await this.prisma.user.findUnique({
       where: {
-        id: id,
+        nickname: Nickname,
       },
       select: {
         achievement: true,

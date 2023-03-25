@@ -49,7 +49,7 @@ export class GithubController {
   @UseGuards(GithubGuard)
   async callback(@SessionUser() user: User, @Res() res: Response) {
     if (user === undefined) throw new UnauthorizedException();
-    this.give.fisrtLogin(user);
+    await this.give.fisrtLogin(user);
     const token = await this.auth.signToken(user.id);
 
     res.cookie('access_token', token, {

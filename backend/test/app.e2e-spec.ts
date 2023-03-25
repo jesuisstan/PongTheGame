@@ -1,17 +1,18 @@
 import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
 import { Test } from '@nestjs/testing';
 import * as pactum from 'pactum';
-import { JwtService } from '@nestjs/jwt';
-import { PrismaService } from 'src/prisma/prisma.service';
-import { AppModule } from 'src/app.module';
-import { ConfigService } from '@nestjs/config';
 import { AchievementDTO } from 'src/achievement/dto/achievement.dto';
+import { AppModule } from 'src/app.module';
 import { SocketAdapter } from 'src/chat/socketAdapter';
+import { Config } from 'src/config.interface';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 function JWT_access(id: number) {
   const jwt: JwtService = new JwtService();
-  const config: ConfigService = new ConfigService();
-  const secret = config.get('JWT_SECRET');
+  const config: ConfigService<Config> = new ConfigService();
+  const secret = config.getOrThrow('JWT_SECRET');
 
   const token = jwt.signAsync(
     { id: id },
@@ -25,7 +26,6 @@ function JWT_access(id: number) {
 
 async function create_user(prisma: PrismaService) {
   if ((await prisma.user.findMany({})).length == 0) {
-    // MEMO User 1 create
     await prisma.user.create({
       data: {
         nickname: 'Admin1',
@@ -35,7 +35,6 @@ async function create_user(prisma: PrismaService) {
         role: 'ADMIN',
       },
     });
-    // MEMO User 2 create
     await prisma.user.create({
       data: {
         nickname: 'Admin2',

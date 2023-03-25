@@ -19,7 +19,6 @@ export class giveAchievementService {
   }
 
   async custom(user: User) {
-    // TODO add this in the right request
     await this.prisma.achievement.update({
       where: {
         Title: 'Change Avatar',
@@ -31,81 +30,86 @@ export class giveAchievementService {
     this.collector(user);
   }
 
-  // async playGame(user : User){
-  // 	const nb_game = 0; //= await // TODO get nb game played
+  async playGame(user: User) {
+    const game = await this.prisma.stats.findUnique({
+      where: {
+        userId: user.id,
+      },
+      select: {
+        nb_game: true,
+      },
+    });
 
-  // 	if (nb_game == 1)
-  // 	{
-  // 		await this.prisma.achievement.update({
-  // 			where : {
-  // 				Title : "First Game",
-  // 			},
-  // 			data : {
-  // 				userId : user.id,
-  // 			},
-  // 		});
-  // 	}
-  // 	else if (nb_game == 10)
-  // 	{
-  // 		await this.prisma.achievement.update({
-  // 			where : {
-  // 				Title : "Play 10 Games",
-  // 			},
-  // 			data : {
-  // 				userId : user.id,
-  // 			},
-  // 		});
-  // 	}
-  // 	else if (nb_game == 100)
-  // 	{
-  // 		await this.prisma.achievement.update({
-  // 			where : {
-  // 				Title : "Play 100 Games",
-  // 			},
-  // 			data : {
-  // 				userId : user.id,
-  // 			},
-  // 		});
-  // 	}
-  // }
+    if (!game) return;
+    if (game.nb_game == 1) {
+      await this.prisma.achievement.update({
+        where: {
+          Title: 'First Game',
+        },
+        data: {
+          userId: user.id,
+        },
+      });
+    } else if (game.nb_game == 10) {
+      await this.prisma.achievement.update({
+        where: {
+          Title: 'Play 10 Games',
+        },
+        data: {
+          userId: user.id,
+        },
+      });
+    } else if (game.nb_game == 42) {
+      await this.prisma.achievement.update({
+        where: {
+          Title: 'Play 42 Games',
+        },
+        data: {
+          userId: user.id,
+        },
+      });
+    }
+  }
 
-  // async winGame(user : User){
-  // 	const gameWin = 0;//= await ;// TODO do the request
-
-  // 	if (gameWin == 1)
-  // 	{
-  // 		await this.prisma.achievement.update({
-  // 			where : {
-  // 				Title : "Win One Games",
-  // 			},
-  // 			data : {
-  // 				userId : user.id,
-  // 			},
-  // 		});
-  // 	}
-  // 	else if (gameWin == 10)
-  // 	{
-  // 		await this.prisma.achievement.update({
-  // 			where : {
-  // 				Title : "Win 10 Games",
-  // 			},
-  // 			data : {
-  // 				userId : user.id,
-  // 			},
-  // 		});
-  // 	}
-  // 	else if (gameWin == 100)
-  // 	{
-  // 		await this.prisma.achievement.update({
-  // 			where : {
-  // 				Title : "Win 100 Games",
-  // 			},
-  // 			data : {
-  // 				userId : user.id,
-  // 			},
-  // 		});
-  // 	}
-  // }
+  async winGame(user: User) {
+    const game = await this.prisma.stats.findUnique({
+      where: {
+        userId: user.id,
+      },
+      select: {
+        nb_win: true,
+      },
+    });
+    if (!game) return;
+    if (game.nb_win == 1) {
+      await this.prisma.achievement.update({
+        where: {
+          Title: 'Win One Game',
+        },
+        data: {
+          userId: user.id,
+        },
+      });
+    } else if (game.nb_win == 10) {
+      await this.prisma.achievement.update({
+        where: {
+          Title: 'Win 10 Games',
+        },
+        data: {
+          userId: user.id,
+        },
+      });
+    } else if (game.nb_win == 42) {
+      await this.prisma.achievement.update({
+        where: {
+          Title: 'Win 42 Games',
+        },
+        data: {
+          userId: user.id,
+        },
+      });
+    }
+  }
 
   // async getFriends(user : User){
   // 	const nb_friends = 0;// TODO do the request
@@ -124,7 +128,7 @@ export class giveAchievementService {
   // 	{
   // 		await this.prisma.achievement.update({
   // 			where : {
-  // 				Title : "Get 42 Friends",
+  // 				Title : "More Friends",
   // 			},
   // 			data : {
   // 				userId : user.id,
@@ -159,10 +163,10 @@ export class giveAchievementService {
       });
     }
   }
-  getAchievement(user: User) {
-    // playGame(user);
-    // winGame(user);
+  async getAchievement(user: User) {
+    await this.playGame(user);
+    await this.winGame(user);
     // getFriends(user);
-    this.collector(user);
+    await this.collector(user);
   }
 }

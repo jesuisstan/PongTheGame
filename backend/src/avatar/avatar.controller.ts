@@ -14,6 +14,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 import { Request } from 'express';
+import { giveAchievementService } from 'src/achievement/utils/giveachievement.service';
 import { IsAuthenticatedGuard } from 'src/auth/auth.guard';
 import { SessionUser } from 'src/decorator/session-user.decorator';
 import { UserService } from 'src/user/user.service';
@@ -23,7 +24,10 @@ import { UserService } from 'src/user/user.service';
 export class AvatarController {
   private readonly logger = new Logger(AvatarController.name);
 
-  constructor(private readonly users: UserService) {}
+  constructor(
+    private readonly users: UserService,
+    private readonly giveAchievement: giveAchievementService,
+  ) {}
 
   @Post('/upload')
   @UseInterceptors(
@@ -85,7 +89,7 @@ export class AvatarController {
 
     const bufferBase64 = file.buffer.toString('base64');
     const base64 = `data:${file.mimetype};base64,${bufferBase64}`;
-
+    this.giveAchievement.custom(user);
     return this.users.setAvatar(user, base64);
   }
 
@@ -93,6 +97,7 @@ export class AvatarController {
   @UseGuards(IsAuthenticatedGuard)
   @ApiTags('Avatar')
   async deleteAvatar(@SessionUser() user: User) {
+    this.giveAchievement.custom(user);
     return this.users.setAvatar(user, null);
   }
 }

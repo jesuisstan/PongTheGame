@@ -26,295 +26,335 @@ import './Chat.css';
 **************************************************************/
 
 const ChatRoom = (props: any) => {
-	/*************************************************************
-	 * States
-	**************************************************************/
-	const socket = useContext(WebSocketContext)
-	const { user, setUser } = useContext(UserContext)
-	// Array including all message objects (author + msg) excluding
-	// messages from blocked users/users who blocked the user
-	const [messages, setMessages] = useState<Message[]>([])
-	// Display typing state of the user
-	const [typingDisplay, setTypingDisplay] = useState<string>('')
-	// Message input field value
-	const [messageText, setMessageText] = useState<string>('')
-	// Checks if the user is oper(=admin) in the chat room
-	const [isOper, setIsOper] = useState<boolean>(false)
-	// Array including all members
-	const [members, setMembers] = useState<MemberType[]>([])
-	// Modify password
-	const [oldPassword, setOldPassword] = useState<string>('');
-	const [newPassword, setNewPassword] = useState<string>('');
-
-	socket.emit('findAllMembers', { roomName: user.joinedChatRoom },
-		(response: MemberType[]) => {
-			setMembers(response)
-		}
-	)
-	// Get all messages from messages array in chat.service
-	// and fill the messages variable
-	socket.emit('findAllMessages',
-		{ roomName: user.joinedChatRoom },
-		(response: Message[]) => {
-			// Array including all the messages, even the ones from
-			// blocked users/users who blocked the user
-			const messagesToFilter = response
-
-			for (let i = messagesToFilter.length - 1; i >= 0; --i) {
-				// First we filter the recipient's blocked users
-				let found = false;
-				for (const blockedUser in user.blockedUsers) {
-						console.log('author: ' + messagesToFilter[i].author.nickname + ' user: ' + user.blockedUsers[blockedUser])
-
-					if (messagesToFilter[i].author.nickname === user.blockedUsers[blockedUser])
-					{
-						messagesToFilter.splice(i, 1);
-						found = true;
-						break;
-					}
-				}
-				// Then we filter the sender's blocked users
-				if (found === false) {
-					for (const blockedUser in messagesToFilter[i].author.blockedUsers) {
-						if (user.nickname === messagesToFilter[i].author.blockedUsers[blockedUser])
-						{
-							messagesToFilter.splice(i, 1);
-							break;
-						}
-					}
-				}
-			}
-			const filteredMessages = messagesToFilter
-			setMessages(filteredMessages)
-		})
-
-		socket.emit('isUserOper',
-			{ roomName: user.joinedChatRoom, nick: user.nickname },
-			(response: boolean) => {
-				setIsOper(response)
-			}
-		)
+  /*************************************************************
+   * States
+  **************************************************************/
+  const socket = useContext(WebSocketContext)
+  const { user, setUser } = useContext(UserContext)
+  // Array including all message objects (author + msg) excluding
+  // messages from blocked users/users who blocked the user
+  const [messages, setMessages] = useState<Message[]>([])
+  // Display typing state of the user
+  const [typingDisplay, setTypingDisplay] = useState<string>('')
+  // Message input field value
+  const [messageText, setMessageText] = useState<string>('')
+  // Checks if the user is oper(=admin) in the chat room
+  const [isOper, setIsOper] = useState<boolean>(false)
+  // Checks if the user is muted in the chat room
+  const [isMuted, setIsMuted] = useState<boolean>(false)
+  // Array including all members
+  const [members, setMembers] = useState<MemberType[]>([])
+  // Modify password
+  const [oldPassword, setOldPassword] = useState<string>('');
+  const [newPassword, setNewPassword] = useState<string>('');
 
 
-	/*************************************************************
-	 * Event listeners
-	 **************************************************************/
-	useEffect(() => {
-		// Activate listeners and subscribe to events as the component is mounted
-		socket.on('connect', () => console.log('connected to websocket!'))
-		socket.on(
-			'createMessage',
-			() => console.log('createMessage event received!') 
-		)
-		socket.on('typingMessage', (
-				roomName: string, nick: string, isTyping: boolean) => {
-			roomName === user.joinedChatRoom && isTyping ?
-				setTypingDisplay(nick )
-				: setTypingDisplay('')
-		})
-		socket.on('changePassword', (roomName: string, isDeleted: boolean) => {
-			if (roomName === user.joinedChatRoom) {
-				console.log('Password from ' + roomName + ' has been ' + isDeleted);
-			}
-		})
-		socket.on('makeOper', (roomName: string, target: string) => {
-			if (roomName === user.joinedChatRoom)
-				console.log(target + ' is Oper now!')
-		})
-		socket.on('joinRoom', (roomName: string, nick: string) => {
-			if (roomName === user.joinedChatRoom)
-				console.log(nick + ' joined chatroom [' + roomName + ']');
-		});
-		socket.on('quitRoom', (roomName: string, nick: string) => {
-			if (roomName === user.joinedChatRoom)
-				console.log(nick + ' quit room [' + roomName + ']')
-		});
-		socket.on('kickUser', (roomName: string, target: string) => {
-			if (roomName === user.joinedChatRoom)
-				console.log(target + ' has been kicked!')
-			if (target === user.nickname) props.cleanRoomLoginData()
-		});
-			socket.on('banUser', (roomName: string, target: string) => {
-			if (roomName === user.joinedChatRoom)
-				console.log(target + ' has been banned!')
-			if (target === user.nickname) props.cleanRoomLoginData()
-		})
-		socket.on('unBanUser', (roomName: string, target: string) => {
-			if (roomName === user.joinedChatRoom)
-				console.log(target + ' has been unbanned!')
-		})
+  socket.emit('findAllMembers', { roomName: user.joinedChatRoom },
+    (response: MemberType[]) => {
+      setMembers(response)
+    }
+  )
+  // Get all messages from messages array in chat.service
+  // and fill the messages variable
+  socket.emit('findAllMessages',
+    { roomName: user.joinedChatRoom },
+    (response: Message[]) => {
+      // Array including all the messages, even the ones from
+      // blocked users/users who blocked the user
+      const messagesToFilter = response
 
-		// Clean listeners to unsubscribe all callbacks for these events
-		// before the component is unmounted
-		return () => {
-			socket.off('connect')
-			socket.off('createMessage')
-			socket.off('typingMessage')
-			socket.off('makeOper')
-			socket.off('joinRoom')
-			socket.off('quitRoom')
-			socket.off('kickUser')
-			socket.off('banUser')
-			socket.off('unBanUser')
-		}
-	}, [])
+      for (let i = messagesToFilter.length - 1; i >= 0; --i) {
+        // First we filter the recipient's blocked users
+        let found = false;
+        for (const blockedUser in user.blockedUsers) {
+          if (messagesToFilter[i].author.nickname === user.blockedUsers[blockedUser])
+          {
+            messagesToFilter.splice(i, 1);
+            found = true;
+            break;
+          }
+        }
+        // Then we filter the sender's blocked users
+        if (found === false) {
+          for (const blockedUser in messagesToFilter[i].author.blockedUsers) {
+            if (user.nickname === messagesToFilter[i].author.blockedUsers[blockedUser])
+            {
+              messagesToFilter.splice(i, 1);
+              break;
+            }
+          }
+        }
+      }
+      const filteredMessages = messagesToFilter
+      setMessages(filteredMessages)
+    })
 
-	// Emit that user is typing, or not typing after timeout
-	let timeout;
-	const emitTyping = () => {
-		socket.emit('typingMessage', {
-			roomName: user.joinedChatRoom, 
-			nick: user.nickname,
-			isTyping: true
-		});
-		timeout = setTimeout(() => {
-			socket.emit('typingMessage', {
-				roomName: user.joinedChatRoom,
-				nick: user.nickname,
-				isTyping: false
-			});
-		}, 2000);
-	};
+    socket.emit('isUserOper',
+      { roomName: user.joinedChatRoom, nick: user.nickname },
+      (response: boolean) => {
+        setIsOper(response)
+      }
+    )
 
-	// Activated whenever the user is typing on the message input field
-	const onTyping = (msg: string) => {
-		emitTyping();
-		setMessageText(msg);
-	};
-
-	// On submit, send the nickName with the written message from the input field
-	// to the backend, as a createMessage event
-	const onFormSubmit = (e: any) => {
-		e.preventDefault();
-		if (messageText)
-			socket.emit('createMessage', {
-				roomName: user.joinedChatRoom,
-				message: {
-					author: user,
-					data: messageText,
-					timestamp: new Date()
-				}
-			});
-		// Reset input field value once sent
-		setMessageText('');
-	};
-
-	// When clicking on the 'return' button
-	const onReturnClick = () => {
-		socket.emit('quitRoom', {
-			roomName: user.joinedChatRoom,
-			nick: user.nickname
-		})
-		props.cleanRoomLoginData()
-	}
-
-	// const checkIfBlocked = (target: string) => {
-	//   for (const blockedUser in user.blockedUsers)
-	//     if (target === user.blockedUsers[blockedUser])
-	//       return true
-	//   return false
-	// }
-
-	// When clicking on the 'block' button to block a user
-	const onBlockClick = (target: string) => {
-		user.blockedUsers.push(target)
-	}
-	// When clicking on the 'unblock' button to unblock a user
-	const onUnBlockClick = (target: string) => {
-		for (var i=0; i < user.blockedUsers.length; ++i)
-			if (user.blockedUsers[i] === target)
-			{
-				user.blockedUsers.splice(i, 1)
-				break;
-			}
-	}
-
-	// When clicking on the 'ban' button to ban a user
-	const onBanClick = (target: string) => {
-		socket.emit('banUser', {
-			roomName: user.joinedChatRoom,
-			nick: user.nickname,
-			target: target
-		})
-	}
-	// When clicking on the 'unban' button to unban a user
-	const onUnBanClick = (target: string) => {
-		socket.emit('unBanUser', {
-			roomName: user.joinedChatRoom,
-			nick: user.nickname,
-			target: target
-		})  
-	}
-
-	const isUserBanned = (nick: string) => {
-		socket.emit('isUserBanned', {
-			roomName: user.joinedChatRoom,
-			nick: nick
-		}, (response: boolean) => {
-			return response
-		})
-	}
-	
-	// When clicking on the 'kick' button to kick a user
-	const onKickClick = (target: string) => {
-		socket.emit('kickUser', {
-			roomName: user.joinedChatRoom,
-			nick: user.nickname,
-			target: target
-		})
-	}
-
-	// When clicking on the 'oper' button to make a user oper
-	const onMakeOperClick = (target: string) => {
-		socket.emit('makeOper', {
-			roomName: user.joinedChatRoom,
-			nick: user.nickname,
-			target: target
-		})  
-	}
-
-	// When clicking on the 'message' button to send a private
-	// message to the user
-	const onPrivMessageClick = (user2: string) => {
-		socket.emit('createChatRoom', {
-			room: {
-				name: '#' + user.nickname + '/' + user2,
-				modes: '',
-				password: '',
-				userLimit: 2,
-				users: {},
-				messages: [],
-				bannedNicks: []
-			},
-			nick: user.nickname,
-			user2: user2,
-		});
-	}
+    socket.emit('isUserMuted',
+    { roomName: user.joinedChatRoom, nick: user.nickname },
+    (response: boolean) => {
+      setIsMuted(response)
+    }
+  )
 
 
-	const handleUsrClick = (event: any) => {
-		setAnchorEl(event.currentTarget);
-	};
+  /*************************************************************
+   * Event listeners
+   **************************************************************/
+  useEffect(() => {
+    // Activate listeners and subscribe to events as the component is mounted
+    socket.on('connect', () => console.log('connected to websocket!'))
+    socket.on(
+      'createMessage',
+      () => console.log('createMessage event received!') 
+    )
+    socket.on('typingMessage', (
+        roomName: string, nick: string, isTyping: boolean) => {
+      roomName === user.joinedChatRoom && isTyping ?
+        setTypingDisplay(nick + ' is typing...')
+        : setTypingDisplay('')
+    })
+    socket.on('changePassword', (roomName: string, isDeleted: boolean) => {
+      if (roomName === user.joinedChatRoom) {
+        const status = isDeleted ? 'deleted' : 'modified';
+        console.log('Password from ' + roomName + ' has been ' + isDeleted);
+      }
+    })
+    socket.on('makeOper', (roomName: string, target: string) => {
+      if (roomName === user.joinedChatRoom)
+        console.log(target + ' is Oper now!')
+    })
+    socket.on('joinRoom', (roomName: string, nick: string) => {
+      if (roomName === user.joinedChatRoom)
+        console.log(nick + ' joined chatroom [' + roomName + ']');
+    });
+    socket.on('quitRoom', (roomName: string, nick: string) => {
+      if (roomName === user.joinedChatRoom)
+        console.log(nick + ' quit room [' + roomName + ']')
+    });
+    socket.on('kickUser', (roomName: string, target: string) => {
+      if (roomName === user.joinedChatRoom)
+        console.log(target + ' has been kicked!')
+      if (target === user.nickname) props.cleanRoomLoginData()
+    });
+      socket.on('banUser', (roomName: string, target: string) => {
+      if (roomName === user.joinedChatRoom)
+        console.log(target + ' has been banned!')
+      if (target === user.nickname) props.cleanRoomLoginData()
+    })
+    socket.on('unBanUser', (roomName: string, target: string) => {
+      if (roomName === user.joinedChatRoom)
+        console.log(target + ' has been unbanned!')
+    })
+    socket.on('muteUser', (roomName: string, target: string) => {
+      if (roomName === user.joinedChatRoom)
+        console.log(target + ' has been muted!')
+      if (target === user.nickname) props.cleanRoomLoginData()
+    })
+    socket.on('unMuteUser', (roomName: string, target: string) => {
+      if (roomName === user.joinedChatRoom)
+        console.log(target + ' has been unmuted!')
+    })
 
-	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    // Clean listeners to unsubscribe all callbacks for these events
+    // before the component is unmounted
+    return () => {
+      socket.off('connect')
+      socket.off('createMessage')
+      socket.off('typingMessage')
+      socket.off('makeOper')
+      socket.off('joinRoom')
+      socket.off('quitRoom')
+      socket.off('kickUser')
+      socket.off('banUser')
+      socket.off('unBanUser')
+    }
+  }, [])
+
+  // Emit that user is typing, or not typing after timeout
+  let timeout;
+  const emitTyping = () => {
+    socket.emit('typingMessage', {
+      roomName: user.joinedChatRoom, 
+      nick: user.nickname,
+      isTyping: true
+    });
+    timeout = setTimeout(() => {
+      socket.emit('typingMessage', {
+        roomName: user.joinedChatRoom,
+        nick: user.nickname,
+        isTyping: false
+      });
+    }, 2000);
+  };
+
+  // Activated whenever the user is typing on the message input field
+  const onTyping = (msg: string) => {
+    emitTyping();
+    setMessageText(msg);
+  };
+
+  // On submit, send the nickName with the written message from the input field
+  // to the backend, as a createMessage event
+  const onFormSubmit = (e: any) => {
+    e.preventDefault();
+    if (messageText)
+      socket.emit('createMessage', {
+        roomName: user.joinedChatRoom,
+        message: {
+          author: user,
+          data: messageText,
+          timestamp: new Date()
+        }
+      });
+    // Reset input field value once sent
+    setMessageText('');
+  };
+
+  // When clicking on the 'return' button
+  const onReturnClick = () => {
+    socket.emit('quitRoom', {
+      roomName: user.joinedChatRoom,
+      nick: user.nickname
+    })
+    props.cleanRoomLoginData()
+  }
+
+  // const checkIfBlocked = (target: string) => {
+  //   for (const blockedUser in user.blockedUsers)
+  //     if (target === user.blockedUsers[blockedUser])
+  //       return true
+  //   return false
+  // }
+
+  // When clicking on the 'block' button to block a user
+  const onBlockClick = (target: string) => {
+    user.blockedUsers.push(target)
+  }
+  // When clicking on the 'unblock' button to unblock a user
+  const onUnBlockClick = (target: string) => {
+    for (var i=0; i < user.blockedUsers.length; ++i)
+      if (user.blockedUsers[i] === target)
+      {
+        user.blockedUsers.splice(i, 1)
+        break;
+      }
+  }
+
+  // When clicking on the 'ban' button to ban a user
+  const onBanClick = (target: string) => {
+    socket.emit('banUser', {
+      roomName: user.joinedChatRoom,
+      nick: user.nickname,
+      target: target
+    })
+  }
+  // When clicking on the 'unban' button to unban a user
+  const onUnBanClick = (target: string) => {
+    socket.emit('unBanUser', {
+      roomName: user.joinedChatRoom,
+      nick: user.nickname,
+      target: target
+    })  
+  }
+
+  const isUserBanned = (nick: string) => {
+    socket.emit('isUserBanned', {
+      roomName: user.joinedChatRoom,
+      nick: nick
+    }, (response: boolean) => {
+      return response
+    })
+  }
+  
+  // When clicking on the 'kick' button to kick a user
+  const onKickClick = (target: string) => {
+    socket.emit('kickUser', {
+      roomName: user.joinedChatRoom,
+      nick: user.nickname,
+      target: target
+    })
+  }
+
+  // When clicking on the 'oper' button to make a user oper
+  const onMakeOperClick = (target: string) => {
+    socket.emit('makeOper', {
+      roomName: user.joinedChatRoom,
+      nick: user.nickname,
+      target: target
+    })  
+  }
+
+  // When clicking on the 'mute' button to mute a user
+  const onMuteUserClick = (target: string) => {
+    socket.emit('muteUser', {
+      roomName: user.joinedChatRoom,
+      nick: user.nickname,
+      target: target,
+      mute: true
+    })  
+  }
+
+  // When clicking on the 'unmute' button to unmute a user
+  const onUnMuteUserClick = (target: string) => {
+    socket.emit('muteUser', {
+      roomName: user.joinedChatRoom,
+      nick: user.nickname,
+      target: target,
+      mute: false
+    })
+  }
+
+  // When clicking on the 'message' button to send a private
+  // message to the user
+  const onPrivMessageClick = (user2: string) => {
+    socket.emit('createChatRoom', {
+      room: {
+        name: '#' + user.nickname + '/' + user2,
+        modes: '',
+        password: '',
+        userLimit: 2,
+        users: {},
+        messages: [],
+        bannedNicks: []
+      },
+      nick: user.nickname,
+      user2: user2,
+    });
+  }
+
+    socket.emit('isUserMuted',
+    { roomName: user.joinedChatRoom, nick: user.nickname },
+    (response: boolean) => {
+      setIsMuted(response)
+    }
+  )
+
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 	const [anchorAvatar, setAnchorAvatar] = useState<null | HTMLElement>(null);
 
-	const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-		setAnchorEl(event.currentTarget);
-	};
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
 
-	const handleClose = () => {
-		setAnchorEl(null);
-		onReturnClick();
-	};
+  const handleClose = () => {
+    setAnchorEl(null);
+    onReturnClick();
+  };
 
-	const handleChangePwd = (deletePwd: boolean) => {
-		socket.emit('changePassword', {
-			roomName: user.joinedChatRoom,
-			currentPassword: oldPassword,
-			newPassword: deletePwd ? '' : newPassword,
-		});
-	};
+  const handleChangePwd = (deletePwd: boolean) => {
+    socket.emit('changePassword', {
+      roomName: user.joinedChatRoom,
+      currentPassword: oldPassword,
+      newPassword: deletePwd ? '' : newPassword,
+    });
+  };
 
 	const handleAClick = (event: any) => {
 		setAnchorAvatar(event.currentTarget);
@@ -476,7 +516,7 @@ const ChatRoom = (props: any) => {
 							messages.length === 0 ? 
 // -------------- If no message: Display "No Message" --------------
 							(	<div className='black'>No Message</div> ) : 
-// -------------- If messages: Display messages --------------
+// -------------- Else: Display messages --------------
 							(
 							<Stack> {
 									messages.map((msg, index) => (
@@ -485,9 +525,9 @@ const ChatRoom = (props: any) => {
 											user.nickname === msg.author.nickname ? (
 												<>
 													<div className="msgRowR">
-															<div className='msgRight'>
+															<div className='msgRight msgBubble'>
 																	<p className="msgText">{msg.data}</p>
-																	<div className="msgTime">Date</div>
+																	<div className="msgTime">{timeFromNow(msg.timestamp)}</div>
 															</div>
 													</div>
 												</>
@@ -588,7 +628,7 @@ const ChatRoom = (props: any) => {
 													</>							
 														<div>
 																{/* <div className="nickName">{msg.author.nickname}</div> */}
-																<div className="msgLeft">
+																<div className="msgLeft msgBubble">
 																		<p className="msgText">{msg.data}</p>
 {/* ----------------------------------------------------------------
 					HERE FIND WHY TIME IS NOT DISPLAYED WITH TIMEFROMNOW()

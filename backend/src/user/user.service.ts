@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { User } from '@prisma/client';
+import { User, Stats } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { WebsocketsService } from 'src/websockets/websockets.service';
 
 const USER_SELECT = {
   avatar: true,
@@ -11,43 +12,50 @@ const USER_SELECT = {
   username: true,
   // blockedUsers: true,
   role: true,
+  status: true,
 };
+
+function userSelect(includeTfaEnabled: boolean) {
+  return includeTfaEnabled
+    ? {
+        ...USER_SELECT,
+        totpSecret: {
+          select: {
+            verified: includeTfaEnabled,
+          },
+        },
+      }
+    : USER_SELECT;
+}
 
 @Injectable()
 export class UserService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly websocket: WebsocketsService,
+  ) {}
 
   async findUserById(
     id: number,
     includeTfaEnabled = false,
   ): Promise<User | null> {
-    const select = includeTfaEnabled
-      ? {
-          ...USER_SELECT,
-          totpSecret: {
-            select: {
-              verified: includeTfaEnabled,
-            },
-          },
-        }
-      : USER_SELECT;
-
     return this.prisma.user.findUnique({
       where: { id },
-      select,
+      select: userSelect(includeTfaEnabled),
     });
   }
 
-  async findUserByNickname(nickname: string) {
+  async findUserByNickname(nickname: string, includeTfaEnabled = false) {
     return this.prisma.user.findUnique({
       where: { nickname },
-      select: USER_SELECT,
+      select: userSelect(includeTfaEnabled),
     });
   }
 
   async findUserByProfileId(
     provider: string,
     profileId: string,
+    includeTfaEnabled = false,
   ): Promise<User | null> {
     return this.prisma.user.findUnique({
       where: {
@@ -56,7 +64,7 @@ export class UserService {
           provider,
         },
       },
-      select: USER_SELECT,
+      select: userSelect(includeTfaEnabled),
     });
   }
 
@@ -74,38 +82,30 @@ export class UserService {
         avatar,
       },
     });
+  }
 
-    // return this.prisma.user.create({Failed to validate the query: `Unable to match input value to any allowed input type for the field.
-    //   data: {
-    //     profileId,
-    //     username,
-    //     provider,
-    //     profileAvatar,
-    //     avatar: null,
-    //   },
-    //   select: {
-    //     avatar: true,
-    //     id: true,
-    //     username: true,
-    //     nickname: true,
-    //     profileId: true,
-    //     provider: true,
-    //   },
-    // });
+  async createStats(UserId: number): Promise<Stats> {
+    return this.prisma.stats.create({
+      data: {
+        userId: UserId,
+      },
+    });
   }
 
   async setUserNickname(user: User, nickname: string): Promise<User> {
     const { id } = user;
 
-    return this.prisma.user.update({
+    const user_modif: User = await this.prisma.user.update({
       data: {
         nickname,
       },
       where: {
         id,
       },
-      select: USER_SELECT,
+      select: userSelect(true),
     });
+    this.websocket.modifyTheUserSocket(user_modif.id);
+    return user_modif;
   }
 
   async hasTotpSecret(user: User): Promise<boolean> {
@@ -124,14 +124,17 @@ export class UserService {
   async setAvatar(user: User, url: string | null): Promise<User> {
     const { id } = user;
 
-    return this.prisma.user.update({
+    const NewUser: User = await this.prisma.user.update({
       data: {
         avatar: url,
       },
       where: {
         id,
       },
+      select: userSelect(true),
     });
+    this.websocket.modifyTheUserSocket(user.id);
+    return NewUser;
   }
 
   async setTotpSecret(user: User, secret: string): Promise<User> {
@@ -147,7 +150,7 @@ export class UserService {
         },
       },
       where: { id },
-      select: USER_SELECT,
+      select: userSelect(true),
     });
   }
 
@@ -161,7 +164,7 @@ export class UserService {
         },
       },
       where: { id },
-      select: USER_SELECT,
+      select: userSelect(true),
     });
   }
 }

@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../contexts/UserContext';
 import EditNickname from './EditNickname';
@@ -7,11 +7,11 @@ import Enable2fa from './Enable2fa';
 import ButtonPong from '../UI/ButtonPong';
 import backendAPI from '../../api/axios-instance';
 import errorAlert from '../UI/errorAlert';
+import { MatchHistory } from '../../types/MatchHistory';
 import List from '@mui/joy/List';
 import ListItem from '@mui/joy/ListItem';
 import Typography from '@mui/joy/Typography';
 import Avatar from '@mui/material/Avatar';
-import Rating from '@mui/material/Rating';
 import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import CreateIcon from '@mui/icons-material/Create';
@@ -24,6 +24,11 @@ const Profile = () => {
   const [modalNicknameOpen, setModalNicknameOpen] = useState(false);
   const [modalAvatarOpen, setModalAvatarOpen] = useState(false);
   const [modal2faOpen, setModal2faOpen] = useState(false);
+  const [matchHistory, setMatchHistory] = useState<MatchHistory>({
+    played: '-',
+    wins: '-',
+    loses: '-'
+  });
 
   const toggleTfa = () => {
     if (user.totpSecret?.verified) {
@@ -43,6 +48,24 @@ const Profile = () => {
     }
   };
 
+  useEffect(() => {
+    if (user.nickname && user.provider) {
+      backendAPI.get(`/stats/${user.nickname}`).then(
+        (response) => {
+          setMatchHistory((prevState) => ({
+            ...prevState,
+            played: response.data.match_play,
+            wins: response.data.match_win,
+            loses: response.data.match_lose
+          }));
+        },
+        (error) => {
+          errorAlert(`Failed to get player's match history`);
+        }
+      );
+    }
+  }, [user.nickname]);
+
   return !user.nickname && user.provider ? (
     <EditNickname open={true} setOpen={setModalNicknameOpen} />
   ) : (
@@ -56,7 +79,7 @@ const Profile = () => {
             <ButtonPong
               text="Change"
               title="upload new avatar"
-              endIcon={<AddAPhotoIcon />}
+              startIcon={<AddAPhotoIcon />}
               onClick={() => setModalAvatarOpen(true)}
             />
             <ButtonPong
@@ -77,6 +100,7 @@ const Profile = () => {
               level="body3"
               textTransform="uppercase"
               fontWeight="lg"
+              textColor="rgb(37, 120, 204)"
             >
               Auth
             </Typography>
@@ -108,6 +132,7 @@ const Profile = () => {
               level="body3"
               textTransform="uppercase"
               fontWeight="lg"
+              textColor="rgb(37, 120, 204)"
             >
               Info
             </Typography>
@@ -139,17 +164,23 @@ const Profile = () => {
               level="body3"
               textTransform="uppercase"
               fontWeight="lg"
+              textColor="rgb(37, 120, 204)"
             >
               Briefs
             </Typography>
-            <Typography component="legend">Rating</Typography>
-            <Rating name="read-only" value={4} readOnly />
+            <List
+              sx={{ display: 'flex', alignItems: 'center' }}
+              aria-labelledby="basic-list"
+            >
+              <ListItem>Wins: {matchHistory.wins}</ListItem>
+              <ListItem>Loses: {matchHistory.loses}</ListItem>
+            </List>
           </div>
           <div className={styles.bottom}>
             <ButtonPong
               text="Full stats"
               title="go to match history page"
-              onClick={() => navigate('/history')}
+              onClick={() => navigate(`/players/${user.nickname}`)}
               endIcon={<ArrowForwardIosIcon />}
             />
           </div>

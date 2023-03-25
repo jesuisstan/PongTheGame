@@ -14,7 +14,7 @@ datasource db {
 }
 
 model User {
-  id        Int     @id @default(autoincrement())
+  id        Int     @id @default(autoincrement()) 
   nickname  String? @unique
   username  String
   avatar    String?
@@ -22,16 +22,33 @@ model User {
   provider  String
   // blockedUsers  String[]
 
-  totpSecret TotpSecret?
-  role       Role        @default(USER)
+  status        StatusUser @default(ONLINE)
+  totpSecret    TotpSecret?
+  role          Role       @default(USER)
 
   // MatchEntry
   matchEntries MatchEntry[]
 
+  stats       Stats[]
   friends     Friends[]
   achievement Achievement[]
-
+  invitation  MatchInvitation[]
   @@unique([profileId, provider])
+}
+
+model Stats {
+  id          Int    @id @default(autoincrement())
+  nb_game     Int    @default(0)
+  nb_win      Int    @default(0)
+  User        User   @relation(fields: [userId], references: [id])
+  userId      Int    @unique
+  @@map("Statistique")
+}
+
+enum StatusUser {
+    ONLINE
+    OFFLINE
+    PLAYING
 }
 
 model TotpSecret {
@@ -52,10 +69,10 @@ enum Role {
 model Achievement {
   id          Int     @id @default(autoincrement())
   Name        String  @unique
-  Title       String  @unique // MEMO Check if needed to keep the title ?
+  Title       String  @unique
   Description String
-  icon_path   String? // TODO Remove the ? when we got the picture
-  User        User?   @relation(fields: [userId], references: [id])
+  icon_path   String?
+  User        User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId      Int?
 
   @@map("Achievements")
@@ -91,10 +108,26 @@ model Match {
   endDate   DateTime?
 }
 
+model MatchInvitation {
+    id          Int                  @id @default(autoincrement())
+    // createdBy   User                 @relation(fields: [createdById], references: [id])
+    // createdById Int                  
+    sendToId    Int                  
+    sendTo      User                 @relation(fields: [sendToId], references: [id])
+    status      InvitationState @default(Pending)
+
+}
+
+enum InvitationState {
+  Pending
+  Started
+  Finished
+}
+
 enum MatchState {
   Scheduled
   Started
-  Finished
+  Finished // MEMO Only use this
 }
 
 // https://www.npmjs.com/package/@quixo3/prisma-session-store#Model

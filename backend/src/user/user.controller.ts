@@ -6,7 +6,6 @@ import {
   Logger,
   NotFoundException,
   Param,
-  ParseIntPipe,
   Patch,
   UseGuards,
   UsePipes,
@@ -18,6 +17,7 @@ import { IsAuthenticatedGuard } from 'src/auth/auth.guard';
 import { SessionUser } from 'src/decorator/session-user.decorator';
 import { SetNicknameDTO } from 'src/user/dto/setNickname.dto';
 import { UserService } from 'src/user/user.service';
+import { WebsocketsService } from 'src/websockets/websockets.service';
 
 @Controller('/user')
 @UseGuards(IsAuthenticatedGuard)
@@ -25,23 +25,25 @@ import { UserService } from 'src/user/user.service';
 export class UserController {
   private readonly logger = new Logger(UserController.name);
 
-  constructor(private readonly users: UserService) {}
+  constructor(
+    private readonly users: UserService,
+    private readonly websocket: WebsocketsService,
+  ) {}
 
-  // https://stackoverflow.com/a/71671007
-  @Get('/:id(\\d+)')
+  @Get('/:nickname')
   @ApiOperation({
-    summary: 'Find a user by its id',
-    parameters: [{ name: 'id', in: 'path' }],
+    summary: 'Find a user by its nickname',
+    parameters: [{ name: 'nickame', in: 'path' }],
     responses: {
       '404': {
-        description: 'user with such id was not found',
+        description: 'user with such nickname was not found',
       },
     },
   })
-  async getUserById(@Param('id', ParseIntPipe) id: number) {
-    const user = await this.users.findUserById(id);
-
+  async getUserByNickname(@Param('nickname') nickname: string) {
+    const user = await this.users.findUserByNickname(nickname);
     if (user === null) throw new NotFoundException();
+    this.websocket.modifyTheUserSocket(user.id);
     return user;
   }
 
