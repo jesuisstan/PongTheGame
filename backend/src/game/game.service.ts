@@ -5,6 +5,7 @@ import { WebsocketsService } from 'src/websockets/websockets.service';
 import { Game } from './game.class';
 import { Socket } from 'socket.io';
 import { giveAchievementService } from 'src/achievement/utils/giveachievement.service';
+import { TypeMode } from './Interface';
 
 @Injectable()
 export class GameService {
@@ -61,6 +62,7 @@ export class GameService {
       this.prisma,
       this.websocket,
       this.achievement,
+      TypeMode.NORMAL,
       { socket: sockets[0], user: sockets[0].user },
       { socket: sockets[1], user: sockets[1].user },
       this.invitation,
@@ -80,6 +82,32 @@ export class GameService {
     //     sendToId : userId[1],
     //   }
     // });
+  }
+
+  async create_training_game(player: any) {
+    const msg = {
+      action: 'match',
+      player1: {
+        name: player.nickname,
+        avatar: player.user.avatar,
+      },
+      player2: {
+        name: 'IA',
+        avatar: '',
+      },
+    };
+    this.websocket.send(player, 'matchmaking', msg);
+    const game = new Game(
+      this.prisma,
+      this.websocket,
+      this.achievement,
+      TypeMode.TRAINING,
+      { socket: player, user: player.user },
+    );
+    this.games.push(game);
+    game.start(() => {
+      this.games.splice(this.games.indexOf(game), 1);
+    });
   }
 
   private _treat_queue(queue: Socket[]) {
@@ -103,6 +131,7 @@ export class GameService {
         this.prisma,
         this.websocket,
         this.achievement,
+        TypeMode.NORMAL,
         { socket: player1, user: player1.user },
         { socket: player2, user: player2.user },
       );

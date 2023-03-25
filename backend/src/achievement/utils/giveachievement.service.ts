@@ -163,7 +163,8 @@ export class giveAchievementService {
       });
     }
   }
-  async getAchievement(user: User) {
+  async getAchievement(user: User | undefined) {
+    if (!user) return;
     await this.playGame(user);
     await this.winGame(user);
     // getFriends(user);
