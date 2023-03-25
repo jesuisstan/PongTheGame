@@ -88,7 +88,7 @@ const Game = () => {
           />
         )}
         {game_state === Game_status.QUEUE && (
-          <Queue set_game_state={set_game_state} joinMatch={joinMatch} />
+          <Queue set_game_state={set_game_state} joinMatch={join_match} />
         )}
         {game_state === Game_status.BEGIN_GAME && (
           <Start_game players={players} set_game_state={set_game_state} />
