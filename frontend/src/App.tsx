@@ -10,11 +10,11 @@ import Profile from './components/profile/Profile';
 import Verify2fa from './components/profile/login/Verify2fa';
 import Chat from './components/chat/Chat';
 import Game from './components/game/Game';
-import PlayerCard from './components/pages/player_page/PlayerCard';
 import NotFound from './components/pages/NotFound';
 import PleaseLogin from './components/pages/PleaseLogin';
 import backendAPI from './api/axios-instance';
 import './App.css';
+import PlayerCard from './components/pages/player_page/PlayerCard';
 
 function App() {
   const socket = useContext(WebSocketContext);

@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../contexts/UserContext';
 import EditNickname from './EditNickname';
@@ -7,6 +7,7 @@ import Enable2fa from './Enable2fa';
 import ButtonPong from '../UI/ButtonPong';
 import backendAPI from '../../api/axios-instance';
 import errorAlert from '../UI/errorAlert';
+import { MatchHistory } from '../../types/MatchHistory';
 import List from '@mui/joy/List';
 import ListItem from '@mui/joy/ListItem';
 import Typography from '@mui/joy/Typography';
@@ -23,6 +24,11 @@ const Profile = () => {
   const [modalNicknameOpen, setModalNicknameOpen] = useState(false);
   const [modalAvatarOpen, setModalAvatarOpen] = useState(false);
   const [modal2faOpen, setModal2faOpen] = useState(false);
+  const [matchHistory, setMatchHistory] = useState<MatchHistory>({
+    played: '-',
+    wins: '-',
+    loses: '-'
+  });
 
   const toggleTfa = () => {
     if (user.totpSecret?.verified) {
@@ -41,6 +47,22 @@ const Profile = () => {
       );
     }
   };
+
+  useEffect(() => {
+    backendAPI.get(`/stats/${user.id}`).then(
+      (response) => {
+        setMatchHistory((prevState) => ({
+          ...prevState,
+          played: response.data.match_play,
+          wins: response.data.match_win,
+          loses: response.data.match_lose
+        }));
+      },
+      (error) => {
+        errorAlert(`Failed to get player's match history`);
+      }
+    );
+  }, []);
 
   return !user.nickname && user.provider ? (
     <EditNickname open={true} setOpen={setModalNicknameOpen} />
@@ -148,8 +170,8 @@ const Profile = () => {
               sx={{ display: 'flex', alignItems: 'center' }}
               aria-labelledby="basic-list"
             >
-              <ListItem>Wins: {0}</ListItem>
-              <ListItem>Loses: {0}</ListItem>
+              <ListItem>Wins: {matchHistory.wins}</ListItem>
+              <ListItem>Loses: {matchHistory.loses}</ListItem>
             </List>
           </div>
           <div className={styles.bottom}>

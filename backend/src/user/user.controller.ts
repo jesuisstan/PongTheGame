@@ -17,6 +17,7 @@ import { IsAuthenticatedGuard } from 'src/auth/auth.guard';
 import { SessionUser } from 'src/decorator/session-user.decorator';
 import { SetNicknameDTO } from 'src/user/dto/setNickname.dto';
 import { UserService } from 'src/user/user.service';
+import { WebsocketsService } from 'src/websockets/websockets.service';
 
 @Controller('/user')
 @UseGuards(IsAuthenticatedGuard)
@@ -24,7 +25,10 @@ import { UserService } from 'src/user/user.service';
 export class UserController {
   private readonly logger = new Logger(UserController.name);
 
-  constructor(private readonly users: UserService) {}
+  constructor(
+    private readonly users: UserService,
+    private readonly websocket: WebsocketsService,
+  ) {}
 
   @Get('/:nickname')
   @ApiOperation({
@@ -38,8 +42,8 @@ export class UserController {
   })
   async getUserByNickname(@Param('nickname') nickname: string) {
     const user = await this.users.findUserByNickname(nickname);
-
     if (user === null) throw new NotFoundException();
+    this.websocket.modifyTheUserSocket(user.id);
     return user;
   }
 

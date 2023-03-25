@@ -9,11 +9,12 @@ import { TotpModule } from 'src/auth/totp/totp.module';
 import { PrismaModule } from 'src/prisma/prisma.module';
 import { UserController } from 'src/user/user.controller';
 import { UserService } from 'src/user/user.service';
+import { WebsocketsModule } from 'src/websockets/websockets.module';
 
 @Module({
   controllers: [UserController],
   providers: [UserService],
-  imports: [PrismaModule, forwardRef(() => TotpModule)],
+  imports: [PrismaModule, forwardRef(() => TotpModule), WebsocketsModule],
   exports: [UserService],
 })
 export class UserModule implements NestModule {

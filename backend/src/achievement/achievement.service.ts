@@ -77,10 +77,12 @@ export class AchievementService {
     return;
   }
 
-  async userAchievement(id: number): Promise<{ achievement: Achievement[] }> {
+  async userAchievement(
+    Nickname: string,
+  ): Promise<{ achievement: Achievement[] }> {
     const user = await this.prisma.user.findUnique({
       where: {
-        id: id,
+        nickname: Nickname,
       },
       select: {
         achievement: true,
