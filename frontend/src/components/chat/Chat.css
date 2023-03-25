@@ -9,10 +9,13 @@
 	 font-style: normal;
 	 color: black;
  }
+
+ #chat-zone {
+	height: 10vh;
+ }
  
  #chat-window {
-	 height: 70vh;
-	 width: 50vw;
+	 max-height: 70vh;
 	 position: relative;
  
  }
