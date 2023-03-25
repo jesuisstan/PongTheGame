@@ -26,10 +26,9 @@ export class WebsocketsService {
       return;
     }
     try {
-      const verify = this.jwt
-        .verify(token, {
-          secret: this.config.get('JWT_SECRET'),
-        });
+      const verify = this.jwt.verify(token, {
+        secret: this.config.get('JWT_SECRET'),
+      });
       if (!verify || !verify.id) {
         this.send(socket, 'error', 'No user found');
         socket.disconnect();
@@ -70,13 +69,12 @@ export class WebsocketsService {
   }
 
   async modifyTheUserSocket(id: number) {
-    // var socket: any = this.getSockets([id])[0];
-    // this.sockets = this.sockets.filter((s: any) => s !== socket);
+    const socket: any = this.getSockets([id])[0];
     const user = await this.prismaService.user.findUnique({
       where: { id: id },
     });
-    // socket['user'] = user;
-    // this.sockets.push(socket);
+    socket['user'] = user;
+    this.sockets.push(socket);
     return;
   }
 

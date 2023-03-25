@@ -4,11 +4,12 @@ import { TotpMiddleware } from 'src/auth/totp/totp.middleware';
 import { TotpModule } from 'src/auth/totp/totp.module';
 import { AvatarController } from 'src/avatar/avatar.controller';
 import { UserModule } from 'src/user/user.module';
+import { WebsocketsModule } from 'src/websockets/websockets.module';
 
 @Module({
   controllers: [AvatarController],
   providers: [],
-  imports: [UserModule, TotpModule, giveAchievementModule],
+  imports: [UserModule, TotpModule, giveAchievementModule, WebsocketsModule],
 })
 export class AvatarModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

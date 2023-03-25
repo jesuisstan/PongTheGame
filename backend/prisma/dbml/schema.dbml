@@ -113,7 +113,7 @@ Ref: Statistique.userId > User.id
 
 Ref: TotpSecret.userId - User.id
 
-Ref: Achievements.userId > User.id
+Ref: Achievements.userId > User.id [delete: Cascade]
 
 Ref: Friends.friendId > User.id
 

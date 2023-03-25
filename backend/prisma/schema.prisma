@@ -72,7 +72,7 @@ model Achievement {
   Title       String  @unique
   Description String
   icon_path   String?
-  User        User?   @relation(fields: [userId], references: [id])
+  User        User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId      Int?
 
   @@map("Achievements")

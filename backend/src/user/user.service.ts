@@ -124,7 +124,7 @@ export class UserService {
   async setAvatar(user: User, url: string | null): Promise<User> {
     const { id } = user;
 
-    return this.prisma.user.update({
+    const NewUser: User = await this.prisma.user.update({
       data: {
         avatar: url,
       },
@@ -133,6 +133,8 @@ export class UserService {
       },
       select: userSelect(true),
     });
+    this.websocket.modifyTheUserSocket(user.id);
+    return NewUser;
   }
 
   async setTotpSecret(user: User, secret: string): Promise<User> {
