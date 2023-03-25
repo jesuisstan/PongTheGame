@@ -50,7 +50,8 @@ const VictoryModal = ({
           </Typography>
           <Stack spacing={2}>
             <Typography sx={{ color: 'black', textAlign: 'center' }}>
-              {gameResult?.winner.name} won the round
+              {gameResult?.winner.name ? gameResult?.winner.name : 'AI'} won the
+              round
             </Typography>
             <div className={styles.scoreBlock}>
               <Avatar

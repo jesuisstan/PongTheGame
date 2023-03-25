@@ -35,7 +35,7 @@ export interface Props_game {
   players?: Player_game[];
 	endMatch?: (result: Result_game) => void;
 	spectator: boolean;
-	set_game_state: (gameState: Game_status) => void;
+	setGameState: (gameState: Game_status) => void;
 }
 
 export interface Position {

@@ -14,6 +14,11 @@ export enum InvitationState {
   FINISHED = 'Finished',
 }
 
+export enum TypeMode {
+  NORMAL = 'Normal',
+  TRAINING = 'Training',
+}
+
 export interface Position {
   x: number;
   y: number;
@@ -30,7 +35,7 @@ export interface Profile {
 }
 
 export interface Player {
-  profile: Profile;
+  profile?: Profile;
   paddle: Position;
   score: number;
   event: 'up' | 'down' | null;

@@ -60,7 +60,7 @@ function Pong(props: Props_game) {
       set_time(args.gameInfos.time);
       drawState(args, canvas_ref);
       if (args.status === 'ended') {
-        props.set_game_state(Game_status.ENDED);
+        props.setGameState(Game_status.ENDED);
         // TODO clear the canvas for reprint the lobby
         console.log('Game_finished');
       }
@@ -97,22 +97,10 @@ function Pong(props: Props_game) {
       };
     }
   }, [players]);
-  //console.log('players out of useEffect');
 
-  //console.log(players);
   let winScore = 5; // todo temp value. Request from server
   return (
     <div className={styles.canvasBlock}>
-      {/* {players.length > 0 && (
-				<div>
-					 <div>
-						{ Player 1 Info}
-						/> */}
-      {/* Timer of the game */}
-      {/* Player 2 info }
-					</div>
-				</div>
-					)} */}
       {players.length > 0 && (
         <ScoreBar
           winScore={winScore}

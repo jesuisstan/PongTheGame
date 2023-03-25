@@ -2,6 +2,7 @@ import { useState, useContext, useRef, useEffect } from 'react';
 import { UserContext } from '../../contexts/UserContext';
 import PleaseLogin from '../pages/PleaseLogin';
 import styles from './styles/Game.module.css';
+import Lobby from './Lobby';
 import Pong from './Pong';
 import {
   Game_player,
@@ -21,18 +22,23 @@ const Game = () => {
   const { user, setUser } = useContext(UserContext);
   const state_ref = useRef(Game_status.LOBBY);
   const [result, setResult] = useState<Game_result | null>(null);
-  const [game_state, set_game_state] = useState(Game_status.LOBBY);
+  const [gameState, setGameState] = useState(Game_status.LOBBY);
   const [players, set_players] = useState<Game_player[]>([]);
   const [open, setOpen] = useState(false);
 
   socket.on('matchmaking', (args) => {
-    set_game_state(Game_status.BEGIN_GAME);
+    setGameState(Game_status.BEGIN_GAME);
   });
 
   // const { send_message } = socket.emit()
-  const joinQueue = () => {
-    set_game_state(Game_status.QUEUE);
+  const joinQueue = (): void => {
+    setGameState(Game_status.QUEUE);
     socket.emit('match_making', { action: 'join' });
+  };
+
+  const launchTraining = (): void => {
+    setGameState(Game_status.PLAYING);
+    socket.emit('match_training', {});
   };
 
   const joinMatch = (player1: Player_info, player2: Player_info) => {
@@ -40,56 +46,51 @@ const Game = () => {
       { infos: player1, score: 0 },
       { infos: player2, score: 0 }
     ]);
-    set_game_state(Game_status.PLAYING);
-  }
+    setGameState(Game_status.PLAYING);
+  };
 
   socket.on('match_result', (args) => {
     setResult(args);
   });
 
   const endMatch = () => {
-    set_game_state(Game_status.LOBBY);
-  }
+    setGameState(Game_status.LOBBY);
+  };
 
   return !user.provider ? (
     <PleaseLogin />
   ) : (
     <div className={styles.parent}>
       <div className={styles.canvasBlock}>
-        {game_state === Game_status.LOBBY && (
-          <ButtonPong
-            text="test pong"
-            onClick={() => {
-              joinQueue();
-            }}
-          />
+        {gameState === Game_status.LOBBY && (
+          <Lobby joinQueue={joinQueue} launchTraining={launchTraining} />
         )}
-        {game_state === Game_status.ENDED && (
+        {gameState === Game_status.ENDED && (
           <VictoryModal
             open={!open}
             setOpen={setOpen}
             gameResult={result}
-            setGameState={set_game_state}
+            setGameState={setGameState}
           />
         )}
-        {game_state === Game_status.QUEUE && (
-          <Queue set_game_state={set_game_state} joinMatch={joinMatch} />
+        {gameState === Game_status.QUEUE && (
+          <Queue set_game_state={setGameState} joinMatch={joinMatch} />
         )}
-        {game_state === Game_status.BEGIN_GAME && (
-          <Start_game players={players} set_game_state={set_game_state} />
+        {gameState === Game_status.BEGIN_GAME && (
+          <Start_game players={players} set_game_state={setGameState} />
         )}
-        {game_state === Game_status.PLAYING && (
+        {gameState === Game_status.PLAYING && (
           <Pong
             spectator={false}
             players={players}
-            set_game_state={set_game_state}
+            setGameState={setGameState}
             endMatch={endMatch}
           />
         )}
-        {game_state === Game_status.SPECTATE && (
+        {gameState === Game_status.SPECTATE && (
           <Pong
             spectator={true}
-            set_game_state={set_game_state}
+            setGameState={setGameState}
             endMatch={endMatch}
           />
         )}

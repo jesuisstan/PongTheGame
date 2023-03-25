@@ -32,6 +32,11 @@ export class GameGateway {
     }
   }
 
+  @SubscribeMessage('match_training')
+  async training(socket: Socket, payload: any) {
+    this.game.create_training_game(socket);
+  }
+
   @SubscribeMessage('match_game_input')
   async gameInput(socket: any, payload: any) {
     if (!payload || !payload.action || !payload.direction) return;

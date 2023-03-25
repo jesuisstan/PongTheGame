@@ -8,6 +8,8 @@ const ScoreBar = ({
   winScore: number;
   players: Player_game[];
 }) => {
+  console.log(players![1].infos.name);
+
   return (
     <div className={styles.scoreBar}>
       <div className={styles.left}>
@@ -15,7 +17,8 @@ const ScoreBar = ({
       </div>
       <div className={styles.center}>Win score: {winScore}</div>
       <div className={styles.right}>
-        {players![1].infos.name}: {players![1].score}
+        {players![1].infos.name ? players![1].infos.name : 'AI'}:{' '}
+        {players![1].score}
       </div>{' '}
     </div>
   );
