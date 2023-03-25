@@ -35,7 +35,12 @@ const Game = () => {
     socket.emit('match_making', { action: 'join' });
   };
 
-  const joinMatch = (player1: Player_info, player2: Player_info) => {
+  function launch_train() {
+    set_game_state(Game_status.PLAYING);
+    socket.emit('match_training', {});
+  }
+
+  function join_match(player1: Player_info, player2: Player_info) {
     set_players([
       { infos: player1, score: 0 },
       { infos: player2, score: 0 }
@@ -57,12 +62,22 @@ const Game = () => {
     <div className={styles.parent}>
       <div className={styles.canvasBlock}>
         {game_state === Game_status.LOBBY && (
-          <ButtonPong
-            text="test pong"
-            onClick={() => {
-              joinQueue();
-            }}
-          />
+          <div>
+            <ButtonPong
+              text="test pong"
+              onClick={() => {
+                joinQueue();
+              }}
+            />
+  
+            <ButtonPong
+              text="Ia Training"
+              onClick={() => {
+                launch_train();
+              }}
+            />
+          </div>
+
         )}
         {game_state === Game_status.ENDED && (
           <VictoryModal
