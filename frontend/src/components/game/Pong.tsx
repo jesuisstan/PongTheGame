@@ -1,7 +1,7 @@
 import { useRef, useEffect, useContext, useState } from 'react';
 import { WebSocketContext } from '../../contexts/WebsocketContext';
 import { Player_game, Props_game, Game_status } from './game.interface';
-import { draw_state } from './utils/gameUtils';
+import { drawState } from './utils/gameUtils';
 import ScoreBar from './ScoreBar';
 import styles from './styles/Game.module.css';
 
@@ -58,7 +58,7 @@ function Pong(props: Props_game) {
         ]);
       }
       set_time(args.gameInfos.time);
-      draw_state(args, canvas_ref);
+      drawState(args, canvas_ref);
       if (args.status === 'ended') {
         props.set_game_state(Game_status.ENDED);
         // TODO clear the canvas for reprint the lobby

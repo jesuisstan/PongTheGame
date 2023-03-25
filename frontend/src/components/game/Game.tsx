@@ -30,12 +30,12 @@ const Game = () => {
   });
 
   // const { send_message } = socket.emit()
-  function join_queu() {
+  const joinQueue = () => {
     set_game_state(Game_status.QUEUE);
     socket.emit('match_making', { action: 'join' });
-  }
+  };
 
-  function join_match(player1: Player_info, player2: Player_info) {
+  const joinMatch = (player1: Player_info, player2: Player_info) => {
     set_players([
       { infos: player1, score: 0 },
       { infos: player2, score: 0 }
@@ -43,15 +43,11 @@ const Game = () => {
     set_game_state(Game_status.PLAYING);
   }
 
-  useEffect(() => {
-    state_ref.current = game_state;
-  }, [game_state]);
-
   socket.on('match_result', (args) => {
     setResult(args);
   });
 
-  function endMatch() {
+  const endMatch = () => {
     set_game_state(Game_status.LOBBY);
   }
 
@@ -64,7 +60,7 @@ const Game = () => {
           <ButtonPong
             text="test pong"
             onClick={() => {
-              join_queu();
+              joinQueue();
             }}
           />
         )}
@@ -77,7 +73,7 @@ const Game = () => {
           />
         )}
         {game_state === Game_status.QUEUE && (
-          <Queue set_game_state={set_game_state} join_match={join_match} />
+          <Queue set_game_state={set_game_state} joinMatch={joinMatch} />
         )}
         {game_state === Game_status.BEGIN_GAME && (
           <Start_game players={players} set_game_state={set_game_state} />
