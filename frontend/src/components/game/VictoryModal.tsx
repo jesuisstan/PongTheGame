@@ -5,7 +5,8 @@ import ModalDialog from '@mui/joy/ModalDialog';
 import ModalClose from '@mui/joy/ModalClose';
 import Stack from '@mui/joy/Stack';
 import Typography from '@mui/joy/Typography';
-import styles from './Game.module.css';
+import Avatar from '@mui/material/Avatar';
+import styles from './styles/VictoryModal.module.css';
 
 const modalDialogStyle = {
   maxWidth: 500,
@@ -51,19 +52,20 @@ const VictoryModal = ({
             <Typography sx={{ color: 'black', textAlign: 'center' }}>
               {gameResult?.winner.name} won the round
             </Typography>
-            <Typography sx={{ color: 'black', textAlign: 'center' }}>Final score:</Typography>
             <Typography sx={{ color: 'black', textAlign: 'center' }}>
-              <img
-                className={styles.ava}
-                src={gameResult?.winner.avatar}
-                alt=""
-              />{' '}
-              {gameResult?.winner.score} : {gameResult?.loser.score}{' '}
-              <img
-                className={styles.ava}
-                src={gameResult?.loser.avatar}
-                alt=""
-              />
+              <div className={styles.scoreBlock}>
+                <Avatar
+                  alt=""
+                  src={gameResult?.winner.avatar}
+                  sx={{ width: 50, height: 50 }}
+                />
+                {gameResult?.winner.score} : {gameResult?.loser.score}
+                <Avatar
+                  alt=""
+                  src={gameResult?.loser.avatar}
+                  sx={{ width: 50, height: 50 }}
+                />
+              </div>
             </Typography>
           </Stack>
         </ModalDialog>

@@ -3,7 +3,7 @@ import { UserContext } from '../../contexts/UserContext';
 import ButtonPong from '../UI/ButtonPong';
 import Switch from '@mui/material/Switch';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import styles from './Game.module.css';
+import styles from './styles/Game.module.css';
 
 const GameBar = ({
   setTrainMode,

@@ -3,7 +3,7 @@ import { WebSocketContext } from '../../contexts/WebsocketContext';
 import { Player_game, Props_game, Game_status } from './game.interface';
 import { draw_state } from './utils/gameUtils';
 import ScoreBar from './ScoreBar';
-import styles from './Game.module.css';
+import styles from './styles/Game.module.css';
 
 const CANVAS_HEIGHT = 600;
 const CANVAS_WIDTH = 800;
