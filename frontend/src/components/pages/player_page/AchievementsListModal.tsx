@@ -1,10 +1,11 @@
 import { SetStateAction, Dispatch, useEffect, useState } from 'react';
+import { Achievement } from '../../../types/Achievement';
+import backendAPI from '../../../api/axios-instance';
+import errorAlert from '../../UI/errorAlert';
 import Modal from '@mui/joy/Modal';
 import ModalDialog from '@mui/joy/ModalDialog';
 import ModalClose from '@mui/joy/ModalClose';
 import Typography from '@mui/joy/Typography';
-import backendAPI from '../../../api/axios-instance';
-import errorAlert from '../../UI/errorAlert';
 
 const modalDialogStyle = {
   maxWidth: 500,
@@ -20,9 +21,7 @@ const AchievementsListModal = ({
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
 }) => {
-  const [achievements, setAchievements] = useState(
-    Array<{ id: -1; Name: ''; Description: '' }>
-  );
+  const [achievements, setAchievements] = useState<Achievement[]>([]);
 
   useEffect(() => {
     backendAPI.get(`/achievements`).then(

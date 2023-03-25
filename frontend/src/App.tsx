@@ -12,9 +12,9 @@ import Chat from './components/chat/Chat';
 import Game from './components/game/Game';
 import NotFound from './components/pages/NotFound';
 import PleaseLogin from './components/pages/PleaseLogin';
+import PlayerCard from './components/pages/player_page/PlayerCard';
 import backendAPI from './api/axios-instance';
 import './App.css';
-import PlayerCard from './components/pages/player_page/PlayerCard';
 
 function App() {
   const socket = useContext(WebSocketContext);

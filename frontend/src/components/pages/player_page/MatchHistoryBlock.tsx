@@ -13,7 +13,7 @@ const MatchHistoryBlock = ({ player }: { player: Player }) => {
   });
 
   useEffect(() => {
-    backendAPI.get(`/stats/${player.id}`).then(
+    backendAPI.get(`/stats/${player.nickname}`).then(
       (response) => {
         setMatchHistory((prevState) => ({
           ...prevState,
