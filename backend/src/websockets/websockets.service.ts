@@ -29,10 +29,6 @@ export class WebsocketsService {
       const verify = this.jwt
         .verify(token, {
           secret: this.config.get('JWT_SECRET'),
-        })
-        .catch((error: string) => {
-          // TODO Try to get the error on the jwt expired
-          if (error === 'jwt expired') return;
         });
       if (!verify || !verify.id) {
         this.send(socket, 'error', 'No user found');
@@ -74,11 +70,13 @@ export class WebsocketsService {
   }
 
   async modifyTheUserSocket(id: number) {
-    const socket: any = this.getSockets([id])[0];
+    // var socket: any = this.getSockets([id])[0];
+    // this.sockets = this.sockets.filter((s: any) => s !== socket);
     const user = await this.prismaService.user.findUnique({
       where: { id: id },
     });
-    socket['user'] = user;
+    // socket['user'] = user;
+    // this.sockets.push(socket);
     return;
   }
 

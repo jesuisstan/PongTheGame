@@ -60,8 +60,8 @@ services:
     healthcheck:
       test: curl -fsSL http://localhost:${BACKEND_PORT}/healthcheck
       interval: 10s
-      timeout: 30s
-      retries: 30
+      timeout: 50s
+      retries: 40
       start_period: 2s
 
 # ---------------------------------------------------------------------------- #
