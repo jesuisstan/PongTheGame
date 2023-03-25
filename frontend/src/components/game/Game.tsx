@@ -27,7 +27,6 @@ const Game = () => {
 
   socket.on('matchmaking', (args) => {
     set_game_state(Game_status.BEGIN_GAME);
-    console.log({ args });
   });
 
   // const { send_message } = socket.emit()

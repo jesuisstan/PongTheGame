@@ -52,21 +52,19 @@ const VictoryModal = ({
             <Typography sx={{ color: 'black', textAlign: 'center' }}>
               {gameResult?.winner.name} won the round
             </Typography>
-            <Typography sx={{ color: 'black', textAlign: 'center' }}>
-              <div className={styles.scoreBlock}>
-                <Avatar
-                  alt=""
-                  src={gameResult?.winner.avatar}
-                  sx={{ width: 50, height: 50 }}
-                />
-                {gameResult?.winner.score} : {gameResult?.loser.score}
-                <Avatar
-                  alt=""
-                  src={gameResult?.loser.avatar}
-                  sx={{ width: 50, height: 50 }}
-                />
-              </div>
-            </Typography>
+            <div className={styles.scoreBlock}>
+              <Avatar
+                alt=""
+                src={gameResult?.winner.avatar}
+                sx={{ width: 50, height: 50 }}
+              />
+              {gameResult?.winner.score} : {gameResult?.loser.score}
+              <Avatar
+                alt=""
+                src={gameResult?.loser.avatar}
+                sx={{ width: 50, height: 50 }}
+              />
+            </div>
           </Stack>
         </ModalDialog>
       </Modal>
