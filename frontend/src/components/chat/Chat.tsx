@@ -1,51 +1,25 @@
 import {
-  useContext,
-  useEffect,
-  useState,
-  Fragment,
-  useRef
-} from 'react';
+  useContext, useEffect, useState, Fragment, useRef
+      } from 'react';
 import * as React from 'react';
 import {
-  AppBar,
-  Box,
-  Divider,
-  Drawer,
-  List,
-  Toolbar,
-  Typography,
-  ListItem,
-  TextField,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  IconButton,
-  ListItemIcon,
-  ListItemText,
-  ListItemButton,
-  CssBaseline,
-  FormLabel
-} from '@mui/material';
+  Box, List, ListItem, TextField, Button, Dialog, DialogActions,
+  DialogContent, DialogContentText,	DialogTitle, ListItemIcon,
+  ListItemText, ListItemButton, CssBaseline, ListItemSecondaryAction
+      } from '@mui/material';
 import {
-  ChatRounded,
-  TagRounded,
-  LockRounded,
-  ArrowForwardIos,
-  AddCircleOutline,
-  LockOpenRounded,
-  KeyboardDoubleArrowRightRounded,
-  MailLockRounded
-} from '@mui/icons-material';
+	TagRounded, LockRounded, ArrowForwardIos, AddCircleOutline,
+	LockOpenRounded, Person2Rounded
+      } from '@mui/icons-material';
+
 // personal components
 import { UserContext } from '../../contexts/UserContext';
 import { WebSocketContext } from '../../contexts/WebsocketContext';
-import MenuIcon from '@mui/icons-material/Menu';
 import ChatRoom from './ChatRoom';
 import PleaseLogin from '../pages/PleaseLogin';
 import { ChatRoomType } from "../../types/chat";
+// personal css
+import './Chat.css';
 
 
 /*************************************************************
@@ -54,9 +28,6 @@ import { ChatRoomType } from "../../types/chat";
  * It is the entrance for chat rooms.
  * Users can create/join chat rooms.
 **************************************************************/
-// import ChanBar from './ChanBar';
-// personal css
-import './Chat.css';
 
 interface WinProps {
   window?: () => Window;
@@ -219,7 +190,7 @@ const Chat = () => {
     else return true;
     return false;
   }
-
+  
   const cleanRoomLoginData = () => {
     user.joinedChatRoom = '';
     setIsPasswordProtected(false);
@@ -227,7 +198,8 @@ const Chat = () => {
   };
   /*************************************************************
    * Render HTML response
-   **************************************************************/
+  **************************************************************/
+
   return !user.provider ? (
     <PleaseLogin />
   ) : (
@@ -256,15 +228,17 @@ const Chat = () => {
                 {chatRooms.map((room, index) => (
                   // Check if this isn't a private conversation of other users
                   isAuthorizedPrivRoom(room.modes, room.users) &&
+                  <>
                   <ListItem key={index} disablePadding>
                     <ListItemIcon sx={{ color: 'white' }}>
                       {
-                      // TODO => room.modes.indexOf('i') !== -1 ? to find private room
-                      room.modes.indexOf('p') !== -1 ? (
+                        // TODO => room.modes.indexOf('i') !== -1 ? to find private room
+                      room.modes === "p" ? (
                         <LockRounded />
-                      ) : (
+                      ) : room.modes === "i" ? (
+                        <Person2Rounded />) : (
                         <TagRounded />
-                      )}
+                      ) }
                     </ListItemIcon>
                     {clickedRoomToJoin === room.name &&
                       room.modes.indexOf('p') !== -1 && (
@@ -299,7 +273,7 @@ const Chat = () => {
                           </Dialog>
                         </>
                       )}
-                    <ListItem onClick={() => onClickJoinRoom(room.name)}>
+                    <ListItemButton onClick={() => onClickJoinRoom(room.name)}>
                       <ListItemText
                         tabIndex={-1}
                         primary={
@@ -309,12 +283,13 @@ const Chat = () => {
                         }
                         className="limitText"
                         sx={{ color: 'white' }}
-                      />
-                      <ListItemButton sx={{ color: 'white' }}>
+                        />
+                      <ListItemIcon sx={{ color: 'white' }}>
                         <ArrowForwardIos />
-                      </ListItemButton>
-                    </ListItem>
+                      </ListItemIcon>
+                    </ListItemButton>
                   </ListItem>
+                  </>
                 ))}
               </List>
             </Box>
@@ -377,11 +352,11 @@ const Chat = () => {
               cleanRoomLoginData={cleanRoomLoginData}
             />
           ) : (
-            <>
+            <div className='black'>
               <h2>Actually no room joined</h2>
               <p>To join a room click on the arrow on the left</p>
               <p>Or add a new chan with the + button</p>
-            </>
+            </div>
           )}
         </Box>
       </Box>
