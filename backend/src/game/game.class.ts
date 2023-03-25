@@ -209,7 +209,7 @@ export function convert_state_to_sendable(
           y: state.player2?.paddle.y,
         },
         infos: {
-          name: 'IA',
+          name: 'AI',
           avatar: '',
         },
         score: state.player2?.score,

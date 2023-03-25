@@ -92,7 +92,7 @@ export class GameService {
         avatar: player.user.avatar,
       },
       player2: {
-        name: 'IA',
+        name: 'AI',
         avatar: '',
       },
     };
