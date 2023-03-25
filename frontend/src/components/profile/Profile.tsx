@@ -49,20 +49,22 @@ const Profile = () => {
   };
 
   useEffect(() => {
-    backendAPI.get(`/stats/${user.id}`).then(
-      (response) => {
-        setMatchHistory((prevState) => ({
-          ...prevState,
-          played: response.data.match_play,
-          wins: response.data.match_win,
-          loses: response.data.match_lose
-        }));
-      },
-      (error) => {
-        errorAlert(`Failed to get player's match history`);
-      }
-    );
-  }, []);
+    if (user.nickname && user.provider) {
+      backendAPI.get(`/stats/${user.nickname}`).then(
+        (response) => {
+          setMatchHistory((prevState) => ({
+            ...prevState,
+            played: response.data.match_play,
+            wins: response.data.match_win,
+            loses: response.data.match_lose
+          }));
+        },
+        (error) => {
+          errorAlert(`Failed to get player's match history`);
+        }
+      );
+    }
+  }, [user.nickname]);
 
   return !user.nickname && user.provider ? (
     <EditNickname open={true} setOpen={setModalNicknameOpen} />

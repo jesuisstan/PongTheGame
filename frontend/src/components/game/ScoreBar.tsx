@@ -1,8 +1,5 @@
-import { useContext } from 'react';
-import { UserContext } from '../../contexts/UserContext';
-import { Player } from '../../types/Player';
 import { Player_game } from './game.interface';
-import styles from './Game.module.css';
+import styles from './styles/ScoreBar.module.css';
 
 const ScoreBar = ({
   winScore,

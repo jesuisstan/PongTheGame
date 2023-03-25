@@ -1,7 +1,7 @@
 import { useState, useContext, useRef, useEffect } from 'react';
 import { UserContext } from '../../contexts/UserContext';
 import PleaseLogin from '../pages/PleaseLogin';
-import styles from './Game.module.css';
+import styles from './styles/Game.module.css';
 import Pong from './Pong';
 import {
   Game_player,
@@ -27,7 +27,6 @@ const Game = () => {
 
   socket.on('matchmaking', (args) => {
     set_game_state(Game_status.BEGIN_GAME);
-    console.log({ args });
   });
 
   // const { send_message } = socket.emit()
