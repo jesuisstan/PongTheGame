@@ -2,6 +2,7 @@ import { useState, useContext, useRef, useEffect } from 'react';
 import { UserContext } from '../../contexts/UserContext';
 import PleaseLogin from '../pages/PleaseLogin';
 import styles from './styles/Game.module.css';
+import Lobby from './Lobby';
 import Pong from './Pong';
 import {
   Game_player,
@@ -30,7 +31,7 @@ const Game = () => {
   });
 
   // const { send_message } = socket.emit()
-  const joinQueue = () => {
+  const joinQueue = (): void => {
     set_game_state(Game_status.QUEUE);
     socket.emit('match_making', { action: 'join' });
   };
@@ -41,7 +42,7 @@ const Game = () => {
       { infos: player2, score: 0 }
     ]);
     set_game_state(Game_status.PLAYING);
-  }
+  };
 
   socket.on('match_result', (args) => {
     setResult(args);
@@ -49,21 +50,14 @@ const Game = () => {
 
   const endMatch = () => {
     set_game_state(Game_status.LOBBY);
-  }
+  };
 
   return !user.provider ? (
     <PleaseLogin />
   ) : (
     <div className={styles.parent}>
       <div className={styles.canvasBlock}>
-        {game_state === Game_status.LOBBY && (
-          <ButtonPong
-            text="test pong"
-            onClick={() => {
-              joinQueue();
-            }}
-          />
-        )}
+        {game_state === Game_status.LOBBY && <Lobby joinQueue={joinQueue} />}
         {game_state === Game_status.ENDED && (
           <VictoryModal
             open={!open}
