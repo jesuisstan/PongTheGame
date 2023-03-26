@@ -10,13 +10,7 @@ import Typography from '@mui/joy/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
 import SaveIcon from '@mui/icons-material/Save';
 import backendAPI from '../../api/axios-instance';
-
-const modalDialogStyle = {
-  maxWidth: 500,
-  border: '0px solid #000',
-  bgcolor: '#f5f5f5ee',
-  borderRadius: '4px'
-};
+import * as MUI from '../UI/MUIstyles';
 
 const EditAvatar = ({
   open,
@@ -80,20 +74,14 @@ const EditAvatar = ({
       >
         <ModalDialog
           aria-labelledby="basic-modal-dialog-title"
-          sx={modalDialogStyle}
+          sx={MUI.modalDialog}
         >
-          <ModalClose />
-          <Typography
-            id="basic-modal-dialog-title"
-            component="h2"
-            sx={{ color: 'black' }}
-          >
-            Modifying your avatar
-          </Typography>
-          <form onSubmit={handleSubmit}>
+          <ModalClose sx={MUI.modalClose} />
+          <Typography sx={MUI.modalHeader}>Modifying avatar</Typography>
+          <form style={{ marginTop: '10px' }} onSubmit={handleSubmit}>
             <Stack spacing={2}>
               <FormLabel sx={{ color: 'black' }}>
-                Max file size is 2 Mb
+                Maximum file size is 2 Mb
               </FormLabel>
               <input
                 required

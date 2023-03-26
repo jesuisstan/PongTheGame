@@ -9,16 +9,10 @@ import Modal from '@mui/joy/Modal';
 import ModalDialog from '@mui/joy/ModalDialog';
 import ModalClose from '@mui/joy/ModalClose';
 import Stack from '@mui/material/Stack';
-import Typography from '@mui/joy/Typography';
+import Typography from '@mui/material/Typography';
 import errorAlert from '../UI/errorAlert';
 import backendAPI from '../../api/axios-instance';
-
-const modalDialogStyle = {
-  maxWidth: 500,
-  border: '0px solid #000',
-  bgcolor: '#f5f5f5ee',
-  borderRadius: '4px'
-};
+import * as MUI from '../UI/MUIstyles';
 
 const EditNickname = ({
   open,
@@ -90,17 +84,11 @@ const EditNickname = ({
       >
         <ModalDialog
           aria-labelledby="basic-modal-dialog-title"
-          sx={modalDialogStyle}
+          sx={MUI.modalDialog}
         >
-          <ModalClose />
-          <Typography
-            id="basic-modal-dialog-title"
-            component="h2"
-            sx={{ color: 'black' }}
-          >
-            Modifying your nickname
-          </Typography>
-          <form onSubmit={handleSubmit}>
+          <ModalClose sx={MUI.modalClose} />
+          <Typography sx={MUI.modalHeader}>Modifying nickname</Typography>
+          <form style={{ marginTop: '10px' }} onSubmit={handleSubmit}>
             <Stack spacing={2}>
               <FormControl>
                 <FormLabel sx={{ color: 'black' }}>
