@@ -46,16 +46,12 @@ const Verify2fa = ({
 
     if (text) {
       setLoad(true);
-
       try {
         const userData = (
           await backendAPI.post<User>('/auth/totp/verify', {
             token: text
           })
         ).data;
-        console.log('user data after verif: '); //todo
-        console.log(userData);
-
         setUser(userData);
         setButtonText('Done ✔️');
         setText('');
@@ -65,8 +61,8 @@ const Verify2fa = ({
           setButtonText('Submit');
         }, 442);
         setTimeout(() => navigate('/profile'), 500);
-      } catch (e) {
-        const err = e as AxiosError;
+      } catch (error) {
+        const err = error as AxiosError;
         backendAPI.get('/auth/logout');
         setButtonText('Failed ❌');
         setTimeout(() => {

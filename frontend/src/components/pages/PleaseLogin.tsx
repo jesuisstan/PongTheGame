@@ -1,14 +1,18 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { UserContext } from '../../contexts/UserContext';
 import BarLoader from 'react-spinners/BarLoader';
+import EditNickname from '../profile/EditNickname';
+import ButtonPong from '../UI/ButtonPong';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
-import ButtonPong from '../UI/ButtonPong';
 import styles from './Pages.module.css';
 
 const PleaseLogin = () => {
   const navigate = useNavigate();
+  const { user } = useContext(UserContext);
   const [loading, setLoading] = useState(true);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     setTimeout(() => {
@@ -26,6 +30,8 @@ const PleaseLogin = () => {
         data-testid="loader"
       />
     </div>
+  ) : !user.nickname && user.provider ? (
+    <EditNickname open={true} setOpen={setOpen} />
   ) : (
     <div className={styles.centeredCard}>
       <div className={styles.wrapper}>
