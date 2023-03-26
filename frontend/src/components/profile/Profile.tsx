@@ -16,7 +16,7 @@ import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import CreateIcon from '@mui/icons-material/Create';
 import DeleteIcon from '@mui/icons-material/Delete';
-import styles from './Profile.module.css';
+import styles from './styles/Profile.module.css';
 
 const Profile = () => {
   const navigate = useNavigate();

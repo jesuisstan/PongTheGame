@@ -1,27 +1,21 @@
 import { Dispatch, SetStateAction, useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { UserContext } from '../../../contexts/UserContext';
+import { UserContext } from '../../contexts/UserContext';
 import { AxiosError } from 'axios';
-import { User } from '../../../types/User';
-import backendAPI from '../../../api/axios-instance';
-import errorAlert from '../../UI/errorAlert';
+import { User } from '../../types/User';
+import backendAPI from '../../api/axios-instance';
+import errorAlert from '../UI/errorAlert';
 import FormControl from '@mui/joy/FormControl';
 import FormLabel from '@mui/joy/FormLabel';
 import Modal from '@mui/joy/Modal';
 import ModalClose from '@mui/joy/ModalClose';
 import ModalDialog from '@mui/joy/ModalDialog';
-import Stack from '@mui/joy/Stack';
+import Stack from '@mui/material/Stack';
 import Typography from '@mui/joy/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
 import TextField from '@mui/material/TextField';
 import SaveIcon from '@mui/icons-material/Save';
-
-const modalDialogStyle = {
-  maxWidth: 500,
-  border: '0px solid #000',
-  bgcolor: '#f5f5f5ee',
-  borderRadius: '4px'
-};
+import * as MUI from '../UI/MUIstyles';
 
 const Verify2fa = ({
   open,
@@ -52,16 +46,12 @@ const Verify2fa = ({
 
     if (text) {
       setLoad(true);
-
       try {
         const userData = (
           await backendAPI.post<User>('/auth/totp/verify', {
             token: text
           })
         ).data;
-        console.log('user data after verif: '); //todo
-        console.log(userData);
-        
         setUser(userData);
         setButtonText('Done ✔️');
         setText('');
@@ -71,8 +61,8 @@ const Verify2fa = ({
           setButtonText('Submit');
         }, 442);
         setTimeout(() => navigate('/profile'), 500);
-      } catch (e) {
-        const err = e as AxiosError;
+      } catch (error) {
+        const err = error as AxiosError;
         backendAPI.get('/auth/logout');
         setButtonText('Failed ❌');
         setTimeout(() => {
@@ -100,9 +90,9 @@ const Verify2fa = ({
       >
         <ModalDialog
           aria-labelledby="basic-modal-dialog-title"
-          sx={modalDialogStyle}
+          sx={MUI.modalDialog}
         >
-          <ModalClose />
+          <ModalClose sx={MUI.modalClose} />
           <Typography
             id="basic-modal-dialog-title"
             component="h2"
