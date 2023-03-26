@@ -10,7 +10,7 @@ import FormLabel from '@mui/joy/FormLabel';
 import Modal from '@mui/joy/Modal';
 import ModalClose from '@mui/joy/ModalClose';
 import ModalDialog from '@mui/joy/ModalDialog';
-import Stack from '@mui/joy/Stack';
+import Stack from '@mui/material/Stack';
 import Typography from '@mui/joy/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
 import TextField from '@mui/material/TextField';
@@ -61,7 +61,7 @@ const Verify2fa = ({
         ).data;
         console.log('user data after verif: '); //todo
         console.log(userData);
-        
+
         setUser(userData);
         setButtonText('Done ✔️');
         setText('');
