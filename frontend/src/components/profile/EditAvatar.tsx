@@ -5,7 +5,7 @@ import FormLabel from '@mui/joy/FormLabel';
 import Modal from '@mui/joy/Modal';
 import ModalDialog from '@mui/joy/ModalDialog';
 import ModalClose from '@mui/joy/ModalClose';
-import Stack from '@mui/joy/Stack';
+import Stack from '@mui/material/Stack';
 import Typography from '@mui/joy/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
 import SaveIcon from '@mui/icons-material/Save';
@@ -56,7 +56,8 @@ const EditAvatar = ({
         setUser(responseUpload.data);
       } catch (error) {
         setOpen(false);
-        const message = (error as any)?.response?.data?.message ?? 'Something went wrong';
+        const message =
+          (error as any)?.response?.data?.message ?? 'Something went wrong';
         errorAlert(message);
       }
       setLoad(false);

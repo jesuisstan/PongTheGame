@@ -3,7 +3,7 @@ import { Game_status, Game_result } from './game.interface';
 import Modal from '@mui/joy/Modal';
 import ModalDialog from '@mui/joy/ModalDialog';
 import ModalClose from '@mui/joy/ModalClose';
-import Stack from '@mui/joy/Stack';
+import Stack from '@mui/material/Stack';
 import Typography from '@mui/joy/Typography';
 import Avatar from '@mui/material/Avatar';
 import styles from './styles/VictoryModal.module.css';

@@ -8,7 +8,7 @@ import TextField from '@mui/material/TextField';
 import Modal from '@mui/joy/Modal';
 import ModalDialog from '@mui/joy/ModalDialog';
 import ModalClose from '@mui/joy/ModalClose';
-import Stack from '@mui/joy/Stack';
+import Stack from '@mui/material/Stack';
 import Typography from '@mui/joy/Typography';
 import errorAlert from '../UI/errorAlert';
 import backendAPI from '../../api/axios-instance';
@@ -35,11 +35,11 @@ const EditNickname = ({
 
   const handleTextInput = (event: any) => {
     const newValue = event.target.value;
-    if (!newValue.match(/[%<>\\$|/?* +^.()[\]]/)) {
+    if (!newValue.match(/[%'<>\$|/?* +^.(){}"]/)) {
       setError('');
       setText(newValue);
     } else {
-      setError('Forbidden: [ ] < > ^ $ % . \\ | / ? * + ( ) space');
+      setError(`Forbidden: { } < > ^ " ' $ % . \\ | / ? * + ( ) space`);
     }
   };
 
@@ -54,20 +54,15 @@ const EditNickname = ({
   };
 
   const setNickname = (value: string) => {
-    return backendAPI
-      .patch(
-        '/user/setnickname',
-        { nickname: value }
-      )
-      .then(
-        (response) => {
-          setUser(response.data);
-        },
-        (error) => {
-          console.log(error);
-          error.request.status === 400 ? warningNameUsed() : warningWentWrong();
-        }
-      );
+    return backendAPI.patch('/user/setnickname', { nickname: value }).then(
+      (response) => {
+        setUser(response.data);
+      },
+      (error) => {
+        console.log(error);
+        error.request.status === 400 ? warningNameUsed() : warningWentWrong();
+      }
+    );
   };
 
   const handleSubmit = async (event: React.FormEvent) => {
