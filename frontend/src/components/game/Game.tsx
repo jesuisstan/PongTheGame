@@ -57,7 +57,7 @@ const Game = () => {
     setGameState(Game_status.LOBBY);
   };
 
-  return !user.provider ? (
+  return !user.provider || (user.provider && !user.nickname) ? (
     <PleaseLogin />
   ) : (
     <div className={styles.parent}>

@@ -38,6 +38,8 @@ const Home = () => {
           role="Frontend: chat, teammate card template"
           github="https://github.com/BarbaraC12"
         />
+        </div>
+              <div className={styles.aboutCards}>
         <Peer
           style={styles.florian}
           firstName="Florian"
@@ -56,6 +58,8 @@ const Home = () => {
           role="Frontend: the entire frontend except for the chat page"
           github="https://github.com/jesuisstan"
         />
+        </div>
+        <div className={styles.aboutCards}>
         <Peer
           style={styles.daisuke}
           firstName="Daisuke"
@@ -65,7 +69,7 @@ const Home = () => {
           role="Backend: chat, docker-compose..."
           github="https://github.com/BarbaraC12"
         />
-      </div>
+        </ div >
     </div>
   );
 };
