@@ -53,6 +53,7 @@ Table Friends {
   user User [not null]
   friendId Int [pk]
   addedDate DateTime [default: `now()`, not null]
+  status Friends_Status [not null, default: 'PENDING']
 }
 
 Table MatchEntry {
@@ -95,6 +96,12 @@ Enum StatusUser {
 Enum Role {
   USER
   ADMIN
+}
+
+Enum Friends_Status {
+  PENDING
+  ACCEPTED
+  BLOCKED
 }
 
 Enum InvitationState {

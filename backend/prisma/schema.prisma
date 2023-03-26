@@ -82,8 +82,14 @@ model Friends {
   user      User     @relation(fields: [friendId], references: [id])
   friendId  Int      @id
   addedDate DateTime @default(now())
+  status    Friends_Status @default(PENDING)
 }
 
+enum Friends_Status {
+  PENDING
+  ACCEPTED
+  BLOCKED
+}
 // model GithubUser {
 //   user User?
 // }
