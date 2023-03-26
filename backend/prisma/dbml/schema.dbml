@@ -14,7 +14,8 @@ Table User {
   role Role [not null, default: 'USER']
   matchEntries MatchEntry [not null]
   stats Statistique [not null]
-  friends Friends [not null]
+  friends User [not null]
+  friendsOf User [not null]
   achievement Achievements [not null]
   invitation MatchInvitation [not null]
 
@@ -47,13 +48,6 @@ Table Achievements {
   icon_path String
   User User
   userId Int
-}
-
-Table Friends {
-  user User [not null]
-  friendId Int [pk]
-  addedDate DateTime [default: `now()`, not null]
-  status Friends_Status [not null, default: 'PENDING']
 }
 
 Table MatchEntry {
@@ -98,12 +92,6 @@ Enum Role {
   ADMIN
 }
 
-Enum Friends_Status {
-  PENDING
-  ACCEPTED
-  BLOCKED
-}
-
 Enum InvitationState {
   Pending
   Started
@@ -121,8 +109,6 @@ Ref: Statistique.userId > User.id
 Ref: TotpSecret.userId - User.id
 
 Ref: Achievements.userId > User.id [delete: Cascade]
-
-Ref: Friends.friendId > User.id
 
 Ref: MatchEntry.userId > User.id [delete: Cascade]
 
