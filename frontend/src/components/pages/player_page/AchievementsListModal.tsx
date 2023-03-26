@@ -6,13 +6,7 @@ import Modal from '@mui/joy/Modal';
 import ModalDialog from '@mui/joy/ModalDialog';
 import ModalClose from '@mui/joy/ModalClose';
 import Typography from '@mui/joy/Typography';
-
-const modalDialogStyle = {
-  maxWidth: 500,
-  border: '0px solid #000',
-  bgcolor: '#f5f5f5ee',
-  borderRadius: '4px'
-};
+import * as MUI from '../../UI/MUIstyles';
 
 const AchievementsListModal = ({
   open,
@@ -39,27 +33,23 @@ const AchievementsListModal = ({
       <Modal sx={{ color: 'black' }} open={open} onClose={() => setOpen(false)}>
         <ModalDialog
           aria-labelledby="basic-modal-dialog-title"
-          sx={modalDialogStyle}
+          sx={MUI.modalDialog}
         >
-          <ModalClose />
-          <Typography
-            id="basic-modal-dialog-title"
-            component="h2"
-            sx={{ color: 'black' }}
-          >
-            Possible achievements:
-          </Typography>
-          {achievements.map((item, index) => (
-            <Typography key={item.id}>
-              {index + 1}.{' '}
-              <Typography sx={{ color: 'rgb(37, 120, 204)' }}>
-                "{item.Name}".{' '}
-                <Typography sx={{ color: 'black' }}>
-                  {item.Description}.
+          <ModalClose sx={MUI.modalClose} />
+          <Typography sx={MUI.modalHeader}>Possible achievements:</Typography>
+          <div style={{ marginTop: '10px' }}>
+            {achievements.map((item, index) => (
+              <Typography key={item.id}>
+                {index + 1}.{' '}
+                <Typography sx={{ color: 'rgb(37, 120, 204)' }}>
+                  "{item.Name}".{' '}
+                  <Typography sx={{ color: 'black' }}>
+                    {item.Description}.
+                  </Typography>
                 </Typography>
               </Typography>
-            </Typography>
-          ))}
+            ))}
+          </div>
         </ModalDialog>
       </Modal>
     </div>
