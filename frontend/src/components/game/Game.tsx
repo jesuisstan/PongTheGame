@@ -25,9 +25,15 @@ const Game = () => {
   const [open, setOpen] = useState(false);
   const [openCount, setOpenCount] = useState(false);
 
-  socket.on('matchmaking', (args) => {
-    setGameState(Game_status.BEGIN_GAME);
-  });
+  if (user.provider && user.nickname) {
+    socket.on('matchmaking', (args) => {
+      setGameState(Game_status.BEGIN_GAME);
+    });
+  
+    socket.on('match_result', (args) => {
+      setResult(args);
+    });
+  }
 
   const joinQueue = (): void => {
     setGameState(Game_status.QUEUE);
@@ -46,10 +52,6 @@ const Game = () => {
     ]);
     setGameState(Game_status.PLAYING);
   };
-
-  socket.on('match_result', (args) => {
-    setResult(args);
-  });
 
   const endMatch = () => {
     setGameState(Game_status.LOBBY);
