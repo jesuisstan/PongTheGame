@@ -10,10 +10,8 @@ const CANVAS_WIDTH = 800;
 
 function Pong(props: Props_game) {
   const socket = useContext(WebSocketContext);
-  const [already_draw, set_already_draw] = useState<boolean>(false);
   const [time, set_time] = useState(300);
-  const canvas_ref = useRef<HTMLCanvasElement>(null);
-  const [ctx, set_ctx] = useState(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   const [players, set_players] = useState<Player_game[]>(
     props.spectator || !props.players ? [] : [...props.players]
   );
@@ -58,7 +56,7 @@ function Pong(props: Props_game) {
         ]);
       }
       set_time(args.gameInfos.time);
-      drawState(args, canvas_ref);
+      drawState(args, canvasRef);
       if (args.status === 'ended') {
         props.setGameState(Game_status.ENDED);
         // TODO clear the canvas for reprint the lobby
@@ -111,7 +109,7 @@ function Pong(props: Props_game) {
       <canvas
         className={styles.canvas}
         id="test"
-        ref={canvas_ref}
+        ref={canvasRef}
         width={CANVAS_WIDTH}
         height={CANVAS_HEIGHT}
       />
