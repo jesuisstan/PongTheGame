@@ -17,7 +17,7 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
   // Define websocket settings for the chat page
-  app.useWebSocketAdapter(new SocketAdapter(app));
+  app.useWebSocketAdapter(new SocketAdapter());
 
   const config = app.get(ConfigService<Config>);
   const prisma = app.get(PrismaService);
@@ -66,7 +66,7 @@ function setupSwagger(app: NestExpressApplication) {
     .addTag('Achivement', 'Manipulate achievement')
     .addTag('Statistique', 'Get statistique from match')
     .addTag('Game', 'Create a game vs a friends')
-    .addTag('Friend', 'Add friends')
+    .addTag('Friends', 'Add friends')
     .build();
 
   const swagger = SwaggerModule.createDocument(app, swaggerConfig);
