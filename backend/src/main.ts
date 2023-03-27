@@ -36,11 +36,9 @@ async function bootstrap() {
     }),
   );
 
-  const frontendUrl = config.getOrThrow('FRONTEND_URL');
-
   app.enableCors({
     credentials: true,
-    origin: frontendUrl,
+    origin: config.getOrThrow('FRONTEND_URL'),
   });
 
   await app.listen(config.getOrThrow('BACKEND_PORT'));
