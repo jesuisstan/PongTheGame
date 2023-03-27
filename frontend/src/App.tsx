@@ -45,9 +45,6 @@ function App() {
     );
   }, []);
 
-  user.provider ? console.log('user logged in') : console.log('no user');
-  console.log(user);
-
   return (
     <WebSocketContext.Provider value={socket}>
       <BrowserRouter>
@@ -69,7 +66,8 @@ function App() {
                   path="profile"
                   element={user.provider ? <Profile /> : <PleaseLogin />}
                 />
-                <Route path="players" element={<PlayerCard />}>
+                <Route path="players/*">
+                  <Route path="" element={<NotFound />} />
                   <Route
                     path=":playerNickname"
                     element={user.provider ? <PlayerCard /> : <PleaseLogin />}
