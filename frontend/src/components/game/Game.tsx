@@ -1,5 +1,6 @@
 import { useState, useContext, useRef, useEffect } from 'react';
 import { UserContext } from '../../contexts/UserContext';
+import { LocationContext } from '../../contexts/LocationContext';
 import PleaseLogin from '../pages/PleaseLogin';
 import Lobby from './Lobby';
 import Pong from './Pong';
@@ -16,7 +17,10 @@ import { WebSocketContext } from '../../contexts/WebsocketContext';
 import styles from './styles/Game.module.css';
 
 const Game = () => {
+  const { locationPath } = useContext(LocationContext);
+
   const socket = useContext(WebSocketContext);
+  console.log(`Location from Game is ${locationPath}`);
 
   const { user } = useContext(UserContext);
   const [result, setResult] = useState<Game_result | null>(null);
@@ -29,7 +33,7 @@ const Game = () => {
     socket.on('matchmaking', (args) => {
       setGameState(Game_status.BEGIN_GAME);
     });
-  
+
     socket.on('match_result', (args) => {
       setResult(args);
     });
@@ -78,7 +82,7 @@ const Game = () => {
         )}
         {gameState === Game_status.BEGIN_GAME && (
           <Countdown
-            open={true}
+            open={!openCount}
             setOpen={setOpenCount}
             players={players}
             setGameState={setGameState}
