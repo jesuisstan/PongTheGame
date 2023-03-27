@@ -1,36 +1,34 @@
 import { useState, useContext, useRef, useEffect } from 'react';
 import { UserContext } from '../../contexts/UserContext';
 import PleaseLogin from '../pages/PleaseLogin';
-import styles from './styles/Game.module.css';
 import Lobby from './Lobby';
 import Pong from './Pong';
+import Queue from './Queue';
+import VictoryModal from './VictoryModal';
+import Countdown from './Countdown';
 import {
   Game_player,
   Game_result,
   Game_status,
   Player_info
 } from './game.interface';
-import ButtonPong from '../UI/ButtonPong';
 import { WebSocketContext } from '../../contexts/WebsocketContext';
-import Start_game from './Start_game';
-import Queue from './Queue';
-import VictoryModal from './VictoryModal';
+import styles from './styles/Game.module.css';
 
 const Game = () => {
   const socket = useContext(WebSocketContext);
 
-  const { user, setUser } = useContext(UserContext);
-  const state_ref = useRef(Game_status.LOBBY);
+  const { user } = useContext(UserContext);
   const [result, setResult] = useState<Game_result | null>(null);
   const [gameState, setGameState] = useState(Game_status.LOBBY);
   const [players, set_players] = useState<Game_player[]>([]);
   const [open, setOpen] = useState(false);
+  const [openCount, setOpenCount] = useState(false);
 
   socket.on('matchmaking', (args) => {
     setGameState(Game_status.BEGIN_GAME);
   });
 
-  // const { send_message } = socket.emit()
   const joinQueue = (): void => {
     setGameState(Game_status.QUEUE);
     socket.emit('match_making', { action: 'join' });
@@ -77,7 +75,13 @@ const Game = () => {
           <Queue set_game_state={setGameState} joinMatch={joinMatch} />
         )}
         {gameState === Game_status.BEGIN_GAME && (
-          <Start_game players={players} set_game_state={setGameState} />
+          <Countdown
+            open={true}
+            setOpen={setOpenCount}
+            players={players}
+            setGameState={setGameState}
+            seconds={5}
+          />
         )}
         {gameState === Game_status.PLAYING && (
           <Pong
