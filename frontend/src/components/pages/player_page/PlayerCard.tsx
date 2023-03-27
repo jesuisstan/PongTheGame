@@ -46,7 +46,7 @@ const PlayerCard = () => {
     <NotFound />
   ) : (
     <div className={styles.basicCard}>
-      <div style={{ marginTop: '21px', marginBottom: '21px' }}>
+      <div className={styles.header}>
         <h5>Player statistics</h5>
       </div>
       <div className={styles.playerCard}>
