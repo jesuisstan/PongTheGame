@@ -75,6 +75,19 @@ const Pong = (props: Props_game) => {
   const checkGameAborted = () => {
     socket.on('game_aborted', (args) => {
       console.log(args.reason);
+      props.setEndMatch({
+          winner: {
+            name: args.winner.nickname,
+            avatar: args.winner.avatar,
+            score: 5,
+          },
+          loser: {
+            name: args.loser.nickname,
+            avatar: args.loser.avatar,
+            score: 0,
+          },
+        duration: args.time,
+      });
       // TODO need to clear canvas adn change alert for something else
     });
   };

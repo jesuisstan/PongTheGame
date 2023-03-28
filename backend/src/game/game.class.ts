@@ -337,6 +337,26 @@ export class Game {
     return res;
   }
 
+  private _abort_string(winner: Player, loser: Player) {
+    const now = new Date();
+    const timePlayed = now.getTime() - this.game_start_time.getTime();
+    const timeInSeconds = Math.floor(timePlayed / 1000);
+    const res = {
+      winner: {
+        name: winner.profile?.user.nickname,
+        avatar: winner.profile?.user.avatar,
+        score: 5,
+      },
+      loser: {
+        name: loser.profile?.user.nickname,
+        avatar: loser.profile?.user.avatar,
+        score: 0,
+      },
+      time: timeInSeconds,
+    };
+    return res;
+  }
+
   private _computerAI() {
     const paddle2YCenter =
       this.game_state.player2.paddle.y + Default_params.PADDLE_HEIGHT / 2;
@@ -498,14 +518,11 @@ export class Game {
       this.game_state.player1.profile?.user.id === leaved.profile?.user.id
         ? this.game_state.player2
         : this.game_state.player1;
-    this.websockets.send(leaved.profile?.socket, 'game_aborted', {
-      reason: 'player_left',
-      result: 'lose',
-    });
+    const res = this._abort_string(otherPlayer, leaved);
+    this.websockets.send(leaved.profile?.socket, 'game_aborted', { res });
     if (this.type == TypeMode.NORMAL)
       this.websockets.send(otherPlayer.profile?.socket, 'game_aborted', {
-        reason: 'player_left',
-        result: 'win',
+        res,
       });
     this.status = Status.ABORTED;
     if (this.game_start_time) {

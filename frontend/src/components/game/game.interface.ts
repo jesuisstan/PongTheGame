@@ -33,7 +33,7 @@ export interface Result_game {
 
 export interface Props_game {
   players?: Player_game[];
-	endMatch?: (result: Result_game) => void;
+	setEndMatch: (result: Result_game) => void;
 	spectator: boolean;
 	gameState: Game_status;
 	setGameState: (gameState: Game_status) => void;

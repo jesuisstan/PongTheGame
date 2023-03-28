@@ -96,7 +96,7 @@ const Game = () => {
             players={players}
             gameState={gameState}
             setGameState={setGameState}
-            endMatch={endMatch}
+            setEndMatch={endMatch}
           />
         )}
         {gameState === Game_status.SPECTATE && (
@@ -104,7 +104,7 @@ const Game = () => {
             spectator={true}
             gameState={gameState}
             setGameState={setGameState}
-            endMatch={endMatch}
+            setEndMatch={endMatch}
           />
         )}
       </div>
