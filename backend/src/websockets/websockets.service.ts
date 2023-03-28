@@ -96,7 +96,7 @@ export class WebsocketsService {
       where: { id: socket.user.id },
       data: { status: 'OFFLINE' },
     });
-    this.broadcast('user-status', {
+    this.broadcast('user_status', {
       id: socket.user.id,
       status: 'OFFLINE',
     });
