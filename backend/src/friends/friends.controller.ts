@@ -36,7 +36,7 @@ export class FriendsController {
     return this.friendsService.getAllFriendsFromUser(user);
   }
 
-  @Post('/friends/add/:nickname')
+  @Post('add/:nickname')
   @ApiOperation({
     summary: 'Add friends',
     parameters: [{ name: 'nickname', in: 'query' }],
@@ -52,7 +52,7 @@ export class FriendsController {
     this.friendsService.addFriendsByNickname(user, nickname);
   }
 
-  @Post('friends/add')
+  @Post('add')
   @ApiOperation({
     summary: 'Add friends',
   })
@@ -63,7 +63,7 @@ export class FriendsController {
     this.friendsService.addFriendsByNickname(user, addFriendDto.nickname);
   }
 
-  @Patch('friends/remove:nickname')
+  @Patch('remove:nickname')
   @ApiOperation({
     summary: 'Remove friends',
     parameters: [{ name: 'nickname', in: 'query' }],
@@ -78,7 +78,7 @@ export class FriendsController {
     this.friendsService.removeFriendsByNickname(user, nickname);
   }
 
-  @Patch('friends/remove')
+  @Patch('remove')
   @ApiOperation({
     summary: 'Remove friends',
   })
