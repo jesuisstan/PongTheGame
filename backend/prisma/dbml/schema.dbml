@@ -15,7 +15,7 @@ Table User {
   matchEntries MatchEntry [not null]
   stats Statistique [not null]
   friends Friends [not null]
-  achievement Achievements [not null]
+  Achievement UserAchivement [not null]
   invitation MatchInvitation [not null]
 
   indexes {
@@ -45,8 +45,18 @@ Table Achievements {
   Title String [unique, not null]
   Description String [not null]
   icon_path String
-  User User
-  userId Int
+  user UserAchivement [not null]
+}
+
+Table UserAchivement {
+  user User [not null]
+  userId Int [not null]
+  achievement Achievements [not null]
+  achievementId Int [not null]
+
+  indexes {
+    (userId, achievementId) [pk]
+  }
 }
 
 Table Friends {
@@ -113,7 +123,9 @@ Ref: Statistique.userId > User.id
 
 Ref: TotpSecret.userId - User.id
 
-Ref: Achievements.userId > User.id [delete: Cascade]
+Ref: UserAchivement.userId > User.id
+
+Ref: UserAchivement.achievementId > Achievements.id
 
 Ref: Friends.friendId > User.id
 
