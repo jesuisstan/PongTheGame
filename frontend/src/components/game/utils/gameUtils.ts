@@ -130,32 +130,6 @@ const drawPaddle = (
   );
 };
 
-const clearPaddle = (
-  canvasContext: CanvasRenderingContext2D,
-  player: Position,
-  color: string,
-  gameInfos: Game_infos
-) => {
-  if (player) {
-    drawRect(
-      canvasContext,
-      'whitesmoke',
-      player.x - 2,
-      player.y - 2,
-      gameInfos.paddleWidth + 4,
-      gameInfos.paddleHeight + 4
-    );
-  }
-  drawRect(
-    canvasContext,
-    color,
-    player.x,
-    player.y,
-    gameInfos.paddleWidth,
-    gameInfos.paddleHeight
-  );
-};
-
 const drawBall = (
   canvasContext: CanvasRenderingContext2D,
   color: string,
