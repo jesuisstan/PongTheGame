@@ -86,14 +86,14 @@ const Profile = () => {
             <div className={styles.bottomAvatarBox}>
               <ButtonPong
                 text="Change"
-                title="upload new avatar"
+                title="Upload new avatar"
                 startIcon={<AddAPhotoIcon />}
                 onClick={() => setModalAvatarOpen(true)}
               />
               <ButtonPong
                 text="Delete"
-                title="set avatar to default"
-                endIcon={<DeleteIcon />}
+                title="Set avatar to default"
+                startIcon={<DeleteIcon />}
                 onClick={deleteAvatar}
                 disabled={!user.avatar}
               />
@@ -124,7 +124,7 @@ const Profile = () => {
               <ButtonPong
                 text={user.totpSecret?.verified ? 'Disable 2FA' : 'Setup 2FA'}
                 title={
-                  user.totpSecret?.verified ? 'turn off 2FA' : 'turn on 2FA'
+                  user.totpSecret?.verified ? 'Turn off 2FA' : 'Turn on 2FA'
                 }
                 endIcon={<ArrowForwardIosIcon />}
                 onClick={toggleTfa}
@@ -155,8 +155,8 @@ const Profile = () => {
               <div>
                 <ButtonPong
                   text="Change nickname"
-                  title="modify nickname"
-                  endIcon={<CreateIcon />}
+                  title="Modify nickname"
+                  startIcon={<CreateIcon />}
                   onClick={() => setModalNicknameOpen(true)}
                 />
                 <EditNickname
@@ -189,7 +189,7 @@ const Profile = () => {
             <div className={styles.bottom}>
               <ButtonPong
                 text="Full stats"
-                title="go to match history page"
+                title="Visit match history page"
                 onClick={() => navigate(`/players/${user.nickname}`)}
                 endIcon={<ArrowForwardIosIcon />}
               />

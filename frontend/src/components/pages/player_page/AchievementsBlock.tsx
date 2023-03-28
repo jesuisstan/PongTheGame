@@ -53,7 +53,7 @@ const AchievementsBlock = ({ player }: { player: Player }) => {
           text="possible"
           title={'Show all possible achievements'}
           onClick={() => setOpen(true)}
-          endIcon={<VisibilityIcon />}
+          startIcon={<VisibilityIcon />}
         />
         <AchievementsListModal open={open} setOpen={setOpen} />
       </div>
