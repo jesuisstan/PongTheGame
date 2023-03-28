@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
 import { CircularProgress } from '@mui/material';
 import Typography from '@mui/joy/Typography';
-
 import { Game_player, Game_status } from './game.interface';
 import Modal from '@mui/joy/Modal';
 import ModalDialog from '@mui/joy/ModalDialog';
 import Stack from '@mui/material/Stack';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import * as MUI from '../UI/MUIstyles';
 
 const modalDialogStyle = {
@@ -16,6 +17,8 @@ const modalDialogStyle = {
   borderRadius: '4px'
 };
 
+const COLOR_PINK = 'rgb(253, 80, 135)';
+
 interface CountdownProps {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -24,7 +27,7 @@ interface CountdownProps {
   seconds: number;
 }
 
-const Countdown = (props: CountdownProps) => {
+const CountdownModal = (props: CountdownProps) => {
   const [remainingSeconds, setRemainingSeconds] = useState<number>(
     props.seconds
   );
@@ -59,9 +62,14 @@ const Countdown = (props: CountdownProps) => {
             <CircularProgress
               variant="determinate"
               value={progress * 100}
-              sx={{ color: 'black', marginTop: '10px' }}
+              sx={{ color: COLOR_PINK, marginTop: '10px' }}
             />
             <Typography>{remainingSeconds - 1} sec.</Typography>
+            <Typography>
+              Use <KeyboardArrowUpIcon sx={{ color: COLOR_PINK }} /> and{' '}
+              <KeyboardArrowDownIcon sx={{ color: COLOR_PINK }} /> keys to move
+              the paddle
+            </Typography>
           </Stack>
         </ModalDialog>
       </Modal>
@@ -69,4 +77,4 @@ const Countdown = (props: CountdownProps) => {
   );
 };
 
-export default Countdown;
+export default CountdownModal;

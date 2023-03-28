@@ -31,7 +31,7 @@ const PleaseLogin = () => {
       />
     </div>
   ) : !user.nickname && user.provider ? (
-    <EditNickname open={true} setOpen={setOpen} />
+    <EditNickname open={!open} setOpen={setOpen} />
   ) : (
     <div className={styles.centeredCard}>
       <div className={styles.wrapper}>

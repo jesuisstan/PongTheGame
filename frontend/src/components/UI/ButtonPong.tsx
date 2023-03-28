@@ -18,6 +18,7 @@ const ButtonPong = ({
   return (
     <Button
       sx={{
+        minWidth: '100px',
         backgroundColor: 'black',
         ':hover': {
           backgroundColor: 'rgba(253, 80, 135, 0.6)',
