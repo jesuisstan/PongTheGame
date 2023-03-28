@@ -24,7 +24,7 @@ export const Default_params = {
   BALL_RADIUS: 10,
   BALL_DEFAULT_SPEED: 10,
   BALL_SPEED_INCREASE: 0.6,
-  BALL_MAX_SPEED: 15,
+  BALL_MAX_SPEED: 18,
   BALL_PERTURBATOR: 0.2,
   GAME_TIME: 300,
   DEFAULT_PADDLE_POSITION: 600 / 2 - 300 / 6 / 2,
@@ -188,7 +188,7 @@ export function convert_state_to_sendable(
         paddleWidth: state.gameInfos.paddleWidth,
         paddleHeight: state.gameInfos.paddleHeight,
         ballRadius: state.gameInfos.ballRadius,
-        time: Default_params.GAME_TIME - timeInSeconds,
+        time: timeInSeconds,
         WinScore: state.gameInfos.WinScore,
       },
       player1: {
@@ -563,14 +563,17 @@ export class Game {
     this._check_ball_collide_paddle(
       ball,
       ballRadius,
-      this.game_state.player1.paddle,
+      {
+        x: this.game_state.player1.paddle.x + Default_params.PADDLE_WIDTH,
+        y: this.game_state.player1.paddle.y,
+      },
       this.game_state.gameInfos.paddleWidth,
       this.game_state.gameInfos.paddleHeight,
     );
     this._check_ball_collide_paddle(
       ball,
       ballRadius,
-      this.game_state.player2.paddle, // TODO Check how to modif
+      this.game_state.player2.paddle,
       this.game_state.gameInfos.paddleWidth,
       this.game_state.gameInfos.paddleHeight,
     );

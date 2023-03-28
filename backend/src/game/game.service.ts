@@ -68,7 +68,7 @@ export class GameService {
       this.invitation,
     );
     this.games.push(game);
-  
+
     game.start(() => {
       this.games.splice(this.games.indexOf(game), 1);
     });
