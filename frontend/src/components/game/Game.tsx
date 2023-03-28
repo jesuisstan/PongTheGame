@@ -1,12 +1,11 @@
 import { useState, useContext, useRef, useEffect } from 'react';
 import { UserContext } from '../../contexts/UserContext';
-import { LocationContext } from '../../contexts/LocationContext';
 import PleaseLogin from '../pages/PleaseLogin';
 import Lobby from './Lobby';
 import Pong from './Pong';
-import Queue from './Queue';
+import QueueModal from './QueueModal';
 import VictoryModal from './VictoryModal';
-import Countdown from './Countdown';
+import CountdownModal from './CountdownModal';
 import {
   Game_player,
   Game_result,
@@ -17,17 +16,15 @@ import { WebSocketContext } from '../../contexts/WebsocketContext';
 import styles from './styles/Game.module.css';
 
 const Game = () => {
-  const { locationPath } = useContext(LocationContext);
-
   const socket = useContext(WebSocketContext);
-  console.log(`Location from Game is ${locationPath}`);
-
   const { user } = useContext(UserContext);
   const [result, setResult] = useState<Game_result | null>(null);
   const [gameState, setGameState] = useState(Game_status.LOBBY);
   const [players, set_players] = useState<Game_player[]>([]);
-  const [open, setOpen] = useState(false);
+  const [openVictoryModal, setOpenVictoryModal] = useState(false);
+
   const [openCount, setOpenCount] = useState(false);
+  const [openQueueModal, setOpenQueueModal] = useState(false);
 
   if (user.provider && user.nickname) {
     socket.on('matchmaking', (args) => {
@@ -71,17 +68,21 @@ const Game = () => {
         )}
         {gameState === Game_status.ENDED && (
           <VictoryModal
-            open={!open}
-            setOpen={setOpen}
+            open={!openVictoryModal}
+            setOpen={setOpenVictoryModal}
             gameResult={result}
             setGameState={setGameState}
           />
         )}
         {gameState === Game_status.QUEUE && (
-          <Queue set_game_state={setGameState} joinMatch={joinMatch} />
+          <QueueModal
+            open={!openQueueModal}
+            setOpen={setOpenQueueModal}
+            setGameState={setGameState}
+          />
         )}
         {gameState === Game_status.BEGIN_GAME && (
-          <Countdown
+          <CountdownModal
             open={!openCount}
             setOpen={setOpenCount}
             players={players}
@@ -93,6 +94,7 @@ const Game = () => {
           <Pong
             spectator={false}
             players={players}
+            gameState={gameState}
             setGameState={setGameState}
             endMatch={endMatch}
           />
@@ -100,6 +102,7 @@ const Game = () => {
         {gameState === Game_status.SPECTATE && (
           <Pong
             spectator={true}
+            gameState={gameState}
             setGameState={setGameState}
             endMatch={endMatch}
           />

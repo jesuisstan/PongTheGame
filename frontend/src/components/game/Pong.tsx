@@ -8,9 +8,8 @@ import styles from './styles/Game.module.css';
 const CANVAS_HEIGHT = 600;
 const CANVAS_WIDTH = 800;
 
-function Pong(props: Props_game) {
+const Pong = (props: Props_game) => {
   const socket = useContext(WebSocketContext);
-  const [time, set_time] = useState(300);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [players, set_players] = useState<Player_game[]>(
     props.spectator || !props.players ? [] : [...props.players]
@@ -18,15 +17,17 @@ function Pong(props: Props_game) {
 
   const state_ref = useRef(false);
 
-  function on_key_release(event: KeyboardEvent) {
-    on_key(event, 'release');
-  }
+  const onKeyRelease = (event: KeyboardEvent) => {
+    keyHandler(event, 'release');
+  };
 
-  function on_key_press(event: KeyboardEvent) {
-    on_key(event, 'press');
-  }
+  const onKeyPress = (event: KeyboardEvent) => {
+    keyHandler(event, 'press');
+  };
+  const onKeyReleaseRef = useRef(onKeyRelease);
+  const onKeyPressRef = useRef(onKeyPress);
 
-  function on_key(event: KeyboardEvent, action: string) {
+  const keyHandler = (event: KeyboardEvent, action: string) => {
     switch (event.key) {
       case 'ArrowUp':
         socket.emit('match_game_input', { action: action, direction: 'up' });
@@ -35,9 +36,9 @@ function Pong(props: Props_game) {
         socket.emit('match_game_input', { action: action, direction: 'down' });
         break;
     }
-  }
+  };
 
-  const foo1 = () => {
+  const playPong = () => {
     socket.on('match_game_state', (args) => {
       // if (props.spectator) {
       // For specator mode need to check the current He need to be false for the player1 and player 2
@@ -55,17 +56,22 @@ function Pong(props: Props_game) {
           }
         ]);
       }
-      set_time(args.gameInfos.time);
+
+      window.addEventListener('keydown', onKeyPressRef.current);
+      window.addEventListener('keyup', onKeyReleaseRef.current);
+
       drawState(args, canvasRef);
       if (args.status === 'ended') {
         props.setGameState(Game_status.ENDED);
         // TODO clear the canvas for reprint the lobby
         console.log('Game_finished');
+        window.removeEventListener('keydown', onKeyPressRef.current);
+        window.removeEventListener('keyup', onKeyReleaseRef.current);
       }
     });
   };
 
-  const foo2 = () => {
+  const checkGameAborted = () => {
     socket.on('game_aborted', (args) => {
       console.log(args.reason);
       // TODO need to clear canvas adn change alert for something else
@@ -80,18 +86,14 @@ function Pong(props: Props_game) {
           socket.emit('match_spectate_leave', {});
         };
       }
-      window.addEventListener('keydown', on_key_press);
-      window.addEventListener('keyup', on_key_release);
 
       const intervalId = setInterval(() => {
-        foo1();
-        foo2();
+        playPong();
+        checkGameAborted();
       }, 1000 / 30);
 
       return () => {
         clearInterval(intervalId);
-        //window.removeEventListener('keydown', on_key_press);
-        //window.removeEventListener('keyup', on_key_release);
       };
     }
   }, [players]);
@@ -115,6 +117,6 @@ function Pong(props: Props_game) {
       />
     </div>
   );
-}
+};
 
 export default Pong;

@@ -1,7 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { UserContext } from './contexts/UserContext';
-import { LocationContext } from './contexts/LocationContext';
 import { WebSocketContext } from './contexts/WebsocketContext';
 import { User } from './types/User';
 import Verify2fa from './components/profile/Verify2fa';
