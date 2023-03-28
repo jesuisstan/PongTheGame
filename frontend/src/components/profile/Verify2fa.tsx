@@ -25,11 +25,12 @@ const Verify2fa = ({
   setOpen: Dispatch<SetStateAction<boolean>>;
 }) => {
   const navigate = useNavigate();
-  const { user, setUser } = useContext(UserContext);
+  const { setUser } = useContext(UserContext);
   const [text, setText] = useState('');
   const [error, setError] = useState('');
   const [load, setLoad] = useState(false);
   const [buttonText, setButtonText] = useState('Submit');
+  const [buttonClickable, setButtonClickable] = useState(true);
 
   const handleTextInput = (event: any) => {
     const newValue = event.target.value;
@@ -44,8 +45,9 @@ const Verify2fa = ({
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    if (text) {
+    if (buttonClickable && text.length !== 0) {
       setLoad(true);
+      setButtonClickable(false);
       try {
         const userData = (
           await backendAPI.post<User>('/auth/totp/verify', {
@@ -62,14 +64,15 @@ const Verify2fa = ({
         }, 442);
         setTimeout(() => navigate('/profile'), 500);
       } catch (error) {
-        const err = error as AxiosError;
-        backendAPI.get('/auth/logout');
+        const err = error as AxiosError<any>;
+        const message =
+          err.response?.data?.message ?? 'Failed to validate code';
+
         setButtonText('Failed ❌');
         setTimeout(() => {
-          setOpen(false);
-          errorAlert(
-            (err.response?.data as any).message + `!\nTry login again`
-          );
+          errorAlert(`${message}! Try again.`);
+          setButtonClickable(true);
+          setButtonText('Submit');
         }, 500);
       }
       setLoad(false);
@@ -84,7 +87,6 @@ const Verify2fa = ({
         onClose={(event, reason) => {
           if (event && reason === 'closeClick') {
             setOpen(false);
-            backendAPI.get('/auth/logout');
           }
         }}
       >
@@ -123,6 +125,7 @@ const Verify2fa = ({
                 startIcon={<SaveIcon />}
                 variant="contained"
                 color="inherit"
+                disabled={!buttonClickable}
               >
                 {buttonText}
               </LoadingButton>
