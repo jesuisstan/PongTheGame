@@ -24,7 +24,6 @@ import { FriendService } from './friends.service';
 @ApiTags('Friends')
 @UseGuards(IsAuthenticatedGuard)
 export class FriendsController {
-  private readonly frontendUrl: string;
 
   constructor(private readonly friendsService: FriendService) {}
 
