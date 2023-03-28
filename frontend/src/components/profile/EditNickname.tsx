@@ -13,6 +13,7 @@ import Typography from '@mui/material/Typography';
 import errorAlert from '../UI/errorAlert';
 import backendAPI from '../../api/axios-instance';
 import * as MUI from '../UI/MUIstyles';
+import axios from 'axios';
 
 const EditNickname = ({
   open,
@@ -21,7 +22,7 @@ const EditNickname = ({
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
 }) => {
-  const { user, setUser } = useContext(UserContext);
+  const { setUser } = useContext(UserContext);
   const [text, setText] = useState('');
   const [error, setError] = useState('');
   const [load, setLoad] = useState(false);
@@ -29,11 +30,11 @@ const EditNickname = ({
 
   const handleTextInput = (event: any) => {
     const newValue = event.target.value;
-    if (!newValue.match(/[%'<#>\$|/?* +^.(){}"]/)) {
-      setError('');
+    if (newValue.match(/^[A-zA-Z0-9_-]*$/)) {
       setText(newValue);
+      setError('');
     } else {
-      setError(`Forbidden: { } < > # ^ " ' $ % . \\ | / ? * + ( ) space`);
+      setError('Allowed characters are Latin letters, digits, dashes and underscores');
     }
   };
 
@@ -53,8 +54,11 @@ const EditNickname = ({
         setUser(response.data);
       },
       (error) => {
-        console.log(error);
-        error.request.status === 400 ? warningNameUsed() : warningWentWrong();
+        if (axios.isAxiosError(error) && error.response?.status === 409) {
+          warningNameUsed();
+        } else {
+          warningWentWrong();
+        }
       }
     );
   };
