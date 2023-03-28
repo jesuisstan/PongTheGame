@@ -37,7 +37,14 @@ const AchievementsListModal = ({
         >
           <ModalClose sx={MUI.modalClose} />
           <Typography sx={MUI.modalHeader}>Possible achievements:</Typography>
-          <div style={{ marginTop: '10px' }}>
+          <div
+            style={{
+              marginTop: '10px',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '10px'
+            }}
+          >
             {achievements.map((item, index) => (
               <Typography key={item.id}>
                 {index + 1}.{' '}

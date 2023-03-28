@@ -28,9 +28,14 @@ const VictoryModal = ({
       <Modal
         sx={{ color: 'black' }}
         open={open}
-        onClose={() => {
-          setGameState(Game_status.LOBBY);
-          setOpen(false);
+        onClose={(event, reason) => {
+          if (
+            event &&
+            (reason === 'closeClick' || reason === 'escapeKeyDown')
+          ) {
+            setGameState(Game_status.LOBBY);
+            setOpen(false);
+          }
         }}
       >
         <ModalDialog
@@ -43,7 +48,7 @@ const VictoryModal = ({
             <Typography
               sx={{ color: 'black', textAlign: 'center', marginTop: '10px' }}
             >
-              {gameResult?.winner.name ? gameResult?.winner.name : 'AI'} wins
+              {gameResult?.winner.name ? gameResult?.winner.name : 'Artificial Intelligence'} wins
               the round
             </Typography>
             <div className={styles.scoreBlock}>
@@ -57,6 +62,7 @@ const VictoryModal = ({
                     cursor: 'pointer'
                   }
                 }}
+                title={gameResult?.winner.name}
                 onClick={() => {
                   if (gameResult?.winner?.name) {
                     navigate(`/players/${gameResult.winner.name}`);
@@ -74,6 +80,7 @@ const VictoryModal = ({
                     cursor: 'pointer'
                   }
                 }}
+                title={gameResult?.loser.name}
                 onClick={() => {
                   if (gameResult?.loser?.name) {
                     navigate(`/players/${gameResult.loser.name}`);
