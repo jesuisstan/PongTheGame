@@ -1,7 +1,4 @@
-import {
-  WebSocketGateway,
-  SubscribeMessage,
-} from '@nestjs/websockets';
+import { WebSocketGateway, SubscribeMessage } from '@nestjs/websockets';
 import { GameService } from './game.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { WebsocketsService } from 'src/websockets/websockets.service';
@@ -35,10 +32,10 @@ export class GameGateway {
   async training(socket: Socket, payload: any) {
     this.game.create_training_game(socket);
   }
-  
+
   @SubscribeMessage('match_leave')
   async leave(socket: Socket, payload: any) {
-    this.game.leave_game(socket);// cant use the emit check why
+    this.game.leave_game(socket); // cant use the emit check why
   }
 
   @SubscribeMessage('match_game_input')

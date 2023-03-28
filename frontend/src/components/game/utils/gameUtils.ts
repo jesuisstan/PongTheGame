@@ -188,19 +188,3 @@ export const drawState = (state: Game_state, canvasRef: any) => {
   return canvasContext;
 };
 
-// export function drawState_2(canvasContext : any , last_state : Position[], actual_state: Game_state, canvasRef: any) {
-// 	if (!canvasRef.current) return;
-// 	// const canvas: any = canvasRef.current;// check if is that
-// 	// const canvasContext = canvas.getContext('2d');
-
-//   drawBall(canvasContext, '#000000', last_state[2], actual_state.gameInfos);
-
-// 	clearPaddle(canvasContext, last_state[0], '#000000', actual_state.gameInfos);
-// 	clearPaddle(canvasContext, last_state[1], '#000000', actual_state.gameInfos);
-
-// 	drawBall(canvasContext, '#ffffff', actual_state.ball, actual_state.gameInfos);
-
-// 	drawPaddle(canvasContext, actual_state.player1, '#abcdef', actual_state.gameInfos);
-// 	drawPaddle(canvasContext, actual_state.player2, '#fedcba', actual_state.gameInfos);
-
-// }
