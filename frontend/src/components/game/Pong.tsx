@@ -87,6 +87,7 @@ const Pong = (props: Props_game) => {
           },
         duration: args.time,
       });
+      props.setGameState(Game_status.ENDED);
       // TODO need to clear canvas adn change alert for something else
     });
   };
