@@ -10,6 +10,7 @@ export async function insert_admin() {
     role: 'ADMIN',
   };
   const user: User = await prisma.user.create({ data: admin_user });
+  await prisma.stats.create({ data: { userId: user.id } });
   await prisma.achievement.update({
     where: {
       Title: 'Be Admin',

@@ -1,58 +1,93 @@
+import { useNavigate } from 'react-router-dom';
 import { SetStateAction, Dispatch } from 'react';
+import { Game_status, Game_result } from './game.interface';
 import Modal from '@mui/joy/Modal';
 import ModalDialog from '@mui/joy/ModalDialog';
 import ModalClose from '@mui/joy/ModalClose';
-import Stack from '@mui/joy/Stack';
+import Stack from '@mui/material/Stack';
 import Typography from '@mui/joy/Typography';
-
-const modalDialogStyle = {
-  maxWidth: 500,
-  border: '0px solid #000',
-  bgcolor: '#f5f5f5ee',
-  borderRadius: '4px'
-};
+import Avatar from '@mui/material/Avatar';
+import * as MUI from '../UI/MUIstyles';
+import styles from './styles/VictoryModal.module.css';
 
 const VictoryModal = ({
   open,
   setOpen,
-  winner,
-  score,
-  setDefault
+  setGameState,
+  gameResult
 }: {
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
-  winner: string;
-  score: any;
-  setDefault: any
+  setGameState: React.Dispatch<React.SetStateAction<Game_status>>;
+  gameResult: Game_result | null;
 }) => {
+  const navigate = useNavigate();
+
   return (
     <div>
       <Modal
         sx={{ color: 'black' }}
         open={open}
         onClose={(event, reason) => {
-          if (event && reason === 'closeClick') {setDefault(); setOpen(false)};
+          if (
+            event &&
+            (reason === 'closeClick' || reason === 'escapeKeyDown')
+          ) {
+            setGameState(Game_status.LOBBY);
+            setOpen(false);
+          }
         }}
       >
         <ModalDialog
           aria-labelledby="basic-modal-dialog-title"
-          sx={modalDialogStyle}
+          sx={MUI.modalDialog}
         >
-          <ModalClose />
-          <Typography
-            id="basic-modal-dialog-title"
-            component="h2"
-            sx={{ color: 'black' }}
-          >
-            Game over!
-          </Typography>
+          <ModalClose sx={MUI.modalClose} />
+          <Typography sx={MUI.modalHeader}>Game over!</Typography>
           <Stack spacing={2}>
-            <Typography sx={{ color: 'black' }}>
-              {winner} won the round
+            <Typography
+              sx={{ color: 'black', textAlign: 'center', marginTop: '10px' }}
+            >
+              {gameResult?.winner.name ? gameResult?.winner.name : 'Artificial Intelligence'} wins
+              the round
             </Typography>
-            <Typography sx={{ color: 'black' }}>
-              Final score - {score.player1} : {score.player2}
-            </Typography>
+            <div className={styles.scoreBlock}>
+              <Avatar
+                alt=""
+                src={gameResult?.winner.avatar}
+                sx={{
+                  width: 50,
+                  height: 50,
+                  ':hover': {
+                    cursor: 'pointer'
+                  }
+                }}
+                title={gameResult?.winner.name}
+                onClick={() => {
+                  if (gameResult?.winner?.name) {
+                    navigate(`/players/${gameResult.winner.name}`);
+                  }
+                }}
+              />
+              {gameResult?.winner.score} : {gameResult?.loser.score}
+              <Avatar
+                alt=""
+                src={gameResult?.loser.avatar}
+                sx={{
+                  width: 50,
+                  height: 50,
+                  ':hover': {
+                    cursor: 'pointer'
+                  }
+                }}
+                title={gameResult?.loser.name}
+                onClick={() => {
+                  if (gameResult?.loser?.name) {
+                    navigate(`/players/${gameResult.loser.name}`);
+                  }
+                }}
+              />
+            </div>
           </Stack>
         </ModalDialog>
       </Modal>

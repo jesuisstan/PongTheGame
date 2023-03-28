@@ -1,37 +1,23 @@
 import { SetStateAction, useContext, useEffect, useState } from 'react';
-import { WebSocketContext } from '../../contexts/WebsocketContext';
+import { WebSocketContext, socket } from '../../contexts/WebsocketContext';
 import {
-  Send,
-  Delete,
-  ArrowBackIosNew,
-  PersonAdd,
-  Settings,
-  PersonAddAlt,
-  Password,
-  ExitToApp
-} from '@mui/icons-material';
+	Send, Delete, ArrowBackIosNew, Settings,PersonAddAlt, Password,
+	ExitToApp, Mail, Clear, PanTool, PersonAdd, VolumeUp, VolumeOff, Room
+	} from '@mui/icons-material';
 import {
-  Box,
-  Button,
-  Divider,
-  FormControl,
-  Grid,
-  IconButton,
-  List,
-  ListItem,
-  ListItemText,
-  Menu,
-  MenuItem,
-  Paper,
-  TextField,
-  Typography
-} from '@mui/material';
+	Box, Button, Divider, FormControl, Grid, IconButton, Stack,
+	Menu, MenuItem,TextField, Typography, CircularProgress,
+	AvatarGroup, FormGroup, FormControlLabel, Switch
+			} from '@mui/material';
 
+// personal components
 import { UserContext } from '../../contexts/UserContext';
 import { MemberType, Message } from "../../types/chat";
-import timeFromNow from './utils/GetTime';
-import './Chat.css';
+import timeFromNow from './utils/timeFromNow';
+import AvatarBadge from './utils/AvatarBadge';
 
+// personal css
+import './Chat.css';
 
 /*************************************************************
  * Chat room
@@ -343,29 +329,15 @@ const ChatRoom = (props: any) => {
     });
   }
 
-  const listChatMessages = messages.map((msg, index) => (
-    <ListItem key={index}>
-      {
-        user.nickname === msg.author.nickname ? (
-          <ListItemText
-            primary={`${msg.data} 
-				- You`}
-            id="send-msg"
-          />
-        ) : (
-          // | ${timeFromNow(msg.timestamp)}
-          <ListItemText
-            primary={`${msg.author.nickname} - 
-				${msg.data}`}
-            id="receive-msg"
-          />
-        )
-        // ${timeFromNow(msg.timestamp)} |
-      }
-    </ListItem>
-  ));
+    socket.emit('isUserMuted',
+    { roomName: user.joinedChatRoom, nick: user.nickname },
+    (response: boolean) => {
+      setIsMuted(response)
+    }
+  )
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+	const [anchorAvatar, setAnchorAvatar] = useState<null | HTMLElement>(null);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -384,193 +356,338 @@ const ChatRoom = (props: any) => {
     });
   };
 
+	const handleAClick = (event: any) => {
+		setAnchorAvatar(event.currentTarget);
+	};
 
-  /*************************************************************
-   * Render HTML response
-   **************************************************************/
-  return (
-      <>
-        
-        <>
-          <ul>
-            { // Members' list
-              Object.keys(members).map((nick, index) => (
-                  <li key={ index }>
-                    <>
-                      { // Nickname of the member preceeded by its online status
-                        members[nick as any].isOnline ? '*' : '' } { nick }
+	const handleAClose = () => {
+		setAnchorAvatar(null);
+	};
 
-                      { // Displays if member is oper
-                        String(members[nick as any].modes).search('o') !== -1 ?
-                          ' (admin)' : '' }
+	const isUserBlocked = (usr: any) => {
+		for (const blockedUser in user.blockedUsers) {
+				if (user.blockedUsers[usr.nickname])
+						return true;
+		return false;
+	}}
 
-                      { // Unblock button appears if the author of the message
-                        // is not the user himself
-                        (user.nickname !== nick) &&
-                          <button onClick={ () => onPrivMessageClick(nick) }>
-                            message
-                          </button>
-                      }
+	const [isUserBan, setIsUserBan] = useState<boolean>(false);
+	
+	const isBan = (user: any) => {
+		socket.emit('isUserBanned', { roomName: user.joinedChatRoom, nick: user.nickname },
+		(response: boolean) => {
+			setIsUserBan(response)
+		}
+		)
+	}
+	
+	/*************************************************************
+	 * Render HTML response
+	**************************************************************/
+	return (
+		<>
+			<>
+				{ 
+					// if private message don't display the list of member
+					user.joinedChatRoom[0] === "#"
+					? <></> 
+					: <Stack direction="row" spacing={1}>
+					{ 
+// ------------- List of Member's in room ------------- 
+				Object.keys(members).map((nick, index) => (
+					<div key={ index }>
+							<>
 
-                      { // If user is oper(=admin), the button to users oper is displayed 
-                        isOper && (user.nickname !== nick) &&
-                          String(members[nick as any].modes).search('o') === -1 &&
-                        <button onClick={ () => onMakeOperClick(nick) }>
-                          oper
-                        </button>
-                      }                          
-                      
-                      { // If user is oper(=admin), the button to kick users is displayed 
-                        isOper && (user.nickname !== nick) &&
-                          String(members[nick as any].modes).search('o') === -1 &&
-                        <button onClick={ () => onKickClick(nick) }>
-                          kick
-                        </button>
-                      }
-                      
-                      { // If user is oper(=admin), the button to ban users is displayed 
-                        isOper && (user.nickname !== nick) &&
-                          String(members[nick as any].modes).search('o') === -1 &&
-                        <button onClick={ () => onBanClick(nick) }>
-                          ban
-                        </button>
-                      }
-                      { // If user is oper(=admin), the button to unban users is displayed 
-                        isOper && (user.nickname !== nick) &&
-                        String(members[nick as any].modes).search('o') === -1 &&
-                        <button onClick={ () => onUnBanClick(nick) }>
-                          unban
-                        </button>
-                      }
-                      
-                      { // Block button appears if the author of the message
-                        // is not the user himself
-                        (user.nickname !== nick) &&
-                          <button onClick={ () => onBlockClick(nick) }>
-                            block
-                          </button>
-                      }
+{/* ----------------------------------------------------------------
+					HERE FIND HOW TO DISPLAY THE AVATAR OF THE USER
+				---------------------------------------------------------------- */}
+							<AvatarBadge
+								nickname='Nom'
+								online={members[nick as any].isOnline.isOnline}
+								admin={isOper && (user.nickname !== nick) &&
+									String(members[nick as any].modes).search('o') === -1}
+									oper={String(members[nick as any].modes).search('o') !== -1} 
+									avatar=""
+									look={false}/>		
+{/* // If user is oper(=admin), the button to kick users is displayed 
+	// If user is oper(=admin), the button to ban users is displayed 
+	// If user is oper(=admin), the button to unban users is displayed  */}
+							{/* { 
+								isOper && (user.nickname !== nick) &&
+								String(members[nick as any].modes).search('o') === -1 &&
+								<>
+								<button onClick={ () => onKickClick(nick) }>
+									kick
+								</button>
+								<button onClick={ () => onBanClick(nick) }>
+									ban
+								</button>
+								<button onClick={ () => onUnBanClick(nick) }>
+									unban
+								</button>
+									</>
+							} */}
+{/* // is not the user himself 
+		//Block button appears if the author of the message
+		// Unblock button appears if the author of the message */}
+							{/* { 
+								(user.nickname !== nick) &&
+								<>
+								<button onClick={ () => onBlockClick(nick) }>
+								block
+								</button>
+								<button onClick={ () => onUnBlockClick(nick) }>
+								unblock
+								</button>
+								</>
+							} */}
+							</>
+						</div>
+						))}
+					</Stack> 
+					}
+				</>
+		<>
+			<div>
+				<Box>
+					<Typography
+						gutterBottom
+						variant='h6'
+						className='black'
+						sx={{
+							display: 'flex',
+							flexDirection: 'row',
+							justifyContent: 'space-around',
+							alignItems: 'center'
+						}}
+					>
+						<IconButton style={{ paddingRight: -1 }} onClick={onReturnClick}>
+							<ArrowBackIosNew
+								
+								className='black'
+								aria-label="return"
+							/>
+						</IconButton>
+						Lets chat here ! {user.joinedChatRoom}
+						<Button
+							id="basic-button"
+							aria-controls="basic-menu"
+							aria-haspopup="true"
+							aria-expanded={Boolean(anchorEl)}
+							onClick={handleClick}
+						>
+							<Settings className='black' />
+						</Button>
+						<Menu
+							id="basic-menu"
+							anchorEl={anchorEl}
+							open={Boolean(anchorEl)}
+							onClose={handleClose}
+							className='black' >
+							<>
+						{ user.joinedChatRoom[0] === "#" 
+						? <></>
+						:	<><MenuItem onClick={() => handleChangePwd(false)} aria-label="change password">
+									<Password sx={{ color: 'black' }} />
+								</MenuItem>
+								<MenuItem onClick={() => handleChangePwd(true)} aria-label="delete password">
+									<Delete sx={{ color: 'black' }} />
+								</MenuItem>
+							</>
+						}
+								<MenuItem onClick={onReturnClick} aria-label="leave room">
+									<ExitToApp className='black' />
+								</MenuItem>
+							</>
+						</Menu>
+					</Typography>
+					<Divider />
+					<Grid container spacing={3}>
+						<Grid
+							item
+							id="chat-window"
+							xs={12}
+							sx={{
+								width: '100vw'
+							}}
+						>
+							{
+// -------------- Begin of display messages --------------
+							messages.length === 0 ? 
+// -------------- If no message: Display "No Message" --------------
+							(	<div className='black'>No Message</div> ) : 
+// -------------- Else: Display messages --------------
+							(
+							<Stack> {
+									messages.map((msg, index) => (
+									<div key={index}>
+										{
+											user.nickname === msg.author.nickname ? (
+												<>
+													<div className="msgRowR">
+															<div className='msgRight msgBubble'>
+																	<p className="msgText">{msg.data}</p>
+																	<div className="msgTime">{timeFromNow(msg.timestamp)}</div>
+															</div>
+													</div>
+												</>
+											) : (
+												<>
+													<div className="msgRowL">
+													<>
+{/*// -------------- Avatar Clickable -------------- */}
+													<Button
+														aria-controls="basic-menu"
+														aria-haspopup="true"
+														aria-expanded={Boolean(anchorAvatar)}
+														onClick={handleAClick}
+													>
+{/*// -------------- Avatar Badge -------------- */}
+{/* ----------------------------------------------------------------
+ HERE ADD FUNCTION TO CHECK IF IS ONLINE, IF IS OPER, IF IS ADMIN
+    ---------------------------------------------------------------- */}
+													<AvatarBadge
+														nickname={msg.author.nickname}
+														online={true}
+														admin={false}
+														oper={true} 
+														avatar={msg.author.avatar}
+														look={true}/>
+													</Button>
+{/*// -------------- Avatar Menu -------------- */}
+													<Menu
+														anchorEl={anchorAvatar}
+														open={Boolean(anchorAvatar)}
+														onClose={handleAClose}
+														className='black' >
+{/*// -------------- Menu Icon Part -------------- */}
+														<MenuItem aria-label="back">
+															<IconButton >
+																<PersonAdd className='black'/>
+															</IconButton>
+															{/* <IconButton onClick={ () => 
+																isUserMuted(msg.author.nickname) 
+																? onUnMuteClick(msg.author.nickname)
+																: onMuteClick(msg.author.nickname)} >
+																{isUserMuted(msg.author.nickname)
+																? <VolumeOff className='black'/>
+																: <VolumeUp className='black'/>}
+															</IconButton> */}
+															<IconButton >
+																<VolumeOff className='black'/>
+															</IconButton>
+															<IconButton onClick={() => onPrivMessageClick(msg.author.nickname) } >
+																<Mail className='black'/>
+															</IconButton>
+															<IconButton onClick={ () =>
+																isUserBlocked(msg.author.nickname)
+																? onUnBlockClick(msg.author.nickname)
+																: onBlockClick(msg.author.nickname) } >
+																<PanTool className={!isUserBlocked(msg.author.nickname)? 'black': 'white'}/>
+															</IconButton>
+															<IconButton onClick={handleAClose}>
+																<Clear className='black'/>
+															</IconButton>
+														</MenuItem>
+{/*// -------------- Menu Switch Part -------------- */}
+														<FormControl component="fieldset">
+															<FormGroup aria-label="position" >
+																<FormControlLabel
+																	value="start"
+																	control={<Switch color="error" />}
+																	label="Operator"
+																	labelPlacement="start"
+																	color='error'
+																/>
+																<FormControlLabel
+																	value="start"
+																	checked={isUserBan? true : false}
+																	control={<Switch color="error" />}
+																	label="Ban user"
+																	labelPlacement="start"
+																	onChange={ 
+																		isUserBan
+																		? (() => onBanClick(msg.author.nickname)) 
+																		: (() => onUnBanClick(msg.author.nickname)) 
+																		}
+																/>
+																<FormControlLabel
+																	value="start"
+																	control={<Switch color="error" />}
+																	label="Block "
+																	labelPlacement="start"
+																	onChange={
+																		isUserBlocked(msg.author.nickname) === false 
+																		? (() => onBlockClick(msg.author.nickname))
+																		: (() => onUnBlockClick(msg.author.nickname))}
+																/>
+															</FormGroup>
+														</FormControl>
+													</Menu>
+{/*// -------------- End Avatar / Menu -------------- */}
+													</>							
+														<div>
+																{/* <div className="nickName">{msg.author.nickname}</div> */}
+																<div className="msgLeft msgBubble">
+																		<p className="msgText">{msg.data}</p>
+{/* ----------------------------------------------------------------
+					HERE FIND WHY TIME IS NOT DISPLAYED WITH TIMEFROMNOW()
+		---------------------------------------------------------------- */}		
+																		<div className="msgTime">{timeFromNow(msg.timestamp)}</div>
+																</div>
+														</div>
+													</div>
+												</> 
+											)
+										}
+									</div>
+								))}</Stack>
+							)
+// -------------- End of message display ----------------
+							}
+						</Grid>
+						<div className="chatRoomText">
+							<div className='typingButton'>
 
-                      { // Unblock button appears if the author of the message
-                        // is not the user himself
-                        (user.nickname !== nick) &&
-                          <button onClick={ () => onUnBlockClick(nick) }>
-                            unblock
-                          </button>
-                      }
-                    </>
-                  </li>
-              ))
-            }
-          </ul>
-        </>
-
-    <>
-      <div>
-        <Box>
-          <Typography
-            variant="h5"
-            gutterBottom
-            sx={{
-              display: 'flex',
-              flexDirection: 'row',
-              justifyContent: 'space-around',
-              alignItems: 'center'
-            }}
-          >
-            <IconButton style={{ paddingRight: -1 }}>
-              <ArrowBackIosNew
-                onClick={onReturnClick}
-                sx={{ color: 'black' }}
-                aria-label="return"
-              />
-            </IconButton>
-            Lets chat here ! #{user.joinedChatRoom}
-            <Button
-              id="basic-button"
-              aria-controls="basic-menu"
-              aria-haspopup="true"
-              aria-expanded={Boolean(anchorEl)}
-              onClick={handleClick}
-            >
-              <Settings sx={{ color: 'black' }} />
-            </Button>
-            <Menu
-              id="basic-menu"
-              anchorEl={anchorEl}
-              open={Boolean(anchorEl)}
-              onClose={handleClose}
-              sx={{ color: 'rgba(255, 255, 255, 0.8)' }}
-            >
-              <MenuItem onClick={handleClose} aria-label="add friend">
-                <PersonAddAlt sx={{ color: 'black' }} />
-              </MenuItem>
-              <MenuItem onClick={() => handleChangePwd(false)} aria-label="change password">
-                <Password sx={{ color: 'black' }} />
-              </MenuItem>
-              <MenuItem onClick={() => handleChangePwd(true)} aria-label="delete room">
-                <Delete sx={{ color: 'black' }} />
-              </MenuItem>
-              <MenuItem onClick={handleClose} aria-label="leave room">
-                <ExitToApp sx={{ color: 'black' }} />
-              </MenuItem>
-            </Menu>
-          </Typography>
-          <Divider />
-          <Grid container spacing={3}>
-            <Grid
-              item
-              id="chat-window"
-              xs={12}
-              sx={{
-                width: '100vw'
-              }}
-            >
-              {messages.length === 0 ? (
-                <div>No Message</div>
-              ) : (
-                <List id="chat-window-messages">{listChatMessages}</List>
-              )}
-            </Grid>
-            <div className="chatRoomText">
-              {
-                // Display message to other users if user is currently typing
-                typingDisplay && <div>{typingDisplay}</div>
-              }
-              <Grid item xs={10}>
-                <FormControl fullWidth onSubmit={onFormSubmit}>
-                  <TextField
-                    value={messageText}
-                    label="Type your message here ..."
-                    variant="filled" //outlined, filled, standard
-                    multiline={false}
-                    onChange={(e: any) => onTyping(e.target.value)}
-                    onKeyPress={(ev) => {
-                      if (ev.key === 'Enter') {
-                        onFormSubmit(ev);
-                      }
-                    }}
-                  />
-                </FormControl>
-              </Grid>
-              <Grid item xs={1}>
-                <IconButton
-                  color="primary"
-                  aria-label="send"
-                  onClick={onFormSubmit}
-                >
-                  <Send />
-                </IconButton>
-              </Grid>
-            </div>
-          </Grid>
-        </Box>
-      </div>
-    </>
+							{
+								// Display message to other users if user is currently typing
+								typingDisplay && <div className='black'><CircularProgress color="inherit" />{typingDisplay}</div>
+							}
+							</div>
+							<Grid item xs={10}>
+								<FormControl fullWidth onSubmit={onFormSubmit}>
+									<TextField
+										value={messageText}
+										label="Type your message here ..."
+										variant="filled" //outlined, filled, standard
+										multiline={false}
+										onChange={(e: any) => onTyping(e.target.value)}
+										onKeyPress={(ev) => {
+											if (ev.key === 'Enter') {
+												onFormSubmit(ev);
+											}
+										}}
+									/>
+								</FormControl>
+							</Grid>
+							<Grid item xs={1}>
+								<IconButton
+									color="primary"
+									aria-label="send"
+									onClick={onFormSubmit}
+								>
+									<Send />
+								</IconButton>
+							</Grid>
+						</div>
+					</Grid>
+				</Box>
+			</div>
+		</>
 
 </>
 
-  );
+	);
 };
 
 export default ChatRoom;

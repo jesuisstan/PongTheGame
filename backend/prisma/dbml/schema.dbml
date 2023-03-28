@@ -1,0 +1,124 @@
+//// ------------------------------------------------------
+//// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+//// ------------------------------------------------------
+
+Table User {
+  id Int [pk, increment]
+  nickname String [unique]
+  username String [not null]
+  avatar String
+  profileId String [not null]
+  provider String [not null]
+  status StatusUser [not null, default: 'ONLINE']
+  totpSecret TotpSecret
+  role Role [not null, default: 'USER']
+  matchEntries MatchEntry [not null]
+  stats Statistique [not null]
+  friends Friends [not null]
+  achievement Achievements [not null]
+  invitation MatchInvitation [not null]
+
+  indexes {
+    (profileId, provider) [unique]
+  }
+}
+
+Table Statistique {
+  id Int [pk, increment]
+  nb_game Int [not null, default: 0]
+  nb_win Int [not null, default: 0]
+  User User [not null]
+  userId Int [unique, not null]
+}
+
+Table TotpSecret {
+  id Int [pk, increment]
+  secret String [not null]
+  verified Boolean [not null, default: false]
+  userId Int [unique]
+  user User
+}
+
+Table Achievements {
+  id Int [pk, increment]
+  Name String [unique, not null]
+  Title String [unique, not null]
+  Description String [not null]
+  icon_path String
+  User User
+  userId Int
+}
+
+Table Friends {
+  user User [not null]
+  friendId Int [pk]
+  addedDate DateTime [default: `now()`, not null]
+}
+
+Table MatchEntry {
+  id Int [pk, increment]
+  score Int [not null]
+  userId Int [not null]
+  user User [not null]
+  matchId Int [not null]
+  match Match [not null]
+}
+
+Table Match {
+  id Int [pk, increment]
+  entries MatchEntry [not null]
+  state MatchState [not null]
+  startDate DateTime
+  endDate DateTime
+}
+
+Table MatchInvitation {
+  id Int [pk, increment]
+  sendToId Int [not null]
+  sendTo User [not null]
+  status InvitationState [not null, default: 'Pending']
+}
+
+Table Session {
+  id String [pk]
+  sid String [unique, not null]
+  data String [not null]
+  expiresAt DateTime [not null]
+}
+
+Enum StatusUser {
+  ONLINE
+  OFFLINE
+  PLAYING
+}
+
+Enum Role {
+  USER
+  ADMIN
+}
+
+Enum InvitationState {
+  Pending
+  Started
+  Finished
+}
+
+Enum MatchState {
+  Scheduled
+  Started
+  Finished
+}
+
+Ref: Statistique.userId > User.id
+
+Ref: TotpSecret.userId - User.id
+
+Ref: Achievements.userId > User.id [delete: Cascade]
+
+Ref: Friends.friendId > User.id
+
+Ref: MatchEntry.userId > User.id [delete: Cascade]
+
+Ref: MatchEntry.matchId > Match.id [delete: Cascade]
+
+Ref: MatchInvitation.sendToId > User.id

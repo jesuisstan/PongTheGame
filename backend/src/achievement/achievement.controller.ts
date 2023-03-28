@@ -81,16 +81,16 @@ export class AchievementController {
   }
 
   @HttpCode(HttpStatus.OK)
-  @Get(':id')
+  @Get(':Nickname')
   @ApiOperation({
     summary: 'Get user achivement',
-    parameters: [{ name: 'id', in: 'query' }],
+    parameters: [{ name: 'Nickname', in: 'query' }],
   })
   @ApiResponse({ status: 401, description: 'Not authorized' })
   @ApiResponse({ status: 404, description: 'User not found' })
   @ApiResponse({ status: 200, description: 'Succes' })
-  userAchievement(@Param('id', ParseIntPipe) id: number) {
-    return this.AchivService.userAchievement(id);
+  userAchievement(@Param('Nickname') Nickname: string) {
+    return this.AchivService.userAchievement(Nickname);
   }
 
   @HttpCode(HttpStatus.OK)

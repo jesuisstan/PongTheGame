@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { User } from '@prisma/client';
+import { User, Stats } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { WebsocketsService } from 'src/websockets/websockets.service';
 
 const USER_SELECT = {
   avatar: true,
@@ -11,6 +12,7 @@ const USER_SELECT = {
   username: true,
   // blockedUsers: true,
   role: true,
+  status: true,
 };
 
 function userSelect(includeTfaEnabled: boolean) {
@@ -28,7 +30,10 @@ function userSelect(includeTfaEnabled: boolean) {
 
 @Injectable()
 export class UserService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly websocket: WebsocketsService,
+  ) {}
 
   async findUserById(
     id: number,
@@ -79,10 +84,18 @@ export class UserService {
     });
   }
 
+  async createStats(UserId: number): Promise<Stats> {
+    return this.prisma.stats.create({
+      data: {
+        userId: UserId,
+      },
+    });
+  }
+
   async setUserNickname(user: User, nickname: string): Promise<User> {
     const { id } = user;
 
-    return this.prisma.user.update({
+    const user_modif: User = await this.prisma.user.update({
       data: {
         nickname,
       },
@@ -91,6 +104,8 @@ export class UserService {
       },
       select: userSelect(true),
     });
+    this.websocket.modifyTheUserSocket(user_modif.id);
+    return user_modif;
   }
 
   async hasTotpSecret(user: User): Promise<boolean> {
@@ -109,7 +124,7 @@ export class UserService {
   async setAvatar(user: User, url: string | null): Promise<User> {
     const { id } = user;
 
-    return this.prisma.user.update({
+    const NewUser: User = await this.prisma.user.update({
       data: {
         avatar: url,
       },
@@ -118,6 +133,8 @@ export class UserService {
       },
       select: userSelect(true),
     });
+    this.websocket.modifyTheUserSocket(user.id);
+    return NewUser;
   }
 
   async setTotpSecret(user: User, secret: string): Promise<User> {

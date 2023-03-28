@@ -1,14 +1,13 @@
 import { useContext } from 'react';
 import { UserContext } from '../../contexts/UserContext';
-import { Score } from '../../types/Score';
 import ButtonPong from '../UI/ButtonPong';
 import Switch from '@mui/material/Switch';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import styles from './Game.module.css';
+import styles from './styles/Game.module.css';
 
 const GameBar = ({
   setTrainMode,
-  setScore,
+  //setScore,
   gameOn,
   setGameOn,
   gamePaused,
@@ -17,7 +16,7 @@ const GameBar = ({
   setBonusMode
 }: {
   setTrainMode: React.Dispatch<React.SetStateAction<boolean>>;
-  setScore: React.Dispatch<React.SetStateAction<Score>>;
+  //setScore: React.Dispatch<React.SetStateAction<Score>>;
   gameOn: boolean;
   setGameOn: React.Dispatch<React.SetStateAction<boolean>>;
   gamePaused: boolean;
@@ -30,7 +29,7 @@ const GameBar = ({
   const trainWithComputer = async () => {
     setTrainMode(true);
     if (!gameOn) {
-      setScore({ player1: 0, player2: 0 });
+      //setScore({ player1: 0, player2: 0 });
       setGameOn(true);
     }
   };

@@ -26,7 +26,6 @@ function JWT_access(id: number) {
 
 async function create_user(prisma: PrismaService) {
   if ((await prisma.user.findMany({})).length == 0) {
-    // MEMO User 1 create
     await prisma.user.create({
       data: {
         nickname: 'Admin1',
@@ -36,7 +35,6 @@ async function create_user(prisma: PrismaService) {
         role: 'ADMIN',
       },
     });
-    // MEMO User 2 create
     await prisma.user.create({
       data: {
         nickname: 'Admin2',

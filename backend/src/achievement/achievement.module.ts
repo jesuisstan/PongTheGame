@@ -7,5 +7,6 @@ import { PrismaModule } from 'src/prisma/prisma.module';
   providers: [AchievementService],
   controllers: [AchievementController],
   imports: [PrismaModule],
+  exports: [AchievementService],
 })
 export class AchivementModule {}

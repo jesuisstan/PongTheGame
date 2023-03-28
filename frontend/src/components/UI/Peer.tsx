@@ -1,6 +1,6 @@
 import ButtonPong from './ButtonPong';
-import Typography from '@mui/joy/Typography';
-import Stack from '@mui/joy/Stack';
+import Typography from '@mui/material/Typography';
+import Stack from '@mui/material/Stack';
 
 interface IMateProps {
   style: string;
@@ -19,21 +19,16 @@ const Peer = (props: IMateProps) => {
         <Stack spacing={1}>
           <Typography
             id="basic-list-demo"
-            level="body3"
+            variant="h3"
+            fontSize={21}
             textTransform="uppercase"
             fontWeight="lg"
           >
             {props.lastName + ' ' + props.firstName}
           </Typography>
-          <Typography id="basic-list-demo" level="body3">
-            {props.description}
-          </Typography>
-          <Typography id="basic-list-demo" level="body3">
-            Location: Paris, France
-          </Typography>
-          <Typography id="basic-list-demo" level="body3">
-            {props.role}
-          </Typography>
+          <Typography id="basic-list-demo">{props.description}</Typography>
+          <Typography id="basic-list-demo">Location: Paris, France</Typography>
+          <Typography id="basic-list-demo">{props.role}</Typography>
           <div>
             <ButtonPong
               text="To github"

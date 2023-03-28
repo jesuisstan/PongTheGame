@@ -12,7 +12,7 @@ import { Player } from '../../../types/Player';
 import styles from './PlayerCard.module.css';
 
 const PlayerCard = () => {
-  const { user, setUser } = useContext(UserContext);
+  const { user } = useContext(UserContext);
   const [player, setPlayer] = useState<Player>({
     avatar: undefined,
     id: -1,
@@ -22,23 +22,13 @@ const PlayerCard = () => {
     role: '',
     username: ''
   });
-  const [achievements, setAchievements] = useState(
-    Array<{ id: -1; Name: ''; Description: '' }>
-  );
+
   let { playerNickname } = useParams();
 
   useEffect(() => {
     backendAPI.get(`/user/${playerNickname}`).then(
       (response) => {
         setPlayer(response.data);
-        backendAPI.get(`/achievements/${response.data.profileId}`).then(
-          (response) => {
-            setAchievements(response.data);
-          },
-          (error) => {
-            errorAlert(`Failed to get player's achievements`);
-          }
-        );
       },
       (error) => {
         if (error.response?.status === 404) {
@@ -56,12 +46,12 @@ const PlayerCard = () => {
     <NotFound />
   ) : (
     <div className={styles.basicCard}>
-      <div style={{ marginTop: '21px', marginBottom: '21px' }}>
+      <div className={styles.header}>
         <h5>Player statistics</h5>
       </div>
       <div className={styles.playerCard}>
         <InfoBlock player={player} />
-        <AchievementsBlock achievements={achievements} />
+        <AchievementsBlock player={player} />
         <MatchHistoryBlock player={player} />
       </div>
     </div>

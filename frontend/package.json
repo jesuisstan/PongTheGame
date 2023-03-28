@@ -27,6 +27,7 @@
     "react-router-dom": "^6.6.2",
     "react-scripts": "5.0.1",
     "react-spinners": "^0.13.8",
+    "react-use-websocket": "^3.0.0",
     "socket.io-client": "^4.5.4",
     "styled-components": "^5.3.6",
     "sweetalert2": "^11.7.1",
@@ -36,6 +37,7 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
+    "lint": "eslint \"{src,api,assets,components,pages,profile,UI}/**/*.tsx\" --fix",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",

@@ -1,19 +1,8 @@
-import {
-  useContext,
-  useEffect,
-  useState,
-  Fragment,
-  useRef
-} from 'react';
+import { useContext, useEffect, useState, Fragment, useRef } from 'react';
 import * as React from 'react';
 import {
-  AppBar,
   Box,
-  Divider,
-  Drawer,
   List,
-  Toolbar,
-  Typography,
   ListItem,
   TextField,
   Button,
@@ -22,31 +11,29 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  IconButton,
   ListItemIcon,
   ListItemText,
   ListItemButton,
   CssBaseline,
-  FormLabel
+  ListItemSecondaryAction
 } from '@mui/material';
 import {
-  ChatRounded,
   TagRounded,
   LockRounded,
   ArrowForwardIos,
   AddCircleOutline,
   LockOpenRounded,
-  KeyboardDoubleArrowRightRounded,
-  MailLockRounded
+  Person2Rounded
 } from '@mui/icons-material';
+
 // personal components
 import { UserContext } from '../../contexts/UserContext';
 import { WebSocketContext } from '../../contexts/WebsocketContext';
-import MenuIcon from '@mui/icons-material/Menu';
 import ChatRoom from './ChatRoom';
 import PleaseLogin from '../pages/PleaseLogin';
-import { ChatRoomType } from "../../types/chat";
-
+import { ChatRoomType } from '../../types/chat';
+// personal css
+import './Chat.css';
 
 /*************************************************************
  * Chat entrance
@@ -54,9 +41,6 @@ import { ChatRoomType } from "../../types/chat";
  * It is the entrance for chat rooms.
  * Users can create/join chat rooms.
 **************************************************************/
-// import ChanBar from './ChanBar';
-// personal css
-import './Chat.css';
 
 interface WinProps {
   window?: () => Window;
@@ -72,7 +56,7 @@ const Chat = () => {
    * States
    **************************************************************/
   // Fetching the socket from its context
-  const socket = useContext(WebSocketContext)
+  const socket = useContext(WebSocketContext);
   // Fetching the user profile from its context
   const { user, setUser } = useContext(UserContext);
   // Array including all chat rooms
@@ -91,7 +75,6 @@ const Chat = () => {
   const [inputPassword, setInputPassword] = useState<string>('');
   const [isPasswordRight, setIsPasswordRight] = useState<boolean>(false);
   const [clickedRoomToJoin, setclickedRoomToJoin] = useState<string>('');
-
 
   socket.emit('findAllChatRooms', {}, (response: ChatRoomType[]) => {
     setChatRooms(response);
@@ -121,15 +104,15 @@ const Chat = () => {
       console.log('Created new chat room [' + roomName + ']');
     });
     socket.on('exception', ({ msg }) => {
-      console.log('ERROR: ' + msg)
-    })
+      console.log('ERROR: ' + msg);
+    });
 
     // Clean listeners to unsubscribe all callbacks for these events
     // before the component is unmounted
     return () => {
       socket.off('connect');
       socket.off('createChatRoom');
-      socket.off('exception')
+      socket.off('exception');
     };
   }, []);
 
@@ -138,7 +121,7 @@ const Chat = () => {
     setChatRoomCreateMode(true);
     handleClickOpen();
   };
-  
+
   const onChatRoomCreateModeSubmit = (e: any) => {
     e.preventDefault();
     if (newChatRoomName)
@@ -206,19 +189,16 @@ const Chat = () => {
   const getMemberNbr = (room: ChatRoomType) => {
     let memberNbr = 0;
     for (const user in room.users)
-      if (room.users[user].isOnline === true)
-        memberNbr += 1;
+      if (room.users[user].isOnline === true) memberNbr += 1;
     return memberNbr;
-  }
+  };
 
   const isAuthorizedPrivRoom = (mode: string, users: any) => {
-    if ((mode).indexOf('i') !== -1) {
-      for (const nick in users)
-        if (nick === user.nickname) return true;
-    }
-    else return true;
+    if (mode.indexOf('i') !== -1) {
+      for (const nick in users) if (nick === user.nickname) return true;
+    } else return true;
     return false;
-  }
+  };
 
   const cleanRoomLoginData = () => {
     user.joinedChatRoom = '';
@@ -228,7 +208,8 @@ const Chat = () => {
   /*************************************************************
    * Render HTML response
    **************************************************************/
-  return !user.provider ? (
+
+  return !user.provider || (user.provider && !user.nickname) ? (
     <PleaseLogin />
   ) : (
     <Fragment>
@@ -253,69 +234,85 @@ const Chat = () => {
             <Box>
               <List>
                 {/* Mapping chatroom array to retrieve all chatrooms with */}
-                {chatRooms.map((room, index) => (
-                  // Check if this isn't a private conversation of other users
-                  isAuthorizedPrivRoom(room.modes, room.users) &&
-                  <ListItem key={index} disablePadding>
-                    <ListItemIcon sx={{ color: 'white' }}>
-                      {
-                      // TODO => room.modes.indexOf('i') !== -1 ? to find private room
-                      room.modes.indexOf('p') !== -1 ? (
-                        <LockRounded />
-                      ) : (
-                        <TagRounded />
-                      )}
-                    </ListItemIcon>
-                    {clickedRoomToJoin === room.name &&
-                      room.modes.indexOf('p') !== -1 && (
-                        <>
-                          <Dialog
-                            open={openP}
-                            onClose={handleClosePass}
-                            onSubmit={onPasswordSubmit}
+                {chatRooms.map(
+                  (room, index) =>
+                    // Check if this isn't a private conversation of other users
+                    isAuthorizedPrivRoom(room.modes, room.users) && (
+                      <>
+                        <ListItem key={index} disablePadding>
+                          <ListItemIcon sx={{ color: 'white' }}>
+                            {
+                              // TODO => room.modes.indexOf('i') !== -1 ? to find private room
+                              room.modes === 'p' ? (
+                                <LockRounded />
+                              ) : room.modes === 'i' ? (
+                                <Person2Rounded />
+                              ) : (
+                                <TagRounded />
+                              )
+                            }
+                          </ListItemIcon>
+                          {clickedRoomToJoin === room.name &&
+                            room.modes.indexOf('p') !== -1 && (
+                              <>
+                                <Dialog
+                                  open={openP}
+                                  onClose={handleClosePass}
+                                  onSubmit={onPasswordSubmit}
+                                >
+                                  <DialogTitle>Enter password</DialogTitle>
+                                  <DialogContent>
+                                    <DialogContentText>
+                                      Please enter the password to join this
+                                      channel
+                                    </DialogContentText>
+                                    <TextField
+                                      autoFocus
+                                      margin="dense"
+                                      id="password"
+                                      label="Password"
+                                      type="password"
+                                      fullWidth
+                                      value={inputPassword}
+                                      onChange={(e) =>
+                                        setInputPassword(e.target.value)
+                                      }
+                                    />
+                                  </DialogContent>
+                                  <DialogActions>
+                                    <Button onClick={handleClosePass}>
+                                      Cancel
+                                    </Button>
+                                    <Button onClick={onPasswordSubmit}>
+                                      Join
+                                    </Button>
+                                  </DialogActions>
+                                </Dialog>
+                              </>
+                            )}
+                          <ListItemButton
+                            onClick={() => onClickJoinRoom(room.name)}
                           >
-                            <DialogTitle>Enter password</DialogTitle>
-                            <DialogContent>
-                              <DialogContentText>
-                                Please enter the password to join this channel
-                              </DialogContentText>
-                              <TextField
-                                autoFocus
-                                margin="dense"
-                                id="password"
-                                label="Password"
-                                type="password"
-                                fullWidth
-                                value={inputPassword}
-                                onChange={(e) =>
-                                  setInputPassword(e.target.value)
-                                }
-                              />
-                            </DialogContent>
-                            <DialogActions>
-                              <Button onClick={handleClosePass}>Cancel</Button>
-                              <Button onClick={onPasswordSubmit}>Join</Button>
-                            </DialogActions>
-                          </Dialog>
-                        </>
-                      )}
-                    <ListItem onClick={() => onClickJoinRoom(room.name)}>
-                      <ListItemText
-                        tabIndex={-1}
-                        primary={
-                          room.name[0] === '#' ? room.name.slice(1) : room.name
-                          // Slicing the '#' character at position 0 which is
-                          // used for private room names
-                        }
-                        className="limitText"
-                        sx={{ color: 'white' }}
-                      />
-                      <ListItemButton sx={{ color: 'white' }}>
-                        <ArrowForwardIos />
-                      </ListItemButton>
-                    </ListItem>
-                  </ListItem>
-                ))}
+                            <ListItemText
+                              tabIndex={-1}
+                              primary={
+                                room.name[0] === '#'
+                                  ? room.name.slice(1)
+                                  : room.name
+                                // Slicing the '#' character at position 0 which is
+                                // used for private room names
+                              }
+                              className="limitText"
+                              sx={{ color: 'white' }}
+                            />
+                            <ListItemIcon sx={{ color: 'white' }}>
+                              <ArrowForwardIos />
+                            </ListItemIcon>
+                          </ListItemButton>
+                        </ListItem>
+                      </>
+                    )
+                )}
               </List>
             </Box>
           )}
@@ -373,15 +370,13 @@ const Chat = () => {
         <Box component="main" className="chatRoom">
           {joinedRoomName &&
           ((isPasswordProtected && isPasswordRight) || !isPasswordProtected) ? (
-            <ChatRoom
-              cleanRoomLoginData={cleanRoomLoginData}
-            />
+            <ChatRoom cleanRoomLoginData={cleanRoomLoginData} />
           ) : (
-            <>
+            <div className="black">
               <h2>Actually no room joined</h2>
               <p>To join a room click on the arrow on the left</p>
               <p>Or add a new chan with the + button</p>
-            </>
+            </div>
           )}
         </Box>
       </Box>

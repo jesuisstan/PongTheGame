@@ -95,8 +95,8 @@ export class ChatService {
         // If the room wasn't in 'password protected' mode,
         // it gets it
         if (room.modes.search('p') === -1) room.modes += 'p';
-      } else // No given password means we remove the password
-      {
+      } // No given password means we remove the password
+      else {
         room.password = '';
         if (room.modes.search('p') !== -1)
           room.modes = room.modes.replace(/p/g, '');
@@ -154,15 +154,15 @@ export class ChatService {
   muteUser(roomName: string, nick: string) {
     const room = this.getChatRoomByName(roomName);
     if (room) room.users[nick].modes += 'm';
-    else throw new WsException({ msg: 'muteUser: unknown room name!' });  
+    else throw new WsException({ msg: 'muteUser: unknown room name!' });
   }
 
   unMuteUser(roomName: string, nick: string) {
     const room = this.getChatRoomByName(roomName);
     if (room)
-      if (room.users[nick].modes.search('m') !==   -1)
+      if (room.users[nick].modes.search('m') !== -1)
         room.users[nick].modes.replace(/m/g, '');
-    else throw new WsException({ msg: 'unMuteUser: unknown room name!' });  
+      else throw new WsException({ msg: 'unMuteUser: unknown room name!' });
   }
 
   isUserMuted(roomName: string, nick: string) {

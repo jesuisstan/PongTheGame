@@ -26,8 +26,10 @@ export class ChatGateway {
     // Create a message object using the create method from chat.service,
     // but only is the user hasn't been muted
     if (msg) {
-      if (msg.author.nickname &&
-        this.chatService.isUserMuted(roomName, msg.author.nickname) === false)
+      if (
+        msg.author.nickname &&
+        this.chatService.isUserMuted(roomName, msg.author.nickname) === false
+      )
         this.chatService.createMessage(roomName, msg);
       console.log('message emitted: ' + Object.entries(msg));
       // Broadcast received message to all users
@@ -229,7 +231,7 @@ export class ChatGateway {
       this.server.emit('muteUser', roomName, target);
     } else {
       this.chatService.unMuteUser(roomName, target);
-      this.server.emit('unMuteUser', roomName, target);        
+      this.server.emit('unMuteUser', roomName, target);
     }
   }
 

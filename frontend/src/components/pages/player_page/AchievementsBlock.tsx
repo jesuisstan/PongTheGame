@@ -1,18 +1,31 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import AchievementsListModal from './AchievementsListModal';
 import ButtonPong from '../../UI/ButtonPong';
+import { Player } from '../../../types/Player';
+import { Achievement } from '../../../types/Achievement';
+import backendAPI from '../../../api/axios-instance';
+import errorAlert from '../../UI/errorAlert';
 import Typography from '@mui/joy/Typography';
 import VisibilityIcon from '@mui/icons-material/Visibility';
+import styles from './PlayerCard.module.css';
 
-const AchievementsBlock = ({
-  achievements
-}: {
-  achievements: Array<{ id: -1; Name: ''; Description: '' }>;
-}) => {
+const AchievementsBlock = ({ player }: { player: Player }) => {
   const [open, setOpen] = useState(false);
+  const [achievements, setAchievements] = useState<Achievement[]>([]);
+
+  useEffect(() => {
+    backendAPI.get(`/achievements/${player.nickname}`).then(
+      (response) => {
+        setAchievements(response.data.achievement);
+      },
+      (error) => {
+        errorAlert(`Failed to get player's achievements`);
+      }
+    );
+  }, []);
 
   return (
-    <div style={{ minWidth: '210px' }}>
+    <div className={styles.achieveBlock}>
       <Typography
         textColor="rgb(37, 120, 204)"
         level="body3"
