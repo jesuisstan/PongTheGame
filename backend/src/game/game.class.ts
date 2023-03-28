@@ -502,10 +502,11 @@ export class Game {
       reason: 'player_left',
       result: 'lose',
     });
-    this.websockets.send(otherPlayer.profile?.socket, 'game_aborted', {
-      reason: 'player_left',
-      result: 'win',
-    });
+    if (this.type == TypeMode.NORMAL)
+      this.websockets.send(otherPlayer.profile?.socket, 'game_aborted', {
+        reason: 'player_left',
+        result: 'win',
+      });
     this.status = Status.ABORTED;
     if (this.game_start_time) {
       const now = new Date();

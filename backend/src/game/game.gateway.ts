@@ -1,13 +1,12 @@
 import {
   WebSocketGateway,
-  WebSocketServer,
   SubscribeMessage,
 } from '@nestjs/websockets';
 import { GameService } from './game.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { WebsocketsService } from 'src/websockets/websockets.service';
 import { Socket } from 'socket.io';
-
+import { User } from '@prisma/client';
 @WebSocketGateway()
 export class GameGateway {
   constructor(
@@ -35,6 +34,11 @@ export class GameGateway {
   @SubscribeMessage('match_training')
   async training(socket: Socket, payload: any) {
     this.game.create_training_game(socket);
+  }
+  
+  @SubscribeMessage('match_leave')
+  async leave(socket: Socket, payload: any) {
+    this.game.leave_game(socket);// cant use the emit check why
   }
 
   @SubscribeMessage('match_game_input')
