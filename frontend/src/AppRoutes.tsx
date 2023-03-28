@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
+import { WebSocketContext } from './contexts/WebsocketContext';
 import { UserContext } from './contexts/UserContext';
 import MainLayout from './components/UI/MainLayout';
 import Home from './components/pages/Home';
@@ -14,15 +15,21 @@ import './App.css';
 
 const AppRoutes = () => {
   const { user } = useContext(UserContext);
-
+  const socket = useContext(WebSocketContext);
   const location = useLocation();
 
   useEffect(() => {
     if (user.provider && user.nickname) {
       // Perform necessary actions when the location changes
+      // if (props.gameState === Game_status.PLAYING) { 
+        if (location.pathname !== '/game') {
+          console.log("Location changed");
+          socket.emit("match_leave", {nickname : user.nickname});
+        }
+      // }
       console.log(`Location changed to ${location.pathname}`);
     }
-  }, [location]);
+  }, [location, socket]);
 
   return (
     <Routes>
@@ -52,3 +59,4 @@ const AppRoutes = () => {
 };
 
 export default AppRoutes;
+// THe only problem i just need to know if the player is on game
