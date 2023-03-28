@@ -7,42 +7,45 @@ export class giveAchievementService {
   constructor(private prisma: PrismaService) {}
 
   async fisrtLogin(user: User) {
-    console.log("First Login" + user.nickname);
+    console.log('First Login' + user.nickname);
 
-    await this.prisma.UserAchivement.create({
-      data : {
-        userId : user.id,
-        achievement : {
-          Title : "First Login",
-        }
+    await this.prisma.userAchivement.create({
+      data: {
+        user: {
+          connect: {
+            id: user.id,
+          },
+        },
+        achievement: {
+          connect: {
+            Title: 'First Login',
+          },
+        },
       },
     });
-    // await this.prisma.user.update({
-    //   where: {
-    //     Title: 'First Login',
-    //   },
-    //   data: {
-    //     userId: user.id,
-    //   },
-    // });
     this.collector(user);
   }
 
   async custom(user: User) {
-    console.log("First Avatar" + user.nickname);
-    await this.prisma.achievement.update({
-      where: {
-        Title: 'Change Avatar',
-      },
+    console.log('First Avatar' + user.nickname);
+    await this.prisma.userAchivement.create({
       data: {
-        userId: user.id,
+        user: {
+          connect: {
+            id: user.id,
+          },
+        },
+        achievement: {
+          connect: {
+            Title: 'Change Avatar',
+          },
+        },
       },
     });
     this.collector(user);
   }
 
   async playGame(user: User) {
-    console.log("" + user.nickname);
     const game = await this.prisma.stats.findUnique({
       where: {
         userId: user.id,
@@ -54,33 +57,51 @@ export class giveAchievementService {
 
     if (!game) return;
     if (game.nb_game == 1) {
-      console.log("First Game" + user.nickname);
-      await this.prisma.achievement.update({
-        where: {
-          Title: 'First Game',
-        },
+      console.log('First Game' + user.nickname);
+      await this.prisma.userAchivement.create({
         data: {
-          userId: user.id,
+          user: {
+            connect: {
+              id: user.id,
+            },
+          },
+          achievement: {
+            connect: {
+              Title: 'First Game',
+            },
+          },
         },
       });
     } else if (game.nb_game == 10) {
-      console.log("Play 10 Games" + user.nickname);
-      await this.prisma.achievement.update({
-        where: {
-          Title: 'Play 10 Games',
-        },
+      console.log('Play 10 Games' + user.nickname);
+      await this.prisma.userAchivement.create({
         data: {
-          userId: user.id,
+          user: {
+            connect: {
+              id: user.id,
+            },
+          },
+          achievement: {
+            connect: {
+              Title: 'Play 10 Games',
+            },
+          },
         },
       });
     } else if (game.nb_game == 42) {
-      console.log("Play 42 Games" + user.nickname);
-      await this.prisma.achievement.update({
-        where: {
-          Title: 'Play 42 Games',
-        },
+      console.log('Play 42 Games' + user.nickname);
+      await this.prisma.userAchivement.create({
         data: {
-          userId: user.id,
+          user: {
+            connect: {
+              id: user.id,
+            },
+          },
+          achievement: {
+            connect: {
+              Title: 'Play 42 Games',
+            },
+          },
         },
       });
     }
@@ -98,32 +119,50 @@ export class giveAchievementService {
     if (!game) return;
     if (game.nb_win == 1) {
       console.log('Win One Game' + user.nickname);
-      await this.prisma.achievement.update({
-        where: {
-          Title: 'Win One Game',
-        },
+      await this.prisma.userAchivement.create({
         data: {
-          userId: user.id,
+          user: {
+            connect: {
+              id: user.id,
+            },
+          },
+          achievement: {
+            connect: {
+              Title: 'Win One Game',
+            },
+          },
         },
       });
     } else if (game.nb_win == 10) {
-      console.log("Win 10 Games" + user.nickname);
-      await this.prisma.achievement.update({
-        where: {
-          Title: 'Win 10 Games',
-        },
+      console.log('Win 10 Games' + user.nickname);
+      await this.prisma.userAchivement.create({
         data: {
-          userId: user.id,
+          user: {
+            connect: {
+              id: user.id,
+            },
+          },
+          achievement: {
+            connect: {
+              Title: "'Win 10 Games",
+            },
+          },
         },
       });
     } else if (game.nb_win == 42) {
-      console.log("Win 42 Games" + user.nickname);
-      await this.prisma.achievement.update({
-        where: {
-          Title: 'Win 42 Games',
-        },
+      console.log('Win 42 Games' + user.nickname);
+      await this.prisma.userAchivement.create({
         data: {
-          userId: user.id,
+          user: {
+            connect: {
+              id: user.id,
+            },
+          },
+          achievement: {
+            connect: {
+              Title: 'Win 42 Games',
+            },
+          },
         },
       });
     }
@@ -156,29 +195,44 @@ export class giveAchievementService {
   // }
 
   async collector(user: User) {
-    const nb_achievements = await this.prisma.achievement.findMany({
+    const nb_achievements = await this.prisma.userAchivement.findMany({
       where: {
         userId: user.id,
       },
+      select: {
+        achievement: true,
+      },
     });
     if (nb_achievements.length == 10) {
-      console.log("Achievements everywhere" + user.nickname);
-      await this.prisma.achievement.update({
-        where: {
-          Title: 'Achievements everywhere',
-        },
+      console.log('Achievements everywhere' + user.nickname);
+      await this.prisma.userAchivement.create({
         data: {
-          userId: user.id,
+          user: {
+            connect: {
+              id: user.id,
+            },
+          },
+          achievement: {
+            connect: {
+              Title: 'Achievements everywhere',
+            },
+          },
         },
       });
     } else if (nb_achievements.length == 20) {
-      console.log("Achievements everywhere * 2" + user.nickname);
-      await this.prisma.achievement.update({
-        where: {
-          Title: 'Achievements everywhere * 2',
-        },
+      console.log('Achievements everywhere * 2' + user.nickname);
+      await this.prisma.userAchivement.create({
         data: {
-          userId: user.id,
+          user: {
+            connect: {
+              id: user.id,
+            },
+          },
+          achievement: {
+            connect: {
+              Title: 'Achievements everywhere * 2',
+            },
+          },
         },
       });
     }
