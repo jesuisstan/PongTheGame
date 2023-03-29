@@ -7,6 +7,7 @@ import { Achievement } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { AchievementDTO } from 'src/achievement/dto/achievement.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class AchievementService {
@@ -77,12 +78,17 @@ export class AchievementService {
     return;
   }
 
-  async userAchievement(
-    Nickname: string,
-  ): Promise<{ achievement: Achievement[] }> {
-    const user = await this.prisma.user.findUnique({
+  async userAchievement(Nickname: string): Promise<any> {
+    //Promise<{ achievement: Achievement[] }> {
+    const nickname_user: any = this.prisma.user.findUnique({
       where: {
         nickname: Nickname,
+      },
+    });
+    if (!nickname_user) throw new NotFoundException('User not found');
+    const user = await this.prisma.userAchivement.findMany({
+      where: {
+        userId: nickname_user.id,
       },
       select: {
         achievement: true,
@@ -96,34 +102,32 @@ export class AchievementService {
     userId: number,
     achievementId: number,
   ): Promise<Achievement | undefined> {
-    const userAchivement = await this.prisma.user.findUnique({
+    const userAchivement: any = await this.prisma.user.findUnique({
       where: {
         id: userId,
       },
       select: {
-        achievement: true,
+        nickname: true,
       },
     });
-    if (!userAchivement) throw new NotFoundException('User not found');
-    const achievement: Achievement | undefined =
-      userAchivement.achievement.find(
-        (Achievement) => Achievement.id == achievementId,
-      );
-    if (achievement && achievement.Title)
-      throw new BadRequestException(
-        `User already got the achivement '${achievement.Title}'`,
-      );
-
+    if (!userAchivement && !userAchivement.nickname)
+      throw new NotFoundException('User not found');
     try {
-      const achievement: Achievement = await this.prisma.achievement.update({
-        where: {
-          id: achievementId,
-        },
+      await this.prisma.userAchivement.create({
         data: {
-          userId: userId,
+          user: {
+            connect: {
+              id: userId,
+            },
+          },
+          achievement: {
+            connect: {
+              id: achievementId,
+            },
+          },
         },
       });
-      return achievement;
+      return;
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         if (error.code == 'P2025')
