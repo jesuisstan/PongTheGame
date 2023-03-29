@@ -30,8 +30,7 @@ model User {
   matchEntries MatchEntry[]
 
   stats       Stats[]
-  friends     User[] @relation("Friendslist")
-  friendsOf   User[] @relation("Friendslist")
+  friends     Friends[]
   achievement Achievement[]
   invitation  MatchInvitation[]
   @@unique([profileId, provider])
@@ -47,9 +46,9 @@ model Stats {
 }
 
 enum StatusUser {
-    ONLINE
-    OFFLINE
-    PLAYING
+  ONLINE
+  OFFLINE
+  PLAYING
 }
 
 model TotpSecret {
@@ -73,11 +72,18 @@ model Achievement {
   Title       String  @unique
   Description String
   icon_path   String?
-  User        User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId      Int?
-
+  user        UserAchivement[]
   @@map("Achievements")
 }
+
+model UserAchivement {
+ user User @relation(fields : [userId], references: [id])
+ userId Int
+ achievement   Achievement @relation(fields: [achievementId], references: [id])
+ achievementId Int
+ @@id([userId, achievementId])
+}
+
 
 // model Friends {
 //   user      User     @relation(fields: [friendId], references: [id])
