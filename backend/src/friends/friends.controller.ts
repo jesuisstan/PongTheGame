@@ -37,7 +37,7 @@ export class FriendsController {
     return this.friendsService.getAllFriendsFromUser(user);
   }
 
-  @Get('nickname')
+  @Get(':nickname')
   @ApiOperation({
     summary: 'Get friends by is nickname',
   })
