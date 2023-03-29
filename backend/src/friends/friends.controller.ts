@@ -31,11 +31,22 @@ export class FriendsController {
   @Get('friends')
   @ApiOperation({
     summary: 'Get all friends',
+    parameters: [{ name: 'nickname', in: 'query' }],
   })
   @ApiResponse({ status: 401, description: 'Not authorized' })
   @ApiResponse({ status: 200, description: 'Succes' })
-  async getFriends(@SessionUser() user: User) {
+  async getFriendsByNickname(@SessionUser() user: User) {
     return this.friendsService.getAllFriendsFromUser(user);
+  }
+
+  @Get('friends:nickname')
+  @ApiOperation({
+    summary: 'Get friends by is nickname',
+  })
+  @ApiResponse({ status: 401, description: 'Not authorized' })
+  @ApiResponse({ status: 200, description: 'Succes' })
+  async getFriends(@Param('nickname') nickname: string) {
+    return this.friendsService.getFriendsFromNickname(nickname);
   }
 
   @Post('/friends/add/:nickname')
