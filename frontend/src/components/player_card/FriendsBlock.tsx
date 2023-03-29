@@ -18,7 +18,7 @@ const FriendsBlock = ({ player }: { player: Player }) => {
 
   // get the friends list of the Player (not current User!)
   useEffect(() => {
-    backendAPI.get(`/friend/friends`).then(
+    backendAPI.get(`/friend/${player.nickname}`).then(
       (response) => {
         setFriendsList(response.data.friends);
         //console.log(response.data.friends);
@@ -43,6 +43,16 @@ const FriendsBlock = ({ player }: { player: Player }) => {
       >
         Friends list
       </Typography>
+      <div>
+        {user.nickname === player.nickname && (
+          <ButtonPong
+            text="Find new"
+            title="Find & follow by nickname"
+            onClick={searchFriend}
+            startIcon={<PersonSearchIcon />}
+          />
+        )}
+      </div>
       {friendsList.length ? (
         friendsList.map((item) => (
           <a
@@ -74,16 +84,6 @@ const FriendsBlock = ({ player }: { player: Player }) => {
       ) : (
         <Typography>List is empty</Typography>
       )}
-      <div style={{ marginTop: '21px' }}>
-        {user.nickname === player.nickname && (
-          <ButtonPong
-            text="Find new"
-            title="Find & follow by nickname"
-            onClick={searchFriend}
-            startIcon={<PersonSearchIcon />}
-          />
-        )}
-      </div>
     </div>
   );
 };
