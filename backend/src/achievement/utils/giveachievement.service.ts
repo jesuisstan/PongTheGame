@@ -179,21 +179,33 @@ export class giveAchievementService {
     });
     if (!nb_friends) return;
     if (nb_friends.friends.length == 1) {
-      await this.prisma.achievement.update({
-        where: {
-          Title: 'Get One Friend',
-        },
+      await this.prisma.userAchivement.create({
         data: {
-          userId: user.id,
+          user: {
+            connect: {
+              id: user.id,
+            },
+          },
+          achievement: {
+            connect: {
+              Title: 'Get One Friend',
+            },
+          },
         },
       });
     } else if (nb_friends.friends.length == 42) {
-      await this.prisma.achievement.update({
-        where: {
-          Title: 'More Friends',
-        },
+      await this.prisma.userAchivement.create({
         data: {
-          userId: user.id,
+          user: {
+            connect: {
+              id: user.id,
+            },
+          },
+          achievement: {
+            connect: {
+              Title: 'More Friends',
+            },
+          },
         },
       });
     }

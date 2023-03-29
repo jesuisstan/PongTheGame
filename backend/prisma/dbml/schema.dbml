@@ -14,8 +14,9 @@ Table User {
   role Role [not null, default: 'USER']
   matchEntries MatchEntry [not null]
   stats Statistique [not null]
-  friends Friends [not null]
-  Achievement UserAchivement [not null]
+  friends User [not null]
+  friendsOf User [not null]
+  achievement UserAchivement [not null]
   invitation MatchInvitation [not null]
 
   indexes {
