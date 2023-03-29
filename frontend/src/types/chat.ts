@@ -15,6 +15,7 @@ export type ChatRoomType = {
 		[nick: string]: {
 		  isOnline: boolean;
 		  modes: string;
+			avatar: string;
 		}
 	  };
 	messages: Message[];
@@ -25,5 +26,6 @@ export type MemberType = {
 	[nick: string]: {
 		isOnline: boolean;
 		modes: string;
-	  }	
+		avatar: string;
+	}
 }

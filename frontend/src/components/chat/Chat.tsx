@@ -123,7 +123,8 @@ const Chat = () => {
           bannedNicks: []
         },
         nick: user.nickname,
-        user2: ''
+        user2: '',
+        avatar: user.avatar,
       });
     setNewChatRoomName('');
     setChatRoomCreateMode(false);
@@ -152,7 +153,11 @@ const Chat = () => {
   const joinRoom = (roomName: string) => {
     socket.emit(
       'joinRoom',
-      { roomName: roomName, nickName: user.nickname },
+      {
+        roomName: roomName,
+        nickName: user.nickname,
+        avatar: user.avatar,
+      },
       (response: string) => {
         user.joinedChatRoom = response;
       }

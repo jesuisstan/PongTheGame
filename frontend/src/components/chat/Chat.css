@@ -31,6 +31,15 @@
 	 overflow-y: overlay;
 	 overflow-wrap: break-word;
  }
+
+ .column-barre {
+	 display: flex;
+	 flex-direction: column;
+	 width: 100%;
+	 height: 100%;
+	 flex-wrap: wrap;
+	 justify-content: space-around;
+ }
  
  .basicCard {
 	 width: 100vw;
@@ -86,9 +95,13 @@
  }
 
  .black {
-	 color: black;
- }
- 
+	color: black;
+}
+
+.gray {
+	color: rgb(120, 85, 85);
+}
+
  .limitText {
 	 margin-left: -35px;
 	 width: 100%;

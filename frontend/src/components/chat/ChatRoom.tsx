@@ -2,7 +2,7 @@ import { SetStateAction, useContext, useEffect, useState } from 'react';
 import { WebSocketContext, socket } from '../../contexts/WebsocketContext';
 import {
 	Send, Delete, ArrowBackIosNew, Settings,PersonAddAlt, Password,
-	ExitToApp, Mail, Clear, PanTool, PersonAdd, VolumeUp, VolumeOff, Room
+	ExitToApp, Mail, Clear, PanTool, PersonAdd, VolumeUp, VolumeOff, Room, Block, HighlightOff, AdminPanelSettings, DeveloperMode
 	} from '@mui/icons-material';
 import {
 	Box, Button, Divider, FormControl, Grid, IconButton, Stack,
@@ -326,6 +326,7 @@ const ChatRoom = (props: any) => {
 			},
 			nick: user.nickname,
 			user2: user2,
+			avatar: user.avatar,
 		});
 	}
 
@@ -400,46 +401,81 @@ const ChatRoom = (props: any) => {
 {/* ----------------------------------------------------------------
 					HERE FIND HOW TO DISPLAY THE AVATAR OF THE USER
 				---------------------------------------------------------------- */}
-							<AvatarBadge
-								nickname={nick}
-								online={members[nick as any].isOnline.isOnline}
-								admin={isOper && (user.nickname !== nick) &&
-									String(members[nick as any].modes).search('o') === -1}
-									oper={String(members[nick as any].modes).search('o') !== -1} 
-									avatar=""
-									look={true}/>		
-{/* // If user is oper(=admin), the button to kick users is displayed 
-	// If user is oper(=admin), the button to ban users is displayed 
-	// If user is oper(=admin), the button to unban users is displayed  */}
-							{/* { 
-								isOper && (user.nickname !== nick) &&
-								String(members[nick as any].modes).search('o') === -1 &&
-								<>
-								<button onClick={ () => onKickClick(nick) }>
-									kick
-								</button>
-								<button onClick={ () => onBanClick(nick) }>
-									ban
-								</button>
-								<button onClick={ () => onUnBanClick(nick) }>
-									unban
-								</button>
-									</>
-							} */}
-{/* // is not the user himself 
-		//Block button appears if the author of the message
-		// Unblock button appears if the author of the message */}
-							{/* { 
-								(user.nickname !== nick) &&
-								<>
-								<button onClick={ () => onBlockClick(nick) }>
-								block
-								</button>
-								<button onClick={ () => onUnBlockClick(nick) }>
-								unblock
-								</button>
-								</>
-							} */}
+{/*// -------------- Avatar Clickable -------------- */}
+													<Button
+														aria-controls="basic-menu"
+														aria-haspopup="true"
+														aria-expanded={Boolean(anchorAvatar)}
+														onClick={user.avatar !== String(members[nick as any].avatar) 
+														? handleAClick 
+														: () => {}}
+														>
+{/*// -------------- Avatar Badge -------------- */}
+													<AvatarBadge
+														nickname={nick}
+														online={Boolean(members[nick as any].isOnline)}
+														admin={isOper && (user.nickname !== nick) &&
+															String(members[nick as any].modes).search('o') === -1}
+														oper={String(members[nick as any].modes).search('o') !== -1} 
+														avatar={String(members[nick as any].avatar)}
+														look={true}/>		
+													</Button>
+{/*// -------------- Avatar Menu -------------- */}
+												{user.nickname !== nick ?
+													<Menu
+														anchorEl={anchorAvatar}
+														open={Boolean(anchorAvatar)}
+														onClose={handleAClose}
+														className='black column-barre' >
+{/*// -------------- Menu Icon Part -------------- */}
+														<MenuItem aria-label="back" className='column-barre'>
+																<IconButton >
+																<PersonAdd className='black'/>
+																<span>add friend</span>
+															</IconButton>
+															<IconButton onClick={isMuted ? () => onMuteUserClick(nick): () => onUnMuteUserClick(nick)}>
+																{isMuted ? <VolumeOff className='black'/> : <VolumeUp className='black'/>}
+																<span>mute</span>
+															</IconButton>
+															<IconButton onClick={() => onPrivMessageClick(nick) } >
+																<Mail className='black'/>
+																<span>private msg</span>
+															</IconButton>
+															<IconButton onClick={ () => onUnBlockClick(nick) } >
+																<PanTool className={'black'}/>
+																<PanTool className={'gray'}/>
+																<span>block</span>
+															</IconButton>
+													{isOper && (user.nickname !== nick) &&
+														String(members[nick as any].modes).search('o') === -1 ?
+														<>
+															<IconButton onClick={() => onKickClick(nick)} >
+																<Block className='black'/>
+																<span>kick</span>
+															</IconButton>
+															<IconButton onClick={() => onBanClick(nick)}>
+																<HighlightOff className='black'/>
+																<HighlightOff className='gray'/>
+																<span>ban</span>
+															</IconButton>
+															<IconButton onClick={() => onMakeOperClick(nick)}>
+																<DeveloperMode className={isOper && String(members[nick as any].modes).search('o') === -1 ?
+																"black" : "gray" }/>
+																<span>oper</span>
+															</IconButton><IconButton >
+																<AdminPanelSettings className='black'/>
+																<span>admin</span>
+															</IconButton>
+																</> : <></>
+															} 
+															<IconButton onClick={handleAClose}>
+																<Clear className='black'/>
+																<span>close</span>
+															</IconButton>
+														</MenuItem>
+													</Menu>
+													: <></>}
+{/*// -------------- End Avatar / Menu -------------- */}					
 						</div>))}
 					</AvatarGroup>
 
@@ -525,97 +561,17 @@ const ChatRoom = (props: any) => {
 										</div>
 									</>
 								: <><div className="msgRowL">
-													
-{/*// -------------- Avatar Clickable -------------- */}
-													<Button
-														aria-controls="basic-menu"
-														aria-haspopup="true"
-														aria-expanded={Boolean(anchorAvatar)}
-														onClick={handleAClick}
-													>
 {/*// -------------- Avatar Badge -------------- */}
 {/* ----------------------------------------------------------------
  HERE ADD FUNCTION TO CHECK IF IS ONLINE, IF IS OPER, IF IS ADMIN
 		---------------------------------------------------------------- */}
-													<AvatarBadge
-														nickname={msg.author.nickname}
-														online={true}
-														admin={false}
-														oper={true} 
-														avatar={msg.author.avatar}
-														look={true}/>
-													</Button>
-{/*// -------------- Avatar Menu -------------- */}
-													<Menu
-														anchorEl={anchorAvatar}
-														open={Boolean(anchorAvatar)}
-														onClose={handleAClose}
-														className='black' >
-{/*// -------------- Menu Icon Part -------------- */}
-														<MenuItem aria-label="back">
-															<IconButton >
-																<PersonAdd className='black'/>
-															</IconButton>
-															{/* <IconButton onClick={ () => 
-																isUserMuted(msg.author.nickname) 
-																? onUnMuteClick(msg.author.nickname)
-																: onMuteClick(msg.author.nickname)} >
-																{isUserMuted(msg.author.nickname)
-																? <VolumeOff className='black'/>
-																: <VolumeUp className='black'/>}
-															</IconButton> */}
-															<IconButton onClick={() => onMuteUserClick(msg.author.nickname) }>
-																<VolumeOff className='black'/>
-															</IconButton>
-															<IconButton onClick={() => onPrivMessageClick(msg.author.nickname) } >
-																<Mail className='black'/>
-															</IconButton>
-															<IconButton onClick={ () =>
-																isUserBlocked(msg.author.nickname)
-																? onUnBlockClick(msg.author.nickname)
-																: onBlockClick(msg.author.nickname) } >
-																<PanTool className={!isUserBlocked(msg.author.nickname)? 'black': 'white'}/>
-															</IconButton>
-															<IconButton onClick={handleAClose}>
-																<Clear className='black'/>
-															</IconButton>
-														</MenuItem>
-{/*// -------------- Menu Switch Part -------------- */}
-														<FormControl component="fieldset">
-															<FormGroup aria-label="position" >
-																<FormControlLabel
-																	value="start"
-																	control={<Switch color="error" />}
-																	label="Operator"
-																	labelPlacement="start"
-																	color='error'
-																/>
-																<FormControlLabel
-																	value="start"
-																	checked={isUserBan? true : false}
-																	control={<Switch color="error" />}
-																	label="Ban user"
-																	labelPlacement="start"
-																	onChange={ 
-																		isUserBan
-																		? (() => onBanClick(msg.author.nickname)) 
-																		: (() => onUnBanClick(msg.author.nickname)) 
-																		}
-																/>
-																<FormControlLabel
-																	value="start"
-																	control={<Switch color="error" />}
-																	label="Block "
-																	labelPlacement="start"
-																	onChange={
-																		isUserBlocked(msg.author.nickname) === false 
-																		? (() => onBlockClick(msg.author.nickname))
-																		: (() => onUnBlockClick(msg.author.nickname))}
-																/>
-															</FormGroup>
-														</FormControl>
-													</Menu>
-{/*// -------------- End Avatar / Menu -------------- */}					
+										<AvatarBadge
+											nickname={msg.author.nickname}
+											online={true}
+											admin={false}
+											oper={true} 
+											avatar={msg.author.avatar}
+											look={true}/>
 										<div>
 												{/* <div className="nickName">{msg.author.nickname}</div> */}
 												<div className="msgLeft msgBubble">

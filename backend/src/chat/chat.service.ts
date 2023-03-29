@@ -8,7 +8,7 @@ export class ChatService {
   chatRooms: ChatRoomDto[] = [];
   privRooms: ChatRoomDto[] = [];
 
-  identify(roomName: string, nick: string, modes: string, online: boolean) {
+  identify(roomName: string, nick: string, avatar: string, modes: string, online: boolean) {
     const room = this.getChatRoomByName(roomName);
     if (!room) throw new WsException({ msg: 'identify: unknown room name!' });
     // Do nothing if user is already identified
@@ -19,11 +19,13 @@ export class ChatService {
       room.users[nick] = {
         isOnline: online,
         modes: (room.users[nick].modes += modes),
+        avatar: avatar,
       };
     else
       room.users[nick] = {
         isOnline: online,
         modes: modes,
+        avatar: avatar,
       };
   }
 
@@ -48,20 +50,20 @@ export class ChatService {
 
   // Create a new chat room object and push it to the chat rooms array
   // the creator will get admin privileges
-  createChatRoom(room: ChatRoomDto, nick: string, user2: string) {
+  createChatRoom(room: ChatRoomDto, nick: string, user2: string, avatar: string) {
     if (room) {
       // Add room to room array
       this.chatRooms.push(room);
 
       // If it is a private conversation
       if (user2) {
-        this.identify(room.name, nick, '', false);
-        this.identify(room.name, user2, '', false);
+        this.identify(room.name, nick, avatar, '', false);
+        this.identify(room.name, user2, avatar, '', false);
         return;
       }
 
       // Identify creator as the oper(=admin)
-      this.identify(room.name, nick, 'o', false);
+      this.identify(room.name, nick, avatar, 'o', false);
     } else
       throw new WsException({
         msg: "createChatRoom: 'room' argument is missing!",

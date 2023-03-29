@@ -45,7 +45,8 @@ export class ChatGateway {
     @MessageBody('room') room: ChatRoomDto,
     @MessageBody('nick') nick: string,
     @MessageBody('user2') user2: string,
-  ) {
+    @MessageBody('avatar') avatar: string,
+    ) {
     // First, check if the room name already exists
     const r = this.chatService.getChatRoomByName(room.name);
     if (r) {
@@ -61,7 +62,7 @@ export class ChatGateway {
     // 2 users, which is basically a chat room with 2 users
     if (user2) room.modes = 'i';
     // Create a chat room and set user as admin
-    this.chatService.createChatRoom(room, nick, user2);
+    this.chatService.createChatRoom(room, nick, user2, avatar);
     if (!user2) {
       console.log('chatRoom emitted: ' + Object.entries(room));
       // Broadcast newly created room to all users
@@ -88,12 +89,13 @@ export class ChatGateway {
   joinRoom(
     @MessageBody('roomName') roomName: string,
     @MessageBody('nickName') nick: string,
+    @MessageBody('avatar') avatar: string,
   ) {
     if (this.isUserBanned(roomName, nick) === true)
       throw new WsException({ msg: 'joinRoom: User is banned.' });
-    this.chatService.identify(roomName, nick, '', true);
+    this.chatService.identify(roomName, nick, avatar, '', true);
 
-    this.server.emit('joinRoom', roomName, nick);
+    this.server.emit('joinRoom', roomName, nick, avatar);
     return roomName;
   }
 
