@@ -22,6 +22,17 @@ export class FriendService {
     });
   }
 
+  async getFriendsFromNickname(nickname: string) {
+    return this.prisma.user.findUnique({
+      where: {
+        nickname: nickname,
+      },
+      select: {
+        friends: true,
+      },
+    });
+  }
+
   async addFriendsByNickname(user: User, nickname: string) {
     const userToAdd: User | null = await this.prisma.user.findUnique({
       where: {
