@@ -1,26 +1,27 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import ButtonPong from '../../UI/ButtonPong';
 import { useContext, useEffect, useState } from 'react';
 import { UserContext } from '../../../contexts/UserContext';
 import { Player } from '../../../types/Player';
 import Typography from '@mui/joy/Typography';
 import Avatar from '@mui/material/Avatar';
-import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import PersonSearchIcon from '@mui/icons-material/PersonSearch';
 import styles from './PlayerCard.module.css';
 import backendAPI from '../../../api/axios-instance';
 import errorAlert from '../../UI/errorAlert';
-import { Achievement } from '../../../types/Achievement';
+import * as MUI from '../../UI/MUIstyles';
 
 const FriendsBlock = ({ player }: { player: Player }) => {
+  const navigate = useNavigate();
   const { user } = useContext(UserContext);
-  const [friendsList, setFriendsList] = useState([]);
+  const [friendsList, setFriendsList] = useState<Player[]>([]);
 
+  // get the friends list of the Player (not current User!)
   useEffect(() => {
     backendAPI.get(`/friend/friends`).then(
       (response) => {
-        //setFriendsList(response.data);
-        console.log(response.data.friends);
+        setFriendsList(response.data.friends);
+        //console.log(response.data.friends);
       },
       (error) => {
         console.log(error);
@@ -29,19 +30,6 @@ const FriendsBlock = ({ player }: { player: Player }) => {
       }
     );
   }, []);
-
-  const handleFriend = () => {
-    return backendAPI.post('/friend/add').then(
-      (response) => {
-        console.log('added a friend');
-        console.log(response.data);
-      },
-      (error) => {
-        errorAlert('Failed to add friend');
-        console.log(error);
-      }
-    );
-  };
 
   const searchFriend = () => {};
 
@@ -55,33 +43,40 @@ const FriendsBlock = ({ player }: { player: Player }) => {
       >
         Friends list
       </Typography>
-      {/*{friendsList.map((item) => (
-        <Typography
-          key={item.id}
-          title={item.Description}
-          sx={{
-            '&:hover': {
-              transform: 'scale(1.1)',
-              cursor: 'wait'
-            }
-          }}
-        >
-          {item.Name}
-        </Typography>
-      ))}*/}
+      {friendsList.length ?
+        (friendsList.map((item) => (
+          <a
+            key={item.id}
+            href={`http://localhost:3000/players/${item.nickname}`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            <div className={styles.friendLine}>
+              <Avatar
+                alt=""
+                src={item.avatar}
+                variant="rounded"
+                sx={{
+                  width: 42,
+                  height: 42,
+                  ':hover': {
+                    cursor: 'pointer'
+                  }
+                }}
+                title={item.username}
+              />
+              <Typography key={item.id} title={item.username}>
+                {item.nickname}
+              </Typography>
+            </div>
+          </a>
+        ))) : <Typography >List is empty</Typography> }
       <div style={{ marginTop: '21px' }}>
-        {user.nickname !== player.nickname ? (
+        {user.nickname === player.nickname && (
           <ButtonPong
-            text="Add as friend"
-            title="Add this players to friends list"
-            onClick={handleFriend}
-            startIcon={<PersonAddIcon />}
-          />
-        ) : (
-          <ButtonPong
-            text="Find a friend"
-            title="Search for a friend by nickname"
-            onClick={(nickname) => searchFriend()}
+            text="Find new"
+            title="Find & follow by nickname"
+            onClick={searchFriend}
             startIcon={<PersonSearchIcon />}
           />
         )}
