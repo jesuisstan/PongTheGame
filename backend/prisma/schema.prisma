@@ -30,8 +30,9 @@ model User {
   matchEntries MatchEntry[]
 
   stats       Stats[]
-  friends     Friends[]
-  achievement Achievement[]
+  friends     User[] @relation("Friendslist")
+  friendsOf   User[] @relation("Friendslist")
+  achievement UserAchivement[]
   invitation  MatchInvitation[]
   @@unique([profileId, provider])
 }
@@ -83,22 +84,6 @@ model UserAchivement {
  achievementId Int
  @@id([userId, achievementId])
 }
-
-
-// model Friends {
-//   user      User     @relation(fields: [friendId], references: [id])
-//   friendId  Int      @id
-//   addedDate DateTime @default(now())
-//   status    Friends_Status @default(ACCEPTED)
-// }
-
-// enum Friends_Status {
-//   ACCEPTED
-//   BLOCKED
-// }
-// model GithubUser {
-//   user User?
-// }
 
 model MatchEntry {
   id    Int @id @default(autoincrement())
