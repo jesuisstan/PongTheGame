@@ -34,7 +34,7 @@ const FriendsBlock = ({ player }: { player: Player }) => {
   const searchFriend = () => {};
 
   return (
-    <div className={styles.achieveBlock}>
+    <div className={styles.friendsBlock}>
       <Typography
         textColor="rgb(37, 120, 204)"
         level="body3"
@@ -43,8 +43,8 @@ const FriendsBlock = ({ player }: { player: Player }) => {
       >
         Friends list
       </Typography>
-      {friendsList.length ?
-        (friendsList.map((item) => (
+      {friendsList.length ? (
+        friendsList.map((item) => (
           <a
             key={item.id}
             href={`http://localhost:3000/players/${item.nickname}`}
@@ -57,8 +57,8 @@ const FriendsBlock = ({ player }: { player: Player }) => {
                 src={item.avatar}
                 variant="rounded"
                 sx={{
-                  width: 42,
-                  height: 42,
+                  width: 35,
+                  height: 35,
                   ':hover': {
                     cursor: 'pointer'
                   }
@@ -70,7 +70,10 @@ const FriendsBlock = ({ player }: { player: Player }) => {
               </Typography>
             </div>
           </a>
-        ))) : <Typography >List is empty</Typography> }
+        ))
+      ) : (
+        <Typography>List is empty</Typography>
+      )}
       <div style={{ marginTop: '21px' }}>
         {user.nickname === player.nickname && (
           <ButtonPong

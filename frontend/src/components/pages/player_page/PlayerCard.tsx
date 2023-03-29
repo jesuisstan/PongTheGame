@@ -40,7 +40,7 @@ const PlayerCard = () => {
         }
       }
     );
-  }, []);
+  }, [playerNickname]);
 
   return !user.provider ? (
     <PleaseLogin />

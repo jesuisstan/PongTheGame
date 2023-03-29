@@ -16,9 +16,11 @@ const InfoBlock = ({ player }: { player: Player }) => {
   const navigate = useNavigate();
   const { user } = useContext(UserContext);
   const [isFriendOfUser, setIsFriendOfUser] = useState(false);
-  const [buttonText, setButtonText] = useState(isFriendOfUser ? 'UnnFollow' : 'FFFFF');
-  console.log((isFriendOfUser));
-  
+  const [buttonText, setButtonText] = useState(
+    isFriendOfUser ? 'Uuuunfollow' : 'Fffolow'
+  );
+  console.log(isFriendOfUser);
+
   const [friendsList, setFriendsList] = useState<Player[]>([]);
 
   useEffect(() => {
@@ -50,7 +52,7 @@ const InfoBlock = ({ player }: { player: Player }) => {
         (response) => {
           console.log(response);
           setIsFriendOfUser(false);
-          
+
           setButtonText('Follow');
           console.log('removed friend');
         },
@@ -103,25 +105,25 @@ const InfoBlock = ({ player }: { player: Player }) => {
         </Typography>
         <Typography>{player.nickname}</Typography>
       </div>
+      {user.nickname !== player.nickname && (
+        <ButtonPong
+          text={buttonText}
+          title={
+            isFriendOfUser
+              ? 'Delete from your friends list'
+              : 'Add to your friends list'
+          }
+          onClick={() => handleFriend()}
+          startIcon={isFriendOfUser ? <PersonOffIcon /> : <PersonAddIcon />}
+        />
+      )}
       <div style={{ marginTop: '21px' }}>
-        {user.nickname !== player.nickname && (
-          <ButtonPong
-            text={buttonText}
-            title={
-              isFriendOfUser
-                ? 'Delete from your friends list'
-                : 'Add to your friends list'
-            }
-            onClick={() => handleFriend()}
-            startIcon={isFriendOfUser ? <PersonOffIcon /> : <PersonAddIcon />}
-          />
-        )}
+        <ButtonPong
+          text="Back"
+          onClick={() => navigate(-1)}
+          startIcon={<ArrowBackIosIcon />}
+        />
       </div>
-      <ButtonPong
-        text="Back"
-        onClick={() => navigate(-1)}
-        startIcon={<ArrowBackIosIcon />}
-      />
     </div>
   );
 };
