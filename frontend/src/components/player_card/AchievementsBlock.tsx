@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import AchievementsListModal from './AchievementsListModal';
-import ButtonPong from '../../UI/ButtonPong';
-import { Player } from '../../../types/Player';
-import { Achievement } from '../../../types/Achievement';
-import backendAPI from '../../../api/axios-instance';
-import errorAlert from '../../UI/errorAlert';
+import ButtonPong from '../UI/ButtonPong';
+import { Player } from '../../types/Player';
+import { Achievement } from '../../types/Achievement';
+import backendAPI from '../../api/axios-instance';
+import errorAlert from '../UI/errorAlert';
 import Typography from '@mui/joy/Typography';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import styles from './PlayerCard.module.css';
@@ -34,21 +34,7 @@ const AchievementsBlock = ({ player }: { player: Player }) => {
       >
         Achievements
       </Typography>
-      {achievements.map((item) => (
-        <Typography
-          key={item.id}
-          title={item.Description}
-          sx={{
-            '&:hover': {
-              transform: 'scale(1.1)',
-              cursor: 'wait'
-            }
-          }}
-        >
-          {item.Name}
-        </Typography>
-      ))}
-      <div style={{ marginTop: '21px' }}>
+      <div>
         <ButtonPong
           text="possible"
           title={'Show all possible achievements'}
@@ -56,6 +42,31 @@ const AchievementsBlock = ({ player }: { player: Player }) => {
           startIcon={<VisibilityIcon />}
         />
         <AchievementsListModal open={open} setOpen={setOpen} />
+      </div>
+      <Typography component="legend">Gained: {achievements.length}</Typography>
+      <div>
+        <Typography
+          level="h1"
+          textColor="rgb(37, 120, 204)"
+          fontWeight="lg"
+          textAlign="left"
+        >
+          Including:
+        </Typography>
+        {achievements.map((item) => (
+          <Typography
+            key={item.id}
+            title={item.Description}
+            sx={{
+              '&:hover': {
+                transform: 'scale(1.1)',
+                cursor: 'wait'
+              }
+            }}
+          >
+            {item.Name}
+          </Typography>
+        ))}
       </div>
     </div>
   );
