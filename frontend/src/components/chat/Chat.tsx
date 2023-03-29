@@ -75,7 +75,6 @@ const Chat = () => {
     setOpen(false);
   };
   const [openP, setOpenPass] = React.useState(false);
-
   const handleClickOpenP = () => {
     setOpenPass(true);
   };
@@ -137,8 +136,8 @@ const Chat = () => {
   };
   const onClickJoinRoom = (roomName: string) => {
     // Notify that the user has clicked on a 'join' button
-    setclickedRoomToJoin(roomName);
     handleClickOpenP();
+    setclickedRoomToJoin(roomName);
     // Check if the corresponding chat room is password protected
     socket.emit(
       'isPasswordProtected',
@@ -146,8 +145,8 @@ const Chat = () => {
       (response: boolean) => {
         setIsPasswordProtected(response);
       }
-    );
-    isPasswordProtected === false ? joinRoom(roomName) : onPasswordSubmit();
+      );
+      isPasswordProtected === false ? joinRoom(roomName) : onPasswordSubmit(null);
   };
   // Join a chatroom if no password has been set
   const joinRoom = (roomName: string) => {
@@ -160,19 +159,21 @@ const Chat = () => {
       );
   };
   // Check if the password is right
-  const onPasswordSubmit = () => {
+  const onPasswordSubmit = (e : any) => {
+    e.preventDefault();
     socket.emit(
       'checkPassword',
       { roomName: clickedRoomToJoin, password: inputPassword },
       (response: boolean) => {
         response === true
-          ? setIsPasswordRight(true)
+          ? setIsPasswordRight(true) 
           : setIsPasswordRight(false);
       }
     );
     if (isPasswordRight) joinRoom(clickedRoomToJoin);
     setInputPassword('');
-    setOpenPass(false);
+    handleClosePass();
+
   };
 
   const getMemberNbr = (room: ChatRoomType) => {
