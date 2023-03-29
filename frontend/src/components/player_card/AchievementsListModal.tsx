@@ -1,12 +1,12 @@
 import { SetStateAction, Dispatch, useEffect, useState } from 'react';
-import { Achievement } from '../../../types/Achievement';
-import backendAPI from '../../../api/axios-instance';
-import errorAlert from '../../UI/errorAlert';
+import { Achievement } from '../../types/Achievement';
+import backendAPI from '../../api/axios-instance';
+import errorAlert from '../UI/errorAlert';
 import Modal from '@mui/joy/Modal';
 import ModalDialog from '@mui/joy/ModalDialog';
 import ModalClose from '@mui/joy/ModalClose';
 import Typography from '@mui/joy/Typography';
-import * as MUI from '../../UI/MUIstyles';
+import * as MUI from '../UI/MUIstyles';
 
 const AchievementsListModal = ({
   open,

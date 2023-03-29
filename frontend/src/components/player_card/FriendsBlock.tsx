@@ -1,15 +1,15 @@
 import { useNavigate, useParams } from 'react-router-dom';
-import ButtonPong from '../../UI/ButtonPong';
+import ButtonPong from '../UI/ButtonPong';
 import { useContext, useEffect, useState } from 'react';
-import { UserContext } from '../../../contexts/UserContext';
-import { Player } from '../../../types/Player';
+import { UserContext } from '../../contexts/UserContext';
+import { Player } from '../../types/Player';
 import Typography from '@mui/joy/Typography';
 import Avatar from '@mui/material/Avatar';
 import PersonSearchIcon from '@mui/icons-material/PersonSearch';
 import styles from './PlayerCard.module.css';
-import backendAPI from '../../../api/axios-instance';
-import errorAlert from '../../UI/errorAlert';
-import * as MUI from '../../UI/MUIstyles';
+import backendAPI from '../../api/axios-instance';
+import errorAlert from '../UI/errorAlert';
+import * as MUI from '../UI/MUIstyles';
 
 const FriendsBlock = ({ player }: { player: Player }) => {
   const navigate = useNavigate();

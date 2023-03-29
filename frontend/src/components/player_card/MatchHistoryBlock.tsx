@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import { Player } from '../../../types/Player';
-import { MatchHistory } from '../../../types/MatchHistory';
-import backendAPI from '../../../api/axios-instance';
-import errorAlert from '../../UI/errorAlert';
+import { Player } from '../../types/Player';
+import { MatchHistory } from '../../types/MatchHistory';
+import backendAPI from '../../api/axios-instance';
+import errorAlert from '../UI/errorAlert';
 import Typography from '@mui/joy/Typography';
 
 const MatchHistoryBlock = ({ player }: { player: Player }) => {
@@ -49,7 +49,6 @@ const MatchHistoryBlock = ({ player }: { player: Player }) => {
         Games played: {matchHistory.played}
       </Typography>
       <Typography
-        mt={2}
         level="h1"
         textColor="rgb(37, 120, 204)"
         fontWeight="lg"

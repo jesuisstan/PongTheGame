@@ -1,16 +1,16 @@
 import { useNavigate } from 'react-router-dom';
-import ButtonPong from '../../UI/ButtonPong';
-import { Player } from '../../../types/Player';
+import ButtonPong from '../UI/ButtonPong';
+import { Player } from '../../types/Player';
 import Typography from '@mui/joy/Typography';
 import Avatar from '@mui/material/Avatar';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import PersonOffIcon from '@mui/icons-material/PersonOff';
 import styles from './PlayerCard.module.css';
-import backendAPI from '../../../api/axios-instance';
-import errorAlert from '../../UI/errorAlert';
+import backendAPI from '../../api/axios-instance';
+import errorAlert from '../UI/errorAlert';
 import { useContext, useEffect, useState } from 'react';
-import { UserContext } from '../../../contexts/UserContext';
+import { UserContext } from '../../contexts/UserContext';
 
 const InfoBlock = ({ player }: { player: Player }) => {
   const navigate = useNavigate();
