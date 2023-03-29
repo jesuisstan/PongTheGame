@@ -18,7 +18,7 @@ const FriendsBlock = ({ player }: { player: Player }) => {
 
   // get the friends list of the Player (not current User!)
   useEffect(() => {
-    backendAPI.get(`/friend/friends`).then(
+    backendAPI.get(`/friend/${player.nickname}`).then(
       (response) => {
         setFriendsList(response.data.friends);
         //console.log(response.data.friends);

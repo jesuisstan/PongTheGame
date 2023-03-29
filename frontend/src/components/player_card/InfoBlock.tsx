@@ -25,10 +25,10 @@ const InfoBlock = ({ player }: { player: Player }) => {
 
   useEffect(() => {
     if (user.nickname !== player.nickname) {
-      backendAPI.get(`/friend/friends`).then(
+      backendAPI.get(`/friend`).then(
         (response) => {
-          let userFriendList: Player[] = response.data.friends;
-          let isFriend = userFriendList.find(
+          let userFriendsList: Player[] = response.data.friends;
+          let isFriend = userFriendsList.find(
             (friend) => friend.nickname === player.nickname
           );
           if (isFriend) {
