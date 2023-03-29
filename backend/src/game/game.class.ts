@@ -353,6 +353,7 @@ export class Game {
         score: 0,
       },
       time: timeInSeconds,
+      reason: 'player left',
     };
     return res;
   }
