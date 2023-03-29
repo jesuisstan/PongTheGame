@@ -30,8 +30,9 @@ model User {
   matchEntries MatchEntry[]
 
   stats       Stats[]
-  friends     Friends[]
-  achievement Achievement[]
+  friends     User[] @relation("Friendslist")
+  friendsOf   User[] @relation("Friendslist")
+  achievement UserAchivement[]
   invitation  MatchInvitation[]
   @@unique([profileId, provider])
 }
