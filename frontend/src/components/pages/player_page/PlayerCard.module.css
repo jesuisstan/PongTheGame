@@ -50,3 +50,20 @@
   align-items: center;
   justify-content: center;
 }
+
+.friendsBlock {
+  min-width: 210px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.friendLine {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 21px;
+  /*min-width: 210px;*/
+}

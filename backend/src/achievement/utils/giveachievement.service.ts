@@ -168,31 +168,36 @@ export class giveAchievementService {
     }
   }
 
-  // async getFriends(user : User){
-  // 	const nb_friends = 0;// TODO do the request
-  // 	if (nb_friends == 1)
-  // 	{
-  // 		await this.prisma.achievement.update({
-  // 			where : {
-  // 				Title : "Get One Friends",
-  // 			},
-  // 			data : {
-  // 				userId : user.id,
-  // 			},
-  // 		});
-  // 	}
-  // 	else if (nb_friends == 42)
-  // 	{
-  // 		await this.prisma.achievement.update({
-  // 			where : {
-  // 				Title : "More Friends",
-  // 			},
-  // 			data : {
-  // 				userId : user.id,
-  // 			},
-  // 		});
-  // 	}
-  // }
+  async getFriends(user: User) {
+    const nb_friends = await this.prisma.user.findUnique({
+      where: {
+        id: user.id,
+      },
+      select: {
+        friends: true,
+      },
+    });
+    if (!nb_friends) return;
+    if (nb_friends.friends.length == 1) {
+      await this.prisma.achievement.update({
+        where: {
+          Title: 'Get One Friend',
+        },
+        data: {
+          userId: user.id,
+        },
+      });
+    } else if (nb_friends.friends.length == 42) {
+      await this.prisma.achievement.update({
+        where: {
+          Title: 'More Friends',
+        },
+        data: {
+          userId: user.id,
+        },
+      });
+    }
+  }
 
   async collector(user: User) {
     const nb_achievements = await this.prisma.userAchivement.findMany({
@@ -242,7 +247,7 @@ export class giveAchievementService {
     if (!user) return;
     await this.playGame(user);
     await this.winGame(user);
-    // getFriends(user);
+    await this.getFriends(user);
     await this.collector(user);
   }
 }

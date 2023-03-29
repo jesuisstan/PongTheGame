@@ -515,6 +515,7 @@ export class Game {
       this._register_game(otherPlayer, leaved, timeInSeconds);
     }
     this._set_players_status('ONLINE');
+    console.log('game end with status aborted');
     this.end();
   }
 

@@ -4,6 +4,7 @@ import { UserContext } from '../../../contexts/UserContext';
 import PleaseLogin from '../PleaseLogin';
 import NotFound from '../NotFound';
 import InfoBlock from './InfoBlock';
+import FriendsBlock from './FriendsBlock';
 import AchievementsBlock from './AchievementsBlock';
 import MatchHistoryBlock from './MatchHistoryBlock';
 import backendAPI from '../../../api/axios-instance';
@@ -20,6 +21,7 @@ const PlayerCard = () => {
     profileId: '',
     provider: '',
     role: '',
+    status: 'OFFLINE',
     username: ''
   });
 
@@ -51,6 +53,7 @@ const PlayerCard = () => {
       </div>
       <div className={styles.playerCard}>
         <InfoBlock player={player} />
+        <FriendsBlock player={player} />
         <AchievementsBlock player={player} />
         <MatchHistoryBlock player={player} />
       </div>

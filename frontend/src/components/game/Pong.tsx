@@ -4,7 +4,6 @@ import { Player_game, Props_game, Game_status } from './game.interface';
 import { drawState } from './utils/gameUtils';
 import ScoreBar from './ScoreBar';
 import styles from './styles/Game.module.css';
-import { useLocation } from 'react-router-dom';
 
 const CANVAS_HEIGHT = 600;
 const CANVAS_WIDTH = 800;
@@ -74,8 +73,10 @@ const Pong = (props: Props_game) => {
 
   const checkGameAborted = () => {
     socket.on('game_aborted', (args) => {
+      console.log(args);
+      
       console.log(args.reason);
-      // TODO need to clear canvas adn change alert for something else
+      props.setGameState(Game_status.ENDED);
     });
   };
 

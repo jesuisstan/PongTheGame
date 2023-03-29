@@ -1,0 +1,13 @@
+Si on fais on mode toi mon pote send retour accept ou autre
+Go cree route avec add / all friends / delete friends
+
+
+// For the delete Complicated
+DO Create a first Gateway for get the data who he want to be friends // With nickname
+DO Send a emit to the people 
+
+If not need to delete the data inside database
+If yes update the status inisde database
+
+With the friends check if the match invitation work
+After this the spectate game

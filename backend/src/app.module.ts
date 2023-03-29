@@ -11,6 +11,7 @@ import { ChatModule } from './chat/chat.module';
 import { GameModule } from './game/game.module';
 import { WebsocketsModule } from './websockets/websockets.module';
 import { StatsModule } from './stats/stats.module';
+import { FriendsModule } from './friends/friends.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { StatsModule } from './stats/stats.module';
     UserModule,
     MatchModule,
     PrismaModule,
+    FriendsModule,
     ChatModule,
     AvatarModule,
     GameModule,

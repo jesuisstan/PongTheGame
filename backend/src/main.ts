@@ -69,6 +69,7 @@ function setupSwagger(app: NestExpressApplication) {
     .addTag('Achivement', 'Manipulate achievement')
     .addTag('Statistique', 'Get statistique from match')
     .addTag('Game', 'Create a game vs a friends')
+    .addTag('Friends', 'Add friends')
     .build();
 
   const swagger = SwaggerModule.createDocument(app, swaggerConfig);

@@ -59,12 +59,6 @@ Table UserAchivement {
   }
 }
 
-Table Friends {
-  user User [not null]
-  friendId Int [pk]
-  addedDate DateTime [default: `now()`, not null]
-}
-
 Table MatchEntry {
   id Int [pk, increment]
   score Int [not null]
@@ -126,8 +120,6 @@ Ref: TotpSecret.userId - User.id
 Ref: UserAchivement.userId > User.id
 
 Ref: UserAchivement.achievementId > Achievements.id
-
-Ref: Friends.friendId > User.id
 
 Ref: MatchEntry.userId > User.id [delete: Cascade]
 
