@@ -161,7 +161,6 @@ const Chat = () => {
   };
   // Check if the password is right
   const onPasswordSubmit = () => {
-    setOpenPass(false);
     socket.emit(
       'checkPassword',
       { roomName: clickedRoomToJoin, password: inputPassword },
@@ -171,9 +170,9 @@ const Chat = () => {
           : setIsPasswordRight(false);
       }
     );
-    if (isPasswordRight) 
-      joinRoom(clickedRoomToJoin);
+    if (isPasswordRight) joinRoom(clickedRoomToJoin);
     setInputPassword('');
+    setOpenPass(false);
   };
 
   const getMemberNbr = (room: ChatRoomType) => {
@@ -207,7 +206,6 @@ const Chat = () => {
   ) : (
       <Box className="basicCard" sx={{ display: 'flex' }}>
         <CssBaseline />
-        {/* TODO: move sx style in css file */}
         <Box component="main" className="chatRoomList">
           {chatRooms.length === 0 ? (
             <Box>
@@ -256,6 +254,7 @@ const Chat = () => {
                               <TextField
                                 autoFocus
                                 margin="dense"
+                                helperText="Password"
                                 id="password"
                                 label="Password"
                                 type="password"
@@ -281,8 +280,7 @@ const Chat = () => {
                           // Slicing the '#' character at position 0 which is
                           // used for private room names
                         }
-                        className="limitText"
-                        sx={{ color: 'white' }}
+                        className="limitText white"
                         />
                       <ListItemIcon sx={{ color: 'white' }}>
                         <ArrowForwardIos />
