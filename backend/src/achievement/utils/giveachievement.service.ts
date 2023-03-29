@@ -7,8 +7,6 @@ export class giveAchievementService {
   constructor(private prisma: PrismaService) {}
 
   async fisrtLogin(user: User) {
-    console.log('First Login' + user.nickname);
-
     await this.prisma.userAchivement.create({
       data: {
         user: {
@@ -27,7 +25,6 @@ export class giveAchievementService {
   }
 
   async custom(user: User) {
-    console.log('First Avatar' + user.nickname);
     await this.prisma.userAchivement.create({
       data: {
         user: {
@@ -57,7 +54,6 @@ export class giveAchievementService {
 
     if (!game) return;
     if (game.nb_game == 1) {
-      console.log('First Game' + user.nickname);
       await this.prisma.userAchivement.create({
         data: {
           user: {
@@ -73,7 +69,6 @@ export class giveAchievementService {
         },
       });
     } else if (game.nb_game == 10) {
-      console.log('Play 10 Games' + user.nickname);
       await this.prisma.userAchivement.create({
         data: {
           user: {
@@ -89,7 +84,6 @@ export class giveAchievementService {
         },
       });
     } else if (game.nb_game == 42) {
-      console.log('Play 42 Games' + user.nickname);
       await this.prisma.userAchivement.create({
         data: {
           user: {
@@ -118,7 +112,6 @@ export class giveAchievementService {
     });
     if (!game) return;
     if (game.nb_win == 1) {
-      console.log('Win One Game' + user.nickname);
       await this.prisma.userAchivement.create({
         data: {
           user: {
@@ -134,7 +127,6 @@ export class giveAchievementService {
         },
       });
     } else if (game.nb_win == 10) {
-      console.log('Win 10 Games' + user.nickname);
       await this.prisma.userAchivement.create({
         data: {
           user: {
@@ -150,7 +142,6 @@ export class giveAchievementService {
         },
       });
     } else if (game.nb_win == 42) {
-      console.log('Win 42 Games' + user.nickname);
       await this.prisma.userAchivement.create({
         data: {
           user: {
@@ -221,7 +212,6 @@ export class giveAchievementService {
       },
     });
     if (nb_achievements.length == 10) {
-      console.log('Achievements everywhere' + user.nickname);
       await this.prisma.userAchivement.create({
         data: {
           user: {
@@ -237,7 +227,6 @@ export class giveAchievementService {
         },
       });
     } else if (nb_achievements.length == 20) {
-      console.log('Achievements everywhere * 2' + user.nickname);
       await this.prisma.userAchivement.create({
         data: {
           user: {
