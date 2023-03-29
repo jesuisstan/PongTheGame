@@ -407,7 +407,7 @@ const ChatRoom = (props: any) => {
 									String(members[nick as any].modes).search('o') === -1}
 									oper={String(members[nick as any].modes).search('o') !== -1} 
 									avatar=""
-									look={false}/>		
+									look={true}/>		
 {/* // If user is oper(=admin), the button to kick users is displayed 
 	// If user is oper(=admin), the button to ban users is displayed 
 	// If user is oper(=admin), the button to unban users is displayed  */}
@@ -501,21 +501,19 @@ const ChatRoom = (props: any) => {
 					</Typography>
 					<Divider />
 					<Grid container spacing={3}>
+						<div></div>
 						<Grid
 							item
+							spacing={3}
 							id="chat-window"
-							xs={12}
-							sx={{
-								height: '50vh'
-							}}
-						>
+							xs={12} >
 					{ 
 // -------------- Begin of display messages --------------
 					messages.length === 0 
 // -------------- If no message: Display "No Message" --------------
 						? <div className='black'>No Message</div>
 // -------------- Else: Display messages --------------
-						: <Stack> {
+						: <Stack className='message-area'> {
 							messages.map((msg, index) => (
 							<div key={index}>
 							{ user.nickname === msg.author.nickname 
@@ -631,8 +629,7 @@ const ChatRoom = (props: any) => {
 					))}</Stack>
 // -------------- End of message display ----------------
 							}
-					</Grid>
-					<div className="chatRoomText">
+					<div className="chat-room-text">
 						<div className='typingButton'>
 						{
 							// Display message to other users if user is currently typing
@@ -655,15 +652,11 @@ const ChatRoom = (props: any) => {
 								/>
 							</FormControl>
 						</Grid>
-						<Grid item xs={1}>
-							<IconButton
-								color="primary"
-								aria-label="send"
-								onClick={onFormSubmit}>
-								<Send />
-							</IconButton>
-						</Grid>
+
 					</div>
+					</Grid>
+					<div></div>
+
 				</Grid>
 			</Box>
 		</div>

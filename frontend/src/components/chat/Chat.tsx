@@ -198,14 +198,14 @@ const Chat = () => {
     setIsPasswordProtected(false);
     setIsPasswordRight(false);
   };
+  // console.log(user.joinedChatRoom + ' ' + clickedRoomToJoin)
   /*************************************************************
    * Render HTML response
   **************************************************************/
-
   return !user.provider ? (
     <PleaseLogin />
   ) : (
-      <Box className="basicCard" sx={{ display: 'flex' }}>
+      <Box className="basicCard">
         <CssBaseline />
         <Box component="main" className="chatRoomList">
           {chatRooms.length === 0 ? (
@@ -241,9 +241,10 @@ const Chat = () => {
                     </ListItemIcon>
                     {clickedRoomToJoin === room.name &&
                       room.modes.indexOf('p') !== -1 && (
+                        // if the room is already joined, don't display the password dialog
                         <>
                           <Dialog
-                            open={openP}
+                          open={openP}
                             onClose={handleClosePass}
                             onSubmit={onPasswordSubmit}
                           >
@@ -255,7 +256,6 @@ const Chat = () => {
                               <TextField
                                 autoFocus
                                 margin="dense"
-                                helperText="Password"
                                 id="password"
                                 label="Password"
                                 type="password"
