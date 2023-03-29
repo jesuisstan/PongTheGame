@@ -5,7 +5,7 @@ import styles from './Pages.module.css';
 const Home = () => {
   return (
     <div className={styles.basicCard}>
-      <div style={{marginTop: '21px'}}>
+      <div style={{ marginTop: '21px' }}>
         <h5>Why?</h5>
         <p>Thanks to this website, you will play Ping-Pong with others</p>
       </div>
@@ -38,13 +38,15 @@ const Home = () => {
           role="Frontend: chat, teammate card template"
           github="https://github.com/BarbaraC12"
         />
+      </div>
+      <div className={styles.aboutCards}>
         <Peer
           style={styles.florian}
           firstName="Florian"
           lastName="Catinaud"
-          description="'Catch phrase'"
+          description="An asshole with a Keyboard"
           intraNickname="fcatinau"
-          role="Backend: player's achievements, token-control..."
+          role="Backend: Game, Friends, Achievements & Stats"
           github="https://github.com/Balgor18"
         />
         <Peer
@@ -53,9 +55,11 @@ const Home = () => {
           lastName="Krivtsoff"
           description="Let's do it! ⚡"
           intraNickname="acaren"
-          role="Frontend: layout, auth, profile, game, stats"
+          role="Frontend: the entire frontend except for the Chat page"
           github="https://github.com/jesuisstan"
         />
+      </div>
+      <div className={styles.aboutCards}>
         <Peer
           style={styles.daisuke}
           firstName="Daisuke"
@@ -63,7 +67,7 @@ const Home = () => {
           description="'Catch phrase'"
           intraNickname="dtanigaw"
           role="Backend: chat, docker-compose..."
-          github="https://github.com/BarbaraC12"
+          github="https://github.com/daisvke"
         />
       </div>
     </div>

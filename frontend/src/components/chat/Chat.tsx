@@ -1,5 +1,5 @@
 import {
-  useContext, useEffect, useState, Fragment, useRef
+  useContext, useEffect, useState, useRef
       } from 'react';
 import * as React from 'react';
 import {
@@ -20,7 +20,6 @@ import PleaseLogin from '../pages/PleaseLogin';
 import { ChatRoomType } from "../../types/chat";
 // personal css
 import './Chat.css';
-
 
 /*************************************************************
  * Chat entrance
@@ -76,6 +75,7 @@ const Chat = () => {
     setOpen(false);
   };
   const [openP, setOpenPass] = React.useState(false);
+
   const handleClickOpenP = () => {
     setOpenPass(true);
   };
@@ -157,10 +157,11 @@ const Chat = () => {
       (response: string) => {
         user.joinedChatRoom = response;
       }
-    );
+      );
   };
   // Check if the password is right
   const onPasswordSubmit = () => {
+    setOpenPass(false);
     socket.emit(
       'checkPassword',
       { roomName: clickedRoomToJoin, password: inputPassword },
@@ -170,7 +171,8 @@ const Chat = () => {
           : setIsPasswordRight(false);
       }
     );
-    if (isPasswordRight) joinRoom(clickedRoomToJoin);
+    if (isPasswordRight) 
+      joinRoom(clickedRoomToJoin);
     setInputPassword('');
   };
 
@@ -203,7 +205,6 @@ const Chat = () => {
   return !user.provider ? (
     <PleaseLogin />
   ) : (
-    <Fragment>
       <Box className="basicCard" sx={{ display: 'flex' }}>
         <CssBaseline />
         {/* TODO: move sx style in css file */}
@@ -232,7 +233,6 @@ const Chat = () => {
                   <ListItem key={index} disablePadding>
                     <ListItemIcon sx={{ color: 'white' }}>
                       {
-                        // TODO => room.modes.indexOf('i') !== -1 ? to find private room
                       room.modes === "p" ? (
                         <LockRounded />
                       ) : room.modes === "i" ? (
@@ -360,7 +360,6 @@ const Chat = () => {
           )}
         </Box>
       </Box>
-    </Fragment>
   );
 };
 
