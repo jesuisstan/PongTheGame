@@ -7,7 +7,7 @@ import {
 import {
 	Box, Button, Divider, FormControl, Grid, IconButton, Stack,
 	Menu, MenuItem,TextField, Typography, CircularProgress,
-	AvatarGroup, FormGroup, FormControlLabel, Switch
+	AvatarGroup, FormGroup, FormControlLabel, Switch, Popper
 			} from '@mui/material';
 
 // personal components
@@ -102,7 +102,10 @@ const ChatRoom = (props: any) => {
       setIsMuted(response)
     }
   )
-
+  socket.emit('saveBlockedUsersToDB', {
+	user: user,
+	blockedUsers: user.blockedUsers
+})
 
   /*************************************************************
    * Event listeners
@@ -235,7 +238,13 @@ const ChatRoom = (props: any) => {
 
   // When clicking on the 'block' button to block a user
   const onBlockClick = (target: string) => {
+	console.log("000You've blocked " + target + "!")
     user.blockedUsers.push(target)
+	socket.emit('saveBlockedUsersToDB', {
+		user: user,
+		blockedUsers: user.blockedUsers
+	})
+	console.log("You've blocked " + target + "!")
   }
   // When clicking on the 'unblock' button to unblock a user
   const onUnBlockClick = (target: string) => {
@@ -345,6 +354,7 @@ const ChatRoom = (props: any) => {
 
   const handleClose = () => {
     setAnchorEl(null);
+	onBlockClick("ppp")
     onReturnClick();
   };
 

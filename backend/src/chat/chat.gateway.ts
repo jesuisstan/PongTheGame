@@ -9,14 +9,20 @@ import {
 import { Server, Socket } from 'socket.io';
 import { ChatService } from './chat.service';
 import { ChatRoomDto, MessageDto } from './dto/chat.dto';
+import { User } from '@prisma/client';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 // Allow requests from the frontend port
 @WebSocketGateway()
 export class ChatGateway {
   @WebSocketServer()
   server: Server;
+  websocket: any;
 
-  constructor(private readonly chatService: ChatService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly chatService: ChatService
+  ) {}
 
   @SubscribeMessage('createMessage')
   createMessage(
@@ -241,5 +247,22 @@ export class ChatGateway {
     @MessageBody('nick') nick: string,
   ) {
     return this.chatService.isUserMuted(roomName, nick);
+  }
+
+  @SubscribeMessage('saveBlockedUsersToDB')
+  async saveBlockedUsersToDB(
+    @MessageBody('user') user: User,
+    @MessageBody('blockedUsers') blockedUsers: string[],
+  ) {
+    const { id } = user;
+    
+    await this.prisma.user.update({
+      data: {
+        blockedUsers,
+      },
+      where: {
+        id,
+      },
+    }) ;
   }
 }
