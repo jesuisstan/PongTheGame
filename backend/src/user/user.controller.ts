@@ -1,6 +1,6 @@
 import {
-  BadRequestException,
   Body,
+  ConflictException,
   Controller,
   Get,
   Logger,
@@ -11,7 +11,12 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { ApiBadRequestResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiConflictResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
 import { User } from '@prisma/client';
 import { IsAuthenticatedGuard } from 'src/auth/auth.guard';
 import { SessionUser } from 'src/decorator/session-user.decorator';
@@ -54,7 +59,10 @@ export class UserController {
   @UsePipes(ValidationPipe)
   @ApiBadRequestResponse({
     description:
-      'The username is already taken, or the payload is not formatted well',
+      'The payload is not formatted well or the nickname does not match SetNicknameDTO conditions',
+  })
+  @ApiConflictResponse({
+    description: 'The nickname is already taken',
   })
   async setNickname(
     @SessionUser() user: User,
@@ -64,7 +72,7 @@ export class UserController {
     const foundUser = await this.users.findUserByNickname(nickname);
 
     if (foundUser !== null)
-      throw new BadRequestException('This nickname is already used');
+      throw new ConflictException('This nickname is already used');
     return await this.users.setUserNickname(user, nickname);
   }
 }

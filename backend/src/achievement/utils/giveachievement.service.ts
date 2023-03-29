@@ -124,7 +124,7 @@ export class giveAchievementService {
     if (nb_friends.friends.length == 1) {
       await this.prisma.achievement.update({
         where: {
-          Title: 'Get One Friends',
+          Title: 'Get One Friend',
         },
         data: {
           userId: user.id,

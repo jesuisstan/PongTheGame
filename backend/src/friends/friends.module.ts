@@ -3,9 +3,11 @@ import { giveAchievementModule } from 'src/achievement/utils/giveachievement.mod
 import { PrismaModule } from 'src/prisma/prisma.module';
 import { WebsocketsModule } from 'src/websockets/websockets.module';
 import { FriendsController } from './friends.controller';
+import { FriendService } from './friends.service';
 
 @Module({
   controllers: [FriendsController],
-  imports: [PrismaModule, WebsocketsModule, giveAchievementModule, GameModule],
+  providers: [FriendService],
+  imports: [PrismaModule, WebsocketsModule, giveAchievementModule],
 })
-export class GameModule {}
+export class FriendsModule {}

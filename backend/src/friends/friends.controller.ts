@@ -24,11 +24,9 @@ import { FriendService } from './friends.service';
 @ApiTags('Friends')
 @UseGuards(IsAuthenticatedGuard)
 export class FriendsController {
-  private readonly frontendUrl: string;
-
   constructor(private readonly friendsService: FriendService) {}
 
-  @Get('friends')
+  @Get('')
   @ApiOperation({
     summary: 'Get all friends',
     parameters: [{ name: 'nickname', in: 'query' }],
@@ -39,7 +37,7 @@ export class FriendsController {
     return this.friendsService.getAllFriendsFromUser(user);
   }
 
-  @Get('friends:nickname')
+  @Get('nickname')
   @ApiOperation({
     summary: 'Get friends by is nickname',
   })
@@ -49,7 +47,7 @@ export class FriendsController {
     return this.friendsService.getFriendsFromNickname(nickname);
   }
 
-  @Post('/friends/add/:nickname')
+  @Post('add/:nickname')
   @ApiOperation({
     summary: 'Add friends',
     parameters: [{ name: 'nickname', in: 'query' }],
@@ -65,7 +63,7 @@ export class FriendsController {
     this.friendsService.addFriendsByNickname(user, nickname);
   }
 
-  @Post('friends/add')
+  @Post('add')
   @ApiOperation({
     summary: 'Add friends',
   })
@@ -76,7 +74,7 @@ export class FriendsController {
     this.friendsService.addFriendsByNickname(user, addFriendDto.nickname);
   }
 
-  @Patch('friends/remove:nickname')
+  @Patch('remove:nickname')
   @ApiOperation({
     summary: 'Remove friends',
     parameters: [{ name: 'nickname', in: 'query' }],
@@ -91,7 +89,7 @@ export class FriendsController {
     this.friendsService.removeFriendsByNickname(user, nickname);
   }
 
-  @Patch('friends/remove')
+  @Patch('remove')
   @ApiOperation({
     summary: 'Remove friends',
   })

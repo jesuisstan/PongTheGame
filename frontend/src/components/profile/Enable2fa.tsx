@@ -7,19 +7,13 @@ import QRCode from 'qrcode';
 import Modal from '@mui/joy/Modal';
 import ModalClose from '@mui/joy/ModalClose';
 import ModalDialog from '@mui/joy/ModalDialog';
-import Stack from '@mui/joy/Stack';
+import Stack from '@mui/material/Stack';
 import Typography from '@mui/joy/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
 import TextField from '@mui/material/TextField';
 import SaveIcon from '@mui/icons-material/Save';
-import styles from './Profile.module.css';
-
-const modalDialogStyle = {
-  maxWidth: 500,
-  border: '0px solid #000',
-  bgcolor: '#f5f5f5ee',
-  borderRadius: '4px'
-};
+import * as MUI from '../UI/MUIstyles';
+import styles from './styles/Profile.module.css';
 
 const Enable2fa = ({
   open,
@@ -113,14 +107,10 @@ const Enable2fa = ({
       >
         <ModalDialog
           aria-labelledby="basic-modal-dialog-title"
-          sx={modalDialogStyle}
+          sx={MUI.modalDialog}
         >
-          <ModalClose />
-          <Typography
-            id="basic-modal-dialog-title"
-            component="h2"
-            sx={{ color: 'black' }}
-          >
+          <ModalClose sx={MUI.modalClose} />
+          <Typography id="basic-modal-dialog-title" sx={MUI.modalHeader}>
             Setting up 2-Step Verification
           </Typography>
           <form onSubmit={handleSubmit}>

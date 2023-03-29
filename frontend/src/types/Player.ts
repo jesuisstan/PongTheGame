@@ -5,5 +5,6 @@ export type Player = {
   profileId: string;
   provider: string;
   role: string;
+  status: string;
   username: string;
 };

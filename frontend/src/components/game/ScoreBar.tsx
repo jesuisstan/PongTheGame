@@ -8,8 +8,6 @@ const ScoreBar = ({
   winScore: number;
   players: Player_game[];
 }) => {
-  console.log(players![1].infos.name);
-
   return (
     <div className={styles.scoreBar}>
       <div className={styles.left}>
