@@ -16,19 +16,14 @@ const InfoBlock = ({ player }: { player: Player }) => {
   const navigate = useNavigate();
   const { user } = useContext(UserContext);
   const [isFriendOfUser, setIsFriendOfUser] = useState(false);
-  const [buttonText, setButtonText] = useState(
-    isFriendOfUser ? 'Uuuunfollow' : 'Fffolow'
-  );
-  console.log(isFriendOfUser);
-
-  const [friendsList, setFriendsList] = useState<Player[]>([]);
 
   useEffect(() => {
     if (user.nickname !== player.nickname) {
+      //backendAPI.get(`/friend`).then( // todo should be? doesn't work
       backendAPI.get(`/friend/friends`).then(
         (response) => {
-          let userFriendList: Player[] = response.data.friends;
-          let isFriend = userFriendList.find(
+          let userFriendsList: Player[] = response.data.friends;
+          let isFriend = userFriendsList.find(
             (friend) => friend.nickname === player.nickname
           );
           if (isFriend) {
@@ -44,17 +39,13 @@ const InfoBlock = ({ player }: { player: Player }) => {
         }
       );
     }
-  }, [buttonText, isFriendOfUser]);
+  }, []);
 
   const handleFriend = () => {
     if (isFriendOfUser) {
       backendAPI.patch(`/friend/remove${player.nickname}`).then(
         (response) => {
-          console.log(response);
           setIsFriendOfUser(false);
-
-          setButtonText('Follow');
-          console.log('removed friend');
         },
         (error) => {
           errorAlert(`Failed to unfollow ${player.nickname}`);
@@ -64,9 +55,6 @@ const InfoBlock = ({ player }: { player: Player }) => {
       backendAPI.post(`/friend/add/${player.nickname}`).then(
         (response) => {
           setIsFriendOfUser(true);
-
-          setButtonText('Unfollow');
-          console.log('added friend');
         },
         (error) => {
           errorAlert(`Failed to follow ${player.nickname}`);
@@ -107,7 +95,7 @@ const InfoBlock = ({ player }: { player: Player }) => {
       </div>
       {user.nickname !== player.nickname && (
         <ButtonPong
-          text={buttonText}
+          text={isFriendOfUser ? 'Unfollow' : 'Follow'}
           title={
             isFriendOfUser
               ? 'Delete from your friends list'

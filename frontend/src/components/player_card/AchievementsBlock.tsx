@@ -43,15 +43,16 @@ const AchievementsBlock = ({ player }: { player: Player }) => {
         />
         <AchievementsListModal open={open} setOpen={setOpen} />
       </div>
-      <Typography
-        level="h1"
-        textColor="rgb(37, 120, 204)"
-        fontWeight="lg"
-        textAlign="left"
-      >
-        Gained:
-      </Typography>
+      <Typography component="legend">Gained: {achievements.length}</Typography>
       <div>
+        <Typography
+          level="h1"
+          textColor="rgb(37, 120, 204)"
+          fontWeight="lg"
+          textAlign="left"
+        >
+          Including:
+        </Typography>
         {achievements.map((item) => (
           <Typography
             key={item.id}
