@@ -14,6 +14,10 @@ import * as MUI from '../UI/MUIstyles';
 import { styled, alpha } from '@mui/material/styles';
 import InputBase from '@mui/material/InputBase';
 import SearchIcon from '@mui/icons-material/Search';
+import FormControl from '@mui/joy/FormControl';
+import FormLabel from '@mui/joy/FormLabel';
+import IconButton from '@mui/material/IconButton';
+import TextField from '@mui/material/TextField';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -61,6 +65,14 @@ const FriendsBlock = ({ player }: { player: Player }) => {
   const navigate = useNavigate();
   const { user } = useContext(UserContext);
   const [friendsList, setFriendsList] = useState<Player[]>([]);
+  const [searchValue, setSearchValue] = useState('');
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchValue(event.target.value);
+  };
+  const [error, setError] = useState('');
+
+  console.log('search for');
+  console.log(searchValue);
 
   // get the friends list of the Player (not current User!)
   useEffect(() => {
@@ -75,7 +87,18 @@ const FriendsBlock = ({ player }: { player: Player }) => {
     );
   }, [player.nickname]);
 
-  const searchFriend = () => {};
+  const searchPlayer = () => {
+    console.log('submit clicked');
+
+    //backendAPI.get(`/friend/search/${searchValue}`).then(
+    //  (response) => {
+    //    setFriendsList(response.data.friends);
+    //  },
+    //  (error) => {
+    //    errorAlert(`Failed to search for ${searchValue}`);
+    //  }
+    //);
+  };
 
   return (
     <div className={styles.friendsBlock}>
@@ -89,15 +112,35 @@ const FriendsBlock = ({ player }: { player: Player }) => {
       </Typography>
       <div>
         {user.nickname === player.nickname && (
-          <Search>
-            <SearchIconWrapper>
-              <SearchIcon />
-            </SearchIconWrapper>
-            <StyledInputBase
-              placeholder="Search…"
-              inputProps={{ 'aria-label': 'search' }}
-            />
-          </Search>
+          <form>
+            <div
+              style={{
+                alignItems: 'center',
+                justifyContent: 'center',
+                maxWidth: '200px',
+                display: 'flex',
+                flexDirection: 'row'
+              }}
+            >
+              <TextField
+                id="search-bar"
+                className="text"
+                onInput={handleSearchChange}
+                label="Enter nickname"
+                variant="outlined"
+                placeholder="Search..."
+                size="small"
+                inputProps={{
+                  'aria-label': 'search',
+                  minLength: 3,
+                  maxLength: 10
+                }}
+              />
+              <IconButton type="submit" aria-label="search">
+                <SearchIcon style={{ fill: 'whitesmoke' }} />
+              </IconButton>
+            </div>
+          </form>
         )}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '21px' }}>
           {friendsList.length ? (

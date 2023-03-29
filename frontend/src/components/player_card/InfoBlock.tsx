@@ -11,6 +11,7 @@ import backendAPI from '../../api/axios-instance';
 import errorAlert from '../UI/errorAlert';
 import { useContext, useEffect, useState } from 'react';
 import { UserContext } from '../../contexts/UserContext';
+import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 
 const InfoBlock = ({ player }: { player: Player }) => {
   const navigate = useNavigate();
@@ -94,16 +95,24 @@ const InfoBlock = ({ player }: { player: Player }) => {
         <Typography>{player.nickname}</Typography>
       </div>
       {user.nickname !== player.nickname && (
-        <ButtonPong
-          text={isFriendOfUser ? 'Unfollow' : 'Follow'}
-          title={
-            isFriendOfUser
-              ? 'Delete from your friends list'
-              : 'Add to your friends list'
-          }
-          onClick={() => handleFriend()}
-          startIcon={isFriendOfUser ? <PersonOffIcon /> : <PersonAddIcon />}
-        />
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          <ButtonPong
+            text={isFriendOfUser ? 'Unfollow' : 'Follow'}
+            title={
+              isFriendOfUser
+                ? 'Delete from your friends list'
+                : 'Add to your friends list'
+            }
+            onClick={() => handleFriend()}
+            startIcon={isFriendOfUser ? <PersonOffIcon /> : <PersonAddIcon />}
+          />
+          <ButtonPong
+            text={'Invite'}
+            title={'Invite for a game'}
+            onClick={() => console.log('invite')}
+            startIcon={<SportsEsportsIcon />}
+          />
+        </div>
       )}
       <div style={{ marginTop: '21px' }}>
         <ButtonPong
