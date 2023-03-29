@@ -22,6 +22,9 @@ services:
     volumes:
       - ./frontend:/frontend
     restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
 
 # ---------------------------------------------------------------------------- #
 
