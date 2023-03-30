@@ -17,6 +17,7 @@ export enum InvitationState {
 export enum TypeMode {
   NORMAL = 'Normal',
   TRAINING = 'Training',
+  CUSTOM = 'Custom',
 }
 
 export interface Position {
@@ -54,7 +55,7 @@ export interface GameInfos {
   paddleHeight: number;
   paddleWidth: number;
   ballRadius: number;
-  WinScore?: number;
+  WinScore: number;
 }
 
 export interface GameState {
@@ -62,4 +63,5 @@ export interface GameState {
   player1: Player;
   player2: Player;
   ball: Ball;
+  obstacle?: Position;
 }
