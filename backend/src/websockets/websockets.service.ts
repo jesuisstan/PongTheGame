@@ -74,8 +74,7 @@ export class WebsocketsService {
       where: { id: id },
     });
     console.log(socket);
-    if (!socket)
-      return ;
+    if (!socket) return;
     socket['user'] = user;
     this.sockets.push(socket);
     return;
