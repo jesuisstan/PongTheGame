@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../contexts/UserContext';
 import { Player } from '../../types/Player';
 import ButtonPong from '../UI/ButtonPong';
+import PongBadge from '../UI/PongBadge';
 import backendAPI from '../../api/axios-instance';
 import errorAlert from '../UI/errorAlert';
 import Typography from '@mui/joy/Typography';
@@ -66,12 +67,14 @@ const InfoBlock = ({ player }: { player: Player }) => {
 
   return (
     <div className={styles.basicInfoBlock}>
-      <Avatar
-        src={player.avatar}
-        alt=""
-        variant="rounded"
-        sx={{ width: 200, height: 200 }}
-      />
+      <PongBadge player={player}>
+        <Avatar
+          src={player.avatar}
+          alt=""
+          variant="circular"
+          sx={{ width: 200, height: 200 }}
+        />
+      </PongBadge>
       <div>
         <Typography
           textColor="rgb(37, 120, 204)"
