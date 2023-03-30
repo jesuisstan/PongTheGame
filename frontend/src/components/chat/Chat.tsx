@@ -103,7 +103,7 @@ const Chat = () => {
     socket.on('createChatRoom', (roomName: string) => {
       console.log('Created new chat room [' + roomName + ']');
     });
-    socket.on('exception', ({ msg }) => {
+    socket.on('exception', (msg: string) => {
       console.log('ERROR: ' + msg);
     });
 
@@ -235,7 +235,7 @@ const Chat = () => {
               <List>
                 {/* Mapping chatroom array to retrieve all chatrooms with */}
                 {chatRooms.map(
-                  (room, index) =>
+                  (room: ChatRoomType, index) =>
                     // Check if this isn't a private conversation of other users
                     isAuthorizedPrivRoom(room.modes, room.users) && (
                       <>

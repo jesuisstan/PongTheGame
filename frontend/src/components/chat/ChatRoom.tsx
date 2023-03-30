@@ -90,14 +90,14 @@ const ChatRoom = (props: any) => {
     })
 
     socket.emit('isUserOper',
-      { roomName: user.joinedChatRoom, nick: user.nickname },
+      { roomName: user.joinedChatRoom, userId: user.id },
       (response: boolean) => {
         setIsOper(response)
       }
     )
 
     socket.emit('isUserMuted',
-    { roomName: user.joinedChatRoom, nick: user.nickname },
+    { roomName: user.joinedChatRoom, userId: user.id },
     (response: boolean) => {
       setIsMuted(response)
     }
@@ -185,13 +185,13 @@ const ChatRoom = (props: any) => {
   const emitTyping = () => {
     socket.emit('typingMessage', {
       roomName: user.joinedChatRoom, 
-      nick: user.nickname,
+      userId: user.id,
       isTyping: true
     });
     timeout = setTimeout(() => {
       socket.emit('typingMessage', {
         roomName: user.joinedChatRoom,
-        nick: user.nickname,
+		userId: user.id,
         isTyping: false
       });
     }, 2000);
@@ -224,7 +224,7 @@ const ChatRoom = (props: any) => {
   const onReturnClick = () => {
     socket.emit('quitRoom', {
       roomName: user.joinedChatRoom,
-      nick: user.nickname
+      userId: user.id,
     })
     props.cleanRoomLoginData()
   }
@@ -321,10 +321,10 @@ const ChatRoom = (props: any) => {
 
   // When clicking on the 'message' button to send a private
   // message to the user
-  const onPrivMessageClick = (user2Id: number) => {
+  const onPrivMessageClick = (user2Id: number, user2Nick: string) => {
     socket.emit('createChatRoom', {
       room: {
-        name: '#' + user.nickname + '/' + user2Id,
+        name: '#' + user.nickname + '/' + user2Nick, /* TODO change to nick */
         modes: '',
         password: '',
         userLimit: 2,
@@ -382,7 +382,7 @@ const ChatRoom = (props: any) => {
 	const [isUserBan, setIsUserBan] = useState<boolean>(false);
 	
 	const isBan = (user: any) => {
-		socket.emit('isUserBanned', { roomName: user.joinedChatRoom, nick: user.id },
+		socket.emit('isUserBanned', { roomName: user.joinedChatRoom, userId: user.id },
 		(response: boolean) => {
 			setIsUserBan(response)
 		}
@@ -530,7 +530,7 @@ const ChatRoom = (props: any) => {
 									messages.map((msg, index) => (
 									<div key={index}>
 										{
-											user.nickname === msg.author.nickname ? (
+											user.id === msg.author.id ? (
 												<>
 													<div className="msgRowR">
 															<div className='msgRight msgBubble'>
@@ -558,7 +558,7 @@ const ChatRoom = (props: any) => {
 														nickname={msg.author.nickname}
 														online={true}
 														admin={false}
-														oper={true} 
+														oper={true}
 														avatar={msg.author.avatar}
 														look={true}/>
 													</Button>
@@ -584,7 +584,7 @@ const ChatRoom = (props: any) => {
 															<IconButton >
 																<VolumeOff className='black'/>
 															</IconButton>
-															<IconButton onClick={() => onPrivMessageClick(msg.author.id) } >
+															<IconButton onClick={() => onPrivMessageClick(msg.author.id, msg.author.nickname) } >
 																<Mail className='black'/>
 															</IconButton>
 															<IconButton onClick={ () =>
@@ -625,7 +625,7 @@ const ChatRoom = (props: any) => {
 																	label="Block "
 																	labelPlacement="start"
 																	onChange={
-																		isUserBlocked(msg.author.nickname) === false 
+																		isUserBlocked(msg.author.id) === false 
 																		? (() => onBlockClick(msg.author.id))
 																		: (() => onUnBlockClick(msg.author.id))}
 																/>
