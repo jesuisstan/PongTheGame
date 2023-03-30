@@ -73,6 +73,8 @@ export class WebsocketsService {
     const user = await this.prismaService.user.findUnique({
       where: { id: id },
     });
+    console.log(socket);
+    if (!socket) return;
     socket['user'] = user;
     this.sockets.push(socket);
     return;
