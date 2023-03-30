@@ -417,7 +417,7 @@ const ChatRoom = (props: any) => {
 									oper={String(members[nick as any].modes).search('o') !== -1} 
 									avatar=""
 									look={false}/>		 */}
-{/* // If user is oper(=admin), the button to kick users is displayed 
+{/* // If user is oper(=admin), the button to kick users is displayed!
 	// If user is oper(=admin), the button to ban users is displayed 
 	// If user is oper(=admin), the button to unban users is displayed  */}
 							{/* { 
