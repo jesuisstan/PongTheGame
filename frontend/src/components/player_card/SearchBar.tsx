@@ -5,6 +5,7 @@ import TextField from '@mui/material/TextField';
 import FormControl from '@mui/joy/FormControl';
 import SearchIcon from '@mui/icons-material/Search';
 import styles from './styles/PlayerCard.module.css';
+import { Params, useParams } from 'react-router-dom';
 
 const SearchBar = () => {
   const { user } = useContext(UserContext);
@@ -13,6 +14,7 @@ const SearchBar = () => {
 
   const handleTextInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = event.target.value;
+
     if (newValue.match(/^[A-Za-z0-9_-]*$/)) {
       setSearchValue(newValue);
       setError('');
@@ -24,9 +26,7 @@ const SearchBar = () => {
   const searchPlayer = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (searchValue === user.nickname) {
-      setError(`It's You. Come on!`);
-    } else if (searchValue !== '') {
+    if (searchValue !== '') {
       window.open(`/players/${searchValue}`);
     }
   };
@@ -47,7 +47,10 @@ const SearchBar = () => {
               inputProps={{
                 'aria-label': 'search',
                 minLength: 3,
-                maxLength: 10
+                maxLength: 10,
+                style: {
+                  color: 'whitesmoke'
+                }
               }}
               error={!!error}
               helperText={error}
