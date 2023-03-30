@@ -28,13 +28,13 @@ const EditNickname = ({
   const [load, setLoad] = useState(false);
   const [buttonText, setButtonText] = useState('Submit');
 
-  const handleTextInput = (event: any) => {
+  const handleTextInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = event.target.value;
-    if (newValue.match(/^[A-zA-Z0-9_-]*$/)) {
+    if (newValue.match(/^[A-Za-z0-9_-]*$/)) {
       setText(newValue);
       setError('');
     } else {
-      setError('Allowed characters are Latin letters, digits, dashes and underscores');
+      setError('Allowed: A-Z _ a-z - 0-9');
     }
   };
 
@@ -83,7 +83,10 @@ const EditNickname = ({
         sx={{ color: 'black' }}
         open={open}
         onClose={(event, reason) => {
-          if (event && reason === 'closeClick') setOpen(false);
+          if (event && reason === 'closeClick') {
+            setError('');
+            setOpen(false);
+          }
         }}
       >
         <ModalDialog

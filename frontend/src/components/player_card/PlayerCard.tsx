@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { UserContext } from '../../contexts/UserContext';
+import { Player } from '../../types/Player';
 import PleaseLogin from '../pages/PleaseLogin';
 import NotFound from '../pages/NotFound';
 import InfoBlock from './InfoBlock';
@@ -9,8 +10,7 @@ import AchievementsBlock from './AchievementsBlock';
 import MatchHistoryBlock from './MatchHistoryBlock';
 import backendAPI from '../../api/axios-instance';
 import errorAlert from '../UI/errorAlert';
-import { Player } from '../../types/Player';
-import styles from './PlayerCard.module.css';
+import styles from './styles/PlayerCard.module.css';
 
 const PlayerCard = () => {
   const { user } = useContext(UserContext);

@@ -12,6 +12,8 @@ import Typography from '@mui/joy/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
 import TextField from '@mui/material/TextField';
 import SaveIcon from '@mui/icons-material/Save';
+import AdbIcon from '@mui/icons-material/Adb';
+import AppleIcon from '@mui/icons-material/Apple';
 import * as MUI from '../UI/MUIstyles';
 import styles from './styles/Profile.module.css';
 
@@ -125,23 +127,33 @@ const Enable2fa = ({
                     href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2&hl=fr&gl=US"
                     target="_blank"
                     rel="noreferrer"
+                    title="Proceed to Google Play"
                   >
-                    <img
-                      className={styles.logo}
-                      src={require('../../assets/androidLogo.png')}
-                      alt=""
+                    <AdbIcon
+                      fontSize="large"
+                      sx={{
+                        color: 'black',
+                        '&:hover': {
+                          color: 'rgba(253, 80, 135, 0.91)'
+                        }
+                      }}
                     />
                   </a>{' '}
-                  /{' '}
+                  or{' '}
                   <a
                     href="https://apps.apple.com/fr/app/google-authenticator/id388497605"
                     target="_blank"
                     rel="noreferrer"
+                    title="Proceed to App Store"
                   >
-                    <img
-                      className={styles.logo}
-                      src={require('../../assets/appleLogo.png')}
-                      alt=""
+                    <AppleIcon
+                      fontSize="large"
+                      sx={{
+                        color: 'black',
+                        '&:hover': {
+                          color: 'rgba(253, 80, 135, 0.91)'
+                        }
+                      }}
                     />
                   </a>
                 </Typography>

@@ -1,17 +1,17 @@
+import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import ButtonPong from '../UI/ButtonPong';
+import { UserContext } from '../../contexts/UserContext';
 import { Player } from '../../types/Player';
+import ButtonPong from '../UI/ButtonPong';
+import backendAPI from '../../api/axios-instance';
+import errorAlert from '../UI/errorAlert';
 import Typography from '@mui/joy/Typography';
 import Avatar from '@mui/material/Avatar';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import PersonOffIcon from '@mui/icons-material/PersonOff';
-import styles from './PlayerCard.module.css';
-import backendAPI from '../../api/axios-instance';
-import errorAlert from '../UI/errorAlert';
-import { useContext, useEffect, useState } from 'react';
-import { UserContext } from '../../contexts/UserContext';
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
+import styles from './styles/PlayerCard.module.css';
 
 const InfoBlock = ({ player }: { player: Player }) => {
   const navigate = useNavigate();
@@ -97,18 +97,16 @@ const InfoBlock = ({ player }: { player: Player }) => {
       {user.nickname !== player.nickname && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
           <ButtonPong
-            text={isFriendOfUser ? 'Unfollow' : 'Follow'}
+            text={isFriendOfUser ? 'Forget' : 'Follow'}
             title={
-              isFriendOfUser
-                ? 'Delete from your friends list'
-                : 'Add to your friends list'
+              isFriendOfUser ? 'Unfollow this player' : 'Follow this player'
             }
             onClick={() => handleFriend()}
             startIcon={isFriendOfUser ? <PersonOffIcon /> : <PersonAddIcon />}
           />
           <ButtonPong
             text={'Invite'}
-            title={'Invite for a game'}
+            title={'Invite to play a game'}
             onClick={() => console.log('invite')}
             startIcon={<SportsEsportsIcon />}
           />
