@@ -98,11 +98,18 @@ export class AchievementService {
     if (!achievement) throw new NotFoundException('User not found');
     const ret: Achievement[] = [];
     for (let i = 0; i < achievement.length; i++) {
-      ret.push(achievement[i].achievement);
+      if (!this.alreadyAchievement(ret, achievement[i].achievement.id))
+        ret.push(achievement[i].achievement);
     }
     return { achievement: ret };
   }
 
+  alreadyAchievement(ret: Achievement[], id: number): boolean {
+    for (let i = 0; i < ret.length; i++) {
+      if (ret[i].id == id) return true;
+    }
+    return false;
+  }
   async addToUser(
     userId: number,
     achievementId: number,
