@@ -6,7 +6,7 @@ import backendAPI from '../../api/axios-instance';
 import errorAlert from '../UI/errorAlert';
 import Typography from '@mui/joy/Typography';
 import IconButton from '@mui/material/IconButton';
-import VisibilityIcon from '@mui/icons-material/Visibility';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import styles from './styles/PlayerCard.module.css';
 
 const AchievementsBlock = ({ player }: { player: Player }) => {
@@ -66,7 +66,7 @@ const AchievementsBlock = ({ player }: { player: Player }) => {
           title={'Show all possible achievements'}
           onClick={() => setOpen(true)}
         >
-          <VisibilityIcon
+          <HelpOutlineIcon
             fontSize="large"
             sx={{
               color: 'black',

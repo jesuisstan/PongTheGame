@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 import { UserContext } from '../../contexts/UserContext';
 import { Player } from '../../types/Player';
 import SearchBar from './SearchBar';
+import PongBadge from '../UI/PongBadge';
 import backendAPI from '../../api/axios-instance';
 import errorAlert from '../UI/errorAlert';
 import Typography from '@mui/joy/Typography';
@@ -14,7 +15,8 @@ const FriendsBlock = ({ player }: { player: Player }) => {
 
   // get the friends list of the Player (not current User!)
   useEffect(() => {
-      backendAPI.get(`/friend/${player.nickname}`).then( // todo should be? doesn't work
+    backendAPI.get(`/friend/${player.nickname}`).then(
+      // todo should be? doesn't work
       (response) => {
         setFriendsList(response.data.friends);
       },
@@ -52,19 +54,21 @@ const FriendsBlock = ({ player }: { player: Player }) => {
                 rel="noreferrer"
               >
                 <div className={styles.friendLine}>
-                  <Avatar
-                    alt=""
-                    src={item.avatar}
-                    variant="rounded"
-                    sx={{
-                      width: 35,
-                      height: 35,
-                      ':hover': {
-                        cursor: 'pointer'
-                      }
-                    }}
-                    title={item.username}
-                  />
+                  <PongBadge player={item}>
+                    <Avatar
+                      alt=""
+                      src={item.avatar}
+                      variant="rounded"
+                      sx={{
+                        width: 35,
+                        height: 35,
+                        ':hover': {
+                          cursor: 'pointer'
+                        }
+                      }}
+                      title={item.username}
+                    />
+                  </PongBadge>
                   <Typography key={item.id} title={item.username}>
                     {item.nickname}
                   </Typography>

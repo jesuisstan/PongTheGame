@@ -10,6 +10,7 @@ import AchievementsBlock from './AchievementsBlock';
 import MatchHistoryBlock from './MatchHistoryBlock';
 import backendAPI from '../../api/axios-instance';
 import errorAlert from '../UI/errorAlert';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 import styles from './styles/PlayerCard.module.css';
 
 const PlayerCard = () => {
