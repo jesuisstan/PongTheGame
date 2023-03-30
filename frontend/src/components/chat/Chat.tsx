@@ -103,7 +103,7 @@ const Chat = () => {
     socket.on('createChatRoom', (roomName: string) => {
       console.log('Created new chat room [' + roomName + ']');
     });
-    socket.on('exception', ({ msg }) => {
+    socket.on('exception', (msg: string) => {
       console.log('ERROR: ' + msg);
     });
 
@@ -133,10 +133,10 @@ const Chat = () => {
           userLimit: 0,
           users: {},
           messages: [],
-          bannedNicks: []
+          bannedUsers: [],
         },
-        nick: user.nickname,
-        user2: ''
+        userId: user.id,
+        user2Id: ''
       });
     setNewChatRoomName('');
     setChatRoomCreateMode(false);
@@ -165,7 +165,7 @@ const Chat = () => {
   const joinRoom = (roomName: string) => {
     socket.emit(
       'joinRoom',
-      { roomName: roomName, nickName: user.nickname },
+      { roomName: roomName, userId: user.id },
       (response: string) => {
         user.joinedChatRoom = response;
       }
@@ -195,7 +195,7 @@ const Chat = () => {
 
   const isAuthorizedPrivRoom = (mode: string, users: any) => {
     if (mode.indexOf('i') !== -1) {
-      for (const nick in users) if (nick === user.nickname) return true;
+      for (const id in users) if (id === String(user.id)) return true;
     } else return true;
     return false;
   };
@@ -235,7 +235,7 @@ const Chat = () => {
               <List>
                 {/* Mapping chatroom array to retrieve all chatrooms with */}
                 {chatRooms.map(
-                  (room, index) =>
+                  (room: ChatRoomType, index) =>
                     // Check if this isn't a private conversation of other users
                     isAuthorizedPrivRoom(room.modes, room.users) && (
                       <>
