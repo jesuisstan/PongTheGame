@@ -48,17 +48,21 @@ const MatchHistoryBlock = ({ player }: { player: Player }) => {
       <Typography component="legend">
         Games played: {matchHistory.played}
       </Typography>
-      <Typography
-        level="h1"
-        textColor="rgb(37, 120, 204)"
-        fontWeight="lg"
-        textAlign="left"
-      >
-        Including:
-      </Typography>
       <div>
-        <Typography component="legend">Wins: {matchHistory.wins}</Typography>
-        <Typography component="legend">Loses: {matchHistory.loses}</Typography>
+        <Typography
+          level="h1"
+          textColor="rgb(37, 120, 204)"
+          fontWeight="lg"
+          textAlign="left"
+        >
+          Including:
+        </Typography>
+        <Typography component="legend" textAlign="left">
+          Wins: {matchHistory.wins}
+        </Typography>
+        <Typography component="legend" textAlign="left">
+          Loses: {matchHistory.loses}
+        </Typography>
       </div>
     </div>
   );

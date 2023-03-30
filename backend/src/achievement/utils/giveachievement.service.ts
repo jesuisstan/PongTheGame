@@ -1,12 +1,30 @@
 import { Injectable } from '@nestjs/common';
-import { User } from '@prisma/client';
+import { User, UserAchivement } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class giveAchievementService {
   constructor(private prisma: PrismaService) {}
 
+  async _checkAlreadyGot(
+    UserId: number,
+    AchievementId: number,
+  ): Promise<boolean> {
+    const res: UserAchivement[] | null =
+      await this.prisma.userAchivement.findMany({
+        where: {
+          userId: UserId,
+          achievementId: AchievementId,
+        },
+      });
+    if (!res) return false;
+    return true;
+  }
+
   async fisrtLogin(user: User) {
+    if (await this._checkAlreadyGot(user.id, 1)) {
+      return;
+    }
     await this.prisma.userAchivement.create({
       data: {
         user: {
@@ -25,6 +43,9 @@ export class giveAchievementService {
   }
 
   async custom(user: User) {
+    if (await this._checkAlreadyGot(user.id, 8)) {
+      return;
+    }
     await this.prisma.userAchivement.create({
       data: {
         user: {
@@ -54,6 +75,9 @@ export class giveAchievementService {
 
     if (!game) return;
     if (game.nb_game == 1) {
+      if (await this._checkAlreadyGot(user.id, 2)) {
+        return;
+      }
       await this.prisma.userAchivement.create({
         data: {
           user: {
@@ -69,6 +93,9 @@ export class giveAchievementService {
         },
       });
     } else if (game.nb_game == 10) {
+      if (await this._checkAlreadyGot(user.id, 3)) {
+        return;
+      }
       await this.prisma.userAchivement.create({
         data: {
           user: {
@@ -84,6 +111,9 @@ export class giveAchievementService {
         },
       });
     } else if (game.nb_game == 42) {
+      if (await this._checkAlreadyGot(user.id, 4)) {
+        return;
+      }
       await this.prisma.userAchivement.create({
         data: {
           user: {
@@ -112,6 +142,9 @@ export class giveAchievementService {
     });
     if (!game) return;
     if (game.nb_win == 1) {
+      if (await this._checkAlreadyGot(user.id, 5)) {
+        return;
+      }
       await this.prisma.userAchivement.create({
         data: {
           user: {
@@ -127,6 +160,9 @@ export class giveAchievementService {
         },
       });
     } else if (game.nb_win == 10) {
+      if (await this._checkAlreadyGot(user.id, 6)) {
+        return;
+      }
       await this.prisma.userAchivement.create({
         data: {
           user: {
@@ -142,6 +178,9 @@ export class giveAchievementService {
         },
       });
     } else if (game.nb_win == 42) {
+      if (await this._checkAlreadyGot(user.id, 7)) {
+        return;
+      }
       await this.prisma.userAchivement.create({
         data: {
           user: {
@@ -170,6 +209,9 @@ export class giveAchievementService {
     });
     if (!nb_friends) return;
     if (nb_friends.friends.length == 1) {
+      if (await this._checkAlreadyGot(user.id, 9)) {
+        return;
+      }
       await this.prisma.userAchivement.create({
         data: {
           user: {
@@ -185,6 +227,9 @@ export class giveAchievementService {
         },
       });
     } else if (nb_friends.friends.length == 42) {
+      if (await this._checkAlreadyGot(user.id, 10)) {
+        return;
+      }
       await this.prisma.userAchivement.create({
         data: {
           user: {
@@ -212,6 +257,9 @@ export class giveAchievementService {
       },
     });
     if (nb_achievements.length == 10) {
+      if (await this._checkAlreadyGot(user.id, 12)) {
+        return;
+      }
       await this.prisma.userAchivement.create({
         data: {
           user: {
@@ -227,6 +275,9 @@ export class giveAchievementService {
         },
       });
     } else if (nb_achievements.length == 20) {
+      if (await this._checkAlreadyGot(user.id, 13)) {
+        return;
+      }
       await this.prisma.userAchivement.create({
         data: {
           user: {
