@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
 import AchievementsListModal from './AchievementsListModal';
-import ButtonPong from '../UI/ButtonPong';
 import { Player } from '../../types/Player';
 import { Achievement } from '../../types/Achievement';
 import backendAPI from '../../api/axios-instance';
 import errorAlert from '../UI/errorAlert';
 import Typography from '@mui/joy/Typography';
+import IconButton from '@mui/material/IconButton';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import styles from './PlayerCard.module.css';
+import styles from './styles/PlayerCard.module.css';
 
 const AchievementsBlock = ({ player }: { player: Player }) => {
   const [open, setOpen] = useState(false);
@@ -34,15 +34,6 @@ const AchievementsBlock = ({ player }: { player: Player }) => {
       >
         Achievements
       </Typography>
-      <div>
-        <ButtonPong
-          text="possible"
-          title={'Show all possible achievements'}
-          onClick={() => setOpen(true)}
-          startIcon={<VisibilityIcon />}
-        />
-        <AchievementsListModal open={open} setOpen={setOpen} />
-      </div>
       <Typography component="legend">Gained: {achievements.length}</Typography>
       <div>
         <Typography
@@ -57,6 +48,7 @@ const AchievementsBlock = ({ player }: { player: Player }) => {
           <Typography
             key={item.id}
             title={item.Description}
+            textAlign="left"
             sx={{
               '&:hover': {
                 transform: 'scale(1.1)',
@@ -67,6 +59,24 @@ const AchievementsBlock = ({ player }: { player: Player }) => {
             {item.Name}
           </Typography>
         ))}
+      </div>
+      <div>
+        <IconButton
+          color="primary"
+          title={'Show all possible achievements'}
+          onClick={() => setOpen(true)}
+        >
+          <VisibilityIcon
+            fontSize="large"
+            sx={{
+              color: 'black',
+              '&:hover': {
+                color: 'rgba(253, 80, 135, 0.91)'
+              }
+            }}
+          />
+        </IconButton>
+        <AchievementsListModal open={open} setOpen={setOpen} />
       </div>
     </div>
   );

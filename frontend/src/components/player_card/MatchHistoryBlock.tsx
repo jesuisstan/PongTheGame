@@ -57,8 +57,12 @@ const MatchHistoryBlock = ({ player }: { player: Player }) => {
         >
           Including:
         </Typography>
-        <Typography component="legend">Wins: {matchHistory.wins}</Typography>
-        <Typography component="legend">Loses: {matchHistory.loses}</Typography>
+        <Typography component="legend" textAlign="left">
+          Wins: {matchHistory.wins}
+        </Typography>
+        <Typography component="legend" textAlign="left">
+          Loses: {matchHistory.loses}
+        </Typography>
       </div>
     </div>
   );

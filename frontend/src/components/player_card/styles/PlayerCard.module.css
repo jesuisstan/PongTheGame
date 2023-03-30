@@ -65,3 +65,14 @@
   gap: 21px;
   /*min-width: 210px;*/
 }
+
+.searchForm {
+  display: flex;
+  flex-direction: row;
+  background-color: rgba(245, 245, 245, 0.65);
+  align-items: center;
+  justify-content: center;
+  padding-bottom: 10px;
+  padding-top: 10px;
+  border-radius: 4px;
+}
