@@ -20,7 +20,7 @@ model User {
   avatar    String?
   profileId String
   provider  String
-  blockedUsers  String[]
+  blockedUsers  Int[]
 
   status        StatusUser @default(ONLINE)
   totpSecret    TotpSecret?

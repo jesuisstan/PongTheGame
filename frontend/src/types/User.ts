@@ -5,7 +5,7 @@ export type User = {
   profileId: string;
   provider: string;
   role: string;
-  blockedUsers: string[];
+  blockedUsers: number[];
   joinedChatRoom: string;
   totpSecret: null | {
     verified: boolean;

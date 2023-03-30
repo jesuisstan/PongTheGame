@@ -33,7 +33,7 @@ const Home = () => {
           style={styles.barbara}
           firstName="Barbara"
           lastName="Cano"
-          description="I made this shit and i wanna die 💀🔫"
+          description="We did it!"
           intraNickname="bcano"
           role="Frontend: chat, teammate card template"
           github="https://github.com/BarbaraC12"
@@ -64,7 +64,7 @@ const Home = () => {
           style={styles.daisuke}
           firstName="Daisuke"
           lastName="Tanigawa"
-          description="'Catch phrase'"
+          description="I agree with everything that Stan says."
           intraNickname="dtanigaw"
           role="Backend: chat, docker-compose..."
           github="https://github.com/daisvke"
