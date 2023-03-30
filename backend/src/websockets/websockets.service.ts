@@ -58,8 +58,7 @@ export class WebsocketsService {
         id: user.id,
         status: 'ONLINE',
       });
-      if (!socket)
-        socket['user'] = user;
+      if (!socket) socket['user'] = user;
       this.sockets.push(socket);
     } catch (e) {
       console.log(e);
