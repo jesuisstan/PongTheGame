@@ -4,6 +4,7 @@ import { WebSocketContext } from './contexts/WebsocketContext';
 import { UserContext } from './contexts/UserContext';
 import MainLayout from './components/UI/MainLayout';
 import Home from './components/pages/Home';
+import About from './components/pages/About';
 import Login from './components/profile/Login';
 import Profile from './components/profile/Profile';
 import Chat from './components/chat/Chat';
@@ -41,6 +42,7 @@ const AppRoutes = () => {
         />
         <Route path="chat" element={<Chat />} />
         <Route path="game" element={<Game />} />
+        <Route path="about" element={<About />} />
         <Route
           path="profile"
           element={user.provider ? <Profile /> : <PleaseLogin />}

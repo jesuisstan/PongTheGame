@@ -18,7 +18,7 @@ a {
 }
 
 a:hover {
-  color: rgba(253, 80, 135, 0.91);
+  color: rgb(253, 80, 135);
 }
 
 h5 {
@@ -36,7 +36,7 @@ h5 {
 }
 
 .active {
-  color: rgb(37, 120, 204);
+  color: rgb(253, 80, 135);
   font-weight: bold;
   text-decoration: underline;
 }

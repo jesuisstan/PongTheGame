@@ -12,8 +12,10 @@ import backendAPI from '../../api/axios-instance';
 import errorAlert from '../UI/errorAlert';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import styles from './styles/PlayerCard.module.css';
+import { WebSocketContext } from '../../contexts/WebsocketContext';
 
 const PlayerCard = () => {
+  const socket = useContext(WebSocketContext);
   const { user } = useContext(UserContext);
   const [player, setPlayer] = useState<Player>({
     avatar: undefined,
@@ -42,6 +44,10 @@ const PlayerCard = () => {
       }
     );
   }, [playerNickname]);
+
+  socket.on('user_status', (args) => {
+    console.log(args);
+  });
 
   return !user.provider ? (
     <PleaseLogin />

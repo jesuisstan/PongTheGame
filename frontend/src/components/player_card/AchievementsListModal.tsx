@@ -7,6 +7,7 @@ import ModalDialog from '@mui/joy/ModalDialog';
 import ModalClose from '@mui/joy/ModalClose';
 import Typography from '@mui/joy/Typography';
 import * as MUI from '../UI/MUIstyles';
+import * as color from '../UI/colorsPong';
 
 const AchievementsListModal = ({
   open,
@@ -48,7 +49,7 @@ const AchievementsListModal = ({
             {achievements.map((item, index) => (
               <Typography key={item.id}>
                 {index + 1}.{' '}
-                <Typography sx={{ color: 'rgb(37, 120, 204)' }}>
+                <Typography sx={{ color: color.PONG_PINK }}>
                   "{item.Name}".{' '}
                   <Typography sx={{ color: 'black' }}>
                     {item.Description}.
