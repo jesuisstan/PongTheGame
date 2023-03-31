@@ -21,7 +21,7 @@ export class ChatGateway {
 
   constructor(
     private readonly prisma: PrismaService,
-    private readonly chatService: ChatService
+    private readonly chatService: ChatService,
   ) {}
 
   @SubscribeMessage('createMessage')
@@ -255,7 +255,7 @@ export class ChatGateway {
     @MessageBody('blockedUsers') blockedUsers: number[],
   ) {
     const { id } = user;
-    
+
     await this.prisma.user.update({
       data: {
         blockedUsers,
@@ -263,6 +263,6 @@ export class ChatGateway {
       where: {
         id,
       },
-    }) ;
+    });
   }
 }
