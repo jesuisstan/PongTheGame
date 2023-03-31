@@ -5,6 +5,7 @@ import {
   Ball,
   GameState,
   KeyEvent,
+  Obstacle,
   Player,
   Position,
   Profile,
@@ -12,7 +13,10 @@ import {
   TypeMode,
 } from './Interface';
 import { User } from '@prisma/client';
-import { convert_state_to_sendable, get_default_game_state } from './create_state';
+import {
+  convert_state_to_sendable,
+  get_default_game_state,
+} from './create_state';
 
 export const Default_params = {
   GAME_WIDTH: 800,
@@ -30,7 +34,7 @@ export const Default_params = {
   GAME_TIME: 300,
   DEFAULT_PADDLE_POSITION: 600 / 2 - 300 / 6 / 2,
   OBSTACLE_HEIGHT: 100 * 2,
-  OBSTACLE_WIDTH: 20,
+  OBSTACLE_WIDTH: 8,
   OBSTACLE_SPEED: 5,
 };
 
@@ -48,7 +52,7 @@ export class Game {
   private type: TypeMode;
   private id_game: number;
   private game_state: GameState;
-  private obstacle? : boolean;
+  private obstacle?: boolean;
   private end: () => void;
 
   constructor(
@@ -60,7 +64,7 @@ export class Game {
     player1: Profile,
     player2?: Profile,
     invitation?: any,
-    obstacle? : boolean,
+    obstacle?: boolean,
   ) {
     this.prisma = prismaService;
     this.websockets = websockets;
@@ -92,7 +96,7 @@ export class Game {
     this._set_players_status('PLAYING');
     this.game_start_time = new Date();
 
-    if (this.type == TypeMode.NORMAL) {
+    if (this.type != TypeMode.TRAINING) {
       if (this.invitation) {
         // await this.prisma.matchInvitation.update({ // TODO update the status
         //   where: {
@@ -132,24 +136,69 @@ export class Game {
     this._game();
   }
 
-  obstacleRun(pos? : Position) {
-    if (!pos)
-      return ;
-    // if (obstacleDirection > 0) {// Go up or down
-      if (pos.y < Default_params.GAME_HEIGHT + Default_params.OBSTACLE_HEIGHT) {
-        pos.y += Default_params.OBSTACLE_SPEED;
+  obstacleRun(obstacle?: Obstacle | undefined) {
+    if (!obstacle) return;
+    if (obstacle.direction > 0) {
+      // Go up or down
+      if (
+        obstacle.position.y <
+        Default_params.GAME_HEIGHT + Default_params.OBSTACLE_HEIGHT
+      ) {
+        obstacle.position.y += Default_params.OBSTACLE_SPEED;
       } else {
-        pos.y = -Default_params.OBSTACLE_HEIGHT;
+        obstacle.position.y = -Default_params.OBSTACLE_HEIGHT;
       }
-    // } else {
-      if (pos.y > -Default_params.OBSTACLE_HEIGHT) {
-        pos.y -= Default_params.OBSTACLE_SPEED;
+    } else {
+      if (obstacle.position.y > -Default_params.OBSTACLE_HEIGHT) {
+        obstacle.position.y -= Default_params.OBSTACLE_SPEED;
       } else {
-        pos.y = Default_params.GAME_HEIGHT + Default_params.OBSTACLE_HEIGHT;
+        obstacle.position.y =
+          Default_params.GAME_HEIGHT + Default_params.OBSTACLE_HEIGHT;
       }
-    // }
-  };
+    }
+    if (
+      (this.game_state.ball.position.x ===
+        obstacle.position.x - Default_params.BALL_RADIUS ||
+        this.game_state.ball.position.x ===
+          obstacle.position.x +
+            Default_params.PADDLE_WIDTH +
+            Default_params.BALL_RADIUS) &&
+      this.game_state.ball.position.y >=
+        obstacle.position.y - Default_params.BALL_RADIUS &&
+      this.game_state.ball.position.y <=
+        obstacle.position.y +
+          Default_params.OBSTACLE_HEIGHT +
+          Default_params.BALL_RADIUS
+    ) {
+      // this.game_state.ball.velocity
+      // ballSpeed.X = -ballSpeed.X;
+      // let deltaY = this.game_state.ball.position.y - (obstacle.position.y + Default_params.OBSTACLE_HEIGHT / 2);
+      // ballSpeed.Y = util.roundToTen(deltaY * 0.35);
+      obstacle.direction *= -1;
+      // obstacleDirection *= -1
+    }
 
+    // Bounce from obstacle's ribs
+    if (
+      this.game_state.ball.position.x >=
+        obstacle.position.x - Default_params.BALL_RADIUS &&
+      this.game_state.ball.position.x <=
+        obstacle.position.x +
+          Default_params.OBSTACLE_WIDTH +
+          Default_params.BALL_RADIUS &&
+      (this.game_state.ball.position.y ===
+        obstacle.position.y - Default_params.BALL_RADIUS ||
+        this.game_state.ball.position.y ===
+          obstacle.position.y +
+            Default_params.OBSTACLE_HEIGHT +
+            Default_params.BALL_RADIUS)
+    ) {
+      obstacle.direction *= -1;
+      // ballSpeed.Y = -ballSpeed.Y;
+      //let deltaX = ballPosition.X - (obstacleX + OBSTACLE_WIDTH / 2);
+      //ballSpeed.X = util.roundToTen(deltaX * 0.35);
+    }
+  }
 
   private _result_string(winner: Player, loser: Player) {
     const res = {
@@ -263,7 +312,7 @@ export class Game {
 
     const res = this._result_string(winner, loser);
     this.websockets.send(this.player1.socket, 'match_result', res);
-    if (this.type == TypeMode.NORMAL)
+    if (this.type != TypeMode.TRAINING)
       this.websockets.send(this.player2?.socket, 'match_result', res);
     const profile_winner: User | undefined = winner.profile?.user;
     const profile_loser: User | undefined = loser.profile?.user;
@@ -334,7 +383,7 @@ export class Game {
       reason: 'player_left',
       result: 'lose',
     });
-    if (this.type == TypeMode.NORMAL)
+    if (this.type != TypeMode.TRAINING)
       this.websockets.send(otherPlayer.profile?.socket, 'game_aborted', {
         reason: 'player_left',
         result: 'win',
@@ -347,7 +396,6 @@ export class Game {
       this._register_game(otherPlayer, leaved, timeInSeconds);
     }
     this._set_players_status('ONLINE');
-    console.log('game end with status aborted');
     this.end();
   }
 
@@ -375,10 +423,9 @@ export class Game {
   }
 
   private _update_state() {
-    if (this.obstacle)
-      this.obstacleRun(this.game_state.obstacle);
+    if (this.obstacle) this.obstacleRun(this.game_state.obstacle);
     this._update_player(this.game_state.player1);
-    if (this.type == TypeMode.NORMAL)
+    if (this.type != TypeMode.TRAINING)
       this._update_player(this.game_state.player2);
     else this._computerAI();
     this._update_ball(this.game_state.ball);
@@ -412,16 +459,15 @@ export class Game {
       this.game_state.gameInfos.paddleWidth,
       this.game_state.gameInfos.paddleHeight,
     );
-    if (this.obstacle){
-      if (!this.game_state.obstacle)
-        return ;
+    if (this.obstacle) {
+      if (!this.game_state.obstacle) return;
       this._check_ball_collide_paddle(
-      ball,
-      ballRadius,
-      this.game_state.obstacle,
-      Default_params.OBSTACLE_WIDTH,
-      Default_params.OBSTACLE_HEIGHT,
-      )
+        ball,
+        ballRadius,
+        this.game_state.obstacle.position,
+        Default_params.OBSTACLE_WIDTH,
+        Default_params.OBSTACLE_HEIGHT,
+      );
     }
   }
 
@@ -618,7 +664,7 @@ export class Game {
     res.player1.current = true;
     this.websockets.send(this.player1.socket, 'match_game_state', res);
     res.player1.current = false;
-    if (this.type == TypeMode.NORMAL) {
+    if (this.type != TypeMode.TRAINING) {
       res.player2.current = true;
       this.websockets.send(this.player2?.socket, 'match_game_state', res);
     }
@@ -626,7 +672,7 @@ export class Game {
 
   private _send_to_players(event: string, data: any) {
     this.websockets.send(this.player1.socket, event, data);
-    if (this.type == TypeMode.NORMAL)
+    if (this.type != TypeMode.TRAINING)
       this.websockets.send(this.player2?.socket, event, data);
   }
 

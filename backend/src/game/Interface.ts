@@ -56,6 +56,13 @@ export interface GameInfos {
   paddleWidth: number;
   ballRadius: number;
   WinScore: number;
+  obstacleHeight?: number;
+  obstacleWidth?: number;
+}
+
+export interface Obstacle {
+  position: Position;
+  direction: number;
 }
 
 export interface GameState {
@@ -63,5 +70,5 @@ export interface GameState {
   player1: Player;
   player2: Player;
   ball: Ball;
-  obstacle?: Position;
+  obstacle?: Obstacle;
 }

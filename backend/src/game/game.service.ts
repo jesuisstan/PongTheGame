@@ -20,7 +20,6 @@ export class GameService {
   ) {}
 
   async join_queue(socket: any) {
-    console.log(socket.user);
     const user: User | null = await this.prisma.user.findUnique({
       where: { id: socket.user.id },
     });
@@ -64,7 +63,7 @@ export class GameService {
       this.websocket,
       this.achievement,
       TypeMode.NORMAL,
-      5,// Get from parameters
+      5, // Get from parameters
       { socket: sockets[0], user: sockets[0].user },
       { socket: sockets[1], user: sockets[1].user },
       this.invitation,
@@ -135,12 +134,10 @@ export class GameService {
         this.prisma,
         this.websocket,
         this.achievement,
-        TypeMode.CUSTOM, // TODO modified  for normal
+        TypeMode.NORMAL,
         5,
         { socket: player1, user: player1.user },
         { socket: player2, user: player2.user },
-        true, // TODO delete this
-        true,// TODO delete this
       );
       this.games.push(game);
       game.start(() => {
