@@ -73,9 +73,6 @@ const Pong = (props: Props_game) => {
 
   const checkGameAborted = () => {
     socket.on('game_aborted', (args) => {
-      console.log(args);
-
-      console.log(args.reason);
       props.setGameState(Game_status.ENDED);
     });
   };
