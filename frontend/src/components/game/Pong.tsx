@@ -42,6 +42,7 @@ const Pong = (props: Props_game) => {
     socket.on('match_game_state', (args) => {
       // if (props.spectator) {
       // For specator mode need to check the current He need to be false for the player1 and player 2
+      console.log(args);
       if (players.length == 0) {
         set_players([
           {
