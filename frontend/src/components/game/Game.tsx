@@ -56,7 +56,6 @@ const Game = () => {
   const endMatch = () => {
     setGameState(Game_status.LOBBY);
   };
-console.log(result);
 
   return !user.provider || (user.provider && !user.nickname) ? (
     <PleaseLogin />

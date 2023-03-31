@@ -53,6 +53,7 @@ export class Game {
   private id_game: number;
   private game_state: GameState;
   private obstacle?: boolean;
+  private people_left: Player;
   private end: () => void;
 
   constructor(
@@ -200,7 +201,7 @@ export class Game {
     }
   }
 
-  private _result_string(winner: Player, loser: Player) {
+  private _result_string(winner: Player, loser: Player, reason: string) {
     const res = {
       winner: {
         id: winner.profile?.user.id,
@@ -214,6 +215,7 @@ export class Game {
         avatar: loser.profile?.user.avatar,
         score: loser.score,
       },
+      reason: reason,
     };
     return res;
   }
@@ -303,7 +305,7 @@ export class Game {
       winner == this.game_state.player1
         ? this.game_state.player2
         : this.game_state.player1;
-    this._register_game(winner, loser, timeInSeconds);
+    this._register_game(winner, loser, timeInSeconds, 'Game Finished');
     this.end();
   }
 
@@ -311,6 +313,7 @@ export class Game {
     winner: Player,
     loser: Player,
     timeInSeconds: number,
+    reason: string,
   ) {
     timeInSeconds;
     // const winnerXP = 50;
@@ -330,8 +333,7 @@ export class Game {
     // }
 
     this._set_players_status('ONLINE');
-
-    const res = this._result_string(winner, loser);
+    const res = this._result_string(winner, loser, reason);
     this.websockets.send(this.player1.socket, 'match_result', res);
     if (this.type != TypeMode.TRAINING)
       this.websockets.send(this.player2?.socket, 'match_result', res);
@@ -400,21 +402,20 @@ export class Game {
       this.game_state.player1.profile?.user.id === leaved.profile?.user.id
         ? this.game_state.player2
         : this.game_state.player1;
-    this.websockets.send(leaved.profile?.socket, 'game_aborted', {
-      reason: 'player_left',
-      result: 'lose',
-    });
-    if (this.type != TypeMode.TRAINING)
-      this.websockets.send(otherPlayer.profile?.socket, 'game_aborted', {
-        reason: 'player_left',
-        result: 'win',
-      });
+    this.people_left = otherPlayer;
+    this.people_left.score = 5;
+    leaved.score = 0;
     this.status = Status.ABORTED;
     if (this.game_start_time) {
       const now = new Date();
       const timePlayed = now.getTime() - this.game_start_time.getTime();
       const timeInSeconds = Math.floor(timePlayed / 1000);
-      this._register_game(otherPlayer, leaved, timeInSeconds);
+      this._register_game(
+        otherPlayer,
+        leaved,
+        timeInSeconds,
+        'Player left the game',
+      );
     }
     this._set_players_status('ONLINE');
     this.end();

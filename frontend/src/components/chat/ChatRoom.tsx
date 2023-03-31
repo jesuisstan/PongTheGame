@@ -113,10 +113,6 @@ const ChatRoom = (props: any) => {
   useEffect(() => {
     // Activate listeners and subscribe to events as the component is mounted
     // socket.on('connect', () => console.log('connected to websocket!'))
-    socket.on(
-      'createMessage',
-      () => console.log('createMessage event received!') 
-    )
     socket.on('typingMessage', (
         roomName: string, userId: number, isTyping: boolean) => {
       roomName === user.joinedChatRoom && isTyping ?
