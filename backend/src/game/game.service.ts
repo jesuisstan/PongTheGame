@@ -63,9 +63,11 @@ export class GameService {
       this.websocket,
       this.achievement,
       TypeMode.NORMAL,
+      5, // Get from parameters
       { socket: sockets[0], user: sockets[0].user },
       { socket: sockets[1], user: sockets[1].user },
       this.invitation,
+      // Add the obstacle if the user want
     );
     this.games.push(game);
 
@@ -102,6 +104,7 @@ export class GameService {
       this.websocket,
       this.achievement,
       TypeMode.TRAINING,
+      5,
       { socket: player, user: player.user },
     );
     this.games.push(game);
@@ -132,6 +135,7 @@ export class GameService {
         this.websocket,
         this.achievement,
         TypeMode.NORMAL,
+        5,
         { socket: player1, user: player1.user },
         { socket: player2, user: player2.user },
       );

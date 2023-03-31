@@ -47,6 +47,42 @@
   min-width: 210px;
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  gap: 21px;
+}
+
+.friendsBlock {
+  min-width: 243px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 21px;
+}
+
+.friendLine {
+  display: flex;
+  flex-direction: row;
+  gap: 21px;
+}
+
+.searchForm {
+  display: flex;
+  flex-direction: row;
   align-items: center;
   justify-content: center;
+  padding-bottom: 10px;
+  padding-top: 10px;
+}
+
+.line {
+  width: 1px;
+  height: 75%;
+  background-color: whitesmoke;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  z-index: -1;
 }

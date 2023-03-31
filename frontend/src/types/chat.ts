@@ -12,18 +12,18 @@ export type ChatRoomType = {
 	password: string;
 	userLimit: number;
 	users: {
-		[nick: string]: {
+		[id: number]: {
 		  isOnline: boolean;
 		  modes: string;
 		}
 	  };
 	messages: Message[];
-	bannedNicks: string[];
+	bannedUsers: number[];
 }
 
 export type MemberType = {
-	[nick: string]: {
+	[userId: number]: {
 		isOnline: boolean;
 		modes: string;
-	  }	
+	  }
 }

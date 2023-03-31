@@ -18,6 +18,7 @@ const App = () => {
     profileId: '',
     provider: '',
     role: '',
+    status: 'OFFLINE',
     totpSecret: null,
     username: '',
     blockedUsers: [],

@@ -1,18 +1,21 @@
 import { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { UserContext } from '../../../contexts/UserContext';
-import PleaseLogin from '../PleaseLogin';
-import NotFound from '../NotFound';
+import { UserContext } from '../../contexts/UserContext';
+import { Player } from '../../types/Player';
+import PleaseLogin from '../pages/PleaseLogin';
+import NotFound from '../pages/NotFound';
 import InfoBlock from './InfoBlock';
 import FriendsBlock from './FriendsBlock';
 import AchievementsBlock from './AchievementsBlock';
 import MatchHistoryBlock from './MatchHistoryBlock';
-import backendAPI from '../../../api/axios-instance';
-import errorAlert from '../../UI/errorAlert';
-import { Player } from '../../../types/Player';
-import styles from './PlayerCard.module.css';
+import backendAPI from '../../api/axios-instance';
+import errorAlert from '../UI/errorAlert';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import styles from './styles/PlayerCard.module.css';
+import { WebSocketContext } from '../../contexts/WebsocketContext';
 
 const PlayerCard = () => {
+  const socket = useContext(WebSocketContext);
   const { user } = useContext(UserContext);
   const [player, setPlayer] = useState<Player>({
     avatar: undefined,
@@ -21,6 +24,7 @@ const PlayerCard = () => {
     profileId: '',
     provider: '',
     role: '',
+    status: 'OFFLINE',
     username: ''
   });
 
@@ -39,7 +43,11 @@ const PlayerCard = () => {
         }
       }
     );
-  }, []);
+  }, [playerNickname]);
+
+  socket.on('user_status', (args) => {
+    console.log(args);
+  });
 
   return !user.provider ? (
     <PleaseLogin />

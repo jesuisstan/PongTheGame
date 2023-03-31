@@ -105,7 +105,7 @@ export class AchievementController {
     ],
   })
   @ApiResponse({ status: 200, description: 'Succes' })
-  @ApiResponse({ status: 400, description: 'User already got the achivement' })
+  // @ApiResponse({ status: 400, description: 'User already got the achivement' })
   @ApiResponse({ status: 401, description: 'Not authorized' })
   @ApiResponse({
     status: 404,

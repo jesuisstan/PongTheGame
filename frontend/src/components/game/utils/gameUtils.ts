@@ -1,7 +1,6 @@
-import { Game_infos, Game_state, Player, Position } from '../game.interface';
+import { Game_infos, Game_state, Obstacle, Player, Position } from '../game.interface';
+import * as color from '../../UI/colorsPong'
 
-const PONG_BLUE = 'rgba(37, 120, 204, 0.5)';
-const PONG_PINK = 'rgb(253, 80, 135)';
 
 export const makeRectangleShape = (
   canvasContext: CanvasRenderingContext2D,
@@ -28,46 +27,46 @@ export const makeCircleShape = (
   canvasContext.fill();
 };
 
-export const printGoal = (
-  canvasContext: CanvasRenderingContext2D,
-  canvasWidth: number,
-  canvasHeight: number
-) => {
-  canvasContext.font = '100px Verdana';
-  canvasContext.fillStyle = 'whitesmoke';
-  canvasContext.beginPath();
-  canvasContext.fillText('G', canvasWidth / 2 - 35, canvasHeight / 4 - 42);
-  canvasContext.fillText(
-    'O',
-    canvasWidth / 2 - 35,
-    (canvasHeight / 4) * 2 - 42
-  );
-  canvasContext.fillText(
-    'A',
-    canvasWidth / 2 - 35,
-    (canvasHeight / 4) * 3 - 42
-  );
-  canvasContext.fillText(
-    'L',
-    canvasWidth / 2 - 35,
-    (canvasHeight / 4) * 4 - 42
-  );
-};
+// export const printGoal = (
+//   canvasContext: CanvasRenderingContext2D,
+//   canvasWidth: number,
+//   canvasHeight: number
+// ) => {
+//   canvasContext.font = '100px Verdana';
+//   canvasContext.fillStyle = 'whitesmoke';
+//   canvasContext.beginPath();
+//   canvasContext.fillText('G', canvasWidth / 2 - 35, canvasHeight / 4 - 42);
+//   canvasContext.fillText(
+//     'O',
+//     canvasWidth / 2 - 35,
+//     (canvasHeight / 4) * 2 - 42
+//   );
+//   canvasContext.fillText(
+//     'A',
+//     canvasWidth / 2 - 35,
+//     (canvasHeight / 4) * 3 - 42
+//   );
+//   canvasContext.fillText(
+//     'L',
+//     canvasWidth / 2 - 35,
+//     (canvasHeight / 4) * 4 - 42
+//   );
+// };
 
-export const printPause = (
-  canvasContext: CanvasRenderingContext2D,
-  canvasWidth: number,
-  canvasHeight: number
-) => {
-  canvasContext.font = '100px Verdana';
-  canvasContext.fillStyle = 'whitesmoke';
-  canvasContext.beginPath();
-  canvasContext.fillText('P', canvasWidth / 6 - 35, canvasHeight / 2);
-  canvasContext.fillText('A', (canvasWidth / 6) * 2 - 35, canvasHeight / 2);
-  canvasContext.fillText('U', (canvasWidth / 6) * 3 - 35, canvasHeight / 2);
-  canvasContext.fillText('S', (canvasWidth / 6) * 4 - 35, canvasHeight / 2);
-  canvasContext.fillText('E', (canvasWidth / 6) * 5 - 35, canvasHeight / 2);
-};
+// export const printPause = (
+//   canvasContext: CanvasRenderingContext2D,
+//   canvasWidth: number,
+//   canvasHeight: number
+// ) => {
+//   canvasContext.font = '100px Verdana';
+//   canvasContext.fillStyle = 'whitesmoke';
+//   canvasContext.beginPath();
+//   canvasContext.fillText('P', canvasWidth / 6 - 35, canvasHeight / 2);
+//   canvasContext.fillText('A', (canvasWidth / 6) * 2 - 35, canvasHeight / 2);
+//   canvasContext.fillText('U', (canvasWidth / 6) * 3 - 35, canvasHeight / 2);
+//   canvasContext.fillText('S', (canvasWidth / 6) * 4 - 35, canvasHeight / 2);
+//   canvasContext.fillText('E', (canvasWidth / 6) * 5 - 35, canvasHeight / 2);
+// };
 
 const drawRect = (
   canvasContext: CanvasRenderingContext2D,
@@ -98,7 +97,7 @@ const drawNet = (
         i,
         2,
         32,
-        PONG_BLUE
+        color.PONG_BLUE_TRANS
       );
     }
   });
@@ -130,6 +129,24 @@ const drawPaddle = (
   );
 };
 
+const drawObstacle = (
+  canvasContext: CanvasRenderingContext2D,
+  color: string,
+  gameInfos: Game_infos,
+  obstacle : Obstacle,
+) => {
+  if (!gameInfos.obstacleHeight || !gameInfos.obstacleWidth)
+    return ;
+  drawRect(
+    canvasContext,
+    color,
+    obstacle.position.x,
+    obstacle.position.y,
+    gameInfos.obstacleWidth,
+    gameInfos.obstacleHeight,
+  );
+};
+
 const drawBall = (
   canvasContext: CanvasRenderingContext2D,
   color: string,
@@ -157,8 +174,10 @@ export const drawState = (state: Game_state, canvasRef: any) => {
   drawNet(canvasContext, canvas.width, canvas.height);
   drawBall(canvasContext, 'whitesmoke', state.ball, state.gameInfos);
 
-  drawPaddle(canvasContext, state.player1, PONG_PINK, state.gameInfos);
-  drawPaddle(canvasContext, state.player2, PONG_PINK, state.gameInfos);
+  if (state.obstacle)
+    drawObstacle(canvasContext, color.PONG_BLUE_TRANS, state.gameInfos, state.obstacle);
+  drawPaddle(canvasContext, state.player1, color.PONG_PINK , state.gameInfos);
+  drawPaddle(canvasContext, state.player2, color.PONG_PINK, state.gameInfos);
   return canvasContext;
 };
 

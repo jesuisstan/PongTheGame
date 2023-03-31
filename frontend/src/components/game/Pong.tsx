@@ -42,6 +42,7 @@ const Pong = (props: Props_game) => {
     socket.on('match_game_state', (args) => {
       // if (props.spectator) {
       // For specator mode need to check the current He need to be false for the player1 and player 2
+      console.log(args);
       if (players.length == 0) {
         set_players([
           {
@@ -73,20 +74,6 @@ const Pong = (props: Props_game) => {
 
   const checkGameAborted = () => {
     socket.on('game_aborted', (args) => {
-      console.log(args.reason);
-      props.setEndMatch({
-          winner: {
-            name: args.winner.nickname,
-            avatar: args.winner.avatar,
-            score: 5,
-          },
-          loser: {
-            name: args.loser.nickname,
-            avatar: args.loser.avatar,
-            score: 0,
-          },
-        duration: args.time,
-      });
       props.setGameState(Game_status.ENDED);
       // TODO need to clear canvas adn change alert for something else
     });
@@ -116,11 +103,7 @@ const Pong = (props: Props_game) => {
   return (
     <div className={styles.canvasBlock}>
       {players.length > 0 && (
-        <ScoreBar
-          winScore={winScore}
-          players={players}
-          //gameOn={gameOn}
-        ></ScoreBar>
+        <ScoreBar winScore={winScore} players={players}></ScoreBar>
       )}
       <canvas
         className={styles.canvas}
