@@ -17,7 +17,7 @@ export class giveAchievementService {
           achievementId: AchievementId,
         },
       });
-    if (!res) return false;
+    if (!res || res?.length == 0) return false;
     return true;
   }
 
