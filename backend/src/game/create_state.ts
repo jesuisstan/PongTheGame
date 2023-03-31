@@ -317,3 +317,17 @@ export function convert_state_to_sendable(
   }
   return res;
 }
+
+export function convert_invitation(socket: any, payload: any) {
+  const res = {
+    from: {
+      nickname: socket.user.nickname,
+      avatar: socket.user.avatar,
+    },
+    gameInfo: {
+      obstacle: payload.obstacle,
+      winscore: payload.winscore,
+    },
+  };
+  return res;
+}

@@ -48,7 +48,7 @@ export class Game {
   private spectator_sockets: any[] = [];
   private start_counter = 5;
   private game_start_time: Date;
-  private invitation?;
+  // private invitation?;
   private type: TypeMode;
   private id_game: number;
   private game_state: GameState;
@@ -63,7 +63,7 @@ export class Game {
     winningScore: number,
     player1: Profile,
     player2?: Profile,
-    invitation?: any,
+    // invitation?: any,
     obstacle?: boolean,
   ) {
     this.prisma = prismaService;
@@ -79,7 +79,7 @@ export class Game {
     );
     this.type = type;
     this._reset_ball(this.game_state.ball);
-    this.invitation = invitation;
+    // this.invitation = invitation;
     this.obstacle = obstacle;
     this.game_state.gameInfos.WinScore = winningScore;
   }
@@ -97,16 +97,16 @@ export class Game {
     this.game_start_time = new Date();
 
     if (this.type != TypeMode.TRAINING) {
-      if (this.invitation) {
-        // await this.prisma.matchInvitation.update({ // TODO update the status
-        //   where: {
-        //     id: this.invitation.id,
-        //   },
-        //   data: {
-        //     status: InvitationState.PLAYING,
-        //   },
-        // });
-      }
+      // if (this.invitation) {
+      // await this.prisma.matchInvitation.update({ // TODO update the status
+      //   where: {
+      //     id: this.invitation.id,
+      //   },
+      //   data: {
+      //     status: InvitationState.PLAYING,
+      //   },
+      // });
+      // }
       const tmp_player: (Profile | undefined)[] = [this.player1, this.player2];
       if (!tmp_player[0] || !tmp_player[1]) return;
       this.id_game = (

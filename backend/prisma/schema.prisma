@@ -33,7 +33,8 @@ model User {
   friends     User[] @relation("Friendslist")
   friendsOf   User[] @relation("Friendslist")
   achievement UserAchivement[]
-  invitation  MatchInvitation[]
+  invitationEmit  MatchInvitation[] @relation("InvitationEmit")
+  invitationReceive   MatchInvitation[] @relation("InvitationReceive")
   @@unique([profileId, provider])
 }
 
@@ -106,13 +107,13 @@ model Match {
 }
 
 model MatchInvitation {
-    id          Int                  @id @default(autoincrement())
-    // createdBy   User                 @relation(fields: [createdById], references: [id])
-    // createdById Int                  
-    sendToId    Int                  
-    sendTo      User                 @relation(fields: [sendToId], references: [id])
-    status      InvitationState @default(Pending)
-
+  id          Int                  @id @default(autoincrement())
+  createdBy   User                 @relation("InvitationEmit", fields: [createdById], references: [id])
+  createdById Int                  @unique
+  sendToId    Int                  @unique
+  sendTo      User                 @relation("InvitationReceive", fields: [sendToId], references: [id])
+  status      InvitationState @default(Pending)
+  // @@unique([createdById, sendToId])
 }
 
 enum InvitationState {
