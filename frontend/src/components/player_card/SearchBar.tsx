@@ -27,7 +27,7 @@ const SearchBar = () => {
     event.preventDefault();
 
     if (searchValue !== '') {
-      window.open(`/players/${searchValue}`);
+      window.location.href = `/players/${searchValue}`;
     }
   };
 

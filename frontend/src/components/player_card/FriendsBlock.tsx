@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 import { UserContext } from '../../contexts/UserContext';
 import { Player } from '../../types/Player';
 import SearchBar from './SearchBar';
-import PongBadge from '../UI/PongBadge';
+import BadgePong from '../UI/BadgePong';
 import backendAPI from '../../api/axios-instance';
 import errorAlert from '../UI/errorAlert';
 import Typography from '@mui/joy/Typography';
@@ -13,18 +13,26 @@ const FriendsBlock = ({ player }: { player: Player }) => {
   const { user } = useContext(UserContext);
   const [friendsList, setFriendsList] = useState<Player[]>([]);
 
-  // get the friends list of the Player (not current User!)
   useEffect(() => {
-    backendAPI.get(`/friend/${player.nickname}`).then(
-      // todo should be? doesn't work
-      (response) => {
-        setFriendsList(response.data.friends);
-      },
-      (error) => {
-        errorAlert(`Failed to get ${player.nickname}'s friends list`);
-      }
-    );
-  }, [player.nickname]);
+    const fetchFriendsList = () => {
+      backendAPI.get(`/friend/${player.nickname}`).then(
+        (response) => {
+          setFriendsList(response.data.friends);
+        },
+        (error) => {
+          errorAlert(`Failed to get ${player.nickname}'s friends list`);
+        }
+      );
+    };
+
+    fetchFriendsList();
+
+    const interval = setInterval(() => {
+      fetchFriendsList();
+    }, 30000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div className={styles.friendsBlock}>
@@ -50,15 +58,14 @@ const FriendsBlock = ({ player }: { player: Player }) => {
               <a
                 key={item.id}
                 href={`/players/${item.nickname}`}
-                target="_blank"
                 rel="noreferrer"
               >
                 <div className={styles.friendLine}>
-                  <PongBadge player={item}>
+                  <BadgePong player={item}>
                     <Avatar
                       alt=""
                       src={item.avatar}
-                      variant="rounded"
+                      variant="circular"
                       sx={{
                         width: 35,
                         height: 35,
@@ -68,7 +75,7 @@ const FriendsBlock = ({ player }: { player: Player }) => {
                       }}
                       title={item.username}
                     />
-                  </PongBadge>
+                  </BadgePong>
                   <Typography key={item.id} title={item.username}>
                     {item.nickname}
                   </Typography>
