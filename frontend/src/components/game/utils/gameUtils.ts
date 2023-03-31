@@ -1,8 +1,6 @@
 import { Game_infos, Game_state, Obstacle, Player, Position } from '../game.interface';
+import * as color from '../../UI/colorsPong'
 
-const PONG_BLUE = 'rgba(37, 120, 204, 0.5)';
-const PONG_PINK = 'rgb(253, 80, 135)';
-const PONG_OBSTACLE = 'rgba(110, 149, 247, 0.5)';
 
 export const makeRectangleShape = (
   canvasContext: CanvasRenderingContext2D,
@@ -99,7 +97,7 @@ const drawNet = (
         i,
         2,
         32,
-        PONG_BLUE
+        color.PONG_BLUE_TRANS
       );
     }
   });
@@ -177,9 +175,9 @@ export const drawState = (state: Game_state, canvasRef: any) => {
   drawBall(canvasContext, 'whitesmoke', state.ball, state.gameInfos);
 
   if (state.obstacle)
-    drawObstacle(canvasContext, PONG_OBSTACLE, state.gameInfos, state.obstacle);
-  drawPaddle(canvasContext, state.player1, PONG_PINK, state.gameInfos);
-  drawPaddle(canvasContext, state.player2, PONG_PINK, state.gameInfos);
+    drawObstacle(canvasContext, color.PONG_BLUE_TRANS, state.gameInfos, state.obstacle);
+  drawPaddle(canvasContext, state.player1, color.PONG_PINK , state.gameInfos);
+  drawPaddle(canvasContext, state.player2, color.PONG_PINK, state.gameInfos);
   return canvasContext;
 };
 

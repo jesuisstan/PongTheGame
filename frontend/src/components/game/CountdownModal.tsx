@@ -8,6 +8,7 @@ import Stack from '@mui/material/Stack';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import * as MUI from '../UI/MUIstyles';
+import * as color from '../UI/colorsPong'
 
 const modalDialogStyle = {
   width: 'auto',
@@ -16,8 +17,6 @@ const modalDialogStyle = {
   bgcolor: '#f5f5f5ee',
   borderRadius: '4px'
 };
-
-const COLOR_PINK = 'rgb(253, 80, 135)';
 
 interface CountdownProps {
   open: boolean;
@@ -62,12 +61,12 @@ const CountdownModal = (props: CountdownProps) => {
             <CircularProgress
               variant="determinate"
               value={progress * 100}
-              sx={{ color: COLOR_PINK, marginTop: '10px' }}
+              sx={{ color: color.PONG_PINK, marginTop: '10px' }}
             />
             <Typography>{remainingSeconds - 1} sec.</Typography>
             <Typography textAlign="center">
-              Use <KeyboardArrowUpIcon sx={{ color: COLOR_PINK }} /> and{' '}
-              <KeyboardArrowDownIcon sx={{ color: COLOR_PINK }} /> keys to move
+              Use <KeyboardArrowUpIcon sx={{ color: color.PONG_PINK }} /> and{' '}
+              <KeyboardArrowDownIcon sx={{ color: color.PONG_PINK }} /> keys to move
               the paddle
             </Typography>
           </Stack>
