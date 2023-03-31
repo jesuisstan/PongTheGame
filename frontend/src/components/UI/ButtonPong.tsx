@@ -21,7 +21,7 @@ const ButtonPong = ({
         minWidth: '121px',
         backgroundColor: 'black',
         ':hover': {
-          backgroundColor: 'rgba(253, 80, 135, 0.6)',
+          backgroundColor: 'rgb(253, 80, 135)',
           color: 'black',
           fontWeight: 'Bold'
         }
