@@ -56,7 +56,6 @@ const Game = () => {
   const endMatch = () => {
     setGameState(Game_status.LOBBY);
   };
-console.log(result);
 
   return !user.provider || (user.provider && !user.nickname) ? (
     <PleaseLogin />
@@ -96,7 +95,7 @@ console.log(result);
             players={players}
             gameState={gameState}
             setGameState={setGameState}
-            endMatch={endMatch}
+            setEndMatch={endMatch}
           />
         )}
         {gameState === Game_status.SPECTATE && (
@@ -104,7 +103,7 @@ console.log(result);
             spectator={true}
             gameState={gameState}
             setGameState={setGameState}
-            endMatch={endMatch}
+            setEndMatch={endMatch}
           />
         )}
       </div>

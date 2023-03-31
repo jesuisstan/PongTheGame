@@ -172,7 +172,7 @@ export class giveAchievementService {
           },
           achievement: {
             connect: {
-              Title: "'Win 10 Games",
+              Title: 'Win 10 Games',
             },
           },
         },
