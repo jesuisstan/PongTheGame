@@ -75,7 +75,7 @@ const Pong = (props: Props_game) => {
   const checkGameAborted = () => {
     socket.on('game_aborted', (args) => {
       console.log(args);
-      
+
       console.log(args.reason);
       props.setGameState(Game_status.ENDED);
     });
@@ -105,11 +105,7 @@ const Pong = (props: Props_game) => {
   return (
     <div className={styles.canvasBlock}>
       {players.length > 0 && (
-        <ScoreBar
-          winScore={winScore}
-          players={players}
-          //gameOn={gameOn}
-        ></ScoreBar>
+        <ScoreBar winScore={winScore} players={players}></ScoreBar>
       )}
       <canvas
         className={styles.canvas}

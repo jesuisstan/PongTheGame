@@ -65,7 +65,7 @@ const CountdownModal = (props: CountdownProps) => {
               sx={{ color: COLOR_PINK, marginTop: '10px' }}
             />
             <Typography>{remainingSeconds - 1} sec.</Typography>
-            <Typography>
+            <Typography textAlign="center">
               Use <KeyboardArrowUpIcon sx={{ color: COLOR_PINK }} /> and{' '}
               <KeyboardArrowDownIcon sx={{ color: COLOR_PINK }} /> keys to move
               the paddle
