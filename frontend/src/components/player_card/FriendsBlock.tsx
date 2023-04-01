@@ -9,6 +9,7 @@ import Typography from '@mui/joy/Typography';
 import Avatar from '@mui/material/Avatar';
 import IconButton from '@mui/material/IconButton';
 import RefreshIcon from '@mui/icons-material/Refresh';
+import * as color from '../UI/colorsPong';
 import styles from './styles/PlayerCard.module.css';
 
 const FriendsBlock = ({
@@ -39,7 +40,7 @@ const FriendsBlock = ({
   return (
     <div className={styles.friendsBlock}>
       <Typography
-        textColor="rgb(37, 120, 204)"
+        textColor={color.PONG_BLUE}
         level="body3"
         textTransform="uppercase"
         fontWeight="lg"
@@ -100,7 +101,7 @@ const FriendsBlock = ({
             sx={{
               color: 'black',
               '&:hover': {
-                color: 'rgba(253, 80, 135, 0.91)'
+                color: color.PONG_PINK
               }
             }}
           />

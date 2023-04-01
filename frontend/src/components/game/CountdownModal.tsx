@@ -8,7 +8,7 @@ import Stack from '@mui/material/Stack';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import * as MUI from '../UI/MUIstyles';
-import * as color from '../UI/colorsPong'
+import * as color from '../UI/colorsPong';
 
 const modalDialogStyle = {
   width: 'auto',
@@ -64,10 +64,16 @@ const CountdownModal = (props: CountdownProps) => {
               sx={{ color: color.PONG_PINK, marginTop: '10px' }}
             />
             <Typography>{remainingSeconds - 1} sec.</Typography>
-            <Typography textAlign="center">
+            <Typography
+              textAlign="center"
+              sx={{
+                whiteSpace: 'pre'
+              }}
+            >
               Use <KeyboardArrowUpIcon sx={{ color: color.PONG_PINK }} /> and{' '}
-              <KeyboardArrowDownIcon sx={{ color: color.PONG_PINK }} /> keys to move
-              the paddle
+              <KeyboardArrowDownIcon sx={{ color: color.PONG_PINK }} /> keys{' '}
+              {'\n'}
+              to move the paddle
             </Typography>
           </Stack>
         </ModalDialog>

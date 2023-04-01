@@ -1,5 +1,5 @@
 import { Game_infos, Game_state, Obstacle, Player, Position } from '../game.interface';
-import * as color from '../../UI/colorsPong'
+import * as colorPong from '../../UI/colorsPong'
 
 
 export const makeRectangleShape = (
@@ -33,7 +33,7 @@ export const makeCircleShape = (
 //   canvasHeight: number
 // ) => {
 //   canvasContext.font = '100px Verdana';
-//   canvasContext.fillStyle = 'whitesmoke';
+//   canvasContext.fillStyle = colorPong.PONG_WHITE;
 //   canvasContext.beginPath();
 //   canvasContext.fillText('G', canvasWidth / 2 - 35, canvasHeight / 4 - 42);
 //   canvasContext.fillText(
@@ -97,7 +97,7 @@ const drawNet = (
         i,
         2,
         32,
-        color.PONG_BLUE_TRANS
+        colorPong.PONG_BLUE_TRANS
       );
     }
   });
@@ -112,7 +112,7 @@ const drawPaddle = (
   if (player.current) {
     drawRect(
       canvasContext,
-      'whitesmoke',
+      colorPong.PONG_WHITE,
       player.paddle.x - 2,
       player.paddle.y - 2,
       gameInfos.paddleWidth + 4,
@@ -172,12 +172,12 @@ export const drawState = (state: Game_state, canvasRef: any) => {
   canvasContext.rect(0, 0, canvas.width, canvas.height);
   canvasContext.fill();
   drawNet(canvasContext, canvas.width, canvas.height);
-  drawBall(canvasContext, 'whitesmoke', state.ball, state.gameInfos);
+  drawBall(canvasContext, colorPong.PONG_WHITE, state.ball, state.gameInfos);
 
   if (state.obstacle)
-    drawObstacle(canvasContext, color.PONG_BLUE_TRANS, state.gameInfos, state.obstacle);
-  drawPaddle(canvasContext, state.player1, color.PONG_PINK , state.gameInfos);
-  drawPaddle(canvasContext, state.player2, color.PONG_PINK, state.gameInfos);
+    drawObstacle(canvasContext, colorPong.PONG_BLUE_TRANS, state.gameInfos, state.obstacle);
+  drawPaddle(canvasContext, state.player1, colorPong.PONG_PINK , state.gameInfos);
+  drawPaddle(canvasContext, state.player2, colorPong.PONG_PINK, state.gameInfos);
   return canvasContext;
 };
 

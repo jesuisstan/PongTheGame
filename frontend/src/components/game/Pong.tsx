@@ -71,8 +71,10 @@ const Pong = (props: Props_game) => {
 
   const checkGameAborted = () => {
     socket.on('game_aborted', (args) => {
+      console.log('args')
+      console.log(args)
+
       props.setGameState(Game_status.ENDED);
-      // TODO need to clear canvas adn change alert for something else
     });
   };
 

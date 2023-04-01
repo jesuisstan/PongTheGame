@@ -7,7 +7,9 @@ import ModalClose from '@mui/joy/ModalClose';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/joy/Typography';
 import Avatar from '@mui/material/Avatar';
+import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import * as MUI from '../UI/MUIstyles';
+import * as color from '../UI/colorsPong';
 import styles from './styles/VictoryModal.module.css';
 
 const VictoryModal = ({
@@ -22,7 +24,7 @@ const VictoryModal = ({
   gameResult: Game_result | null;
 }) => {
   const navigate = useNavigate();
-
+  console.log(gameResult); //todo
   return (
     <div>
       <Modal
@@ -48,8 +50,10 @@ const VictoryModal = ({
             <Typography
               sx={{ color: 'black', textAlign: 'center', marginTop: '10px' }}
             >
-              {gameResult?.winner.name ? gameResult?.winner.name : 'Artificial Intelligence'} wins
-              the round
+              {gameResult?.winner.name
+                ? gameResult?.winner.name
+                : 'Artificial Intelligence'}{' '}
+              wins the round
             </Typography>
             <div className={styles.scoreBlock}>
               <Avatar
@@ -88,6 +92,24 @@ const VictoryModal = ({
                 }}
               />
             </div>
+            {gameResult?.reason === 'Player left the game' && (
+              <Typography
+                sx={{
+                  color: 'black',
+                  textAlign: 'center',
+                  marginTop: '10px',
+                  whiteSpace: 'pre'
+                }}
+              >
+                <WarningAmberIcon
+                  fontSize="large"
+                  sx={{ color: color.PONG_PINK }}
+                />
+                {'\n'}
+                {gameResult?.loser.name} left the game {'\n'}
+                and receives technical lose
+              </Typography>
+            )}
           </Stack>
         </ModalDialog>
       </Modal>

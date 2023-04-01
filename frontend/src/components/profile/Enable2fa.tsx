@@ -15,6 +15,7 @@ import SaveIcon from '@mui/icons-material/Save';
 import AdbIcon from '@mui/icons-material/Adb';
 import AppleIcon from '@mui/icons-material/Apple';
 import * as MUI from '../UI/MUIstyles';
+import * as color from '../UI/colorsPong'
 import styles from './styles/Profile.module.css';
 
 const Enable2fa = ({
@@ -117,7 +118,7 @@ const Enable2fa = ({
           </Typography>
           <form onSubmit={handleSubmit}>
             <Stack spacing={2}>
-              <Typography component="h3" sx={{ color: 'rgb(37, 120, 204)' }}>
+              <Typography component="h3" sx={{ color: color.PONG_BLUE }}>
                 Configuring Google Authenticator
               </Typography>
               <Stack spacing={1}>
@@ -134,7 +135,7 @@ const Enable2fa = ({
                       sx={{
                         color: 'black',
                         '&:hover': {
-                          color: 'rgba(253, 80, 135, 0.91)'
+                          color: color.PONG_PINK
                         }
                       }}
                     />
@@ -151,7 +152,7 @@ const Enable2fa = ({
                       sx={{
                         color: 'black',
                         '&:hover': {
-                          color: 'rgba(253, 80, 135, 0.91)'
+                          color: color.PONG_PINK
                         }
                       }}
                     />
@@ -166,7 +167,7 @@ const Enable2fa = ({
                 </Typography>
               </Stack>
               <div>
-                <Typography component="h3" sx={{ color: 'rgb(37, 120, 204)' }}>
+                <Typography component="h3" sx={{ color: color.PONG_BLUE }}>
                   Scan QR Code
                 </Typography>
                 <div className={styles.QRbox}>
@@ -186,7 +187,7 @@ const Enable2fa = ({
                 </div>
               </div>
               <div>
-                <Typography component="h3" sx={{ color: 'rgb(37, 120, 204)' }}>
+                <Typography component="h3" sx={{ color: color.PONG_BLUE }}>
                   Verify Code
                 </Typography>
               </div>

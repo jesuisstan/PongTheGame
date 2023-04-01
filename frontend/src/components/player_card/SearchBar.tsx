@@ -5,7 +5,7 @@ import TextField from '@mui/material/TextField';
 import FormControl from '@mui/joy/FormControl';
 import SearchIcon from '@mui/icons-material/Search';
 import styles from './styles/PlayerCard.module.css';
-import { Params, useParams } from 'react-router-dom';
+import * as color from '../UI/colorsPong';
 
 const SearchBar = () => {
   const { user } = useContext(UserContext);
@@ -49,7 +49,7 @@ const SearchBar = () => {
                 minLength: 3,
                 maxLength: 10,
                 style: {
-                  color: 'whitesmoke'
+                  color: color.PONG_WHITE
                 }
               }}
               error={!!error}
@@ -63,7 +63,7 @@ const SearchBar = () => {
               sx={{
                 color: 'black',
                 '&:hover': {
-                  color: 'rgba(253, 80, 135, 0.91)'
+                  color: color.PONG_PINK
                 }
               }}
             />

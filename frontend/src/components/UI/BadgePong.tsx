@@ -1,6 +1,7 @@
 import { Player } from '../../types/Player';
 import Badge from '@mui/material/Badge';
 import { styled } from '@mui/material/styles';
+import * as colorPong from '../UI/colorsPong';
 
 interface PongBadgeProps {
   color?: string;
@@ -13,7 +14,7 @@ const BadgePong = ({ color, pulse, player, children }: PongBadgeProps) => {
   const badgeColor = color
     ? color
     : player.status === 'PLAYING'
-    ? 'rgb(37, 120, 204)'
+    ? colorPong.PONG_BLUE
     : player.status === 'ONLINE'
     ? 'green'
     : 'red';

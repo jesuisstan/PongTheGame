@@ -4,6 +4,7 @@ import { MatchHistory } from '../../types/MatchHistory';
 import backendAPI from '../../api/axios-instance';
 import errorAlert from '../UI/errorAlert';
 import Typography from '@mui/joy/Typography';
+import * as color from '../UI/colorsPong';
 
 const MatchHistoryBlock = ({
   player,
@@ -44,7 +45,7 @@ const MatchHistoryBlock = ({
       }}
     >
       <Typography
-        textColor="rgb(37, 120, 204)"
+        textColor={color.PONG_BLUE}
         level="body3"
         textTransform="uppercase"
         fontWeight="lg"
@@ -57,7 +58,7 @@ const MatchHistoryBlock = ({
       <div>
         <Typography
           level="h1"
-          textColor="rgb(37, 120, 204)"
+          textColor={color.PONG_BLUE}
           fontWeight="lg"
           textAlign="left"
         >

@@ -80,16 +80,14 @@ export interface Game_result {
 		name: string;
 		avatar: string;
 		score: number;
-		position: 1 | 2;
 	};
 	loser: {
 		id: number;
 		name: string;
 		avatar: string;
 		score: number;
-		position: 1 | 2;
 	};
-	duration: number;
+	reason: string;
 }
 
 export interface Player_info {
