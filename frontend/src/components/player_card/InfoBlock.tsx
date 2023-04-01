@@ -13,11 +13,31 @@ import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import PersonOffIcon from '@mui/icons-material/PersonOff';
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 import styles from './styles/PlayerCard.module.css';
+import { WebSocketContext } from '../../contexts/WebsocketContext';
 
 const InfoBlock = ({ player }: { player: Player }) => {
   const navigate = useNavigate();
   const { user } = useContext(UserContext);
+  const socket = useContext(WebSocketContext);
   const [isFriendOfUser, setIsFriendOfUser] = useState(false);
+
+  function inviteFriendsCustom(nickname : string){
+    console.log("Create a modal for the user can select the winning score && if he want the obstacle");
+
+    // Send a socket to the back with info :
+    // winscore
+    // obstacle : true of false
+    // Name of the people he invite
+
+    // When the user press to button of the modal after selected the config of the game
+
+    socket.emit('match_get_invitation', {winscore : 5 , obstacle : false, nickname : nickname}) // The second argument is TMP
+    // The other user is gonne get the notification on the request 'invitation_game' // He have to accept or decline the game
+  }
+
+  socket.on("match_invitation_error", (args) => {
+      // If a error occurs
+  })
 
   useEffect(() => {
     if (user.nickname !== player.nickname) {
@@ -109,7 +129,7 @@ const InfoBlock = ({ player }: { player: Player }) => {
           <ButtonPong
             text={'Invite'}
             title={'Invite to play a game'}
-            onClick={() => console.log('invite')}
+            onClick={() => inviteFriendsCustom(player.nickname)}
             startIcon={<SportsEsportsIcon />}
           />
         </div>

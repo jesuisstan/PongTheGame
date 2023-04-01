@@ -1,8 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { WebsocketsService } from 'src/websockets/websockets.service';
 import { giveAchievementService } from 'src/achievement/utils/giveachievement.service';
-import { Socket } from 'socket.io';
 import { User } from '@prisma/client';
 @Injectable()
 export class FriendService {

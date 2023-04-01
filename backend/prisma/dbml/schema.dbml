@@ -18,7 +18,8 @@ Table User {
   friends User [not null]
   friendsOf User [not null]
   achievement UserAchivement [not null]
-  invitation MatchInvitation [not null]
+  invitationEmit MatchInvitation [not null]
+  invitationReceive MatchInvitation [not null]
 
   indexes {
     (profileId, provider) [unique]
@@ -80,7 +81,9 @@ Table Match {
 
 Table MatchInvitation {
   id Int [pk, increment]
-  sendToId Int [not null]
+  createdBy User [not null]
+  createdById Int [unique, not null]
+  sendToId Int [unique, not null]
   sendTo User [not null]
   status InvitationState [not null, default: 'Pending']
 }
@@ -126,5 +129,7 @@ Ref: UserAchivement.achievementId > Achievements.id
 Ref: MatchEntry.userId > User.id [delete: Cascade]
 
 Ref: MatchEntry.matchId > Match.id [delete: Cascade]
+
+Ref: MatchInvitation.createdById > User.id
 
 Ref: MatchInvitation.sendToId > User.id
