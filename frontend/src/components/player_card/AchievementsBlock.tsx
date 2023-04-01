@@ -9,7 +9,13 @@ import IconButton from '@mui/material/IconButton';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import styles from './styles/PlayerCard.module.css';
 
-const AchievementsBlock = ({ player }: { player: Player }) => {
+const AchievementsBlock = ({
+  player,
+  socketEvent
+}: {
+  player: Player;
+  socketEvent: number;
+}) => {
   const [open, setOpen] = useState(false);
   const [achievements, setAchievements] = useState<Achievement[]>([]);
 
@@ -22,7 +28,7 @@ const AchievementsBlock = ({ player }: { player: Player }) => {
         errorAlert(`Failed to get player's achievements`);
       }
     );
-  }, []);
+  }, [socketEvent]);
 
   return (
     <div className={styles.achieveBlock}>

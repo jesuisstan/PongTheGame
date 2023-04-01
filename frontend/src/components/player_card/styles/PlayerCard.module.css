@@ -52,7 +52,7 @@
 }
 
 .friendsBlock {
-  min-width: 243px;
+  min-width: 210px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -86,3 +86,12 @@
   margin: auto;
   z-index: -1;
 }
+
+/*.line {
+  border-top: 1px solid #ccc;
+  margin: 10px 0;
+  height: 75%;
+  background-color: whitesmoke;
+  width: 1px;
+  height: 75%;
+}*/

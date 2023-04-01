@@ -7,32 +7,34 @@ import backendAPI from '../../api/axios-instance';
 import errorAlert from '../UI/errorAlert';
 import Typography from '@mui/joy/Typography';
 import Avatar from '@mui/material/Avatar';
+import IconButton from '@mui/material/IconButton';
+import RefreshIcon from '@mui/icons-material/Refresh';
 import styles from './styles/PlayerCard.module.css';
 
-const FriendsBlock = ({ player }: { player: Player }) => {
+const FriendsBlock = ({
+  player,
+  socketEvent
+}: {
+  player: Player;
+  socketEvent: number;
+}) => {
   const { user } = useContext(UserContext);
   const [friendsList, setFriendsList] = useState<Player[]>([]);
 
+  const fetchFriendsList = () => {
+    backendAPI.get(`/friend/${player.nickname}`).then(
+      (response) => {
+        setFriendsList(response.data.friends);
+      },
+      (error) => {
+        errorAlert(`Failed to get ${player.nickname}'s friends list`);
+      }
+    );
+  };
+
   useEffect(() => {
-    const fetchFriendsList = () => {
-      backendAPI.get(`/friend/${player.nickname}`).then(
-        (response) => {
-          setFriendsList(response.data.friends);
-        },
-        (error) => {
-          errorAlert(`Failed to get ${player.nickname}'s friends list`);
-        }
-      );
-    };
-
     fetchFriendsList();
-
-    const interval = setInterval(() => {
-      fetchFriendsList();
-    }, 30000);
-
-    return () => clearInterval(interval);
-  }, []);
+  }, [socketEvent]);
 
   return (
     <div className={styles.friendsBlock}>
@@ -86,6 +88,23 @@ const FriendsBlock = ({ player }: { player: Player }) => {
             <Typography>List is empty</Typography>
           )}
         </div>
+      </div>
+      <div>
+        <IconButton
+          color="primary"
+          title={'Refresh the list'}
+          onClick={() => fetchFriendsList()}
+        >
+          <RefreshIcon
+            fontSize="large"
+            sx={{
+              color: 'black',
+              '&:hover': {
+                color: 'rgba(253, 80, 135, 0.91)'
+              }
+            }}
+          />
+        </IconButton>
       </div>
     </div>
   );
