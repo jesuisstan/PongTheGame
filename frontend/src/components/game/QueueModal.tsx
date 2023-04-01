@@ -56,11 +56,11 @@ const QueueModal = (props: QueueModalProps) => {
           </Typography>
           <Stack spacing={2} alignItems="center" justifyContent="center">
             <CircularProgress
-              sx={{ color: color, marginTop: '10px' }}
+              sx={{ color: color.PONG_PINK, marginTop: '10px' }}
             />
             <LoadingButton
               type="reset"
-              endIcon={<NotInterestedIcon />}
+              startIcon={<NotInterestedIcon sx={{ color: color.PONG_PINK }} />}
               variant="contained"
               color="inherit"
               onClick={exitQueue}

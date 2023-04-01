@@ -17,6 +17,7 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import CreateIcon from '@mui/icons-material/Create';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SecurityIcon from '@mui/icons-material/Security';
+import * as color from '../UI/colorsPong';
 import styles from './styles/Profile.module.css';
 
 const Profile = () => {
@@ -109,7 +110,7 @@ const Profile = () => {
                 level="body3"
                 textTransform="uppercase"
                 fontWeight="lg"
-                textColor="rgb(37, 120, 204)"
+                textColor={color.PONG_BLUE}
               >
                 Auth
               </Typography>
@@ -143,7 +144,7 @@ const Profile = () => {
                 level="body3"
                 textTransform="uppercase"
                 fontWeight="lg"
-                textColor="rgb(37, 120, 204)"
+                textColor={color.PONG_BLUE}
               >
                 Info
               </Typography>
@@ -175,7 +176,7 @@ const Profile = () => {
                 level="body3"
                 textTransform="uppercase"
                 fontWeight="lg"
-                textColor="rgb(37, 120, 204)"
+                textColor={color.PONG_BLUE}
               >
                 Briefs
               </Typography>

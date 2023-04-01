@@ -7,6 +7,7 @@ import errorAlert from '../UI/errorAlert';
 import Typography from '@mui/joy/Typography';
 import IconButton from '@mui/material/IconButton';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import * as color from '../UI/colorsPong';
 import styles from './styles/PlayerCard.module.css';
 
 const AchievementsBlock = ({
@@ -33,7 +34,7 @@ const AchievementsBlock = ({
   return (
     <div className={styles.achieveBlock}>
       <Typography
-        textColor="rgb(37, 120, 204)"
+        textColor={color.PONG_BLUE}
         level="body3"
         textTransform="uppercase"
         fontWeight="lg"
@@ -44,7 +45,7 @@ const AchievementsBlock = ({
       <div>
         <Typography
           level="h1"
-          textColor="rgb(37, 120, 204)"
+          textColor={color.PONG_BLUE}
           fontWeight="lg"
           textAlign="left"
         >
@@ -57,7 +58,7 @@ const AchievementsBlock = ({
             textAlign="left"
             sx={{
               '&:hover': {
-                transform: 'scale(1.1)',
+                transform: 'scale(1.05)',
                 cursor: 'wait'
               }
             }}
@@ -77,7 +78,7 @@ const AchievementsBlock = ({
             sx={{
               color: 'black',
               '&:hover': {
-                color: 'rgba(253, 80, 135, 0.91)'
+                color: color.PONG_PINK
               }
             }}
           />

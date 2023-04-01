@@ -1,4 +1,5 @@
 import Button from '@mui/material/Button';
+import * as color from '../UI/colorsPong'
 
 const ButtonPong = ({
   text,
@@ -21,12 +22,12 @@ const ButtonPong = ({
     <Button
       sx={{
         minWidth: '121px',
-        color: !inversedColors ? 'whitesmoke' : 'black',
-        backgroundColor: !inversedColors ? 'black' : 'rgb(253, 80, 135)',
+        color: !inversedColors ? color.PONG_WHITE : 'black',
+        backgroundColor: !inversedColors ? 'black' : color.PONG_PINK,
         fontWeight: !inversedColors ? '' : 'Bold',
         ':hover': {
-          backgroundColor: !inversedColors ? 'rgb(253, 80, 135)' : 'black',
-          color: !inversedColors ? 'black' : 'whitesmoke',
+          backgroundColor: !inversedColors ? color.PONG_PINK : 'black',
+          color: !inversedColors ? 'black' : color.PONG_WHITE,
           fontWeight: 'Bold'
         }
       }}

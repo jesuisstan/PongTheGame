@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../contexts/UserContext';
 import { Player } from '../../types/Player';
+import { WebSocketContext } from '../../contexts/WebsocketContext';
 import ButtonPong from '../UI/ButtonPong';
 import BadgePong from '../UI/BadgePong';
 import backendAPI from '../../api/axios-instance';
@@ -12,8 +13,8 @@ import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import PersonOffIcon from '@mui/icons-material/PersonOff';
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
+import * as color from '../UI/colorsPong';
 import styles from './styles/PlayerCard.module.css';
-import { WebSocketContext } from '../../contexts/WebsocketContext';
 
 const InfoBlock = ({ player }: { player: Player }) => {
   const navigate = useNavigate();
@@ -21,8 +22,10 @@ const InfoBlock = ({ player }: { player: Player }) => {
   const socket = useContext(WebSocketContext);
   const [isFriendOfUser, setIsFriendOfUser] = useState(false);
 
-  function inviteFriendsCustom(nickname : string){
-    console.log("Create a modal for the user can select the winning score && if he want the obstacle");
+  function inviteFriendsCustom(nickname: string) {
+    console.log(
+      'Create a modal for the user can select the winning score && if he want the obstacle'
+    );
 
     // Send a socket to the back with info :
     // winscore
@@ -31,13 +34,17 @@ const InfoBlock = ({ player }: { player: Player }) => {
 
     // When the user press to button of the modal after selected the config of the game
 
-    socket.emit('match_get_invitation', {winscore : 5 , obstacle : false, nickname : nickname}) // The second argument is TMP
+    socket.emit('match_get_invitation', {
+      winscore: 5,
+      obstacle: false,
+      nickname: nickname
+    }); // The second argument is TMP
     // The other user is gonne get the notification on the request 'invitation_game' // He have to accept or decline the game
   }
 
-  socket.on("match_invitation_error", (args) => {
-      // If a error occurs
-  })
+  socket.on('match_invitation_error', (args) => {
+    // If a error occurs
+  });
 
   useEffect(() => {
     if (user.nickname !== player.nickname) {
@@ -96,7 +103,7 @@ const InfoBlock = ({ player }: { player: Player }) => {
       </BadgePong>
       <div>
         <Typography
-          textColor="rgb(37, 120, 204)"
+          textColor={color.PONG_BLUE}
           level="body3"
           textTransform="uppercase"
           fontWeight="lg"
@@ -107,7 +114,7 @@ const InfoBlock = ({ player }: { player: Player }) => {
       </div>
       <div>
         <Typography
-          textColor="rgb(37, 120, 204)"
+          textColor={color.PONG_BLUE}
           level="body3"
           textTransform="uppercase"
           fontWeight="lg"
