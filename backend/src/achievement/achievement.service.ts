@@ -79,11 +79,14 @@ export class AchievementService {
   }
 
   async userAchievement(
-    Nickname: string, //: Promise<any> {
+    Nickname: string,
   ): Promise<{ achievement: Achievement[] }> {
-    const nickname_user: any = this.prisma.user.findUnique({
+    const nickname_user = await this.prisma.user.findUnique({
       where: {
         nickname: Nickname,
+      },
+      select: {
+        id: true,
       },
     });
     if (!nickname_user) throw new NotFoundException('User not found');
@@ -93,12 +96,16 @@ export class AchievementService {
       },
       select: {
         achievement: true,
+        userId: true,
       },
     });
     if (!achievement) throw new NotFoundException('User not found');
     const ret: Achievement[] = [];
     for (let i = 0; i < achievement.length; i++) {
-      if (!this.alreadyAchievement(ret, achievement[i].achievement.id))
+      if (
+        !this.alreadyAchievement(ret, achievement[i].achievement.id) &&
+        achievement[i].userId == nickname_user.id
+      )
         ret.push(achievement[i].achievement);
     }
     return { achievement: ret };

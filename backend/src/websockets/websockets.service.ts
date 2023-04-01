@@ -55,7 +55,7 @@ export class WebsocketsService {
         data: { status: 'ONLINE' },
       });
       this.sendToAll(this.sockets, 'user_status', {
-        id: user.id,
+        nickname: user.nickname,
         status: 'ONLINE',
       });
       socket['user'] = user;
@@ -100,7 +100,7 @@ export class WebsocketsService {
       data: { status: 'OFFLINE' },
     });
     this.broadcast('user_status', {
-      id: socket.user.id,
+      nickname: socket.user.nickname,
       status: 'OFFLINE',
     });
   }
