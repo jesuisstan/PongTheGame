@@ -5,7 +5,13 @@ import backendAPI from '../../api/axios-instance';
 import errorAlert from '../UI/errorAlert';
 import Typography from '@mui/joy/Typography';
 
-const MatchHistoryBlock = ({ player }: { player: Player }) => {
+const MatchHistoryBlock = ({
+  player,
+  socketEvent
+}: {
+  player: Player;
+  socketEvent: number;
+}) => {
   const [matchHistory, setMatchHistory] = useState<MatchHistory>({
     played: '-',
     wins: '-',
@@ -26,7 +32,7 @@ const MatchHistoryBlock = ({ player }: { player: Player }) => {
         errorAlert(`Failed to get player's match history`);
       }
     );
-  }, []);
+  }, [socketEvent]);
 
   return (
     <div
