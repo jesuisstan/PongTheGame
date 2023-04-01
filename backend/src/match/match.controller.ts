@@ -17,10 +17,7 @@ import { UserService } from 'src/user/user.service';
 @UseGuards(IsAuthenticatedGuard)
 @ApiTags('Matches')
 export class MatchController {
-  constructor(
-    private readonly matches: MatchService,
-    private readonly users: UserService,
-  ) {}
+  constructor(private readonly matches: MatchService) {}
 
   @Get('/mine')
   @ApiOperation({

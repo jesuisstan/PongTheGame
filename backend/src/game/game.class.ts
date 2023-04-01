@@ -48,7 +48,6 @@ export class Game {
   private spectator_sockets: any[] = [];
   private start_counter = 5;
   private game_start_time: Date;
-  // private invitation?;
   private type: TypeMode;
   private id_game: number;
   private game_state: GameState;
@@ -63,7 +62,6 @@ export class Game {
     winningScore: number,
     player1: Profile,
     player2?: Profile,
-    // invitation?: any,
     obstacle?: boolean,
   ) {
     this.prisma = prismaService;
@@ -79,7 +77,6 @@ export class Game {
     );
     this.type = type;
     this._reset_ball(this.game_state.ball);
-    // this.invitation = invitation;
     this.obstacle = obstacle;
     this.game_state.gameInfos.WinScore = winningScore;
   }
@@ -97,16 +94,6 @@ export class Game {
     this.game_start_time = new Date();
 
     if (this.type != TypeMode.TRAINING) {
-      // if (this.invitation) {
-      // await this.prisma.matchInvitation.update({ // TODO update the status
-      //   where: {
-      //     id: this.invitation.id,
-      //   },
-      //   data: {
-      //     status: InvitationState.PLAYING,
-      //   },
-      // });
-      // }
       const tmp_player: (Profile | undefined)[] = [this.player1, this.player2];
       if (!tmp_player[0] || !tmp_player[1]) return;
       this.id_game = (
@@ -170,12 +157,7 @@ export class Game {
           Default_params.OBSTACLE_HEIGHT +
           Default_params.BALL_RADIUS
     ) {
-      // this.game_state.ball.velocity
-      // ballSpeed.X = -ballSpeed.X;
-      // let deltaY = this.game_state.ball.position.y - (obstacle.position.y + Default_params.OBSTACLE_HEIGHT / 2);
-      // ballSpeed.Y = util.roundToTen(deltaY * 0.35);
       obstacle.direction *= -1;
-      // obstacleDirection *= -1
     }
 
     // Bounce from obstacle's ribs
@@ -194,9 +176,6 @@ export class Game {
             Default_params.BALL_RADIUS)
     ) {
       obstacle.direction *= -1;
-      // ballSpeed.Y = -ballSpeed.Y;
-      //let deltaX = ballPosition.X - (obstacleX + OBSTACLE_WIDTH / 2);
-      //ballSpeed.X = util.roundToTen(deltaX * 0.35);
     }
   }
 
@@ -292,21 +271,6 @@ export class Game {
     timeInSeconds: number,
   ) {
     timeInSeconds;
-    // const winnerXP = 50;
-    // const loserXP = 0;
-    // let eloChange = 0;
-    // if (this._type === GameType.RANKED) {
-    // 	let eloDiff = Math.abs(
-    // 		winner.profile.user.profile.elo -
-    // 			loser.profile.user.profile.elo,
-    // 	);
-    // 	if (eloDiff > 1000) eloDiff = 1000;
-    // 	eloDiff /= 400;
-    // 	eloDiff = Math.pow(10, eloDiff) + 1;
-    // 	let score = 1 / eloDiff;
-    // 	score = Math.round((1 - score) * 20);
-    // 	eloChange = score;
-    // }
 
     this._set_players_status('ONLINE');
 

@@ -26,7 +26,6 @@ model User {
   totpSecret    TotpSecret?
   role          Role       @default(USER)
 
-  // MatchEntry
   matchEntries MatchEntry[]
 
   stats       Stats[]
@@ -113,7 +112,6 @@ model MatchInvitation {
   sendToId    Int                  @unique
   sendTo      User                 @relation("InvitationReceive", fields: [sendToId], references: [id])
   status      InvitationState @default(Pending)
-  // @@unique([createdById, sendToId])
 }
 
 enum InvitationState {

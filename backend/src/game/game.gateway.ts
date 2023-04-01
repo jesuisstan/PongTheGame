@@ -3,12 +3,11 @@ import { GameService } from './game.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { WebsocketsService } from 'src/websockets/websockets.service';
 import { Socket } from 'socket.io';
-import { User } from '@prisma/client';
+
 @WebSocketGateway()
 export class GameGateway {
   constructor(
     private readonly game: GameService,
-    private readonly prisma: PrismaService,
     private readonly websockets: WebsocketsService,
   ) {}
 
@@ -120,7 +119,6 @@ export class GameGateway {
 
   @SubscribeMessage('match_invitation_refuse')
   async match_invitation_refuse(socket: Socket, payload: any) {
-    // Need the from
     if (!socket || !payload || !payload.from.nickname) {
       this.websockets.send(socket, 'match_invitation_error', {
         status: 'error',

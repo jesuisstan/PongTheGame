@@ -12,7 +12,6 @@ import { convert_invitation } from './create_state';
 export class GameService {
   private game_queue: Socket[] = [];
   games: Game[] = [];
-  private invitation: number[] = [];
 
   constructor(
     private readonly websocket: WebsocketsService,
@@ -62,7 +61,6 @@ export class GameService {
         sendToId: user.id,
       },
     });
-    console.log(already_exist);
     if (already_exist) {
       this.websocket.send(socket, 'match_invitation_error', {
         status: 'error',

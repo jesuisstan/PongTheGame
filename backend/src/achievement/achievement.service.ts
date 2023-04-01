@@ -7,7 +7,6 @@ import { Achievement } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { AchievementDTO } from 'src/achievement/dto/achievement.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { User } from '@prisma/client';
 
 @Injectable()
 export class AchievementService {
@@ -79,7 +78,7 @@ export class AchievementService {
   }
 
   async userAchievement(
-    Nickname: string, //: Promise<any> {
+    Nickname: string,
   ): Promise<{ achievement: Achievement[] }> {
     const nickname_user: any = this.prisma.user.findUnique({
       where: {
