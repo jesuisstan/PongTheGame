@@ -658,12 +658,12 @@ export class Game {
       data: { status: status },
     });
     this.websockets.broadcast('user_status', {
-      id: this.player1.user.id,
+      nickname: this.player1.user.nickname,
       status: status,
     });
     if (this.type == TypeMode.NORMAL)
       this.websockets.broadcast('user_status', {
-        id: this.player2?.user.id,
+        nickname: this.player2?.user.nickname,
         status: status,
       });
   }
