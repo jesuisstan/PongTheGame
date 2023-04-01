@@ -2,27 +2,31 @@ import Button from '@mui/material/Button';
 
 const ButtonPong = ({
   text,
-  title,
   onClick,
+  title,
   endIcon,
   startIcon,
-  disabled
+  disabled,
+  inversedColors
 }: {
   text: string;
-  title?: string;
   onClick: React.MouseEventHandler<HTMLButtonElement>;
+  title?: string;
   endIcon?: React.ReactNode;
   startIcon?: React.ReactNode;
   disabled?: boolean;
+  inversedColors?: boolean;
 }) => {
   return (
     <Button
       sx={{
         minWidth: '121px',
-        backgroundColor: 'black',
+        color: !inversedColors ? 'whitesmoke' : 'black',
+        backgroundColor: !inversedColors ? 'black' : 'rgb(253, 80, 135)',
+        fontWeight: !inversedColors ? '' : 'Bold',
         ':hover': {
-          backgroundColor: 'rgb(253, 80, 135)',
-          color: 'black',
+          backgroundColor: !inversedColors ? 'rgb(253, 80, 135)' : 'black',
+          color: !inversedColors ? 'black' : 'whitesmoke',
           fontWeight: 'Bold'
         }
       }}

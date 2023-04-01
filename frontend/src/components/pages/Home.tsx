@@ -9,25 +9,59 @@ const Home = () => {
 
   return (
     <div className={styles.basicHome}>
-      <div style={{ display: 'flex', flexDirection: 'column' }}>
-        <div className={styles.welcome}>
+      <div
+        style={{
+          fontSize: '70px',
+          color: color.PONG_PINK,
+          marginLeft: 'auto',
+          marginRight: '421px',
+          marginTop: '84px'
+        }}
+      >
+        <div
+          style={{
+            background: 'rgba(0, 0, 0, 0.35)',
+            borderRadius: '4px'
+          }}
+        >
           W E L C O M E
-          <div style={{ fontSize: '60px', color: color.PONG_PINK }}>
-            to pong-the-game
+          <div
+            style={{
+              fontSize: '60px',
+              color: color.PONG_WHITE
+            }}
+          >
+            to Pong The Game
           </div>
         </div>
-        <div>
-          <ButtonPong
-            text="Start"
-            onClick={() => navigate('/login')}
-            endIcon={<ArrowForwardIosIcon />}
-          />
-        </div>
-        <div className={styles.why}>
-          W H Y ?
-          <div style={{ fontSize: '40px', color: color.PONG_WHITE }}>
-            to play Ping-Pong with others
-          </div>
+
+        <ButtonPong
+          text="Start"
+          onClick={() => navigate('/login')}
+          endIcon={<ArrowForwardIosIcon />}
+          inversedColors
+        />
+      </div>
+      <div
+        style={{
+          fontSize: '50px',
+          color: color.PONG_PINK,
+          marginLeft: 'auto',
+          marginRight: '80px',
+          marginTop: '300px',
+          textAlign: 'right'
+        }}
+      >
+        W H Y ?
+        <div
+          style={{
+            fontSize: '40px',
+            color: color.PONG_WHITE,
+            background: 'rgba(0, 0, 0, 0.35)',
+            borderRadius: '4px'
+          }}
+        >
+          to play Ping-Pong with others
         </div>
       </div>
     </div>
