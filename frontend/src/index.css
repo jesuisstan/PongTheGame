@@ -10,7 +10,7 @@ body {
   background: linear-gradient(
       to bottom right,
       black,
-      rgba(253, 80, 135, 0.91),
+      rgba(253, 80, 135),
       black
     )
     fixed;

@@ -38,7 +38,6 @@ h5 {
 .active {
   color: rgb(253, 80, 135);
   font-weight: bold;
-  text-decoration: underline;
 }
 
 .swal2-container.swal2-backdrop-show,

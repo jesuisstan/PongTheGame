@@ -16,6 +16,7 @@ import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import CreateIcon from '@mui/icons-material/Create';
 import DeleteIcon from '@mui/icons-material/Delete';
+import SecurityIcon from '@mui/icons-material/Security';
 import styles from './styles/Profile.module.css';
 
 const Profile = () => {
@@ -126,7 +127,7 @@ const Profile = () => {
                 title={
                   user.totpSecret?.verified ? 'Turn off 2FA' : 'Turn on 2FA'
                 }
-                endIcon={<ArrowForwardIosIcon />}
+                startIcon={<SecurityIcon />}
                 onClick={toggleTfa}
               />
               <Enable2fa open={modal2faOpen} setOpen={setModal2faOpen} />

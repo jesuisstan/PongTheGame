@@ -97,7 +97,7 @@ const MenuBar = () => {
             <NavLink to="game">Game</NavLink>
           </Button>
           <Button variant="text">
-            <NavLink to="about">About</NavLink>
+            <NavLink to="about">Info</NavLink>
           </Button>
         </div>
         <div className={styles.right}>
