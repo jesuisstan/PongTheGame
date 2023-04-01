@@ -1,4 +1,6 @@
 import { useNavigate } from 'react-router-dom';
+import { useContext } from 'react';
+import { UserContext } from '../../contexts/UserContext';
 import ButtonPong from '../UI/ButtonPong';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import * as color from '../UI/colorsPong';
@@ -6,6 +8,7 @@ import styles from './Pages.module.css';
 
 const Home = () => {
   const navigate = useNavigate();
+  const { user } = useContext(UserContext);
 
   return (
     <div className={styles.basicHome}>
@@ -13,15 +16,16 @@ const Home = () => {
         style={{
           fontSize: '70px',
           color: color.PONG_PINK,
-          marginLeft: 'auto',
-          marginRight: '421px',
-          marginTop: '84px'
+          marginLeft: '242px',
+          marginRight: 'auto',
+          marginTop: '60px'
         }}
       >
         <div
           style={{
             background: 'rgba(0, 0, 0, 0.35)',
-            borderRadius: '4px'
+            borderRadius: '4px',
+            textAlign: 'left'
           }}
         >
           W E L C O M E
@@ -34,22 +38,27 @@ const Home = () => {
             to Pong The Game
           </div>
         </div>
-
-        <ButtonPong
-          text="Start"
-          onClick={() => navigate('/login')}
-          endIcon={<ArrowForwardIosIcon />}
-          inversedColors
-        />
+        <div
+          style={{
+            textAlign: 'left'
+          }}
+        >
+          <ButtonPong
+            text={user.provider ? 'Continue' : 'Start'}
+            onClick={() => navigate('/login')}
+            endIcon={<ArrowForwardIosIcon />}
+            inversedColors
+          />
+        </div>
       </div>
       <div
         style={{
           fontSize: '50px',
           color: color.PONG_PINK,
-          marginLeft: 'auto',
-          marginRight: '80px',
+          marginLeft: '84px',
+          marginRight: 'auto',
           marginTop: '300px',
-          textAlign: 'right'
+          textAlign: 'left'
         }}
       >
         W H Y ?
