@@ -173,8 +173,7 @@ const Chat = () => {
   };
   // Check if the password is right
   const onPasswordSubmit = () => {
-    socket.emit(
-      'checkPassword',
+    socket.emit('checkPassword',
       { roomName: clickedRoomToJoin, password: inputPassword },
       (response: boolean) => {
         response === true
@@ -186,11 +185,10 @@ const Chat = () => {
     setInputPassword('');
   };
 
-  const getMemberNbr = (room: ChatRoomType) => {
-    let memberNbr = 0;
-    for (const user in room.users)
-      if (room.users[user].isOnline === true) memberNbr += 1;
-    return memberNbr;
+  const getMemberNbr = (roomName: string) => {
+    socket.emit('getMemberNbr', { roomName: roomName },
+      (response: number) => { return response; }
+    )
   };
 
   const isAuthorizedPrivRoom = (mode: string, users: any) => {

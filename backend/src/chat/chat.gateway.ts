@@ -25,7 +25,7 @@ export class ChatGateway {
   ) {}
 
   @SubscribeMessage('createMessage')
-  createMessage(
+  async createMessage(
     @MessageBody('roomName') roomName: string,
     @MessageBody('message') msg: MessageDto,
   ) {
@@ -34,9 +34,9 @@ export class ChatGateway {
     if (msg) {
       if (
         msg.author.id &&
-        this.chatService.isUserMuted(roomName, msg.author.id) === false
+        await this.chatService.isUserMuted(roomName, msg.author.id) === false
       )
-        this.chatService.createMessage(roomName, msg);
+      this.chatService.createMessage(roomName, msg);
       console.log('message emitted: ' + Object.entries(msg));
       // Broadcast received message to all users
       this.server.emit('createMessage');
@@ -47,13 +47,13 @@ export class ChatGateway {
   }
 
   @SubscribeMessage('createChatRoom')
-  createChatRoom(
+  async createChatRoom(
     @MessageBody('room') room: ChatRoomDto,
     @MessageBody('userId') userId: number,
     @MessageBody('user2Id') user2Id: number,
   ) {
     // First, check if the room name already exists
-    const r = this.chatService.getChatRoomByName(room.name);
+    const r = await this.chatService.getChatRoomByName(room.name);
     if (r) {
       if (!user2Id)
         throw new WsException({
@@ -67,7 +67,7 @@ export class ChatGateway {
     // 2 users, which is basically a chat room with 2 users
     if (user2Id) room.modes = 'i';
     // Create a chat room and set user as admin
-    this.chatService.createChatRoom(room, userId, user2Id);
+    await this.chatService.createChatRoom(room, userId, user2Id);
     if (!user2Id) {
       console.log('chatRoom emitted: ' + Object.entries(room));
       // Broadcast newly created room to all users
@@ -91,14 +91,13 @@ export class ChatGateway {
   }
 
   @SubscribeMessage('joinRoom')
-  joinRoom(
+  async joinRoom(
     @MessageBody('roomName') roomName: string,
     @MessageBody('userId') userId: number,
   ) {
-    if (this.isUserBanned(roomName, userId) === true)
+    if (await this.isUserBanned(roomName, userId) === true)
       throw new WsException({ msg: 'joinRoom: User is banned.' });
     this.chatService.identify(roomName, userId, '', true);
-
     this.server.emit('joinRoom', roomName, userId);
     return roomName;
   }
@@ -123,28 +122,29 @@ export class ChatGateway {
   }
 
   @SubscribeMessage('isPasswordProtected')
-  isPasswordProtected(@MessageBody('roomName') roomName: string) {
-    const room = this.chatService.getChatRoomByName(roomName);
+  async isPasswordProtected(@MessageBody('roomName') roomName: string) {
+    const room = await this.chatService.getChatRoomByName(roomName);
     return room?.password ? true : false;
   }
 
   @SubscribeMessage('checkPassword')
-  checkPassword(
+  async checkPassword(
     @MessageBody('roomName') roomName: string,
     @MessageBody('password') password: string,
   ) {
-    const room = this.chatService.getChatRoomByName(roomName);
+    const room = await this.chatService.getChatRoomByName(roomName);
     return room?.password === password ? true : false;
   }
 
   @SubscribeMessage('changePassword')
-  changePassword(
+  async changePassword(
     @MessageBody('roomName') roomName: string,
     @MessageBody('currentPassword') currentPassword: string,
     @MessageBody('newPassword') newPassword: string,
   ) {
     // First, check the current password
-    if (newPassword && this.checkPassword(roomName, currentPassword) === false)
+    if (newPassword &&
+      await this.checkPassword(roomName, currentPassword) === false)
       throw new WsException({ msg: 'changePassword: wrong password!' });
     this.chatService.changePassword(roomName, newPassword);
     const isDeleted = newPassword ? false : true;
@@ -161,26 +161,26 @@ export class ChatGateway {
 
   // Give a target user the oper status
   @SubscribeMessage('makeOper')
-  makeOper(
+  async makeOper(
     @MessageBody('roomName') roomName: string,
     @MessageBody('userId') userId: number,
     @MessageBody('target') target: number,
   ) {
     // First, check if the user has the admin rights
-    if (this.isUserOper(roomName, userId) === false)
+    if (await this.isUserOper(roomName, userId) === false)
       throw new WsException({ msg: 'makeOper: user is not oper!' });
     this.chatService.makeOper(roomName, target);
     this.server.emit('makeOper', roomName, target);
   }
 
   @SubscribeMessage('banUser')
-  banUser(
+  async banUser(
     @MessageBody('roomName') roomName: string,
     @MessageBody('userId') userId: number,
     @MessageBody('target') target: number,
   ) {
     // First, check if the user has the admin rights
-    if (this.isUserOper(roomName, userId) === false)
+    if (await this.isUserOper(roomName, userId) === false)
       throw new WsException({ msg: 'banUser: user is not oper!' });
     this.chatService.banUser(roomName, target);
     this.chatService.quitRoom(roomName, target);
@@ -188,13 +188,13 @@ export class ChatGateway {
   }
 
   @SubscribeMessage('unBanUser')
-  unBanUser(
+  async unBanUser(
     @MessageBody('roomName') roomName: string,
     @MessageBody('userId') userId: number,
     @MessageBody('target') target: number,
   ) {
     // First, check if the user has the admin rights
-    if (this.isUserOper(roomName, userId) === false)
+    if (await this.isUserOper(roomName, userId) === false)
       throw new WsException({ msg: 'unBanUser: user is not oper!' });
     this.chatService.unBanUser(roomName, target);
     this.server.emit('unBanUser', roomName, target);
@@ -209,13 +209,13 @@ export class ChatGateway {
   }
 
   @SubscribeMessage('kickUser')
-  kickUser(
+  async kickUser(
     @MessageBody('roomName') roomName: string,
     @MessageBody('userId') userId: number,
     @MessageBody('target') target: number,
   ) {
     // First, check if the user has the admin rights
-    if (this.isUserOper(roomName, userId) === false)
+    if (await this.isUserOper(roomName, userId) === false)
       throw new WsException({ msg: 'kickUser: user is not oper!' });
     this.chatService.quitRoom(roomName, target);
     this.server.emit('kickUser', roomName, target);
@@ -223,14 +223,14 @@ export class ChatGateway {
 
   // Give a target user the muted status
   @SubscribeMessage('muteUser')
-  muteUser(
+  async muteUser(
     @MessageBody('roomName') roomName: string,
     @MessageBody('userId') userId: number,
     @MessageBody('target') target: number,
     @MessageBody('mute') mute: boolean,
   ) {
     // First, check if the user has the admin rights
-    if (this.isUserOper(roomName, userId) === false)
+    if (await this.isUserOper(roomName, userId) === false)
       throw new WsException({ msg: 'muteUser: user is not oper!' });
     if (mute === true) {
       this.chatService.muteUser(roomName, target);
@@ -255,14 +255,24 @@ export class ChatGateway {
     @MessageBody('blockedUsers') blockedUsers: number[],
   ) {
     const { id } = user;
-    
     await this.prisma.user.update({
-      data: {
-        blockedUsers,
-      },
-      where: {
-        id,
-      },
-    }) ;
+      data: {blockedUsers},
+      where: {id},
+    });
+  }
+
+  @SubscribeMessage('getMemberNbr')
+  async getMemberNbr(
+    @MessageBody('roomName') roomName: string,
+  ) {
+    const room = await this.chatService.getChatRoomByName(roomName);
+    if (room) {
+      var nbr = 0;
+      for (let i = 0; i < room.users.length; ++i) {
+        if (room.users[i].isOnline === true) ++nbr;
+      }
+      return nbr;
+    }
+    throw new WsException({ msg: 'getMemberNbr: unknown room name!' });
   }
 }
