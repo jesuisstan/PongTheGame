@@ -24,7 +24,6 @@ const VictoryModal = ({
   gameResult: Game_result | null;
 }) => {
   const navigate = useNavigate();
-  console.log(gameResult); //todo
   return (
     <div>
       <Modal

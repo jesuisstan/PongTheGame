@@ -21,14 +21,8 @@ const AppRoutes = () => {
 
   useEffect(() => {
     if (user.provider && user.nickname) {
-      // Perform necessary actions when the location changes
-      // if (props.gameState === Game_status.PLAYING) {
-      if (location.pathname !== '/game') {
-        console.log('Location changed');
+      if (location.pathname !== '/game') 
         socket.emit('match_leave', { nickname: user.nickname });
-      }
-      // }
-      console.log(`Location changed to ${location.pathname}`);
     }
   }, [location, socket]);
 

@@ -509,7 +509,11 @@ export class Game {
       this.status,
       timeInSeconds,
     );
-    this.websockets.sendToAll(this.spectator_sockets, 'game-state', res);
+    this.websockets.sendToAll(
+      this.spectator_sockets,
+      'match_spectate_state',
+      res,
+    );
   }
 
   private _check_colide(collide1: any, collide2: any) {
