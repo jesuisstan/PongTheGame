@@ -258,8 +258,10 @@ export class Game {
       this._send_state_to_players(timeInSeconds);
       this._send_state_to_spectators(timeInSeconds);
       if (
-        this.game_state.player1.score == this.game_state.gameInfos.WinScore ||
-        this.game_state.player2.score == this.game_state.gameInfos.WinScore
+        (this.game_state.player1.score == this.game_state.gameInfos.WinScore ||
+          this.game_state.player2.score ==
+            this.game_state.gameInfos.WinScore) &&
+        !this.people_left
       ) {
         this.status = Status.ENDED;
         this._send_state_to_players(timeInSeconds);
@@ -367,7 +369,7 @@ export class Game {
         ? this.game_state.player2
         : this.game_state.player1;
     this.people_left = otherPlayer;
-    this.people_left.score = 5;
+    this.people_left.score = this.game_state.gameInfos.WinScore;
     leaved.score = 0;
     this.status = Status.ABORTED;
     if (this.game_start_time) {
