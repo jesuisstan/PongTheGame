@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 import { redirect, useNavigate } from 'react-router-dom';
 import { UserContext } from '../../contexts/UserContext';
 import { Player } from '../../types/Player';
-import InvitationModal from './InvitationModal';
+import InvitationModal from './invitation/InvitationModal';
 import ButtonPong from '../UI/ButtonPong';
 import BadgePong from '../UI/BadgePong';
 import backendAPI from '../../api/axios-instance';
@@ -35,10 +35,8 @@ const InfoBlock = ({ player }: { player: Player }) => {
           );
           if (isFriend) {
             setIsFriendOfUser(true);
-            console.log(`${player.nickname} is in the friends list.`);
           } else {
             setIsFriendOfUser(false);
-            console.log(`${player.nickname} is not in the friends list.`);
           }
         },
         (error) => {

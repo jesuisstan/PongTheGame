@@ -60,7 +60,7 @@ const QueueModal = (props: QueueModalProps) => {
             />
             <LoadingButton
               type="reset"
-              startIcon={<NotInterestedIcon sx={{ color: color.PONG_PINK }} />}
+              startIcon={<NotInterestedIcon />}
               variant="contained"
               color="inherit"
               onClick={exitQueue}
