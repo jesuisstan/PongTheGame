@@ -21,7 +21,7 @@ export class ChatGateway {
 
   constructor(
     private readonly prisma: PrismaService,
-    private readonly chatService: ChatService
+    private readonly chatService: ChatService,
   ) {}
 
   @SubscribeMessage('createMessage')
@@ -123,8 +123,7 @@ export class ChatGateway {
 
   @SubscribeMessage('isPasswordProtected')
   async isPasswordProtected(@MessageBody('roomName') roomName: string) {
-    const room = await this.chatService.getChatRoomByName(roomName);
-    return room?.password ? true : false;
+    return await this.chatService.isPasswordProtected(roomName);
   }
 
   @SubscribeMessage('checkPassword')
@@ -132,8 +131,7 @@ export class ChatGateway {
     @MessageBody('roomName') roomName: string,
     @MessageBody('password') password: string,
   ) {
-    const room = await this.chatService.getChatRoomByName(roomName);
-    return room?.password === password ? true : false;
+    return await this.chatService.checkPassword(roomName, password);
   }
 
   @SubscribeMessage('changePassword')
@@ -259,20 +257,5 @@ export class ChatGateway {
       data: {blockedUsers},
       where: {id},
     });
-  }
-
-  @SubscribeMessage('getMemberNbr')
-  async getMemberNbr(
-    @MessageBody('roomName') roomName: string,
-  ) {
-    const room = await this.chatService.getChatRoomByName(roomName);
-    if (room) {
-      var nbr = 0;
-      for (let i = 0; i < room.users.length; ++i) {
-        if (room.users[i].isOnline === true) ++nbr;
-      }
-      return nbr;
-    }
-    throw new WsException({ msg: 'getMemberNbr: unknown room name!' });
   }
 }

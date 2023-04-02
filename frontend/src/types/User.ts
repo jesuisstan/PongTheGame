@@ -7,6 +7,7 @@ export type User = {
   role: string;
   blockedUsers: number[];
   joinedChatRoom: string;
+  status: string,
   totpSecret: null | {
     verified: boolean;
   };

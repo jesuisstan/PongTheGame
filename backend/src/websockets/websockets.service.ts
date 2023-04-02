@@ -55,7 +55,7 @@ export class WebsocketsService {
         data: { status: 'ONLINE' },
       });
       this.sendToAll(this.sockets, 'user_status', {
-        id: user.id,
+        nickname: user.nickname,
         status: 'ONLINE',
       });
       socket['user'] = user;
@@ -69,13 +69,16 @@ export class WebsocketsService {
   }
 
   async modifyTheUserSocket(id: number) {
-    const socket: any = this.getSockets([id])[0];
-    const user = await this.prismaService.user.findUnique({
-      where: { id: id },
-    });
-    socket['user'] = user;
-    this.sockets.push(socket);
-    return;
+    // MEMO TMP NEED TO DECOMMENT
+    // const socket: any = this.getSockets([id])[0];
+    // const user = await this.prismaService.user.findUnique({
+    //   where: { id: id },
+    // });
+    // console.log(socket);
+    // if (!socket) return;
+    // socket['user'] = user;
+    // this.sockets.push(socket);
+    // return;
   }
 
   registerOnClose(socket: any, action: () => void) {
@@ -96,8 +99,8 @@ export class WebsocketsService {
       where: { id: socket.user.id },
       data: { status: 'OFFLINE' },
     });
-    this.broadcast('user-status', {
-      id: socket.user.id,
+    this.broadcast('user_status', {
+      nickname: socket.user.nickname,
       status: 'OFFLINE',
     });
   }

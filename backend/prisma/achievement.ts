@@ -45,11 +45,6 @@ export async function insert_achievement() {
       Description: 'Change avatar',
     },
     {
-      Name: 'Mode User',
-      Title: 'use 2 different game modes',
-      Description: 'Play 2 different game modes',
-    }, // MEMO Not sur to keep it
-    {
       Name: 'Friend Of Maurice',
       Title: 'Get One Friend',
       Description: 'Get at least one friend',

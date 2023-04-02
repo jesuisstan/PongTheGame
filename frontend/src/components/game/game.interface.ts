@@ -10,7 +10,14 @@ export interface Game_infos {
 	paddleWidth: number;
 	ballRadius: number;
 	time: number;
+	obstacleHeight? : number;
+	obstacleWidth? : number;
 }
+
+export interface Obstacle {
+	position : Position;
+	direction : number;
+  }
 
 export interface Player_game {
 	infos: Info_player;
@@ -33,7 +40,7 @@ export interface Result_game {
 
 export interface Props_game {
   players?: Player_game[];
-	endMatch?: (result: Result_game) => void;
+	setEndMatch: (result: Result_game) => void;
 	spectator: boolean;
 	gameState: Game_status;
 	setGameState: (gameState: Game_status) => void;
@@ -60,10 +67,11 @@ export interface Player {
 }
 
 export interface Game_state {
-gameInfos: Game_infos;
-player1: Player;
-player2: Player;
-ball: Position;
+	gameInfos: Game_infos;
+	player1: Player;
+	player2: Player;
+	ball: Position;
+	obstacle?: Obstacle;
 }
 
 export interface Game_result {
@@ -72,16 +80,14 @@ export interface Game_result {
 		name: string;
 		avatar: string;
 		score: number;
-		position: 1 | 2;
 	};
 	loser: {
 		id: number;
 		name: string;
 		avatar: string;
 		score: number;
-		position: 1 | 2;
 	};
-	duration: number;
+	reason: string;
 }
 
 export interface Player_info {

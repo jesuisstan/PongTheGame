@@ -112,11 +112,7 @@ const ChatRoom = (props: any) => {
    **************************************************************/
   useEffect(() => {
     // Activate listeners and subscribe to events as the component is mounted
-    socket.on('connect', () => console.log('connected to websocket!'))
-    socket.on(
-      'createMessage',
-      () => console.log('createMessage event received!') 
-    )
+    // socket.on('connect', () => console.log('connected to websocket!'))
     socket.on('typingMessage', (
         roomName: string, userId: number, isTyping: boolean) => {
       roomName === user.joinedChatRoom && isTyping ?
@@ -168,7 +164,7 @@ const ChatRoom = (props: any) => {
     // Clean listeners to unsubscribe all callbacks for these events
     // before the component is unmounted
     return () => {
-      socket.off('connect')
+    //   socket.off('connect')
       socket.off('createMessage')
       socket.off('typingMessage')
       socket.off('makeOper')
@@ -328,7 +324,7 @@ const ChatRoom = (props: any) => {
         modes: '',
         password: '',
         userLimit: 2,
-        users: {},
+        members: {},
         messages: [],
 		bannedUsers: [],
 	},

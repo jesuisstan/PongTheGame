@@ -1,74 +1,77 @@
-import Peer from '../UI/Peer';
-import Typography from '@mui/joy/Typography';
+import { useNavigate } from 'react-router-dom';
+import { useContext } from 'react';
+import { UserContext } from '../../contexts/UserContext';
+import ButtonPong from '../UI/ButtonPong';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import * as color from '../UI/colorsPong';
 import styles from './Pages.module.css';
 
 const Home = () => {
+  const navigate = useNavigate();
+  const { user } = useContext(UserContext);
+
   return (
-    <div className={styles.basicCard}>
-      <div style={{ marginTop: '21px' }}>
-        <h5>Why?</h5>
-        <p>Thanks to this website, you will play Ping-Pong with others</p>
-      </div>
-      <div className={styles.aboutHeader}>
-        <Typography
-          id="basic-list-demo"
-          level="body3"
-          textTransform="uppercase"
-          fontWeight="lg"
+    <div className={styles.basicHome}>
+      <div
+        style={{
+          fontSize: '70px',
+          color: color.PONG_PINK,
+          marginLeft: '260px',
+          marginRight: 'auto',
+          marginTop: '60px'
+        }}
+      >
+        <div
+          style={{
+            background: 'rgba(0, 0, 0, 0.35)',
+            borderRadius: '4px',
+            textAlign: 'left'
+          }}
         >
-          We, being faithful to the original Pong (1972), are:
-        </Typography>
+          W E L C O M E
+          <div
+            style={{
+              fontSize: '60px',
+              color: color.PONG_WHITE
+            }}
+          >
+            to Pong The Game
+          </div>
+        </div>
+        <div
+          style={{
+            textAlign: 'left'
+          }}
+        >
+          <ButtonPong
+            text={user.provider ? 'Continue' : 'Start'}
+            onClick={() => navigate('/login')}
+            endIcon={<ArrowForwardIosIcon />}
+            inversedColors
+          />
+        </div>
       </div>
-      <div className={styles.aboutCards}>
-        <Peer
-          style={styles.benjamin}
-          firstName="Benjamin"
-          lastName="Brassart"
-          description="I need a coffee"
-          intraNickname="bbrassar"
-          role="Backend: authentication, 2FA, avatar upload"
-          github="https://github.com/benjaminbrassart"
-        />
-        <Peer
-          style={styles.barbara}
-          firstName="Barbara"
-          lastName="Cano"
-          description="We did it!"
-          intraNickname="bcano"
-          role="Frontend: chat, teammate card template"
-          github="https://github.com/BarbaraC12"
-        />
-      </div>
-      <div className={styles.aboutCards}>
-        <Peer
-          style={styles.florian}
-          firstName="Florian"
-          lastName="Catinaud"
-          description="An asshole with a Keyboard"
-          intraNickname="fcatinau"
-          role="Backend: Game, Friends, Achievements & Stats"
-          github="https://github.com/Balgor18"
-        />
-        <Peer
-          style={styles.stan}
-          firstName="Stanislav"
-          lastName="Krivtsoff"
-          description="Let's do it! ⚡"
-          intraNickname="acaren"
-          role="Frontend: the entire frontend except for the Chat page"
-          github="https://github.com/jesuisstan"
-        />
-      </div>
-      <div className={styles.aboutCards}>
-        <Peer
-          style={styles.daisuke}
-          firstName="Daisuke"
-          lastName="Tanigawa"
-          description="I agree with everything that Stan says."
-          intraNickname="dtanigaw"
-          role="Backend: chat, docker-compose..."
-          github="https://github.com/daisvke"
-        />
+      <div
+        style={{
+          fontSize: '50px',
+          color: color.PONG_PINK,
+          marginLeft: '84px',
+          marginRight: 'auto',
+          marginTop: '300px',
+          textAlign: 'left'
+        }}
+      >
+        W H Y ?
+        <div
+          style={{
+            fontSize: '40px',
+            color: color.PONG_WHITE,
+            background: 'rgba(0, 0, 0, 0.35)',
+            borderRadius: '4px'
+          }}
+        >
+          to play Ping-Pong with others
+        </div>
       </div>
     </div>
   );

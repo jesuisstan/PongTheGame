@@ -22,7 +22,6 @@ const Game = () => {
   const [gameState, setGameState] = useState(Game_status.LOBBY);
   const [players, set_players] = useState<Game_player[]>([]);
   const [openVictoryModal, setOpenVictoryModal] = useState(false);
-
   const [openCount, setOpenCount] = useState(false);
   const [openQueueModal, setOpenQueueModal] = useState(false);
 
@@ -96,7 +95,7 @@ const Game = () => {
             players={players}
             gameState={gameState}
             setGameState={setGameState}
-            endMatch={endMatch}
+            setEndMatch={endMatch}
           />
         )}
         {gameState === Game_status.SPECTATE && (
@@ -104,7 +103,7 @@ const Game = () => {
             spectator={true}
             gameState={gameState}
             setGameState={setGameState}
-            endMatch={endMatch}
+            setEndMatch={endMatch}
           />
         )}
       </div>

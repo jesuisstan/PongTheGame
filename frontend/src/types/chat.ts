@@ -11,7 +11,7 @@ export type ChatRoomType = {
 	modes: string;
 	password: string;
 	userLimit: number;
-	users: {
+	members: {
 		id: number;
 		isOnline: boolean;
 		modes: string;

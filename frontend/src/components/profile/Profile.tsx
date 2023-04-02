@@ -16,6 +16,8 @@ import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import CreateIcon from '@mui/icons-material/Create';
 import DeleteIcon from '@mui/icons-material/Delete';
+import SecurityIcon from '@mui/icons-material/Security';
+import * as color from '../UI/colorsPong';
 import styles from './styles/Profile.module.css';
 
 const Profile = () => {
@@ -86,14 +88,14 @@ const Profile = () => {
             <div className={styles.bottomAvatarBox}>
               <ButtonPong
                 text="Change"
-                title="upload new avatar"
+                title="Upload new avatar"
                 startIcon={<AddAPhotoIcon />}
                 onClick={() => setModalAvatarOpen(true)}
               />
               <ButtonPong
                 text="Delete"
-                title="set avatar to default"
-                endIcon={<DeleteIcon />}
+                title="Set avatar to default"
+                startIcon={<DeleteIcon />}
                 onClick={deleteAvatar}
                 disabled={!user.avatar}
               />
@@ -108,7 +110,7 @@ const Profile = () => {
                 level="body3"
                 textTransform="uppercase"
                 fontWeight="lg"
-                textColor="rgb(37, 120, 204)"
+                textColor={color.PONG_BLUE}
               >
                 Auth
               </Typography>
@@ -124,9 +126,9 @@ const Profile = () => {
               <ButtonPong
                 text={user.totpSecret?.verified ? 'Disable 2FA' : 'Setup 2FA'}
                 title={
-                  user.totpSecret?.verified ? 'turn off 2FA' : 'turn on 2FA'
+                  user.totpSecret?.verified ? 'Turn off 2FA' : 'Turn on 2FA'
                 }
-                endIcon={<ArrowForwardIosIcon />}
+                startIcon={<SecurityIcon />}
                 onClick={toggleTfa}
               />
               <Enable2fa open={modal2faOpen} setOpen={setModal2faOpen} />
@@ -142,7 +144,7 @@ const Profile = () => {
                 level="body3"
                 textTransform="uppercase"
                 fontWeight="lg"
-                textColor="rgb(37, 120, 204)"
+                textColor={color.PONG_BLUE}
               >
                 Info
               </Typography>
@@ -155,8 +157,8 @@ const Profile = () => {
               <div>
                 <ButtonPong
                   text="Change nickname"
-                  title="modify nickname"
-                  endIcon={<CreateIcon />}
+                  title="Modify nickname"
+                  startIcon={<CreateIcon />}
                   onClick={() => setModalNicknameOpen(true)}
                 />
                 <EditNickname
@@ -174,7 +176,7 @@ const Profile = () => {
                 level="body3"
                 textTransform="uppercase"
                 fontWeight="lg"
-                textColor="rgb(37, 120, 204)"
+                textColor={color.PONG_BLUE}
               >
                 Briefs
               </Typography>
@@ -189,7 +191,7 @@ const Profile = () => {
             <div className={styles.bottom}>
               <ButtonPong
                 text="Full stats"
-                title="go to match history page"
+                title="Visit match history page"
                 onClick={() => navigate(`/players/${user.nickname}`)}
                 endIcon={<ArrowForwardIosIcon />}
               />

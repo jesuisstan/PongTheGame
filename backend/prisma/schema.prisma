@@ -26,14 +26,16 @@ model User {
   totpSecret TotpSecret?
   role       Role        @default(USER)
 
-  // MatchEntry
   matchEntries MatchEntry[]
 
-  stats       Stats[]
-  friends     Friends[]
-  Achievement UserAchivement[]
-  invitation  MatchInvitation[]
-  Message     Message[]
+  stats             Stats[]
+  friends           User[]            @relation("Friendslist")
+  friendsOf         User[]            @relation("Friendslist")
+  achievement       UserAchivement[]
+  invitationEmit    MatchInvitation[] @relation("InvitationEmit")
+  invitationReceive MatchInvitation[] @relation("InvitationReceive")
+  Message           Message[]
+  ChatRoom          ChatRoom[]
 
   @@unique([profileId, provider])
 }
@@ -89,16 +91,6 @@ model UserAchivement {
   @@id([userId, achievementId])
 }
 
-model Friends {
-  user      User     @relation(fields: [friendId], references: [id])
-  friendId  Int      @id
-  addedDate DateTime @default(now())
-}
-
-// model GithubUser {
-//   user User?
-// }
-
 model MatchEntry {
   id    Int @id @default(autoincrement())
   score Int
@@ -120,12 +112,12 @@ model Match {
 }
 
 model MatchInvitation {
-  id       Int             @id @default(autoincrement())
-  // createdBy   User                 @relation(fields: [createdById], references: [id])
-  // createdById Int                  
-  sendToId Int
-  sendTo   User            @relation(fields: [sendToId], references: [id])
-  status   InvitationState @default(Pending)
+  id          Int             @id @default(autoincrement())
+  createdBy   User            @relation("InvitationEmit", fields: [createdById], references: [id])
+  createdById Int             @unique
+  sendToId    Int             @unique
+  sendTo      User            @relation("InvitationReceive", fields: [sendToId], references: [id])
+  status      InvitationState @default(Pending)
 }
 
 enum InvitationState {
@@ -166,11 +158,12 @@ model Member {
 }
 
 model ChatRoom {
+  id          Int       @id @default(autoincrement())
   name        String    @unique
-  modes       String?
-  password    String?
-  userLimit   Int?
+  modes       String
+  password    String
+  userLimit   Int
   members     Member[]
   messages    Message[]
-  bannedUsers Int[]
+  bannedUsers User[]
 }

@@ -10,7 +10,7 @@ export class ChatRoom {
   modes: string;
   password: string;
   userLimit: number;
-	users: {
+	members: {
 		id: number;
 		isOnline: boolean;
 		modes: string;

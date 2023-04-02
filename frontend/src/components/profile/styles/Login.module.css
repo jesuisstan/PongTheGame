@@ -35,7 +35,7 @@
 }
 
 .loginButtonEcole:hover {
-  background-color: rgba(253, 80, 135, 0.6);
+  background-color: rgb(253, 80, 135);
   color: black;
   transform: scale(1.04);
   font-weight: bold;
@@ -60,7 +60,7 @@
 }
 
 .loginButtonGithub:hover {
-  background-color: rgba(253, 80, 135, 0.6);
+  background-color: rgb(253, 80, 135);
   transform: scale(1.04);
   color: black;
   font-weight: bold;

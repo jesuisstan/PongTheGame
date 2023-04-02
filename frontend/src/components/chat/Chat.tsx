@@ -131,7 +131,7 @@ const Chat = () => {
           modes: '',
           password: chatRoomPassword,
           userLimit: 0,
-          users: {},
+          members: {},
           messages: [],
           bannedUsers: [],
         },
@@ -185,11 +185,11 @@ const Chat = () => {
     setInputPassword('');
   };
 
-  const getMemberNbr = (roomName: string) => {
-    socket.emit('getMemberNbr', { roomName: roomName },
-      (response: number) => { return response; }
-    )
-  };
+  // const getMemberNbr = (roomName: string) => {
+  //   socket.emit('getMemberNbr', { roomName: roomName },
+  //     (response: number) => { return response; }
+  //   )
+  // };
 
   const isAuthorizedPrivRoom = (mode: string, users: any) => {
     if (mode.indexOf('i') !== -1) {

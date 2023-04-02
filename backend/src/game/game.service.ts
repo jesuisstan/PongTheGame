@@ -1,17 +1,17 @@
 import { Injectable } from '@nestjs/common';
-import { User } from '@prisma/client';
+import { User, StatusUser } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { WebsocketsService } from 'src/websockets/websockets.service';
 import { Game } from './game.class';
 import { Socket } from 'socket.io';
 import { giveAchievementService } from 'src/achievement/utils/giveachievement.service';
 import { TypeMode } from './Interface';
+import { convert_invitation } from './create_state';
 
 @Injectable()
 export class GameService {
   private game_queue: Socket[] = [];
   games: Game[] = [];
-  private invitation: number[] = [];
 
   constructor(
     private readonly websocket: WebsocketsService,
@@ -30,42 +30,99 @@ export class GameService {
     this._treat_queue(this.game_queue);
   }
 
-  async create_friend_game(id: number[]) {
-    this.invitation.push(id[1]);
-
-    await this.prisma.user.update({
-      where: {
-        id: id[0],
-      },
-      data: {
-        invitation: {
-          create: [
-            {
-              id: id[1],
-              sendToId: id[1],
-            },
-          ],
+  async create_invitation(socket: any, payload: any) {
+    const user: { id: number; status: StatusUser } | null =
+      await this.prisma.user.findUnique({
+        where: {
+          nickname: payload.nickname,
         },
+        select: {
+          id: true,
+          status: true,
+        },
+      });
+    if (!user) {
+      this.websocket.send(socket, 'match_invitation_error', {
+        status: 'error',
+        error: 'User not found',
+      });
+      return;
+    }
+    if (user.status == 'PLAYING') {
+      this.websocket.send(socket, 'match_invitation_error', {
+        status: 'error',
+        error: 'User already in game',
+      });
+      return;
+    }
+    const already_exist = await this.prisma.matchInvitation.findMany({
+      where: {
+        createdById: socket.user.id,
+        sendToId: user.id,
       },
     });
-
-    console.log(this.websocket.getSockets([id[0]]));
-    const notif_socket = this.websocket.getSockets([id[1]]);
-    this.websocket.send(notif_socket, 'game_invite_notification', {}); // MEMO emit for the notification
-    // TODO probably send the player who send the invited + WINING_SCORE for create the game after
+    if (already_exist) {
+      this.websocket.send(socket, 'match_invitation_error', {
+        status: 'error',
+        error: 'Invitation already send',
+      });
+      return;
+    }
+    const invited_socket: Socket[] = this.websocket.getSockets([user.id]);
+    if (!invited_socket || !invited_socket[0]) {
+      this.websocket.send(socket, 'match_invitation_error', {
+        status: 'error',
+        error: 'User offline',
+      });
+      return;
+    }
+    await this.prisma.matchInvitation.create({
+      data: {
+        createdById: socket.user.id,
+        sendToId: user.id,
+      },
+    });
+    const res = convert_invitation(socket, payload);
+    this.websocket.send(invited_socket[0], 'invitation_game', res);
   }
 
-  async game_friend_start(id: number[]) {
-    // need to get hte socket from the id
-    const sockets: any = this.websocket.getSockets(id);
+  async game_friend_start(socket: any, payload: any) {
+    // The user accepted the game invitation
+    const type: TypeMode =
+      payload.obstacle == true ? TypeMode.CUSTOM : TypeMode.NORMAL;
+    const user: { id: number } | null = await this.prisma.user.findUnique({
+      where: {
+        nickname: payload.from.nickname,
+      },
+      select: {
+        id: true,
+      },
+    });
+    if (!user) {
+      this.websocket.send(socket, 'match_invitation_error', {
+        status: 'error',
+        error: 'Opponents not found',
+      });
+      return;
+    }
+    const sockets: any = this.websocket.getSockets([user.id]);
+    if (!sockets[0]) {
+      this.websocket.send(socket, 'match_invitation_error', {
+        status: 'error',
+        error: 'Opponents log out',
+      });
+      return;
+    }
+    this._delete_user_invitations([user.id, socket.user.id]);
     const game = new Game(
       this.prisma,
       this.websocket,
       this.achievement,
-      TypeMode.NORMAL,
+      type,
+      payload.winscore,
       { socket: sockets[0], user: sockets[0].user },
-      { socket: sockets[1], user: sockets[1].user },
-      this.invitation,
+      { socket: socket, user: socket.user },
+      payload.obstacle,
     );
     this.games.push(game);
 
@@ -74,16 +131,32 @@ export class GameService {
     });
   }
   private async _delete_user_invitations(userId: number[]) {
-    this.invitation.splice(this.invitation.indexOf(userId[1]), 1);
-    // TODO check how to delete the game
-    // await this.prisma.matchInvitation.delete({ // FIXME Dosent work check
-    //   where :
-    //   {
-    //     sendToId : userId[1],
-    //   }
-    // });
+    await this.prisma.matchInvitation.delete({
+      where: {
+        createdById: userId[0],
+        sendToId: userId[1],
+      },
+    });
   }
 
+  async refuseInvitation(socket: any, payload: any) {
+    const user: { id: number } | null = await this.prisma.user.findUnique({
+      where: {
+        nickname: payload.from.nickname,
+      },
+      select: {
+        id: true,
+      },
+    });
+    if (!user) {
+      this.websocket.send(socket, 'match_invitation_error', {
+        status: 'error',
+        error: 'User not found',
+      });
+      return;
+    }
+    this._delete_user_invitations([user.id, socket.user.id]);
+  }
   async create_training_game(player: any) {
     const msg = {
       action: 'match',
@@ -102,6 +175,7 @@ export class GameService {
       this.websocket,
       this.achievement,
       TypeMode.TRAINING,
+      5,
       { socket: player, user: player.user },
     );
     this.games.push(game);
@@ -131,9 +205,11 @@ export class GameService {
         this.prisma,
         this.websocket,
         this.achievement,
-        TypeMode.NORMAL,
+        TypeMode.CUSTOM,
+        5,
         { socket: player1, user: player1.user },
         { socket: player2, user: player2.user },
+        true,
       );
       this.games.push(game);
       game.start(() => {

@@ -10,6 +10,7 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import CircularProgress from '@mui/material/CircularProgress';
 import NotInterestedIcon from '@mui/icons-material/NotInterested';
 import * as MUI from '../UI/MUIstyles';
+import * as color from '../UI/colorsPong';
 
 const modalDialogStyle = {
   width: 'auto',
@@ -55,11 +56,11 @@ const QueueModal = (props: QueueModalProps) => {
           </Typography>
           <Stack spacing={2} alignItems="center" justifyContent="center">
             <CircularProgress
-              sx={{ color: 'rgb(253, 80, 135)', marginTop: '10px' }}
+              sx={{ color: color.PONG_PINK, marginTop: '10px' }}
             />
             <LoadingButton
               type="reset"
-              endIcon={<NotInterestedIcon />}
+              startIcon={<NotInterestedIcon sx={{ color: color.PONG_PINK }} />}
               variant="contained"
               color="inherit"
               onClick={exitQueue}

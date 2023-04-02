@@ -15,10 +15,13 @@ Table User {
   role Role [not null, default: 'USER']
   matchEntries MatchEntry [not null]
   stats Statistique [not null]
-  friends Friends [not null]
-  Achievement UserAchivement [not null]
-  invitation MatchInvitation [not null]
+  friends User [not null]
+  friendsOf User [not null]
+  achievement UserAchivement [not null]
+  invitationEmit MatchInvitation [not null]
+  invitationReceive MatchInvitation [not null]
   Message Message [not null]
+  ChatRoom ChatRoom [not null]
 
   indexes {
     (profileId, provider) [unique]
@@ -61,12 +64,6 @@ Table UserAchivement {
   }
 }
 
-Table Friends {
-  user User [not null]
-  friendId Int [pk]
-  addedDate DateTime [default: `now()`, not null]
-}
-
 Table MatchEntry {
   id Int [pk, increment]
   score Int [not null]
@@ -86,7 +83,9 @@ Table Match {
 
 Table MatchInvitation {
   id Int [pk, increment]
-  sendToId Int [not null]
+  createdBy User [not null]
+  createdById Int [unique, not null]
+  sendToId Int [unique, not null]
   sendTo User [not null]
   status InvitationState [not null, default: 'Pending']
 }
@@ -116,13 +115,14 @@ Table Member {
 }
 
 Table ChatRoom {
+  id Int [pk, increment]
   name String [unique, not null]
-  modes String
-  password String
-  userLimit Int
+  modes String [not null]
+  password String [not null]
+  userLimit Int [not null]
   members Member [not null]
   messages Message [not null]
-  bannedUsers Int[] [not null]
+  bannedUsers User [not null]
 }
 
 Enum StatusUser {
@@ -156,11 +156,11 @@ Ref: UserAchivement.userId > User.id
 
 Ref: UserAchivement.achievementId > Achievements.id
 
-Ref: Friends.friendId > User.id
-
 Ref: MatchEntry.userId > User.id [delete: Cascade]
 
 Ref: MatchEntry.matchId > Match.id [delete: Cascade]
+
+Ref: MatchInvitation.createdById > User.id
 
 Ref: MatchInvitation.sendToId > User.id
 

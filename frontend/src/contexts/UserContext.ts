@@ -14,6 +14,7 @@ export const UserContext = createContext<UserContextData>({
     profileId: '',
     provider: '',
     role: '',
+    status: 'OFFLINE',
     totpSecret: null,
     username: '',
     blockedUsers: [],

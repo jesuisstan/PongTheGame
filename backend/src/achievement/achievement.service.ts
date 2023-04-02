@@ -7,7 +7,6 @@ import { Achievement } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { AchievementDTO } from 'src/achievement/dto/achievement.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { User } from '@prisma/client';
 
 @Injectable()
 export class AchievementService {
@@ -78,26 +77,45 @@ export class AchievementService {
     return;
   }
 
-  async userAchievement(Nickname: string): Promise<any> {
-    //Promise<{ achievement: Achievement[] }> {
-    const nickname_user: any = this.prisma.user.findUnique({
+  async userAchievement(
+    Nickname: string,
+  ): Promise<{ achievement: Achievement[] }> {
+    const nickname_user = await this.prisma.user.findUnique({
       where: {
         nickname: Nickname,
       },
+      select: {
+        id: true,
+      },
     });
     if (!nickname_user) throw new NotFoundException('User not found');
-    const user = await this.prisma.userAchivement.findMany({
+    const achievement = await this.prisma.userAchivement.findMany({
       where: {
         userId: nickname_user.id,
       },
       select: {
         achievement: true,
+        userId: true,
       },
     });
-    if (!user) throw new NotFoundException('User not found');
-    return user;
+    if (!achievement) throw new NotFoundException('User not found');
+    const ret: Achievement[] = [];
+    for (let i = 0; i < achievement.length; i++) {
+      if (
+        !this.alreadyAchievement(ret, achievement[i].achievement.id) &&
+        achievement[i].userId == nickname_user.id
+      )
+        ret.push(achievement[i].achievement);
+    }
+    return { achievement: ret };
   }
 
+  alreadyAchievement(ret: Achievement[], id: number): boolean {
+    for (let i = 0; i < ret.length; i++) {
+      if (ret[i].id == id) return true;
+    }
+    return false;
+  }
   async addToUser(
     userId: number,
     achievementId: number,

@@ -4,7 +4,6 @@ import { Player_game, Props_game, Game_status } from './game.interface';
 import { drawState } from './utils/gameUtils';
 import ScoreBar from './ScoreBar';
 import styles from './styles/Game.module.css';
-import { useLocation } from 'react-router-dom';
 
 const CANVAS_HEIGHT = 600;
 const CANVAS_WIDTH = 800;
@@ -48,12 +47,12 @@ const Pong = (props: Props_game) => {
           {
             ...players[0],
             infos: args.player1.infos,
-            score: args.player1.score
+            score: args.player1.score,
           },
           {
             ...players[1],
             infos: args.player2.infos,
-            score: args.player2.score
+            score: args.player2.score,
           }
         ]);
       }
@@ -62,10 +61,8 @@ const Pong = (props: Props_game) => {
       window.addEventListener('keyup', onKeyReleaseRef.current);
 
       drawState(args, canvasRef);
-      if (args.status === 'ended') {
+      if (args.status === 'ended' || args.status === 'aborted') {
         props.setGameState(Game_status.ENDED);
-        // TODO clear the canvas for reprint the lobby
-        console.log('Game_finished');
         window.removeEventListener('keydown', onKeyPressRef.current);
         window.removeEventListener('keyup', onKeyReleaseRef.current);
       }
@@ -74,8 +71,10 @@ const Pong = (props: Props_game) => {
 
   const checkGameAborted = () => {
     socket.on('game_aborted', (args) => {
-      console.log(args.reason);
-      // TODO need to clear canvas adn change alert for something else
+      console.log('args')
+      console.log(args)
+
+      props.setGameState(Game_status.ENDED);
     });
   };
 
@@ -103,11 +102,7 @@ const Pong = (props: Props_game) => {
   return (
     <div className={styles.canvasBlock}>
       {players.length > 0 && (
-        <ScoreBar
-          winScore={winScore}
-          players={players}
-          //gameOn={gameOn}
-        ></ScoreBar>
+        <ScoreBar winScore={winScore} players={players}></ScoreBar>
       )}
       <canvas
         className={styles.canvas}
