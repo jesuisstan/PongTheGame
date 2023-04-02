@@ -40,9 +40,7 @@ const Pong = (props: Props_game) => {
 
   const playPong = () => {
     socket.on('match_game_state', (args) => {
-      // if (props.spectator) {
-      // For specator mode need to check the current He need to be false for the player1 and player 2
-      if (players.length == 0) {
+      if (players.length === 0) {
         set_players([
           {
             ...players[0],
@@ -56,7 +54,6 @@ const Pong = (props: Props_game) => {
           }
         ]);
       }
-
       window.addEventListener('keydown', onKeyPressRef.current);
       window.addEventListener('keyup', onKeyReleaseRef.current);
 
@@ -67,13 +64,32 @@ const Pong = (props: Props_game) => {
         window.removeEventListener('keyup', onKeyReleaseRef.current);
       }
     });
+
+    socket.on('match_spectate_state', (args) => {
+      console.log(args);
+      if (players.length === 0) {
+        set_players([
+          {
+            ...players[0],
+            infos: args.player1.infos,
+            score: args.player1.score,
+          },
+          {
+            ...players[1],
+            infos: args.player2.infos,
+            score: args.player2.score,
+          }
+        ]);
+      }
+      drawState(args, canvasRef);
+      if (args.status === 'ended' || args.status === 'aborted') {
+        props.setGameState(Game_status.ENDED);
+      }
+    });
   };
 
   const checkGameAborted = () => {
     socket.on('game_aborted', (args) => {
-      console.log('args')
-      console.log(args)
-
       props.setGameState(Game_status.ENDED);
     });
   };

@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { redirect, useNavigate } from 'react-router-dom';
 import { UserContext } from '../../contexts/UserContext';
 import { Player } from '../../types/Player';
 import InvitationModal from './InvitationModal';
@@ -16,8 +16,10 @@ import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import * as color from '../UI/colorsPong';
 import styles from './styles/PlayerCard.module.css';
+import { WebSocketContext } from '../../contexts/WebsocketContext';
 
 const InfoBlock = ({ player }: { player: Player }) => {
+  const socket = useContext(WebSocketContext);
   const navigate = useNavigate();
   const { user } = useContext(UserContext);
   const [isFriendOfUser, setIsFriendOfUser] = useState(false);
@@ -67,6 +69,11 @@ const InfoBlock = ({ player }: { player: Player }) => {
       );
     }
   };
+
+  function sendSpectate(id : number) {
+    socket.emit("match_spectate", {id : id});
+    navigate('/game');
+  }
 
   return (
     <div className={styles.basicInfoBlock}>
@@ -125,7 +132,7 @@ const InfoBlock = ({ player }: { player: Player }) => {
           <ButtonPong
             text={'Watch'}
             title={`Spectate the current game of ${player.nickname}`}
-            onClick={() => console.log('time for spectating')}
+            onClick={() => sendSpectate(player.id)}
             startIcon={<VisibilityIcon />}
             disabled={player.status === 'PLAYING' ? false : true}
           />
