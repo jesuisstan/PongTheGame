@@ -12,6 +12,15 @@ const PinkSwitch = styled(Switch)(({ theme }) => ({
   },
   '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
     backgroundColor: color.PONG_PINK
+  },
+  '& .MuiSwitch-switchBase.Mui-disabled + .MuiSwitch-track': {
+    backgroundColor: theme.palette.grey[400]
+  },
+  '& .MuiSwitch-switchBase.Mui-disabled': {
+    color: theme.palette.grey[400],
+    '& + .MuiSwitch-track': {
+      opacity: 0.5
+    }
   }
 }));
 

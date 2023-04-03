@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 import { redirect, useNavigate } from 'react-router-dom';
 import { UserContext } from '../../contexts/UserContext';
 import { Player } from '../../types/Player';
-import InvitationModal from './invitation/InvitationModal';
+import InvitationSendModal from './invitation/InvitationSendModal';
 import ButtonPong from '../UI/ButtonPong';
 import BadgePong from '../UI/BadgePong';
 import backendAPI from '../../api/axios-instance';
@@ -75,7 +75,7 @@ const InfoBlock = ({ player }: { player: Player }) => {
 
   return (
     <div className={styles.basicInfoBlock}>
-      <InvitationModal
+      <InvitationSendModal
         open={openInvitationModal}
         setOpen={setOpenInvitationModal}
         player={player}

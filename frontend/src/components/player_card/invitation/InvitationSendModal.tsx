@@ -24,7 +24,7 @@ import styles from './styles/PlayerCard.module.css';
 
 const DEFAULT_WIN_SCORE = 5;
 
-const InvitationModal = ({
+const InvitationSendModal = ({
   open,
   setOpen,
   player
@@ -57,6 +57,7 @@ const InvitationModal = ({
           nickname: player.nickname
         },
         (response: any) => {
+          console.log(response);
           if (response.error) {
             reject(response.error);
           } else {
@@ -70,7 +71,8 @@ const InvitationModal = ({
     });
   };
 
-  socket.on('match_invitation_error', (args) => { // If a error occurs
+  socket.on('match_invitation_error', (args) => {
+    // If a error occurs
     // If a error occurs
     console.log('socket match_invitation_error ON');
     console.log(args);
@@ -237,4 +239,4 @@ const InvitationModal = ({
   );
 };
 
-export default InvitationModal;
+export default InvitationSendModal;
