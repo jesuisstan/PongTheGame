@@ -84,13 +84,12 @@ export class GameGateway {
     if (
       !socket ||
       !payload ||
-      !payload.obstacle ||
       !payload.winscore ||
-      !payload.nickname
+      (!payload.nickname && (payload.obstacle || !payload.obstacle))
     ) {
       this.websockets.send(socket, 'match_invitation_error', {
         status: 'error',
-        error: 'Error backend on creation',
+        error: 'Data needed not fetch',
       });
       return;
     }

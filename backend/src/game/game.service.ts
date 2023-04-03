@@ -61,7 +61,7 @@ export class GameService {
         sendToId: user.id,
       },
     });
-    if (already_exist) {
+    if (already_exist.length > 0) {
       this.websocket.send(socket, 'match_invitation_error', {
         status: 'error',
         error: 'Invitation already send',
