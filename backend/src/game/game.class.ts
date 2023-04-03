@@ -33,9 +33,9 @@ export const Default_params = {
   BALL_PERTURBATOR: 0.2,
   GAME_TIME: 300,
   DEFAULT_PADDLE_POSITION: 600 / 2 - 300 / 6 / 2,
-  OBSTACLE_HEIGHT: 100 * 2,
+  OBSTACLE_HEIGHT: 150,
   OBSTACLE_WIDTH: 8,
-  OBSTACLE_SPEED: 5,
+  OBSTACLE_SPEED: 8,
 };
 
 export class Game {
@@ -380,11 +380,12 @@ export class Game {
       ball,
       ballRadius,
       {
-        x: this.game_state.player1.paddle.x + Default_params.PADDLE_WIDTH,
+        x: this.game_state.player1.paddle.x,
         y: this.game_state.player1.paddle.y,
       },
       this.game_state.gameInfos.paddleWidth,
       this.game_state.gameInfos.paddleHeight,
+      true,
     );
     this._check_ball_collide_paddle(
       ball,
@@ -392,6 +393,7 @@ export class Game {
       this.game_state.player2.paddle,
       this.game_state.gameInfos.paddleWidth,
       this.game_state.gameInfos.paddleHeight,
+      false,
     );
     if (this.obstacle) {
       if (!this.game_state.obstacle) return;
@@ -401,6 +403,7 @@ export class Game {
         this.game_state.obstacle.position,
         Default_params.OBSTACLE_WIDTH,
         Default_params.OBSTACLE_HEIGHT,
+        false,
       );
     }
   }
@@ -422,7 +425,10 @@ export class Game {
     paddle: Position,
     paddleWidth: number,
     paddleHeight: number,
+    isPlayer1: boolean,
   ) {
+    let paddleFrontMiddleCollideZone: any;
+    let paddleFrontDownCollideZone: any;
     if (ball.collidable) {
       const ballColide: any = {
         x: ball.position.x - ballRadius,
@@ -436,18 +442,34 @@ export class Game {
         width: 2,
         height: paddleHeight / 3,
       };
-      const paddleFrontMiddleCollideZone: any = {
-        x: paddle.x,
-        y: paddle.y + paddleHeight / 3,
-        width: 2,
-        height: paddleHeight / 3,
-      };
-      const paddleFrontDownCollideZone: any = {
-        x: paddle.x,
-        y: paddle.y + (paddleHeight / 3) * 2,
-        width: 2,
-        height: paddleHeight / 3,
-      };
+      if (isPlayer1) {
+        paddleFrontMiddleCollideZone = {
+          x: paddle.x + Default_params.PADDLE_WIDTH,
+          y: paddle.y + paddleHeight / 3,
+          width: 2,
+          height: paddleHeight / 3,
+        };
+        paddleFrontDownCollideZone = {
+          x: paddle.x + Default_params.PADDLE_WIDTH,
+          y: paddle.y + (paddleHeight / 3) * 2,
+          width: 2,
+          height: paddleHeight / 3,
+        };
+      } else {
+        paddleFrontMiddleCollideZone = {
+          x: paddle.x,
+          y: paddle.y + paddleHeight / 3,
+          width: 2,
+          height: paddleHeight / 3,
+        };
+        paddleFrontDownCollideZone = {
+          x: paddle.x,
+          y: paddle.y + (paddleHeight / 3) * 2,
+          width: 2,
+          height: paddleHeight / 3,
+        };
+      }
+
       const paddleTopCollideZone: any = {
         x: paddle.x,
         y: paddle.y - 2,

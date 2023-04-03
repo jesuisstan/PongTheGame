@@ -189,11 +189,10 @@ export class GameService {
         this.prisma,
         this.websocket,
         this.achievement,
-        TypeMode.CUSTOM,
+        TypeMode.NORMAL,
         5,
         { socket: player1, user: player1.user },
         { socket: player2, user: player2.user },
-        true,
       );
       this.games.push(game);
       game.start(() => {
