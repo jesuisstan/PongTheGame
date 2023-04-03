@@ -47,13 +47,12 @@ export class GameService {
     if (!user) return { status: 403, reason: 'User not found' };
     if (user.status == 'PLAYING')
       return { status: 400, reason: 'User Already in game' };
-    const already_exist = await this.prisma.matchInvitation.findMany({
+    const already_exist = await this.prisma.matchInvitation.findUnique({
       where: {
         createdById: socket.user.id,
-        sendToId: user.id,
       },
     });
-    if (already_exist.length > 0)
+    if (already_exist)
       return { status: 400, reason: 'Invitation already send' };
     const invited_socket: Socket[] = this.websocket.getSockets([user.id]);
     if (!invited_socket || !invited_socket[0])
@@ -113,11 +112,24 @@ export class GameService {
       this.games.splice(this.games.indexOf(game), 1);
     });
   }
+
+  async game_abort(socket: any, nickname: string) {
+    const userId: { id: number } | null = await this.prisma.user.findUnique({
+      where: {
+        nickname: nickname,
+      },
+      select: {
+        id: true,
+      },
+    });
+    if (!userId) return;
+    this._delete_user_invitations([socket.user.id, userId]);
+  }
+
   private async _delete_user_invitations(userId: number[]) {
     await this.prisma.matchInvitation.delete({
       where: {
         createdById: userId[0],
-        sendToId: userId[1],
       },
     });
   }
