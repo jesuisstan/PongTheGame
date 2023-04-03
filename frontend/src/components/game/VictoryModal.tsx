@@ -46,6 +46,24 @@ const VictoryModal = ({
           <ModalClose sx={MUI.modalClose} />
           <Typography sx={MUI.modalHeader}>Game over!</Typography>
           <Stack spacing={2}>
+            {gameResult?.reason === 'Player left the game' && (
+              <Typography
+                sx={{
+                  color: 'black',
+                  textAlign: 'center',
+                  marginTop: '10px',
+                  whiteSpace: 'pre'
+                }}
+              >
+                <WarningAmberIcon
+                  fontSize="large"
+                  sx={{ color: color.PONG_PINK }}
+                />
+                {'\n'}
+                {gameResult?.loser.name} left the game {'\n'}
+                and receives technical lose
+              </Typography>
+            )}
             <Typography
               sx={{ color: 'black', textAlign: 'center', marginTop: '10px' }}
             >
@@ -91,24 +109,6 @@ const VictoryModal = ({
                 }}
               />
             </div>
-            {gameResult?.reason === 'Player left the game' && (
-              <Typography
-                sx={{
-                  color: 'black',
-                  textAlign: 'center',
-                  marginTop: '10px',
-                  whiteSpace: 'pre'
-                }}
-              >
-                <WarningAmberIcon
-                  fontSize="large"
-                  sx={{ color: color.PONG_PINK }}
-                />
-                {'\n'}
-                {gameResult?.loser.name} left the game {'\n'}
-                and receives technical lose
-              </Typography>
-            )}
           </Stack>
         </ModalDialog>
       </Modal>
