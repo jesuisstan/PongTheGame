@@ -123,6 +123,13 @@ export class GameService {
       },
     });
     if (!userId) return;
+    const match_exist = await this.prisma.matchInvitation.findUnique({
+      where: {
+        // sendToId : userId,
+        createdById: socket.user.id,
+      },
+    });
+    if (!match_exist) return;
     this._delete_user_invitations([socket.user.id, userId]);
   }
 
