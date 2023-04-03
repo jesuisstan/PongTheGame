@@ -157,7 +157,8 @@ const Chat = () => {
       { roomName: roomName },
       (response: boolean) => {
         setIsPasswordProtected(response);
-      }
+    console.log("isprotectedddddd  " + isPasswordProtected)
+  }
     );
     isPasswordProtected === false ? joinRoom(roomName) : onPasswordSubmit();
   };
@@ -235,7 +236,7 @@ const Chat = () => {
                 {chatRooms.map(
                   (room: ChatRoomType, index) =>
                     // Check if this isn't a private conversation of other users
-                    isAuthorizedPrivRoom(room.modes, room.users) && (
+                    isAuthorizedPrivRoom(room.modes, room.members) && (
                       <>
                         <ListItem key={index} disablePadding>
                           <ListItemIcon sx={{ color: 'white' }}>

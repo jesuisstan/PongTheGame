@@ -34,9 +34,10 @@ model User {
   achievement       UserAchivement[]
   invitationEmit    MatchInvitation[] @relation("InvitationEmit")
   invitationReceive MatchInvitation[] @relation("InvitationReceive")
-  Message           Message[]
+  Message           Message[]         @relation("MessageAuthor")
+  Member            Member[]          @relation("ChatRoomMember")
   ChatRoom          ChatRoom[]
-
+  
   @@unique([profileId, provider])
 }
 
@@ -142,24 +143,26 @@ model Session {
 
 model Message {
   id           Int       @id @default(autoincrement())
-  author       User      @relation(fields: [authorId], references: [id])
+  author       User      @relation("MessageAuthor", fields: [authorId], references: [id])
   authorId     Int
   data         String
-  ChatRoom     ChatRoom? @relation(fields: [chatRoomName], references: [name])
-  chatRoomName String?
+  ChatRoom     ChatRoom @relation(fields: [chatRoomName], references: [name])
+  chatRoomName String
 }
 
 model Member {
-  id           Int       @id
+  memberId     Int
+  member       User      @relation("ChatRoomMember", fields: [memberId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   isOnline     Boolean
   modes        String
-  ChatRoom     ChatRoom? @relation(fields: [chatRoomName], references: [name])
-  chatRoomName String?
+  ChatRoom     ChatRoom @relation(fields: [chatRoomName], references: [name], onDelete: Cascade, onUpdate: Cascade)
+  chatRoomName String
+
+  @@id([memberId, chatRoomName])
 }
 
 model ChatRoom {
-  id          Int       @id @default(autoincrement())
-  name        String    @unique
+  name        String    @id
   modes       String
   password    String
   userLimit   Int

@@ -18,42 +18,34 @@ export class ChatService {
     var found = false;
     var foundModes = "";
     for (let i=0; i < members.length; ++i) {
-      if (userId === members[i].id) {
+      if (userId === members[i].memberId) {
         found = true;
         foundModes = members[i].modes;
-        if (members[i].isOnline === online) {
-          return;
-        }
+        if (members[i].isOnline === online) return;
       }
     }
-    if (found) {
-      await this.prisma.member.update({
-        where: { id: userId },
-        data: { modes: foundModes += modes}
-      })
-    }
-    else
+    if (found)
+      this.updateUserModes(roomName, userId, foundModes + modes);
+    else {
       await this.prisma.member.create({
         data: {
-          id: userId,
-          isOnline: online,
-          modes: modes
+              memberId: userId,
+              isOnline: online,
+              modes: modes,
+              chatRoomName: roomName
         }
       })
+    }
   }
 
   async quitRoom(roomName: string, userId: number) {
     const room = await this.getChatRoomByName(roomName);
     if (room) {
-      await this.prisma.chatRoom.update({
-        where: { name: roomName },
-        data : { members: {
-          update: {
-            where: { id: userId },
+      await this.prisma.member.update({
+            where: { memberId_chatRoomName: {
+              memberId: userId, chatRoomName: roomName }
+            },
             data: { isOnline: false }
-          }
-          }
-        },
       })
     }
     else throw new WsException({ msg: 'quitRoom: unknown room name!' });
@@ -118,15 +110,19 @@ export class ChatService {
   async findAllMessages(roomName: string) {
     const room = await this.getChatRoomByName(roomName);
     if (room) return await this.prisma.message.findMany({
-      where: { chatRoomName: roomName }
+      where: { chatRoomName: roomName },
+      select: { author: true, data: true }
     });
     throw new WsException({ msg: 'findAllMessages: unknown room name!' });
   }
 
   findAllChatRooms() { return this.prisma.chatRoom.findMany(); }
-    // Return all members from the chatroom
-    async findAllMembers(roomName: string) {
-    return this.prisma.member.findMany();
+
+  // Return all members from the chatroom
+  async findAllMembers(roomName: string) {
+    return this.prisma.member.findMany({
+      where: { chatRoomName: roomName }
+    });
   }
 
   async changePassword(roomName: string, newPassword: string) {
@@ -173,7 +169,7 @@ export class ChatService {
       const members = await this.findAllMembers(roomName);
       // Look for oper mode ('o') in user's mode
       for (let i=0; i < members.length; ++i)
-        if (members[i].id === userId && members[i].modes.search('o') !== -1)
+        if (members[i].memberId === userId && members[i].modes.search('o') !== -1)
           return true;
       return false;
     }
@@ -188,22 +184,13 @@ export class ChatService {
       // Add 'o' mode if not already there
       var modes = "";
       for (var i=0; i < members.length; ++i)
-        if (members[i].id === userId) {
+        if (members[i].memberId === userId) {
           modes = members[i].modes;
           if (members[i].modes.search('o') === -1)
             modes += 'o';
         }
       // Save the new modes
-      await this.prisma.chatRoom.update({
-        where: { name: roomName },
-        data : { members: {
-          update: {
-            where: { id: userId },
-            data: { modes: modes }
-          }
-          }
-        },
-      })
+      this.updateUserModes(roomName, userId, modes);
     }
     else throw new WsException({ msg: 'makeOper: unknown room name!' });
   }
@@ -252,13 +239,13 @@ export class ChatService {
   async isUserBanned(roomName: string, userId: number) {
     const room = await this.getChatRoomByName(roomName);
     if (room) {
-      const bannedUser = await this.prisma.chatRoom.findUnique({
+      const res = await this.prisma.chatRoom.findUnique({
         where: { name: roomName },
         select: {
-          bannedUsers: { where: { id: userId } }
-          }
+          bannedUsers: { where: { id: userId } },
+        }
       });
-      if (bannedUser) return true;
+      if (res?.bannedUsers[0]) return true;
       return false;
     }
     else throw new WsException({ msg: 'isUserBanned: unknown room name!' });
@@ -269,16 +256,11 @@ export class ChatService {
   }
 
   async updateUserModes(roomName: string, userId: number, modes: string) {
-    await this.prisma.chatRoom.update({
-      where: { name: roomName },
-      data : {
-        members: {
-          update: {
-            where: { id: userId },
-            data: { modes: modes }
-          },
-        },
+    await this.prisma.member.update({
+      where: { memberId_chatRoomName: {
+        memberId: userId, chatRoomName: roomName }
       },
+      data: { modes: modes }
     })
   }
 
@@ -289,7 +271,7 @@ export class ChatService {
       // Get user's modes and remove 'm' mode if found
       var modes = "";
       for (var i=0; i < members.length; ++i)
-        if (members[i].id === userId) {
+        if (members[i].memberId === userId) {
           modes = members[i].modes;
           if (members[i].modes.search('m') === -1)
             modes += 'm';
@@ -307,7 +289,7 @@ export class ChatService {
       // Get user's modes and remove 'm' mode if found
       var modes = "";
       for (var i=0; i < members.length; ++i)
-        if (members[i].id === userId) {
+        if (members[i].memberId === userId) {
           modes = members[i].modes;
           if (members[i].modes.search('m') !== -1)
             modes.replace(/m/g, '');
@@ -323,7 +305,7 @@ export class ChatService {
       const members = await this.findAllMembers(roomName);
       // Look for mute mode ('m') in user's modes
       for (var i=0; i < members.length; ++i)
-        if (members[i].id === userId && members[i].modes.search('m') !== -1)
+        if (members[i].memberId === userId && members[i].modes.search('m') !== -1)
           return true;
       return false;
     }
@@ -333,10 +315,11 @@ export class ChatService {
   async isPasswordProtected(roomName: string) {
     const room = await this.getChatRoomByName(roomName);
     if (room) {
-      return await this.prisma.chatRoom.findUnique({
-        where: { name: roomName },
-        select: { password: true }
-      });
+      // const pwd = await this.prisma.chatRoom.findUnique({
+      //   where: { name: roomName },
+      //   select: { password: true }
+      // });
+      return room.password !== '' ? true : false;
     } else
       throw new WsException({ msg: 'isPasswordProtected: unknown room name!' });
   }

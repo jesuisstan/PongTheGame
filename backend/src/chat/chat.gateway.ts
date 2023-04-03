@@ -95,7 +95,7 @@ export class ChatGateway {
     @MessageBody('roomName') roomName: string,
     @MessageBody('userId') userId: number,
   ) {
-    if (await this.isUserBanned(roomName, userId) === true)
+    if (await this.chatService.isUserBanned(roomName, userId) === true)
       throw new WsException({ msg: 'joinRoom: User is banned.' });
     this.chatService.identify(roomName, userId, '', true);
     this.server.emit('joinRoom', roomName, userId);

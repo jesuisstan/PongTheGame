@@ -21,7 +21,7 @@ export type ChatRoomType = {
 }
 
 export type MemberType = {
-		id: number;
-		isOnline: boolean;
-		modes: string;
+	memberId: number;
+	isOnline: boolean;
+	modes: string;
 }

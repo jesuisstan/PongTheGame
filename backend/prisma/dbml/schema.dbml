@@ -21,6 +21,7 @@ Table User {
   invitationEmit MatchInvitation [not null]
   invitationReceive MatchInvitation [not null]
   Message Message [not null]
+  Member Member [not null]
   ChatRoom ChatRoom [not null]
 
   indexes {
@@ -102,21 +103,25 @@ Table Message {
   author User [not null]
   authorId Int [not null]
   data String [not null]
-  ChatRoom ChatRoom
-  chatRoomName String
+  ChatRoom ChatRoom [not null]
+  chatRoomName String [not null]
 }
 
 Table Member {
-  id Int [pk]
+  memberId Int [not null]
+  member User [not null]
   isOnline Boolean [not null]
   modes String [not null]
-  ChatRoom ChatRoom
-  chatRoomName String
+  ChatRoom ChatRoom [not null]
+  chatRoomName String [not null]
+
+  indexes {
+    (memberId, chatRoomName) [pk]
+  }
 }
 
 Table ChatRoom {
-  id Int [pk, increment]
-  name String [unique, not null]
+  name String [pk]
   modes String [not null]
   password String [not null]
   userLimit Int [not null]
@@ -168,4 +173,6 @@ Ref: Message.authorId > User.id
 
 Ref: Message.chatRoomName > ChatRoom.name
 
-Ref: Member.chatRoomName > ChatRoom.name
+Ref: Member.memberId > User.id [delete: Cascade]
+
+Ref: Member.chatRoomName > ChatRoom.name [delete: Cascade]

@@ -62,7 +62,6 @@ const ChatRoom = (props: any) => {
       // Array including all the messages, even the ones from
       // blocked users/users who blocked the user
       const messagesToFilter = response
-
       for (let i = messagesToFilter.length - 1; i >= 0; --i) {
         // First we filter the recipient's blocked users
         let found = false;
@@ -131,7 +130,7 @@ const ChatRoom = (props: any) => {
     })
     socket.on('joinRoom', (roomName: string, userId: number) => {
       if (roomName === user.joinedChatRoom)
-        console.log(userId + ' joined chatroom [' + roomName + ']');
+        console.log('user ID: ' + userId + ' joined chatroom [' + roomName + ']');
     });
     socket.on('quitRoom', (roomName: string, userId: number) => {
       if (roomName === user.joinedChatRoom)
