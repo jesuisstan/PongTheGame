@@ -40,6 +40,7 @@ const InvitationSendModal = ({
   const [disabledOptions, setDisabledOptions] = useState(false);
   const [disabledButton, setDisabledButton] = useState(false);
   const [buttonInviteText, setButtonInviteText] = useState('Invite');
+  const [buttonPlayText, setButtonPlayText] = useState('Play');
   const [loadingInvite, setLoadingInvite] = useState(false);
   const [loadingPlay, setLoadingPlay] = useState(false);
 
@@ -50,21 +51,29 @@ const InvitationSendModal = ({
   const sendInvitation = () => {
     return new Promise(async (resolve, reject) => {
       socket.emit(
-        'match_get_invitation',
+        'match_send_invitation',
         {
           winscore: winScore,
           obstacle: obstacleEnabled,
           nickname: player.nickname
         },
         (response: any) => {
-          console.log(response);
-          if (response.error) {
-            reject(response.error);
+          console.log(response);//todo
+          if (response.status === 400) {
+            if (response.reason === 'Invitation already send') {
+              reject((response.error = 'Invitation is already sent'));
+            } else {
+              reject((response.error = `${player.nickname} is occupied`));
+            }
+          } else if (response.status === 403) {
+            reject(
+              (response.error = `User with nickname "${player.nickname}" is not found`)
+            );
+          } else if (response.status !== 200) {
+            reject((response.error = 'Something went wrong'));
           } else {
-            setLoadingInvite(false);
-            setButtonInviteText('Sent');
-            setDisabledButton(true);
-            resolve(response.data);
+            console.log('goodway') //todo
+            resolve(response);
           }
         }
       );
@@ -83,6 +92,8 @@ const InvitationSendModal = ({
     setObstacleEnabled(false);
     setButtonInviteText('Invite');
     setLoadingInvite(false);
+    setButtonPlayText('Play');
+    setLoadingPlay(false);
   };
 
   const handleSubmit = async (event: any) => {
@@ -92,6 +103,10 @@ const InvitationSendModal = ({
     await sendInvitation()
       .then((data) => {
         console.log('resp emit data -> ', data);
+        setLoadingInvite(false);
+        setButtonInviteText('Sent');
+        setDisabledButton(true);
+        setButtonPlayText('Awaiting');
         setLoadingPlay(true);
       })
       .catch((error) => {
@@ -204,7 +219,7 @@ const InvitationSendModal = ({
                     color="inherit"
                     loadingPosition="end"
                     disabled={disabledButton}
-                    sx={{ minWidth: '100px' }}
+                    sx={{ minWidth: '130px' }}
                   >
                     {buttonInviteText}
                   </LoadingButton>
@@ -225,9 +240,9 @@ const InvitationSendModal = ({
                     color="inherit"
                     loadingPosition="end"
                     disabled={!disabledButton}
-                    sx={{ minWidth: '100px' }}
+                    sx={{ minWidth: '130px' }}
                   >
-                    Play
+                    {buttonPlayText}
                   </LoadingButton>
                 </div>
               </div>

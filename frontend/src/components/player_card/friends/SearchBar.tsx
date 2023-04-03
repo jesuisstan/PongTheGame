@@ -1,11 +1,11 @@
 import { useContext, useState } from 'react';
-import { UserContext } from '../../contexts/UserContext';
+import { UserContext } from '../../../contexts/UserContext';
 import IconButton from '@mui/material/IconButton';
 import TextField from '@mui/material/TextField';
 import FormControl from '@mui/joy/FormControl';
 import SearchIcon from '@mui/icons-material/Search';
-import styles from './styles/PlayerCard.module.css';
-import * as color from '../UI/colorsPong';
+import styles from '../styles/PlayerCard.module.css';
+import * as color from '../../UI/colorsPong';
 
 const SearchBar = () => {
   const { user } = useContext(UserContext);
