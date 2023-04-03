@@ -1,15 +1,11 @@
-import { SetStateAction, Dispatch, useEffect, useState } from 'react';
-import { Achievement } from '../../../types/Achievement';
-import backendAPI from '../../../api/axios-instance';
-import errorAlert from '../../UI/errorAlert';
+import { SetStateAction, Dispatch } from 'react';
 import Modal from '@mui/joy/Modal';
 import ModalDialog from '@mui/joy/ModalDialog';
 import ModalClose from '@mui/joy/ModalClose';
 import Typography from '@mui/joy/Typography';
 import * as MUI from '../../UI/MUIstyles';
-import * as color from '../../UI/colorsPong';
 
-const HistoryHelpModal = ({
+const HistoryNoteModal = ({
   open,
   setOpen
 }: {
@@ -24,7 +20,7 @@ const HistoryHelpModal = ({
           sx={MUI.modalDialog}
         >
           <ModalClose sx={MUI.modalClose} />
-          <Typography sx={MUI.modalHeader}>Explanatory note</Typography>
+          <Typography sx={MUI.modalHeader}>Note</Typography>
           <div
             style={{
               marginTop: '10px',
@@ -34,9 +30,10 @@ const HistoryHelpModal = ({
             }}
           >
             <Typography>
-              Match history includes only online games played.
+              Match history includes{' '}
+              <span style={{ fontWeight: 'bold' }}>online</span> games played.
             </Typography>
-            <Typography>Training with AI does not count.</Typography>
+            <Typography>Training with AI does not come into count.</Typography>
           </div>
         </ModalDialog>
       </Modal>
@@ -44,4 +41,4 @@ const HistoryHelpModal = ({
   );
 };
 
-export default HistoryHelpModal;
+export default HistoryNoteModal;

@@ -58,7 +58,7 @@ const InvitationSendModal = ({
           nickname: player.nickname
         },
         (response: any) => {
-          console.log(response);//todo
+          console.log(response); //todo
           if (response.status === 400) {
             if (response.reason === 'Invitation already send') {
               reject((response.error = 'Invitation is already sent'));
@@ -72,7 +72,7 @@ const InvitationSendModal = ({
           } else if (response.status !== 200) {
             reject((response.error = 'Something went wrong'));
           } else {
-            console.log('goodway') //todo
+            console.log('goodway'); //todo
             resolve(response);
           }
         }
@@ -117,13 +117,11 @@ const InvitationSendModal = ({
   };
 
   const cancelInvitation = () => {
-    console.log("cancel Invit")
-    socket.emit(
-      'match_invitation_abort',
-      {
-        nickname: player.nickname
-      })
-  }
+    console.log('cancel Invit');
+    socket.emit('match_invitation_abort', {
+      nickname: player.nickname
+    });
+  };
 
   return (
     <div>
@@ -132,7 +130,7 @@ const InvitationSendModal = ({
         open={open}
         onClose={(event, reason) => {
           if (event && reason === 'closeClick') {
-            cancelInvitation()
+            cancelInvitation();
             setDefault();
             setOpen(false);
           }
@@ -152,9 +150,10 @@ const InvitationSendModal = ({
                 <Typography
                   component="h3"
                   sx={{
-                    textAlign: 'center',
+                    textAlign: 'left',
                     paddingBottom: '10px',
-                    paddingTop: '15px'
+                    paddingTop: '15px',
+                    color: color.PONG_BLUE
                   }}
                 >
                   Define if obstacle is available:
@@ -186,75 +185,99 @@ const InvitationSendModal = ({
               <div>
                 <Typography
                   component="h3"
-                  sx={{ textAlign: 'center', paddingBottom: '30px' }}
+                  sx={{
+                    textAlign: 'left',
+                    paddingBottom: '30px',
+                    color: color.PONG_BLUE
+                  }}
                 >
                   Define the win score:
                 </Typography>
-                <SliderPong
-                  disabled={disabledOptions}
-                  setWinScore={setWinScore}
-                />
+                <div
+                  style={{
+                    marginLeft: '15px',
+                    marginRight: '15px'
+                  }}
+                >
+                  <SliderPong
+                    disabled={disabledOptions}
+                    setWinScore={setWinScore}
+                  />
+                </div>
+              </div>
+              <div>
+                <Typography
+                  component="h3"
+                  sx={{
+                    textAlign: 'left',
+                    paddingBottom: '10px',
+                    paddingTop: '15px',
+                    color: color.PONG_BLUE
+                  }}
+                >
+                  Send invitation and proceed to game:
+                </Typography>
                 <div
                   style={{
                     display: 'flex',
                     flexDirection: 'row',
+                    gap: '21px',
                     alignItems: 'center',
-                    gap: '11px',
                     justifyContent: 'center'
                   }}
-                ></div>
-              </div>
-              <div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  gap: '21px',
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}
-              >
-                <div>
-                  <LoadingButton
-                    type="submit"
-                    title={`Invite ${player.nickname} to play game`}
-                    loading={loadingInvite}
-                    endIcon={
-                      buttonInviteText === 'Sent' ? (
-                        <PlaylistAddCheckIcon />
-                      ) : (
-                        <SendIcon />
-                      )
-                    }
-                    variant="contained"
-                    color="inherit"
-                    loadingPosition="end"
-                    disabled={disabledButton}
-                    sx={{ minWidth: '130px' }}
-                  >
-                    {buttonInviteText}
-                  </LoadingButton>
+                >
+                  <div>
+                    <LoadingButton
+                      type="submit"
+                      title={`Invite ${player.nickname} to play game`}
+                      loading={loadingInvite}
+                      endIcon={
+                        buttonInviteText === 'Sent' ? (
+                          <PlaylistAddCheckIcon />
+                        ) : (
+                          <SendIcon />
+                        )
+                      }
+                      variant="contained"
+                      color="inherit"
+                      loadingPosition="end"
+                      disabled={disabledButton}
+                      sx={{ minWidth: '130px' }}
+                    >
+                      {buttonInviteText}
+                    </LoadingButton>
+                  </div>
+                  <div>
+                    <LoadingButton
+                      type="submit"
+                      title="Proceed to game"
+                      loading={loadingPlay}
+                      endIcon={
+                        buttonInviteText === 'Sent' ? (
+                          <PlaylistAddCheckIcon />
+                        ) : (
+                          <SportsEsportsIcon />
+                        )
+                      }
+                      variant="contained"
+                      color="inherit"
+                      loadingPosition="end"
+                      disabled={!disabledButton}
+                      sx={{ minWidth: '130px' }}
+                    >
+                      {buttonPlayText}
+                    </LoadingButton>
+                  </div>
                 </div>
-                <div>
-                  <LoadingButton
-                    type="submit"
-                    title="Proceed to game"
-                    loading={loadingPlay}
-                    endIcon={
-                      buttonInviteText === 'Sent' ? (
-                        <PlaylistAddCheckIcon />
-                      ) : (
-                        <SportsEsportsIcon />
-                      )
-                    }
-                    variant="contained"
-                    color="inherit"
-                    loadingPosition="end"
-                    disabled={!disabledButton}
-                    sx={{ minWidth: '130px' }}
-                  >
-                    {buttonPlayText}
-                  </LoadingButton>
-                </div>
+                <Typography
+                  sx={{
+                    textAlign: 'left',
+                    fontSize: '14px',
+                    paddingTop: '15px'
+                  }}
+                >
+                  * closing this popup cancels an invitation
+                </Typography>
               </div>
             </Stack>
           </form>

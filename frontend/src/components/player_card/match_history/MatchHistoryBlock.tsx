@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Player } from '../../../types/Player';
 import { MatchHistory } from '../../../types/MatchHistory';
-import HistoryHelpModal from './HistoryHelpModal';
+import HistoryNoteModal from './HistoryNoteModal';
 import backendAPI from '../../../api/axios-instance';
 import errorAlert from '../../UI/errorAlert';
 import Typography from '@mui/joy/Typography';
@@ -78,7 +78,7 @@ const MatchHistoryBlock = ({
       <div>
         <IconButton
           color="primary"
-          title={'Show all possible achievements'}
+          title={'Note'}
           onClick={() => setOpen(true)}
         >
           <HelpOutlineIcon
@@ -91,7 +91,7 @@ const MatchHistoryBlock = ({
             }}
           />
         </IconButton>
-        <HistoryHelpModal open={open} setOpen={setOpen} />
+        <HistoryNoteModal open={open} setOpen={setOpen} />
       </div>
     </div>
   );
