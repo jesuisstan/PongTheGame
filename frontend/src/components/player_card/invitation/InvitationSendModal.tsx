@@ -40,6 +40,7 @@ const InvitationSendModal = ({
   const [disabledOptions, setDisabledOptions] = useState(false);
   const [disabledButton, setDisabledButton] = useState(false);
   const [buttonInviteText, setButtonInviteText] = useState('Invite');
+  const [buttonPlayText, setButtonPlayText] = useState('Play');
   const [loadingInvite, setLoadingInvite] = useState(false);
   const [loadingPlay, setLoadingPlay] = useState(false);
 
@@ -57,7 +58,7 @@ const InvitationSendModal = ({
           nickname: player.nickname
         },
         (response: any) => {
-          console.log(response);
+          console.log(response);//todo
           if (response.status === 400) {
             if (response.reason === 'Invitation already send') {
               reject((response.error = 'Invitation is already sent'));
@@ -72,7 +73,7 @@ const InvitationSendModal = ({
             reject((response.error = 'Something went wrong'));
           } else {
             console.log('goodway') //todo
-            resolve(response.data);
+            resolve(response);
           }
         }
       );
@@ -91,6 +92,8 @@ const InvitationSendModal = ({
     setObstacleEnabled(false);
     setButtonInviteText('Invite');
     setLoadingInvite(false);
+    setButtonPlayText('Play');
+    setLoadingPlay(false);
   };
 
   const handleSubmit = async (event: any) => {
@@ -103,6 +106,7 @@ const InvitationSendModal = ({
         setLoadingInvite(false);
         setButtonInviteText('Sent');
         setDisabledButton(true);
+        setButtonPlayText('Awaiting');
         setLoadingPlay(true);
       })
       .catch((error) => {
@@ -215,7 +219,7 @@ const InvitationSendModal = ({
                     color="inherit"
                     loadingPosition="end"
                     disabled={disabledButton}
-                    sx={{ minWidth: '100px' }}
+                    sx={{ minWidth: '130px' }}
                   >
                     {buttonInviteText}
                   </LoadingButton>
@@ -236,9 +240,9 @@ const InvitationSendModal = ({
                     color="inherit"
                     loadingPosition="end"
                     disabled={!disabledButton}
-                    sx={{ minWidth: '100px' }}
+                    sx={{ minWidth: '130px' }}
                   >
-                    Play
+                    {buttonPlayText}
                   </LoadingButton>
                 </div>
               </div>
