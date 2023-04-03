@@ -3,6 +3,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { UserContext } from './contexts/UserContext';
 import { WebSocketContext } from './contexts/WebsocketContext';
 import { User } from './types/User';
+import { Player } from './types/Player';
 import AppRoutes from './AppRoutes';
 import Verify2fa from './components/profile/Verify2fa';
 import InvitationReceivedModal from './components/player_card/invitation/InvitationReceivedModal';
@@ -28,6 +29,17 @@ const App = () => {
     joinedChatRoom: ''
   });
 
+  const [inviter, setInviter] = useState<Player>({
+    avatar: undefined,
+    id: -1,
+    nickname: '',
+    profileId: '',
+    provider: '',
+    role: '',
+    status: 'OFFLINE',
+    username: ''
+  });
+
   useEffect(() => {
     backendAPI.get('/auth/getuser').then(
       (response) => {
@@ -40,6 +52,12 @@ const App = () => {
       }
     );
   }, []);
+
+  socket.on('invitation_game', (args) => {
+    console.log('invitation received') //todo
+    setInviter(args.player);
+    setOpenInvitation(true);
+  });
 
   return (
     <WebSocketContext.Provider value={socket}>

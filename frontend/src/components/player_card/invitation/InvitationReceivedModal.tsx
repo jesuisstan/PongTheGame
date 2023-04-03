@@ -10,8 +10,7 @@ import ModalDialog from '@mui/joy/ModalDialog';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/joy/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
-import SendIcon from '@mui/icons-material/Send';
-import PlaylistAddCheckIcon from '@mui/icons-material/PlaylistAddCheck';
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 import * as MUI from '../../UI/MUIstyles';
 import * as color from '../../UI/colorsPong';
@@ -19,7 +18,7 @@ import styles from './styles/PlayerCard.module.css';
 
 const InvitationReceivedModal = ({
   open,
-  setOpen,
+  setOpen
 }: {
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
@@ -27,7 +26,6 @@ const InvitationReceivedModal = ({
   const { user, setUser } = useContext(UserContext);
   const socket = useContext(WebSocketContext);
   const [disabledButton, setDisabledButton] = useState(false);
-  const [buttonInviteText, setButtonInviteText] = useState('Invite');
   const [loadingInvite, setLoadingInvite] = useState(false);
   const [loadingPlay, setLoadingPlay] = useState(false);
 
@@ -55,6 +53,14 @@ const InvitationReceivedModal = ({
   //  });
   //};
 
+  const declineInvitation = () => {
+    console.log('declined');
+  };
+
+  const acceptInvitation = () => {
+    console.log('accepted');
+  };
+
   return (
     <div>
       <Modal
@@ -72,102 +78,90 @@ const InvitationReceivedModal = ({
         >
           <ModalClose sx={MUI.modalClose} />
           <Typography id="basic-modal-dialog-title" sx={MUI.modalHeader}>
-            Invitation received! 
+            Invitation received!
           </Typography>
-            <Stack spacing={3}>
-              <div>
-                <Typography
-                  component="h3"
-                  sx={{
-                    textAlign: 'center',
-                    paddingBottom: '10px',
-                    paddingTop: '15px'
-                  }}
-                >
-                  Define if obstacle is available:
-                </Typography>
-                <div
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    gap: '11px',
-                    justifyContent: 'center'
-                  }}
-                >
-                  
-                </div>
-              </div>
-
-              <div>
-                <Typography
-                  component="h3"
-                  sx={{ textAlign: 'center', paddingBottom: '30px' }}
-                >
-                  Define the win score:
-                </Typography>
-                <div
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    gap: '11px',
-                    justifyContent: 'center'
-                  }}
-                ></div>
-              </div>
+          <Stack spacing={3}>
+            <div>
+              <Typography
+                component="h3"
+                sx={{
+                  textAlign: 'center',
+                  paddingBottom: '10px',
+                  paddingTop: '15px'
+                }}
+              >
+                Define if obstacle is available:
+              </Typography>
               <div
                 style={{
                   display: 'flex',
                   flexDirection: 'row',
-                  gap: '21px',
                   alignItems: 'center',
+                  gap: '11px',
+                  justifyContent: 'center'
+                }}
+              ></div>
+            </div>
+
+            <div>
+              <Typography
+                component="h3"
+                sx={{ textAlign: 'center', paddingBottom: '30px' }}
+              >
+                Someone invites your to play the custom game:
+              </Typography>
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: '11px',
                   justifyContent: 'center'
                 }}
               >
-                <div>
-                  <LoadingButton
-                    type="submit"
-                    loading={loadingInvite}
-                    endIcon={
-                      buttonInviteText === 'Sent' ? (
-                        <PlaylistAddCheckIcon />
-                      ) : (
-                        <SendIcon />
-                      )
-                    }
-                    variant="contained"
-                    color="inherit"
-                    loadingPosition="end"
-                    disabled={disabledButton}
-                    sx={{ minWidth: '100px' }}
-                  >
-                    {buttonInviteText}
-                  </LoadingButton>
-                </div>
-                <div>
-                  <LoadingButton
-                    type="submit"
-                    title="Proceed to game"
-                    loading={loadingPlay}
-                    endIcon={
-                      buttonInviteText === 'Sent' ? (
-                        <PlaylistAddCheckIcon />
-                      ) : (
-                        <SportsEsportsIcon />
-                      )
-                    }
-                    variant="contained"
-                    color="inherit"
-                    loadingPosition="end"
-                    disabled={!disabledButton}
-                    sx={{ minWidth: '100px' }}
-                  >
-                    Play
-                  </LoadingButton>
-                </div>
+                Obstacle - ; win score - ;
               </div>
-            </Stack>
+            </div>
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                gap: '21px',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+            >
+              <div>
+                <LoadingButton
+                  type="submit"
+                  loading={loadingInvite}
+                  startIcon={<HighlightOffIcon />}
+                  variant="contained"
+                  color="inherit"
+                  loadingPosition="start"
+                  sx={{ minWidth: '100px' }}
+                  onClick={() => declineInvitation()}
+                >
+                  Decline
+                </LoadingButton>
+              </div>
+              <div>
+                <LoadingButton
+                  type="submit"
+                  title="Proceed to game"
+                  loading={loadingPlay}
+                  startIcon={<SportsEsportsIcon />}
+                  variant="contained"
+                  color="inherit"
+                  loadingPosition="start"
+                  sx={{ minWidth: '100px' }}
+                  onClick={() => acceptInvitation()}
+                >
+                  Play
+                </LoadingButton>
+              </div>
+            </div>
+          </Stack>
         </ModalDialog>
       </Modal>
     </div>
