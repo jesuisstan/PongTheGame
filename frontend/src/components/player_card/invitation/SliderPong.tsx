@@ -1,6 +1,7 @@
-import Box from '@mui/material/Box';
+import { Dispatch, SetStateAction } from 'react';
 import Slider from '@mui/material/Slider';
-import { Dispatch, SetStateAction, useState } from 'react';
+import Box from '@mui/material/Box';
+import * as color from '../../UI/colorsPong';
 
 const SliderPong = ({
   disabled,
@@ -52,6 +53,8 @@ const SliderPong = ({
         valueLabelDisplay="on"
         disabled={disabled}
         onChangeCommitted={handleChange}
+        title="Set the win score"
+        sx={{ color: color.PONG_PINK }}
       />
     </Box>
   );
