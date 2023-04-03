@@ -130,53 +130,20 @@ export class Game {
       // Go up or down
       if (
         obstacle.position.y <
-        Default_params.GAME_HEIGHT + Default_params.OBSTACLE_HEIGHT
+        Default_params.GAME_HEIGHT - Default_params.OBSTACLE_HEIGHT
       ) {
-        obstacle.position.y += Default_params.OBSTACLE_SPEED;
+        obstacle.position.y += Default_params.OBSTACLE_SPEED; // go down
       } else {
-        obstacle.position.y = -Default_params.OBSTACLE_HEIGHT;
+        obstacle.position.y -= Default_params.OBSTACLE_SPEED; // Go up
+        obstacle.direction *= -1;
       }
     } else {
-      if (obstacle.position.y > -Default_params.OBSTACLE_HEIGHT) {
-        obstacle.position.y -= Default_params.OBSTACLE_SPEED;
+      if (obstacle.position.y > 0) {
+        obstacle.position.y -= Default_params.OBSTACLE_SPEED; // go up
       } else {
-        obstacle.position.y =
-          Default_params.GAME_HEIGHT + Default_params.OBSTACLE_HEIGHT;
+        obstacle.position.y += Default_params.OBSTACLE_SPEED; // go down
+        obstacle.direction *= -1;
       }
-    }
-    if (
-      (this.game_state.ball.position.x ===
-        obstacle.position.x - Default_params.BALL_RADIUS ||
-        this.game_state.ball.position.x ===
-          obstacle.position.x +
-            Default_params.PADDLE_WIDTH +
-            Default_params.BALL_RADIUS) &&
-      this.game_state.ball.position.y >=
-        obstacle.position.y - Default_params.BALL_RADIUS &&
-      this.game_state.ball.position.y <=
-        obstacle.position.y +
-          Default_params.OBSTACLE_HEIGHT +
-          Default_params.BALL_RADIUS
-    ) {
-      obstacle.direction *= -1;
-    }
-
-    // Bounce from obstacle's ribs
-    if (
-      this.game_state.ball.position.x >=
-        obstacle.position.x - Default_params.BALL_RADIUS &&
-      this.game_state.ball.position.x <=
-        obstacle.position.x +
-          Default_params.OBSTACLE_WIDTH +
-          Default_params.BALL_RADIUS &&
-      (this.game_state.ball.position.y ===
-        obstacle.position.y - Default_params.BALL_RADIUS ||
-        this.game_state.ball.position.y ===
-          obstacle.position.y +
-            Default_params.OBSTACLE_HEIGHT +
-            Default_params.BALL_RADIUS)
-    ) {
-      obstacle.direction *= -1;
     }
   }
 
@@ -195,27 +162,6 @@ export class Game {
         score: loser.score,
       },
       reason: reason,
-    };
-    return res;
-  }
-
-  private _abort_string(winner: Player, loser: Player) {
-    const now = new Date();
-    const timePlayed = now.getTime() - this.game_start_time.getTime();
-    const timeInSeconds = Math.floor(timePlayed / 1000);
-    const res = {
-      winner: {
-        name: winner.profile?.user.nickname,
-        avatar: winner.profile?.user.avatar,
-        score: 5,
-      },
-      loser: {
-        name: loser.profile?.user.nickname,
-        avatar: loser.profile?.user.avatar,
-        score: 0,
-      },
-      time: timeInSeconds,
-      reason: 'player left',
     };
     return res;
   }
@@ -563,7 +509,11 @@ export class Game {
       this.status,
       timeInSeconds,
     );
-    this.websockets.sendToAll(this.spectator_sockets, 'game-state', res);
+    this.websockets.sendToAll(
+      this.spectator_sockets,
+      'match_spectate_state',
+      res,
+    );
   }
 
   private _check_colide(collide1: any, collide2: any) {
@@ -579,10 +529,20 @@ export class Game {
     if (ball.position.x < ballRadius) {
       this.game_state.player2.score++;
       this._reset_ball(ball);
+      this._reset_both_paddle([
+        this.game_state.player1.paddle,
+        this.game_state.player2.paddle,
+      ]);
+      if (this.obstacle) this._reset_obstacle(this.game_state.obstacle);
     }
     if (ball.position.x > this.game_state.gameInfos.width - ballRadius) {
       this.game_state.player1.score++;
       this._reset_ball(ball);
+      this._reset_both_paddle([
+        this.game_state.player1.paddle,
+        this.game_state.player2.paddle,
+      ]);
+      if (this.obstacle) this._reset_obstacle(this.game_state.obstacle);
     }
     if (ball.position.y < ballRadius) {
       ball.position.y = ballRadius;
@@ -592,6 +552,26 @@ export class Game {
       ball.position.y = this.game_state.gameInfos.height - ballRadius;
       ball.direction.y *= -1;
     }
+  }
+
+  private _reset_both_paddle(paddle: Position[]) {
+    paddle[0].x = Default_params.PADDLE_OFFSET;
+    paddle[0].y =
+      Default_params.GAME_HEIGHT / 2 - Default_params.PADDLE_HEIGHT / 2;
+    paddle[1].x =
+      Default_params.GAME_WIDTH -
+      Default_params.PADDLE_OFFSET -
+      Default_params.PADDLE_WIDTH;
+    paddle[1].y =
+      Default_params.GAME_HEIGHT / 2 - Default_params.PADDLE_HEIGHT / 2;
+  }
+
+  private _reset_obstacle(Obstacle?: Obstacle) {
+    if (!Obstacle) return;
+    Obstacle.position.x =
+      Default_params.GAME_WIDTH / 2 - Default_params.OBSTACLE_WIDTH / 2;
+    Obstacle.position.y = 0;
+    Obstacle.direction = 1;
   }
 
   private _update_player(player: Player) {

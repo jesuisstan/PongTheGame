@@ -35,6 +35,11 @@ const Game = () => {
     });
   }
 
+  socket.on('match_spectate', (args) => {
+    if (args.status && args.status === 'success')
+      setGameState(Game_status.SPECTATE);
+  });
+
   const joinQueue = (): void => {
     setGameState(Game_status.QUEUE);
     socket.emit('match_making', { action: 'join' });

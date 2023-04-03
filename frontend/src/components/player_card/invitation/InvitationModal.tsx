@@ -70,7 +70,7 @@ const InvitationModal = ({
     });
   };
 
-  socket.on('match_invitation_error', (args) => {
+  socket.on('match_invitation_error', (args) => { // If a error occurs
     // If a error occurs
     console.log('socket match_invitation_error ON');
     console.log(args);

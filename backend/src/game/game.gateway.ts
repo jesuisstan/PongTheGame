@@ -50,7 +50,7 @@ export class GameGateway {
     if (!payload || !payload.id) return;
     const game = this.game.get_game_where_player_is(payload.id);
     if (!game) {
-      this.websockets.send(socket, 'match_spectate', {
+      this.websockets.send(socket, 'match_spectate_error', {
         status: 'error',
         error: 'Game not found',
       });
@@ -67,7 +67,7 @@ export class GameGateway {
     if (!payload || !payload.name) return;
     const game = this.game.get_game_where_player_is_by_name(payload.name);
     if (!game) {
-      this.websockets.send(socket, 'match_spectate', {
+      this.websockets.send(socket, 'match_spectate_error', {
         status: 'error',
         error: 'Game not found',
       });
@@ -84,13 +84,12 @@ export class GameGateway {
     if (
       !socket ||
       !payload ||
-      !payload.obstacle ||
       !payload.winscore ||
-      !payload.nickname
+      (!payload.nickname && (payload.obstacle || !payload.obstacle))
     ) {
       this.websockets.send(socket, 'match_invitation_error', {
         status: 'error',
-        error: 'Error backend on creation',
+        error: 'Data needed not fetch',
       });
       return;
     }
