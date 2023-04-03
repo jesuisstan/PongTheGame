@@ -47,11 +47,6 @@ const InvitationModal = ({
   const sendInvitation = () => {
     return new Promise<void>(async (resolve, reject) => {
       try {
-        //const response = await backendAPI.post('/match/customise');
-        const response = await backendAPI.patch('/user/setnickname', {
-          nickname: 'QQQQ'
-        });
-        if (response.status === 200) {
           socket.emit('match_get_invitation', {
             winscore: winScore,
             obstacle: obstacleEnabled,
@@ -60,16 +55,13 @@ const InvitationModal = ({
           setLoadingInvitation(false);
           setButtonInviteText('Sent');
           resolve();
-        } else {
-          throw new Error('Unable to customise game');
-        }
       } catch (error) {
         reject(error);
       }
     });
   };
 
-  socket.on('match_invitation_error', (args) => {
+  socket.on('match_invitation_error', (args) => { // If a error occurs
     // If a error occurs
     //setLoading(false)
     //setButtonText('Failed ❌')
