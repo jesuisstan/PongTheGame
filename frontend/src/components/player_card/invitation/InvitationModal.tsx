@@ -17,6 +17,7 @@ import FormControl from '@mui/material/FormControl';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import SendIcon from '@mui/icons-material/Send';
 import PlaylistAddCheckIcon from '@mui/icons-material/PlaylistAddCheck';
+import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 import * as MUI from '../../UI/MUIstyles';
 import * as color from '../../UI/colorsPong';
 import styles from './styles/PlayerCard.module.css';
@@ -36,61 +37,67 @@ const InvitationModal = ({
   const socket = useContext(WebSocketContext);
   const [obstacleEnabled, setObstacleEnabled] = useState(false);
   const [winScore, setWinScore] = useState(DEFAULT_WIN_SCORE);
-  const [disabled, setDisabled] = useState(false);
-  const [loadingInvitation, setLoadingInvitation] = useState(false);
+  const [disabledOptions, setDisabledOptions] = useState(false);
+  const [disabledButton, setDisabledButton] = useState(false);
   const [buttonInviteText, setButtonInviteText] = useState('Invite');
+  const [loadingInvite, setLoadingInvite] = useState(false);
+  const [loadingPlay, setLoadingPlay] = useState(false);
 
   const toggleObstacle = () => {
     setObstacleEnabled((prev) => !prev);
   };
 
   const sendInvitation = () => {
-    return new Promise<void>(async (resolve, reject) => {
-      try {
-          socket.emit('match_get_invitation', {
-            winscore: winScore,
-            obstacle: obstacleEnabled,
-            nickname: player.nickname
-          });
-          setLoadingInvitation(false);
-          setButtonInviteText('Sent');
-          resolve();
-      } catch (error) {
-        reject(error);
-      }
+    return new Promise(async (resolve, reject) => {
+      socket.emit(
+        'match_get_invitation',
+        {
+          winscore: winScore,
+          obstacle: obstacleEnabled,
+          nickname: player.nickname
+        },
+        (response: any) => {
+          if (response.error) {
+            reject(response.error);
+          } else {
+            setLoadingInvite(false);
+            setButtonInviteText('Sent');
+            setDisabledButton(true);
+            resolve(response.data);
+          }
+        }
+      );
     });
   };
 
   socket.on('match_invitation_error', (args) => { // If a error occurs
     // If a error occurs
-    //setLoading(false)
-    //setButtonText('Failed ❌')
     console.log('socket match_invitation_error ON');
     console.log(args);
   });
 
   const setDefault = () => {
-    setDisabled(false);
+    setDisabledOptions(false);
     setObstacleEnabled(false);
     setButtonInviteText('Invite');
-    setLoadingInvitation(false);
+    setLoadingInvite(false);
   };
 
   const handleSubmit = async (event: any) => {
     event.preventDefault();
-    setDisabled(true);
-    setLoadingInvitation(true);
+    setDisabledOptions(true);
+    setLoadingInvite(true);
     await sendInvitation()
-      .then(() => {
-        //setTimeout(() => setOpen(false), 442);
-        //setTimeout(() => setDefault(), 450);
+      .then((data) => {
+        console.log('resp emit data -> ', data);
+        setLoadingPlay(true);
       })
       .catch((error) => {
-        errorAlert(error);
         setDefault();
+        setOpen(false);
+        errorAlert(error);
       });
   };
-
 
   return (
     <div>
@@ -117,9 +124,13 @@ const InvitationModal = ({
               <div>
                 <Typography
                   component="h3"
-                  sx={{ color: color.PONG_BLUE, textAlign: 'center' }}
+                  sx={{
+                    textAlign: 'center',
+                    paddingBottom: '10px',
+                    paddingTop: '15px'
+                  }}
                 >
-                  Define if obstacle available
+                  Define if obstacle is available:
                 </Typography>
                 <div
                   style={{
@@ -130,17 +141,17 @@ const InvitationModal = ({
                     justifyContent: 'center'
                   }}
                 >
-                  <Typography>Off</Typography>
                   <FormControlLabel
                     title="Add additional moving obstacle to the game"
                     control={
                       <SwitchPong
                         checked={obstacleEnabled}
-                        disabled={disabled}
+                        disabled={disabledOptions}
                         onClick={() => toggleObstacle()}
                       />
                     }
-                    label="On"
+                    label=""
+                    labelPlacement="bottom"
                   />
                 </div>
               </div>
@@ -148,11 +159,14 @@ const InvitationModal = ({
               <div>
                 <Typography
                   component="h3"
-                  sx={{ color: color.PONG_BLUE, textAlign: 'center' }}
+                  sx={{ textAlign: 'center', paddingBottom: '30px' }}
                 >
-                  Define the winning score
+                  Define the win score:
                 </Typography>
-                <SliderPong disabled={disabled} setWinScore={setWinScore} />
+                <SliderPong
+                  disabled={disabledOptions}
+                  setWinScore={setWinScore}
+                />
                 <div
                   style={{
                     display: 'flex',
@@ -163,45 +177,58 @@ const InvitationModal = ({
                   }}
                 ></div>
               </div>
-<div style={{display:'flex', flexDirection: 'row', gap: '21px', alignItems: 'center', justifyItems: 'center'}}>
-
-              <LoadingButton
-                type="submit"
-                loading={loadingInvitation}
-                endIcon={
-                  buttonInviteText === 'Sent' ? (
-                    <PlaylistAddCheckIcon />
-                  ) : (
-                    <SendIcon />
-                  )
-                }
-                variant="contained"
-                color="inherit"
-                loadingIndicator="Sending..."
-                disabled={buttonInviteText === 'Sent' ? true : false}
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  gap: '21px',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
               >
-                {buttonInviteText}
-              </LoadingButton>
-
-              <LoadingButton
-                type="submit"
-                loading={!loadingInvitation}
-                endIcon={
-                  buttonInviteText === 'Sent' ? (
-                    <PlaylistAddCheckIcon />
-                  ) : (
-                    <SendIcon />
-                  )
-                }
-                variant="contained"
-                color="inherit"
-                loadingIndicator="Waiting..."
-                disabled={buttonInviteText === 'Sent' ? false : true}
-              >
-                {buttonInviteText}
-              </LoadingButton>
-</div>
-
+                <div>
+                  <LoadingButton
+                    type="submit"
+                    title={`Invite ${player.nickname} to play game`}
+                    loading={loadingInvite}
+                    endIcon={
+                      buttonInviteText === 'Sent' ? (
+                        <PlaylistAddCheckIcon />
+                      ) : (
+                        <SendIcon />
+                      )
+                    }
+                    variant="contained"
+                    color="inherit"
+                    loadingPosition="end"
+                    disabled={disabledButton}
+                    sx={{ minWidth: '100px' }}
+                  >
+                    {buttonInviteText}
+                  </LoadingButton>
+                </div>
+                <div>
+                  <LoadingButton
+                    type="submit"
+                    title="Proceed to game"
+                    loading={loadingPlay}
+                    endIcon={
+                      buttonInviteText === 'Sent' ? (
+                        <PlaylistAddCheckIcon />
+                      ) : (
+                        <SportsEsportsIcon />
+                      )
+                    }
+                    variant="contained"
+                    color="inherit"
+                    loadingPosition="end"
+                    disabled={!disabledButton}
+                    sx={{ minWidth: '100px' }}
+                  >
+                    Play
+                  </LoadingButton>
+                </div>
+              </div>
             </Stack>
           </form>
         </ModalDialog>
