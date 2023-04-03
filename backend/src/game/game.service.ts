@@ -30,7 +30,10 @@ export class GameService {
     this._treat_queue(this.game_queue);
   }
 
-  async create_invitation(socket: any, payload: any) {
+  async create_invitation(
+    socket: any,
+    payload: any,
+  ): Promise<{ status: number; reason: string }> {
     const user: { id: number; status: StatusUser } | null =
       await this.prisma.user.findUnique({
         where: {
@@ -41,41 +44,20 @@ export class GameService {
           status: true,
         },
       });
-    if (!user) {
-      this.websocket.send(socket, 'match_invitation_error', {
-        status: 'error',
-        error: 'User not found',
-      });
-      return;
-    }
-    if (user.status == 'PLAYING') {
-      this.websocket.send(socket, 'match_invitation_error', {
-        status: 'error',
-        error: 'User already in game',
-      });
-      return;
-    }
+    if (!user) return { status: 403, reason: 'User not found' };
+    if (user.status == 'PLAYING')
+      return { status: 400, reason: 'User Already in game' };
     const already_exist = await this.prisma.matchInvitation.findMany({
       where: {
         createdById: socket.user.id,
         sendToId: user.id,
       },
     });
-    if (already_exist.length > 0) {
-      this.websocket.send(socket, 'match_invitation_error', {
-        status: 'error',
-        error: 'Invitation already send',
-      });
-      return;
-    }
+    if (already_exist.length > 0)
+      return { status: 400, reason: 'Invitation already send' };
     const invited_socket: Socket[] = this.websocket.getSockets([user.id]);
-    if (!invited_socket || !invited_socket[0]) {
-      this.websocket.send(socket, 'match_invitation_error', {
-        status: 'error',
-        error: 'User offline',
-      });
-      return;
-    }
+    if (!invited_socket || !invited_socket[0])
+      return { status: 400, reason: 'User offline' };
     await this.prisma.matchInvitation.create({
       data: {
         createdById: socket.user.id,
@@ -84,6 +66,7 @@ export class GameService {
     });
     const res = convert_invitation(socket, payload);
     this.websocket.send(invited_socket[0], 'invitation_game', res);
+    return { status: 200, reason: 'Invitation send' };
   }
 
   async game_friend_start(socket: any, payload: any) {
@@ -157,6 +140,7 @@ export class GameService {
     }
     this._delete_user_invitations([user.id, socket.user.id]);
   }
+
   async create_training_game(player: any) {
     const msg = {
       action: 'match',

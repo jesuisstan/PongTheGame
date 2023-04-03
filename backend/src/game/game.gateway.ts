@@ -79,21 +79,20 @@ export class GameGateway {
     game.add_spectator(socket);
   }
 
-  @SubscribeMessage('match_get_invitation')
-  async getInvitation(socket: any, payload: any) {
+  @SubscribeMessage('match_send_invitation')
+  async getInvitation(
+    socket: any,
+    payload: any,
+  ): Promise<{ status: number; reason: string }> {
     if (
       !socket ||
       !payload ||
       !payload.winscore ||
       (!payload.nickname && (payload.obstacle || !payload.obstacle))
     ) {
-      this.websockets.send(socket, 'match_invitation_error', {
-        status: 'error',
-        error: 'Data needed not fetch',
-      });
-      return;
+      return { status: 403, reason: 'Data needed not fetch' };
     }
-    this.game.create_invitation(socket, payload);
+    return this.game.create_invitation(socket, payload);
   }
 
   @SubscribeMessage('match_invitation_accept')
@@ -103,8 +102,7 @@ export class GameGateway {
       !socket ||
       !payload ||
       !payload.winscore ||
-      !payload.obstacle ||
-      !payload.from.nickname
+      (!payload.from.nickname && (payload.obstacle || !payload.obstacle))
     ) {
       this.websockets.send(socket, 'match_invitation_error', {
         status: 'error',
