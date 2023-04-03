@@ -1,9 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Player } from '../../../types/Player';
 import { MatchHistory } from '../../../types/MatchHistory';
+import HistoryHelpModal from './HistoryHelpModal';
 import backendAPI from '../../../api/axios-instance';
 import errorAlert from '../../UI/errorAlert';
 import Typography from '@mui/joy/Typography';
+import IconButton from '@mui/material/IconButton';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import * as color from '../../UI/colorsPong';
 
 const MatchHistoryBlock = ({
@@ -18,6 +21,7 @@ const MatchHistoryBlock = ({
     wins: '-',
     loses: '-'
   });
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     backendAPI.get(`/stats/${player.nickname}`).then(
@@ -70,6 +74,24 @@ const MatchHistoryBlock = ({
         <Typography component="legend" textAlign="left">
           Loses: {matchHistory.loses}
         </Typography>
+      </div>
+      <div>
+        <IconButton
+          color="primary"
+          title={'Show all possible achievements'}
+          onClick={() => setOpen(true)}
+        >
+          <HelpOutlineIcon
+            fontSize="large"
+            sx={{
+              color: 'black',
+              '&:hover': {
+                color: color.PONG_PINK
+              }
+            }}
+          />
+        </IconButton>
+        <HistoryHelpModal open={open} setOpen={setOpen} />
       </div>
     </div>
   );

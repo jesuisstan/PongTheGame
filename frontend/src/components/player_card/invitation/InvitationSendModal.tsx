@@ -116,6 +116,15 @@ const InvitationSendModal = ({
       });
   };
 
+  const cancelInvitation = () => {
+    console.log("cancel Invit")
+    socket.emit(
+      'match_invitation_abort',
+      {
+        nickname: player.nickname
+      })
+  }
+
   return (
     <div>
       <Modal
@@ -123,6 +132,7 @@ const InvitationSendModal = ({
         open={open}
         onClose={(event, reason) => {
           if (event && reason === 'closeClick') {
+            cancelInvitation()
             setDefault();
             setOpen(false);
           }

@@ -16,7 +16,7 @@ const Home = () => {
         style={{
           fontSize: '70px',
           color: color.PONG_PINK,
-          marginLeft: '260px',
+          marginLeft: '280px',
           marginRight: 'auto',
           marginTop: '60px'
         }}
@@ -55,7 +55,7 @@ const Home = () => {
         style={{
           fontSize: '50px',
           color: color.PONG_PINK,
-          marginLeft: '84px',
+          marginLeft: '70px',
           marginRight: 'auto',
           marginTop: '300px',
           textAlign: 'left'
