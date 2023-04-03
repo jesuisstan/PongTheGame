@@ -111,6 +111,8 @@ model MatchInvitation {
   createdById Int                  @unique
   sendToId    Int                  
   sendTo      User                 @relation("InvitationReceive", fields: [sendToId], references: [id])
+  obstacle    Boolean
+  winscore    Int                  @default(5)
   status      InvitationState @default(Pending)
 }
 

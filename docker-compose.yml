@@ -49,6 +49,7 @@ services:
     env_file:
       - .env
     environment:
+      NEST_DEBUG : true # TODO REMOVE THIS
       BACKEND_PORT: ${BACKEND_PORT}
       FRONTEND_URL: ${FRONTEND_URL}
       SESSION_SECRET: ${SESSION_SECRET}
