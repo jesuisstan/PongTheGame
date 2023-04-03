@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
-import { Player } from '../../types/Player';
-import { MatchHistory } from '../../types/MatchHistory';
-import backendAPI from '../../api/axios-instance';
-import errorAlert from '../UI/errorAlert';
+import { Player } from '../../../types/Player';
+import { MatchHistory } from '../../../types/MatchHistory';
+import backendAPI from '../../../api/axios-instance';
+import errorAlert from '../../UI/errorAlert';
 import Typography from '@mui/joy/Typography';
-import * as color from '../UI/colorsPong';
+import * as color from '../../UI/colorsPong';
 
 const MatchHistoryBlock = ({
   player,

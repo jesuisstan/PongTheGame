@@ -1,16 +1,16 @@
 import { useContext, useEffect, useState } from 'react';
-import { UserContext } from '../../contexts/UserContext';
-import { Player } from '../../types/Player';
+import { UserContext } from '../../../contexts/UserContext';
+import { Player } from '../../../types/Player';
 import SearchBar from './SearchBar';
-import BadgePong from '../UI/BadgePong';
-import backendAPI from '../../api/axios-instance';
-import errorAlert from '../UI/errorAlert';
+import BadgePong from '../../UI/BadgePong';
+import backendAPI from '../../../api/axios-instance';
+import errorAlert from '../../UI/errorAlert';
 import Typography from '@mui/joy/Typography';
 import Avatar from '@mui/material/Avatar';
 import IconButton from '@mui/material/IconButton';
 import RefreshIcon from '@mui/icons-material/Refresh';
-import * as color from '../UI/colorsPong';
-import styles from './styles/PlayerCard.module.css';
+import * as color from '../../UI/colorsPong';
+import styles from '../styles/PlayerCard.module.css';
 
 const FriendsBlock = ({
   player,

@@ -50,7 +50,7 @@ const InvitationSendModal = ({
   const sendInvitation = () => {
     return new Promise(async (resolve, reject) => {
       socket.emit(
-        'match_get_invitation',
+        'match_send_invitation',
         {
           winscore: winScore,
           obstacle: obstacleEnabled,
@@ -58,12 +58,20 @@ const InvitationSendModal = ({
         },
         (response: any) => {
           console.log(response);
-          if (response.error) {
-            reject(response.error);
+          if (response.status === 400) {
+            if (response.reason === 'Invitation already send') {
+              reject((response.error = 'Invitation is already sent'));
+            } else {
+              reject((response.error = `${player.nickname} is occupied`));
+            }
+          } else if (response.status === 403) {
+            reject(
+              (response.error = `User with nickname "${player.nickname}" is not found`)
+            );
+          } else if (response.status !== 200) {
+            reject((response.error = 'Something went wrong'));
           } else {
-            setLoadingInvite(false);
-            setButtonInviteText('Sent');
-            setDisabledButton(true);
+            console.log('goodway') //todo
             resolve(response.data);
           }
         }
@@ -92,6 +100,9 @@ const InvitationSendModal = ({
     await sendInvitation()
       .then((data) => {
         console.log('resp emit data -> ', data);
+        setLoadingInvite(false);
+        setButtonInviteText('Sent');
+        setDisabledButton(true);
         setLoadingPlay(true);
       })
       .catch((error) => {

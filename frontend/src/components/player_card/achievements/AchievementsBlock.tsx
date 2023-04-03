@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react';
 import AchievementsListModal from './AchievementsListModal';
-import { Player } from '../../types/Player';
-import { Achievement } from '../../types/Achievement';
-import backendAPI from '../../api/axios-instance';
-import errorAlert from '../UI/errorAlert';
+import { Player } from '../../../types/Player';
+import { Achievement } from '../../../types/Achievement';
+import backendAPI from '../../../api/axios-instance';
+import errorAlert from '../../UI/errorAlert';
 import Typography from '@mui/joy/Typography';
 import IconButton from '@mui/material/IconButton';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
-import * as color from '../UI/colorsPong';
-import styles from './styles/PlayerCard.module.css';
+import * as color from '../../UI/colorsPong';
+import styles from '../styles/PlayerCard.module.css';
 
 const AchievementsBlock = ({
   player,
