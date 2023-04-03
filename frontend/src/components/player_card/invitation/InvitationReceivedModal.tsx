@@ -20,11 +20,9 @@ import styles from './styles/PlayerCard.module.css';
 const InvitationReceivedModal = ({
   open,
   setOpen,
-  player
 }: {
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
-  player: Player;
 }) => {
   const { user, setUser } = useContext(UserContext);
   const socket = useContext(WebSocketContext);
@@ -74,7 +72,7 @@ const InvitationReceivedModal = ({
         >
           <ModalClose sx={MUI.modalClose} />
           <Typography id="basic-modal-dialog-title" sx={MUI.modalHeader}>
-            Setting up custom game
+            Invitation received! 
           </Typography>
             <Stack spacing={3}>
               <div>
@@ -130,7 +128,6 @@ const InvitationReceivedModal = ({
                 <div>
                   <LoadingButton
                     type="submit"
-                    title={`Invite ${player.nickname} to play game`}
                     loading={loadingInvite}
                     endIcon={
                       buttonInviteText === 'Sent' ? (

@@ -3,14 +3,17 @@ import { BrowserRouter } from 'react-router-dom';
 import { UserContext } from './contexts/UserContext';
 import { WebSocketContext } from './contexts/WebsocketContext';
 import { User } from './types/User';
+import AppRoutes from './AppRoutes';
 import Verify2fa from './components/profile/Verify2fa';
+import InvitationReceivedModal from './components/player_card/invitation/InvitationReceivedModal';
 import backendAPI from './api/axios-instance';
 import './App.css';
-import AppRoutes from './AppRoutes';
 
 const App = () => {
   const socket = useContext(WebSocketContext);
-  const [open, setOpen] = useState(false);
+  const [openVerify2fa, setOpenVerify2fa] = useState(false);
+  const [openInvitation, setOpenInvitation] = useState(false);
+
   const [user, setUser] = useState<User>({
     avatar: undefined,
     id: -1,
@@ -32,7 +35,7 @@ const App = () => {
       },
       (error) => {
         if (error.response?.status === 400) {
-          setOpen(true);
+          setOpenVerify2fa(true);
         }
       }
     );
@@ -43,7 +46,11 @@ const App = () => {
       <BrowserRouter>
         <div className="App">
           <UserContext.Provider value={{ user, setUser }}>
-            <Verify2fa open={open} setOpen={setOpen} />
+            <Verify2fa open={openVerify2fa} setOpen={setOpenVerify2fa} />
+            <InvitationReceivedModal
+              open={openInvitation}
+              setOpen={setOpenInvitation}
+            />
             <AppRoutes />
           </UserContext.Provider>
         </div>
