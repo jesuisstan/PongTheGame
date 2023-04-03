@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import { User, StatusUser } from '@prisma/client';
+import { Inject, forwardRef, Injectable } from '@nestjs/common';
+import { User, StatusUser, MatchInvitation } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { WebsocketsService } from 'src/websockets/websockets.service';
 import { Game } from './game.class';
@@ -14,6 +14,7 @@ export class GameService {
   games: Game[] = [];
 
   constructor(
+    @Inject(forwardRef(() => WebsocketsService))
     private readonly websocket: WebsocketsService,
     private readonly prisma: PrismaService,
     private readonly achievement: giveAchievementService,
@@ -47,12 +48,12 @@ export class GameService {
     if (!user) return { status: 403, reason: 'User not found' };
     if (user.status == 'PLAYING')
       return { status: 400, reason: 'User Already in game' };
-    const already_exist = await this.prisma.matchInvitation.findUnique({
+    const already_exist = await this.prisma.matchInvitation.findMany({
       where: {
         createdById: socket.user.id,
       },
     });
-    if (already_exist)
+    if (already_exist.length > 0)
       return { status: 400, reason: 'Invitation already send' };
     const invited_socket: Socket[] = this.websocket.getSockets([user.id]);
     if (!invited_socket || !invited_socket[0])
@@ -61,11 +62,39 @@ export class GameService {
       data: {
         createdById: socket.user.id,
         sendToId: user.id,
+        winscore: payload.winscore,
+        obstacle: payload.obstacle,
       },
     });
     const res = convert_invitation(socket, payload);
     this.websocket.send(invited_socket[0], 'invitation_game', res);
     return { status: 200, reason: 'Invitation send' };
+  }
+
+  async send_all_invitation(socket: any) {
+    if (!socket) return;
+    const allInvit = await this.prisma.matchInvitation.findMany({
+      where: {
+        sendToId: socket.user.id,
+      },
+      select: {
+        createdBy: true,
+        obstacle: true,
+        winscore: true,
+      },
+    });
+    for (let i = 0; i < allInvit.length; i++) {
+      const res = convert_invitation(
+        {
+          user: {
+            nickname: allInvit[i].createdBy.nickname,
+            avatar: allInvit[i].createdBy.avatar,
+          },
+        },
+        { obstacle: allInvit[i].obstacle, winscore: allInvit[i].winscore },
+      );
+      this.websocket.send(socket, 'invitation_game', res);
+    }
   }
 
   async game_friend_start(socket: any, payload: any) {
@@ -95,7 +124,7 @@ export class GameService {
       });
       return;
     }
-    this._delete_user_invitations([user.id, socket.user.id]);
+    this._delete_user_invitations(user.id);
     const game = new Game(
       this.prisma,
       this.websocket,
@@ -123,20 +152,24 @@ export class GameService {
       },
     });
     if (!userId) return;
-    const match_exist = await this.prisma.matchInvitation.findUnique({
-      where: {
-        // sendToId : userId,
-        createdById: socket.user.id,
-      },
-    });
-    if (!match_exist) return;
-    this._delete_user_invitations([socket.user.id, userId]);
+    this._delete_user_invitations(socket.user.id);
   }
 
-  private async _delete_user_invitations(userId: number[]) {
+  async delete_invitation(user: User) {
+    const invit: MatchInvitation | null =
+      await this.prisma.matchInvitation.findUnique({
+        where: {
+          createdById: user.id,
+        },
+      });
+    if (!invit) return;
+    this._delete_user_invitations(user.id);
+  }
+
+  private async _delete_user_invitations(createdID: number) {
     await this.prisma.matchInvitation.delete({
       where: {
-        createdById: userId[0],
+        createdById: createdID,
       },
     });
   }
@@ -157,7 +190,7 @@ export class GameService {
       });
       return;
     }
-    this._delete_user_invitations([user.id, socket.user.id]);
+    this._delete_user_invitations(user.id);
   }
 
   async create_training_game(player: any) {
