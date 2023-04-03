@@ -148,8 +148,17 @@ const Chat = () => {
     if (type === 'password') setChatRoomPassword(value);
   };
   const onClickJoinRoom = (roomName: string) => {
+    if (user.joinedChatRoom) {
+    socket.emit('quitRoom', {
+      roomName: user.joinedChatRoom,
+      userId: user.id,
+    })
+  }
+    cleanRoomLoginData()
     // Notify that the user has clicked on a 'join' button
     setclickedRoomToJoin(roomName);
+    console.log('cllllllllllic -1: ' +clickedRoomToJoin)
+
     handleClickOpenP();
     // Check if the corresponding chat room is password protected
     socket.emit(
@@ -157,8 +166,7 @@ const Chat = () => {
       { roomName: roomName },
       (response: boolean) => {
         setIsPasswordProtected(response);
-    console.log("isprotectedddddd  " + isPasswordProtected)
-  }
+      }
     );
     isPasswordProtected === false ? joinRoom(roomName) : onPasswordSubmit();
   };
@@ -174,6 +182,8 @@ const Chat = () => {
   };
   // Check if the password is right
   const onPasswordSubmit = () => {
+    console.log('cllllllllllic 0: ' +clickedRoomToJoin)
+
     socket.emit('checkPassword',
       { roomName: clickedRoomToJoin, password: inputPassword },
       (response: boolean) => {
@@ -182,6 +192,7 @@ const Chat = () => {
           : setIsPasswordRight(false);
       }
     );
+    console.log('cllllllllllic 1: ' +clickedRoomToJoin)
     if (isPasswordRight) joinRoom(clickedRoomToJoin);
     setInputPassword('');
   };

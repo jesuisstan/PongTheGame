@@ -315,10 +315,6 @@ export class ChatService {
   async isPasswordProtected(roomName: string) {
     const room = await this.getChatRoomByName(roomName);
     if (room) {
-      // const pwd = await this.prisma.chatRoom.findUnique({
-      //   where: { name: roomName },
-      //   select: { password: true }
-      // });
       return room.password !== '' ? true : false;
     } else
       throw new WsException({ msg: 'isPasswordProtected: unknown room name!' });
@@ -327,11 +323,11 @@ export class ChatService {
   async checkPassword(roomName: string, password: string) {
     const room = await this.getChatRoomByName(roomName);
     if (room) {
-      const pwd = await this.prisma.chatRoom.findUnique({
+      const res = await this.prisma.chatRoom.findUnique({
         where: { name: roomName },
         select: { password: true }
       });
-      return String(pwd) === password;
+      return res?.password === password;
     } else
       throw new WsException({ msg: 'isPasswordProtected: unknown room name!' });
   }

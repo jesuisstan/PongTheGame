@@ -6,22 +6,18 @@ export type Message = {
 	timestamp: Date;
 }
 
+export type MemberType = {
+	memberId: number;
+	isOnline: boolean;
+	modes: string;
+}
+
 export type ChatRoomType = {
 	name: string;
 	modes: string;
 	password: string;
 	userLimit: number;
-	members: {
-		id: number;
-		isOnline: boolean;
-		modes: string;
-	}
+	members: MemberType[];
 	messages: Message[];
 	bannedUsers: number[];
-}
-
-export type MemberType = {
-	memberId: number;
-	isOnline: boolean;
-	modes: string;
 }
