@@ -8,7 +8,7 @@ import ModalClose from '@mui/joy/ModalClose';
 import Stack from '@mui/material/Stack';
 import LoadingButton from '@mui/lab/LoadingButton';
 import CircularProgress from '@mui/material/CircularProgress';
-import NotInterestedIcon from '@mui/icons-material/NotInterested';
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import * as MUI from '../UI/MUIstyles';
 import * as color from '../UI/colorsPong';
 
@@ -60,7 +60,7 @@ const QueueModal = (props: QueueModalProps) => {
             />
             <LoadingButton
               type="reset"
-              startIcon={<NotInterestedIcon />}
+              startIcon={<HighlightOffIcon />}
               variant="contained"
               color="inherit"
               onClick={exitQueue}

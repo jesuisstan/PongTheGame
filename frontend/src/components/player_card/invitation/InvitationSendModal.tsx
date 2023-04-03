@@ -252,13 +252,7 @@ const InvitationSendModal = ({
                       type="submit"
                       title="Proceed to game"
                       loading={loadingPlay}
-                      endIcon={
-                        buttonInviteText === 'Sent' ? (
-                          <PlaylistAddCheckIcon />
-                        ) : (
-                          <SportsEsportsIcon />
-                        )
-                      }
+                      endIcon={<SportsEsportsIcon />}
                       variant="contained"
                       color="inherit"
                       loadingPosition="end"
