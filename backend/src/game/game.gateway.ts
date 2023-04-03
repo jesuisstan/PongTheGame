@@ -95,6 +95,14 @@ export class GameGateway {
     return this.game.create_invitation(socket, payload);
   }
 
+  @SubscribeMessage('match_invitation_abort')
+  async closeInvitation(socket: any, payload: any) {
+    if (!socket || !payload || !payload.nickname) {
+      return { status: 403, reason: 'Data needed not fetch' };
+    }
+    this.game.game_abort(socket, payload.nickname);
+  }
+
   @SubscribeMessage('match_invitation_accept')
   async match_invitation_accept(socket: Socket, payload: any) {
     // Need the from | win score | obstacle
