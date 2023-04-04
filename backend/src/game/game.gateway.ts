@@ -96,43 +96,42 @@ export class GameGateway {
   }
 
   @SubscribeMessage('match_invitation_abort')
-  async closeInvitation(socket: any, payload: any) {
+  async closeInvitation(
+    socket: any,
+    payload: any,
+  ): Promise<{ status: number; reason: string }> {
     if (!socket || !payload || !payload.nickname) {
       return { status: 403, reason: 'Data needed not fetch' };
     }
-    this.game.game_abort(socket, payload.nickname);
+    return this.game.game_abort(socket, payload.nickname);
   }
 
   @SubscribeMessage('match_invitation_accept')
-  async match_invitation_accept(socket: Socket, payload: any) {
+  async match_invitation_accept(
+    socket: Socket,
+    payload: any,
+  ): Promise<{ status: number; reason: string }> {
     // Need the from | win score | obstacle
     if (
       !socket ||
       !payload ||
       !payload.winscore ||
-      (!payload.from.nickname && (payload.obstacle || !payload.obstacle))
+      (!payload.nickname && (payload.obstacle || !payload.obstacle))
     ) {
-      this.websockets.send(socket, 'match_invitation_error', {
-        status: 'error',
-        error: 'Information missing',
-      });
-      return;
+      return { status: 403, reason: 'Data needed not fetch' };
     }
-    this.game.game_friend_start(socket, payload);
-    return;
+    return this.game.game_friend_start(socket, payload);
   }
 
   @SubscribeMessage('match_invitation_refuse')
-  async match_invitation_refuse(socket: Socket, payload: any) {
-    if (!socket || !payload || !payload.from.nickname) {
-      this.websockets.send(socket, 'match_invitation_error', {
-        status: 'error',
-        error: 'Information missing',
-      });
-      return;
-    }
+  async match_invitation_refuse(
+    socket: Socket,
+    payload: any,
+  ): Promise<{ status: number; reason: string }> {
+    if (!socket || !payload || !payload.nickname)
+      return { status: 403, reason: 'Data needed not fetch' };
     this.game.refuseInvitation(socket, payload);
-    return;
+    return { status: 200, reason: 'Ok' };
   }
 
   @SubscribeMessage('match_spectate_leave')
