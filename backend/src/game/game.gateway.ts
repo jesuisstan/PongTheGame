@@ -118,19 +118,19 @@ export class GameGateway {
       !payload.winscore ||
       (!payload.nickname && (payload.obstacle || !payload.obstacle))
     ) {
-      return { status: 403, reason: 'Data needed not fetch' };
+      return { status: 403, reason: 'Data needed not fetch' }
     }
     return this.game.game_friend_start(socket, payload);
   }
 
-  @SubscribeMessage('match_invitation_refuse')
+  @SubscribeMessage('match_invitation_refused')
   async match_invitation_refuse(
     socket: Socket,
     payload: any,
   ): Promise<{ status: number; reason: string }> {
     if (!socket || !payload || !payload.nickname)
       return { status: 403, reason: 'Data needed not fetch' };
-    this.game.refuseInvitation(socket, payload);
+    await this.game.refuseInvitation(socket, payload);
     return { status: 200, reason: 'Ok' };
   }
 
