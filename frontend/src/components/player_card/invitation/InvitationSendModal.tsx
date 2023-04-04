@@ -39,10 +39,8 @@ const InvitationSendModal = ({
   const [winScore, setWinScore] = useState(DEFAULT_WIN_SCORE);
   const [disabledOptions, setDisabledOptions] = useState(false);
   const [disabledButton, setDisabledButton] = useState(false);
-  const [buttonInviteText, setButtonInviteText] = useState('Invite');
-  const [buttonPlayText, setButtonPlayText] = useState('Play');
-  const [loadingInvite, setLoadingInvite] = useState(false);
-  const [loadingPlay, setLoadingPlay] = useState(false);
+  const [buttonText, setButtonText] = useState('Invite');
+  const [loading, setLoading] = useState(false);
 
   const toggleObstacle = () => {
     setObstacleEnabled((prev) => !prev);
@@ -58,7 +56,6 @@ const InvitationSendModal = ({
           nickname: player.nickname
         },
         (response: any) => {
-          console.log(response); //todo
           if (response.status === 400) {
             if (response.reason === 'Invitation already send') {
               reject((response.error = 'Invitation is already sent'));
@@ -79,34 +76,25 @@ const InvitationSendModal = ({
     });
   };
 
-  //todo no need anymore?
-  //socket.on('match_invitation_error', (args) => {
-  //  // If a error occurs
-  //  // If a error occurs
-  //  console.log('socket match_invitation_error ON');
-  //  console.log(args);
-  //});
-
   const setDefault = () => {
-    setDisabledOptions(false);
     setObstacleEnabled(false);
-    setButtonInviteText('Invite');
-    setLoadingInvite(false);
-    setButtonPlayText('Play');
-    setLoadingPlay(false);
+    setWinScore(DEFAULT_WIN_SCORE);
+    setDisabledOptions(false);
+    setDisabledButton(false);
+    setButtonText('Invite');
+    setLoading(false);
   };
 
   const handleSubmit = async (event: any) => {
     event.preventDefault();
     setDisabledOptions(true);
-    setLoadingInvite(true);
+    setLoading(true);
     await sendInvitation()
       .then((data) => {
-        setLoadingInvite(false);
-        setButtonInviteText('Sent');
+        setLoading(false);
+        setButtonText('Awaiting');
         setDisabledButton(true);
-        setButtonPlayText('Awaiting');
-        setLoadingPlay(true);
+        setLoading(true);
       })
       .catch((error) => {
         setDefault();
@@ -123,18 +111,17 @@ const InvitationSendModal = ({
 
   //todo a socket_event kind of 'invitation_accepted' to proceed to game
   socket.on('invitation_accepted', (args) => {
-    console.log('invitation_accepted')
-    setLoadingPlay(false);
+    console.log('invitation_accepted');
+    setLoading(false);
     // proceed to game //todo
     //setOpen(false);
   });
 
   socket.on('invitation_refused', (args) => {
-    setLoadingPlay(false);
-    console.log("got refused")
-    alert('invitation refused')
-    // proceed to game //todo
+    setLoading(false);
     setOpen(false);
+    setDefault();
+    errorAlert(`${player.nickname} refused your invitation`);
   });
 
   return (
@@ -229,64 +216,44 @@ const InvitationSendModal = ({
                     color: color.PONG_BLUE
                   }}
                 >
-                  Send invitation and proceed to game:
+                  Send invitation and wait for response:
                 </Typography>
                 <div
                   style={{
                     display: 'flex',
-                    flexDirection: 'row',
-                    gap: '21px',
                     alignItems: 'center',
                     justifyContent: 'center'
                   }}
                 >
-                  <div>
-                    <LoadingButton
-                      type="submit"
-                      title={`Invite ${player.nickname} to play game`}
-                      loading={loadingInvite}
-                      endIcon={
-                        buttonInviteText === 'Sent' ? (
-                          <PlaylistAddCheckIcon />
-                        ) : (
-                          <SendIcon />
-                        )
-                      }
-                      variant="contained"
-                      color="inherit"
-                      loadingPosition="end"
-                      disabled={disabledButton}
-                      sx={{ minWidth: '130px' }}
-                    >
-                      {buttonInviteText}
-                    </LoadingButton>
-                  </div>
-                  <div>
-                    <LoadingButton
-                      type="submit"
-                      title="Proceed to game"
-                      loading={loadingPlay}
-                      endIcon={<SportsEsportsIcon />}
-                      variant="contained"
-                      color="inherit"
-                      loadingPosition="end"
-                      disabled={!disabledButton}
-                      sx={{ minWidth: '130px' }}
-                    >
-                      {buttonPlayText}
-                    </LoadingButton>
-                  </div>
+                  <LoadingButton
+                    type="submit"
+                    title={`Invite ${player.nickname} to play game`}
+                    loading={loading}
+                    endIcon={
+                      buttonText === 'Sent' ? (
+                        <PlaylistAddCheckIcon />
+                      ) : (
+                        <SendIcon />
+                      )
+                    }
+                    variant="contained"
+                    color="inherit"
+                    loadingPosition="end"
+                    disabled={disabledButton}
+                    sx={{ minWidth: '130px' }}
+                  >
+                    {buttonText}
+                  </LoadingButton>
                 </div>
-                <Typography
-                  sx={{
-                    textAlign: 'left',
-                    fontSize: '14px',
-                    paddingTop: '15px'
-                  }}
-                >
-                  * closing this popup will cancel the invitation
-                </Typography>
               </div>
+              <Typography
+                sx={{
+                  textAlign: 'left',
+                  fontSize: '14px'
+                }}
+              >
+                * closing this popup will cancel the invitation
+              </Typography>
             </Stack>
           </form>
         </ModalDialog>
