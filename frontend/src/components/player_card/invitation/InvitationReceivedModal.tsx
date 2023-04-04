@@ -1,8 +1,8 @@
 import { Dispatch, SetStateAction, useContext, useState } from 'react';
 import { UserContext } from '../../../contexts/UserContext';
 import { User } from '../../../types/User';
-import { Player } from '../../../types/Player';
 import { WebSocketContext } from '../../../contexts/WebsocketContext';
+import { Invitation } from '../../../types/Invitation';
 import errorAlert from '../../UI/errorAlert';
 import Modal from '@mui/joy/Modal';
 import ModalClose from '@mui/joy/ModalClose';
@@ -12,53 +12,47 @@ import Typography from '@mui/joy/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
+import Avatar from '@mui/material/Avatar';
 import * as MUI from '../../UI/MUIstyles';
 import * as color from '../../UI/colorsPong';
 import styles from './styles/PlayerCard.module.css';
 
 const InvitationReceivedModal = ({
   open,
-  setOpen
+  setOpen,
+  invitation
 }: {
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
+  invitation: Invitation;
 }) => {
   const { user, setUser } = useContext(UserContext);
   const socket = useContext(WebSocketContext);
-  const [disabledButton, setDisabledButton] = useState(false);
-  const [loadingInvite, setLoadingInvite] = useState(false);
+  const [loadingDecline, setLoadingDecline] = useState(false);
   const [loadingPlay, setLoadingPlay] = useState(false);
-
-  //const sendInvitation = () => {
-  //  return new Promise(async (resolve, reject) => {
-  //    socket.emit(
-  //      'match_get_invitation',
-  //      {
-  //        winscore: winScore,
-  //        obstacle: obstacleEnabled,
-  //        nickname: player.nickname
-  //      },
-  //      (response: any) => {
-  //        console.log(response);
-  //        if (response.error) {
-  //          reject(response.error);
-  //        } else {
-  //          setLoadingInvite(false);
-  //          setButtonInviteText('Sent');
-  //          setDisabledButton(true);
-  //          resolve(response.data);
-  //        }
-  //      }
-  //    );
-  //  });
-  //};
 
   const declineInvitation = () => {
     console.log('declined');
+    socket.emit('match_invitation_abort', {
+      nickname: invitation.from.nickname
+    });
+    setOpen(false);
   };
 
   const acceptInvitation = () => {
     console.log('accepted');
+
+    socket.emit('match_invitation_accept', {
+      winscore: invitation.gameInfo.winscore,
+      obstacle: invitation.gameInfo.obstacle,
+      nickname: invitation.from.nickname
+    });
+    setOpen(false);
+  };
+
+  const setDefault = () => {
+    setLoadingDecline(false);
+    setLoadingPlay(false);
   };
 
   return (
@@ -68,6 +62,8 @@ const InvitationReceivedModal = ({
         open={open}
         onClose={(event, reason) => {
           if (event && reason === 'closeClick') {
+            declineInvitation();
+            setDefault();
             setOpen(false);
           }
         }}
@@ -80,47 +76,58 @@ const InvitationReceivedModal = ({
           <Typography id="basic-modal-dialog-title" sx={MUI.modalHeader}>
             Invitation received!
           </Typography>
-          <Stack spacing={3}>
+          <Stack spacing={2}>
             <div>
-              <Typography
-                component="h3"
-                sx={{
-                  textAlign: 'center',
-                  paddingBottom: '10px',
-                  paddingTop: '15px'
-                }}
-              >
-                Define if obstacle is available:
-              </Typography>
-              <div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  gap: '11px',
-                  justifyContent: 'center'
-                }}
-              ></div>
-            </div>
-
-            <div>
-              <Typography
-                component="h3"
-                sx={{ textAlign: 'center', paddingBottom: '30px' }}
-              >
-                Someone invites your to play the custom game:
-              </Typography>
               <div
                 style={{
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
-                  gap: '11px',
-                  justifyContent: 'center'
+                  justifyContent: 'center',
+                  gap: '8px'
                 }}
               >
-                Obstacle - ; win score - ;
+                <Avatar
+                  alt=""
+                  src={invitation.from.avatar}
+                  sx={{
+                    width: 50,
+                    height: 50,
+                    ':hover': {
+                      cursor: 'pointer'
+                    }
+                  }}
+                  title={invitation.from.nickname}
+                  onClick={() =>
+                    window.open(
+                      `/players/${invitation.from.nickname}`,
+                      '_blank'
+                    )
+                  }
+                />
+                Player {invitation.from.nickname}
               </div>
+              <Typography
+                sx={{
+                  textAlign: 'center',
+                  whiteSpace: 'pre'
+                }}
+              >
+                invites your to play game{'\n'}
+                with customisation:
+              </Typography>
+            </div>
+
+            <div>
+              <Typography
+                sx={{
+                  textAlign: 'center',
+                  whiteSpace: 'pre'
+                }}
+              >
+                win score - [ {invitation.gameInfo.winscore} ]{'\n'}moving
+                obstacle - [ {invitation.gameInfo.obstacle ? 'on' : 'off'} ]
+              </Typography>
             </div>
             <div
               style={{
@@ -134,12 +141,12 @@ const InvitationReceivedModal = ({
               <div>
                 <LoadingButton
                   type="submit"
-                  loading={loadingInvite}
+                  loading={loadingDecline}
                   startIcon={<HighlightOffIcon />}
                   variant="contained"
                   color="inherit"
                   loadingPosition="start"
-                  sx={{ minWidth: '100px' }}
+                  sx={{ minWidth: '120px' }}
                   onClick={() => declineInvitation()}
                 >
                   Decline
@@ -154,13 +161,22 @@ const InvitationReceivedModal = ({
                   variant="contained"
                   color="inherit"
                   loadingPosition="start"
-                  sx={{ minWidth: '100px' }}
+                  sx={{ minWidth: '120px' }}
                   onClick={() => acceptInvitation()}
                 >
                   Play
                 </LoadingButton>
               </div>
             </div>
+            <Typography
+              sx={{
+                textAlign: 'left',
+                fontSize: '14px',
+                paddingTop: '15px'
+              }}
+            >
+              * closing this popup will decline the invitation
+            </Typography>
           </Stack>
         </ModalDialog>
       </Modal>

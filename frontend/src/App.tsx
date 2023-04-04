@@ -3,7 +3,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { UserContext } from './contexts/UserContext';
 import { WebSocketContext } from './contexts/WebsocketContext';
 import { User } from './types/User';
-import { Player } from './types/Player';
+import { Invitation } from './types/Invitation';
 import AppRoutes from './AppRoutes';
 import Verify2fa from './components/profile/Verify2fa';
 import InvitationReceivedModal from './components/player_card/invitation/InvitationReceivedModal';
@@ -29,15 +29,15 @@ const App = () => {
     joinedChatRoom: ''
   });
 
-  const [inviter, setInviter] = useState<Player>({
-    avatar: undefined,
-    id: -1,
-    nickname: '',
-    profileId: '',
-    provider: '',
-    role: '',
-    status: 'OFFLINE',
-    username: ''
+  const [invitation, setInvitation] = useState<Invitation>({
+    from: {
+      nickname: undefined,
+      avatar: undefined
+    },
+    gameInfo: {
+      obstacle: undefined,
+      winscore: undefined
+    }
   });
 
   useEffect(() => {
@@ -54,8 +54,7 @@ const App = () => {
   }, []);
 
   socket.on('invitation_game', (args) => {
-    console.log('invitation received') //todo
-    setInviter(args.player);
+    setInvitation(args);
     setOpenInvitation(true);
   });
 
@@ -68,6 +67,7 @@ const App = () => {
             <InvitationReceivedModal
               open={openInvitation}
               setOpen={setOpenInvitation}
+              invitation={invitation}
             />
             <AppRoutes />
           </UserContext.Provider>

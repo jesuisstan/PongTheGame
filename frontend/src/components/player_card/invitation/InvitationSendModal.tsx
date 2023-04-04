@@ -72,7 +72,6 @@ const InvitationSendModal = ({
           } else if (response.status !== 200) {
             reject((response.error = 'Something went wrong'));
           } else {
-            console.log('goodway'); //todo
             resolve(response);
           }
         }
@@ -80,12 +79,13 @@ const InvitationSendModal = ({
     });
   };
 
-  socket.on('match_invitation_error', (args) => {
-    // If a error occurs
-    // If a error occurs
-    console.log('socket match_invitation_error ON');
-    console.log(args);
-  });
+  //todo no need anymore?
+  //socket.on('match_invitation_error', (args) => {
+  //  // If a error occurs
+  //  // If a error occurs
+  //  console.log('socket match_invitation_error ON');
+  //  console.log(args);
+  //});
 
   const setDefault = () => {
     setDisabledOptions(false);
@@ -102,7 +102,6 @@ const InvitationSendModal = ({
     setLoadingInvite(true);
     await sendInvitation()
       .then((data) => {
-        console.log('resp emit data -> ', data);
         setLoadingInvite(false);
         setButtonInviteText('Sent');
         setDisabledButton(true);
@@ -117,11 +116,17 @@ const InvitationSendModal = ({
   };
 
   const cancelInvitation = () => {
-    console.log('cancel Invit');
     socket.emit('match_invitation_abort', {
       nickname: player.nickname
     });
   };
+
+  //todo a socket_event kind of 'invitation_accepted' to proceed to game
+  socket.on('invitation_accepted', (args) => {
+    setLoadingPlay(false);
+    // proceed to game //todo
+    setOpen(false);
+  });
 
   return (
     <div>
@@ -270,7 +275,7 @@ const InvitationSendModal = ({
                     paddingTop: '15px'
                   }}
                 >
-                  * closing this popup cancels an invitation
+                  * closing this popup will cancel the invitation
                 </Typography>
               </div>
             </Stack>
