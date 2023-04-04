@@ -49,7 +49,7 @@ services:
     env_file:
       - .env
     environment:
-      NEST_DEBUG : null # TODO REMOVE THIS
+      NEST_DEBUG : null # TODO REMOVE THIS ('true' break compilation on other machines)
       BACKEND_PORT: ${BACKEND_PORT}
       FRONTEND_URL: ${FRONTEND_URL}
       SESSION_SECRET: ${SESSION_SECRET}
