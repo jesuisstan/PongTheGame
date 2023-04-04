@@ -118,7 +118,7 @@ export class GameGateway {
       !payload.winscore ||
       (!payload.nickname && (payload.obstacle || !payload.obstacle))
     ) {
-      return { status: 403, reason: 'Data needed not fetch' }
+      return { status: 403, reason: 'Data needed not fetch' };
     }
     return this.game.game_friend_start(socket, payload);
   }

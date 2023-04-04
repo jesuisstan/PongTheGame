@@ -115,7 +115,7 @@ export class GameService {
     if (!user) return { status: 403, reason: 'User not found' };
     const sockets: any = this.websocket.getSockets([user.id]);
     if (!sockets[0]) return { status: 400, reason: 'Opponents log out' };
-    this.websocket.send(sockets[0], 'invitation_accepted', '')
+    this.websocket.send(sockets[0], 'invitation_accepted', '');
     this._delete_user_invitations(user.id);
     const game = new Game(
       this.prisma,
