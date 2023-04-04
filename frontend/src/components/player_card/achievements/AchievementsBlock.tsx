@@ -34,7 +34,7 @@ const AchievementsBlock = ({
   return (
     <div className={styles.achieveBlock}>
       <Typography
-        textColor={color.PONG_BLUE}
+        textColor={color.PONG_ORANGE}
         level="body3"
         textTransform="uppercase"
         fontWeight="lg"
@@ -45,7 +45,7 @@ const AchievementsBlock = ({
       <div>
         <Typography
           level="h1"
-          textColor={color.PONG_BLUE}
+          textColor={color.PONG_ORANGE}
           fontWeight="lg"
           textAlign="left"
         >

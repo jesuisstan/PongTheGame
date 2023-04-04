@@ -49,7 +49,7 @@ const MatchHistoryBlock = ({
       }}
     >
       <Typography
-        textColor={color.PONG_BLUE}
+        textColor={color.PONG_ORANGE}
         level="body3"
         textTransform="uppercase"
         fontWeight="lg"
@@ -62,7 +62,7 @@ const MatchHistoryBlock = ({
       <div>
         <Typography
           level="h1"
-          textColor={color.PONG_BLUE}
+          textColor={color.PONG_ORANGE}
           fontWeight="lg"
           textAlign="left"
         >

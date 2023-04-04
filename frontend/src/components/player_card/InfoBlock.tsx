@@ -90,7 +90,7 @@ const InfoBlock = ({ player }: { player: Player }) => {
       </BadgePong>
       <div>
         <Typography
-          textColor={color.PONG_BLUE}
+          textColor={color.PONG_ORANGE}
           level="body3"
           textTransform="uppercase"
           fontWeight="lg"
@@ -101,7 +101,7 @@ const InfoBlock = ({ player }: { player: Player }) => {
       </div>
       <div>
         <Typography
-          textColor={color.PONG_BLUE}
+          textColor={color.PONG_ORANGE}
           level="body3"
           textTransform="uppercase"
           fontWeight="lg"

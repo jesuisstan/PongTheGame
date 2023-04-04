@@ -1,5 +1,5 @@
 import Button from '@mui/material/Button';
-import * as color from '../UI/colorsPong'
+import * as color from '../UI/colorsPong';
 
 const ButtonPong = ({
   text,
@@ -28,7 +28,8 @@ const ButtonPong = ({
         ':hover': {
           backgroundColor: !inversedColors ? color.PONG_PINK : 'black',
           color: !inversedColors ? 'black' : color.PONG_WHITE,
-          fontWeight: 'Bold'
+          fontWeight: 'Bold',
+          border: inversedColors ? `0.5px solid ${color.PONG_PINK}` : 'black'
         }
       }}
       title={title}

@@ -43,7 +43,7 @@ const FriendsBlock = ({
   return (
     <div className={styles.friendsBlock}>
       <Typography
-        textColor={color.PONG_BLUE}
+        textColor={color.PONG_ORANGE}
         level="body3"
         textTransform="uppercase"
         fontWeight="lg"
