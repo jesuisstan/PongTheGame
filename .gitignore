@@ -1,4 +1,5 @@
-.env
+/.env
+/.env.prod
 /private
 /database
 /ft_transcendence_env

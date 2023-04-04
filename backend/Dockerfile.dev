@@ -1,0 +1,14 @@
+FROM node:18-alpine
+
+RUN apk add --no-cache curl
+
+WORKDIR /backend
+
+ENTRYPOINT \
+	yarn install --production=false --frozen-lockfile --non-interactive && \
+	yarn prisma db push && \
+	yarn prisma db seed && \
+	ls -la . && \
+	# sleep 20 && \
+	yarn build && ls -la
+	# yarn start:dev

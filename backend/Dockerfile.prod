@@ -1,0 +1,26 @@
+FROM node:18-alpine AS build
+
+RUN apk add --no-cache curl
+
+WORKDIR /backend
+
+# copy only the required files to install dependencies,
+# we want to reinstall dependencies only if these files change
+COPY yarn.lock package.json ./
+
+# install dependencies
+RUN yarn install --production=false --frozen-lockfile --non-interactive
+
+# copy the rest of the project
+COPY . .
+
+# build the app
+RUN \
+	yarn prisma generate && \
+	yarn build
+
+ENTRYPOINT \
+	# migrate the database schema if changed
+	yarn prisma migrate deploy && \
+	# start the app in production mode
+	yarn start:prod

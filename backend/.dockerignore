@@ -1,0 +1,7 @@
+/dist/
+/node_modules/
+/.gitignore
+/Dockerfile
+/Dockerfile.*
+/README.md
+*.log

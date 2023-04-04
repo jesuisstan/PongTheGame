@@ -7,7 +7,7 @@ export interface Config {
   GITHUB_CLIENT_SECRET: string;
   GITHUB_CALLBACK_URL: string;
 
-  BACKEND_PORT: string;
+  BACKEND_URL: string;
   FRONTEND_URL: string;
 
   DATABASE_URL: string;

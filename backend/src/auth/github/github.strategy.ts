@@ -9,7 +9,7 @@ import { Config } from 'src/config.interface';
 @Injectable()
 export class GithubStrategy extends PassportStrategy(Strategy, 'github') {
   constructor(
-    readonly config: ConfigService<Config>,
+    config: ConfigService<Config>,
     private readonly auth: SessionService,
   ) {
     super({

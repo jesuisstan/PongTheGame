@@ -41,7 +41,7 @@ async function bootstrap() {
     origin: config.getOrThrow('FRONTEND_URL'),
   });
 
-  await app.listen(config.getOrThrow('BACKEND_PORT'));
+  await app.listen(3000);
 }
 
 function setupSwagger(app: NestExpressApplication) {
