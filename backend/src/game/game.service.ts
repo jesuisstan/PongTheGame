@@ -185,8 +185,8 @@ export class GameService {
       },
     });
     if (!user) return { status: 404, reason: 'user not found' };
-    const socketUserCreate = this.websocket.getSockets([user.id]);
-    this.websocket.send(socketUserCreate, 'invitation_refuse', ''); // TODO talk with Stan
+    const socketUserCreate: Socket[] = this.websocket.getSockets([user.id]);
+    this.websocket.send(socketUserCreate[0], 'invitation_refused', '');
     this._delete_user_invitations(user.id);
   }
 
