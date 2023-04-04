@@ -89,6 +89,7 @@ export class Game {
       this.start_counter--;
       this._send_to_players('match_starting', { time: this.start_counter });
     }
+    console.log("counter_stop");
     this._send_to_players('match_starting', { time: this.start_counter });
     this.status = Status.PLAYING;
     this._set_players_status('PLAYING');
@@ -202,6 +203,7 @@ export class Game {
       const timeInSeconds = Math.floor(timePlayed / 1000);
       this._update_state();
       this._send_state_to_players(timeInSeconds);
+      console.log("state_send");
       this._send_state_to_spectators(timeInSeconds);
       if (
         (this.game_state.player1.score == this.game_state.gameInfos.WinScore ||
@@ -213,6 +215,7 @@ export class Game {
         this._send_state_to_players(timeInSeconds);
       }
     }
+    console.log("game_finished")
     if (this.status === Status.ABORTED) {
       this.end();
       return;

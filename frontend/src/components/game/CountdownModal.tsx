@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { CircularProgress } from '@mui/material';
-import Typography from '@mui/joy/Typography';
 import { Game_player, Game_status } from './game.interface';
+import { GameStateContext } from '../../contexts/GameStateContext';
+import Typography from '@mui/joy/Typography';
 import Modal from '@mui/joy/Modal';
 import ModalDialog from '@mui/joy/ModalDialog';
 import Stack from '@mui/material/Stack';
@@ -22,11 +23,11 @@ interface CountdownProps {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   players: Game_player[];
-  setGameState: (gameState: Game_status) => void;
   seconds: number;
 }
 
 const CountdownModal = (props: CountdownProps) => {
+  const { setGameState } = useContext(GameStateContext);
   const [remainingSeconds, setRemainingSeconds] = useState<number>(
     props.seconds
   );
@@ -39,7 +40,7 @@ const CountdownModal = (props: CountdownProps) => {
     if (remainingSeconds === 1) {
     }
     if (remainingSeconds === 0) {
-      props.setGameState(Game_status.PLAYING);
+      setGameState(Game_status.PLAYING);
       props.setOpen(false);
       clearInterval(intervalId);
     }

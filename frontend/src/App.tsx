@@ -9,6 +9,7 @@ import Verify2fa from './components/profile/Verify2fa';
 import InvitationReceivedModal from './components/player_card/invitation/InvitationReceivedModal';
 import backendAPI from './api/axios-instance';
 import './App.css';
+import { GameStateContext } from './contexts/GameStateContext';
 
 const App = () => {
   const socket = useContext(WebSocketContext);
@@ -28,6 +29,8 @@ const App = () => {
     blockedUsers: [],
     joinedChatRoom: ''
   });
+
+  const [gameState, setGameState] = useState('lobby');
 
   const [invitation, setInvitation] = useState<Invitation>({
     from: {
@@ -63,13 +66,15 @@ const App = () => {
       <BrowserRouter>
         <div className="App">
           <UserContext.Provider value={{ user, setUser }}>
-            <Verify2fa open={openVerify2fa} setOpen={setOpenVerify2fa} />
-            <InvitationReceivedModal
-              open={openInvitation}
-              setOpen={setOpenInvitation}
-              invitation={invitation}
-            />
-            <AppRoutes />
+            <GameStateContext.Provider value={{ gameState, setGameState }}>
+              <Verify2fa open={openVerify2fa} setOpen={setOpenVerify2fa} />
+              <InvitationReceivedModal
+                open={openInvitation}
+                setOpen={setOpenInvitation}
+                invitation={invitation}
+              />
+              <AppRoutes />
+            </GameStateContext.Provider>
           </UserContext.Provider>
         </div>
       </BrowserRouter>

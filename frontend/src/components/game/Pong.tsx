@@ -1,4 +1,5 @@
 import { useRef, useEffect, useContext, useState } from 'react';
+import { GameStateContext } from '../../contexts/GameStateContext';
 import { WebSocketContext } from '../../contexts/WebsocketContext';
 import { Player_game, Props_game, Game_status } from './game.interface';
 import { drawState } from './utils/gameUtils';
@@ -9,12 +10,13 @@ const CANVAS_HEIGHT = 600;
 const CANVAS_WIDTH = 800;
 
 const Pong = (props: Props_game) => {
+  const { setGameState } = useContext(GameStateContext);
   const socket = useContext(WebSocketContext);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [players, set_players] = useState<Player_game[]>(
     props.spectator || !props.players ? [] : [...props.players]
   );
-
+  const [winScore, setWinScore] = useState<number>(5);
   const state_ref = useRef(false);
 
   const onKeyRelease = (event: KeyboardEvent) => {
@@ -45,21 +47,25 @@ const Pong = (props: Props_game) => {
           {
             ...players[0],
             infos: args.player1.infos,
-            score: args.player1.score,
+            score: args.player1.score
           },
           {
             ...players[1],
             infos: args.player2.infos,
-            score: args.player2.score,
+            score: args.player2.score
           }
         ]);
+        setWinScore(args.gameInfos.winScore);
+console.log('winScore args ->') //todo
+console.log(args.gameInfos.winScore)
+
       }
       window.addEventListener('keydown', onKeyPressRef.current);
       window.addEventListener('keyup', onKeyReleaseRef.current);
 
       drawState(args, canvasRef);
       if (args.status === 'ended' || args.status === 'aborted') {
-        props.setGameState(Game_status.ENDED);
+        setGameState(Game_status.ENDED);
         window.removeEventListener('keydown', onKeyPressRef.current);
         window.removeEventListener('keyup', onKeyReleaseRef.current);
       }
@@ -72,25 +78,26 @@ const Pong = (props: Props_game) => {
           {
             ...players[0],
             infos: args.player1.infos,
-            score: args.player1.score,
+            score: args.player1.score
           },
           {
             ...players[1],
             infos: args.player2.infos,
-            score: args.player2.score,
+            score: args.player2.score
           }
         ]);
+        setWinScore(args.gameInfos.winScore);
       }
       drawState(args, canvasRef);
       if (args.status === 'ended' || args.status === 'aborted') {
-        props.setGameState(Game_status.ENDED);
+        setGameState(Game_status.ENDED);
       }
     });
   };
 
   const checkGameAborted = () => {
     socket.on('game_aborted', (args) => {
-      props.setGameState(Game_status.ENDED);
+      setGameState(Game_status.ENDED);
     });
   };
 
@@ -114,7 +121,6 @@ const Pong = (props: Props_game) => {
     }
   }, [players]);
 
-  let winScore = 5; // todo temp value. Request from server
   return (
     <div className={styles.canvasBlock}>
       {players.length > 0 && (
