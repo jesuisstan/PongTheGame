@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
-import { SetStateAction, Dispatch } from 'react';
+import { SetStateAction, Dispatch, useContext } from 'react';
 import { Game_status, Game_result } from './game.interface';
+import { GameStateContext } from '../../contexts/GameStateContext';
 import Modal from '@mui/joy/Modal';
 import ModalDialog from '@mui/joy/ModalDialog';
 import ModalClose from '@mui/joy/ModalClose';
@@ -15,15 +16,15 @@ import styles from './styles/VictoryModal.module.css';
 const VictoryModal = ({
   open,
   setOpen,
-  setGameState,
   gameResult
 }: {
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
-  setGameState: React.Dispatch<React.SetStateAction<Game_status>>;
   gameResult: Game_result | null;
 }) => {
   const navigate = useNavigate();
+  const { setGameState } = useContext(GameStateContext);
+
   return (
     <div>
       <Modal

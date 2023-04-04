@@ -1,10 +1,11 @@
 import { Dispatch, SetStateAction, useContext, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../../contexts/UserContext';
-import { User } from '../../../types/User';
+import { GameStateContext } from '../../../contexts/GameStateContext';
+import { Game_status } from '../../game/game.interface';
 import { Player } from '../../../types/Player';
 import { WebSocketContext } from '../../../contexts/WebsocketContext';
 import SliderPong from './SliderPong';
-import backendAPI from '../../../api/axios-instance';
 import errorAlert from '../../UI/errorAlert';
 import Modal from '@mui/joy/Modal';
 import ModalClose from '@mui/joy/ModalClose';
@@ -13,14 +14,11 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/joy/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
 import SwitchPong from './SwitchPong';
-import FormControl from '@mui/material/FormControl';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import SendIcon from '@mui/icons-material/Send';
-import PlaylistAddCheckIcon from '@mui/icons-material/PlaylistAddCheck';
-import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import * as MUI from '../../UI/MUIstyles';
 import * as color from '../../UI/colorsPong';
-import styles from './styles/PlayerCard.module.css';
 
 const DEFAULT_WIN_SCORE = 5;
 
@@ -33,7 +31,8 @@ const InvitationSendModal = ({
   setOpen: Dispatch<SetStateAction<boolean>>;
   player: Player;
 }) => {
-  const { user, setUser } = useContext(UserContext);
+  const navigate = useNavigate();
+  const { setGameState } = useContext(GameStateContext);
   const socket = useContext(WebSocketContext);
   const [obstacleEnabled, setObstacleEnabled] = useState(false);
   const [winScore, setWinScore] = useState(DEFAULT_WIN_SCORE);
@@ -41,6 +40,15 @@ const InvitationSendModal = ({
   const [disabledButton, setDisabledButton] = useState(false);
   const [buttonText, setButtonText] = useState('Invite');
   const [loading, setLoading] = useState(false);
+
+  const setDefault = () => {
+    setObstacleEnabled(false);
+    setWinScore(DEFAULT_WIN_SCORE);
+    setDisabledOptions(false);
+    setDisabledButton(false);
+    setButtonText('Invite');
+    setLoading(false);
+  };
 
   const toggleObstacle = () => {
     setObstacleEnabled((prev) => !prev);
@@ -76,15 +84,6 @@ const InvitationSendModal = ({
     });
   };
 
-  const setDefault = () => {
-    setObstacleEnabled(false);
-    setWinScore(DEFAULT_WIN_SCORE);
-    setDisabledOptions(false);
-    setDisabledButton(false);
-    setButtonText('Invite');
-    setLoading(false);
-  };
-
   const handleSubmit = async (event: any) => {
     event.preventDefault();
     setDisabledOptions(true);
@@ -109,16 +108,16 @@ const InvitationSendModal = ({
     });
   };
 
-  //todo a socket_event kind of 'invitation_accepted' to proceed to game
   socket.on('invitation_accepted', (args) => {
     console.log('invitation_accepted');
+    setButtonText('Accepted');
     setLoading(false);
-    // proceed to game //todo
-    //setOpen(false);
+    setOpen(false);
+    navigate('/game');
+    setGameState(Game_status.PLAYING);
   });
 
   socket.on('invitation_refused', (args) => {
-    setLoading(false);
     setOpen(false);
     setDefault();
     errorAlert(`${player.nickname} refused your invitation`);
@@ -206,6 +205,7 @@ const InvitationSendModal = ({
                   />
                 </div>
               </div>
+
               <div>
                 <Typography
                   component="h3"
@@ -230,8 +230,8 @@ const InvitationSendModal = ({
                     title={`Invite ${player.nickname} to play game`}
                     loading={loading}
                     endIcon={
-                      buttonText === 'Sent' ? (
-                        <PlaylistAddCheckIcon />
+                      buttonText === 'Accepted' ? (
+                        <CheckCircleOutlineIcon />
                       ) : (
                         <SendIcon />
                       )

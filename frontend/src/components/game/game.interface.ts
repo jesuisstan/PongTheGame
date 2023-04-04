@@ -9,6 +9,7 @@ export interface Game_infos {
 	paddleHeight: number;
 	paddleWidth: number;
 	ballRadius: number;
+	winScore : number;
 	time: number;
 	obstacleHeight? : number;
 	obstacleWidth? : number;
@@ -42,8 +43,6 @@ export interface Props_game {
   players?: Player_game[];
 	setEndMatch: (result: Result_game) => void;
 	spectator: boolean;
-	gameState: Game_status;
-	setGameState: (gameState: Game_status) => void;
 }
 
 export interface Position {

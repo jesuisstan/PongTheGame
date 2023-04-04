@@ -16,6 +16,9 @@ import Avatar from '@mui/material/Avatar';
 import * as MUI from '../../UI/MUIstyles';
 import * as color from '../../UI/colorsPong';
 import styles from './styles/PlayerCard.module.css';
+import { GameStateContext } from '../../../contexts/GameStateContext';
+import { Game_status } from '../../game/game.interface';
+import { useNavigate } from 'react-router-dom';
 
 const InvitationReceivedModal = ({
   open,
@@ -26,10 +29,12 @@ const InvitationReceivedModal = ({
   setOpen: Dispatch<SetStateAction<boolean>>;
   invitation: Invitation;
 }) => {
+  const navigate = useNavigate();
   const { user, setUser } = useContext(UserContext);
   const socket = useContext(WebSocketContext);
   const [loadingDecline, setLoadingDecline] = useState(false);
   const [loadingPlay, setLoadingPlay] = useState(false);
+  const { setGameState } = useContext(GameStateContext);
 
   const declineInvitation = () => {
     console.log('declined');
@@ -48,6 +53,8 @@ const InvitationReceivedModal = ({
       nickname: invitation.from.nickname
     });
     setOpen(false);
+    navigate('/game');
+    setGameState(Game_status.PLAYING);
   };
 
   const setDefault = () => {
