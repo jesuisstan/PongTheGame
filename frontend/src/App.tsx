@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
-import { BrowserRouter } from 'react-router-dom';
+import { Navigate, BrowserRouter } from 'react-router-dom';
 import { UserContext } from './contexts/UserContext';
 import { WebSocketContext } from './contexts/WebsocketContext';
 import { User } from './types/User';
@@ -59,6 +59,11 @@ const App = () => {
   socket.on('invitation_game', (args) => {
     setInvitation(args);
     setOpenInvitation(true);
+  });
+
+  socket.on('error_token', (args) => {
+    alert(args.message); // TODO Check how to do that
+    console.log(args);
   });
 
   return (

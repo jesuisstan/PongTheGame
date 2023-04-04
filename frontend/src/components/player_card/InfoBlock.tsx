@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
-import { redirect, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../contexts/UserContext';
 import { Player } from '../../types/Player';
 import InvitationSendModal from './invitation/InvitationSendModal';
