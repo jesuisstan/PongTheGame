@@ -128,6 +128,14 @@ const InvitationSendModal = ({
     setOpen(false);
   });
 
+  socket.on('invitation_refused', (args) => {
+    setLoadingPlay(false);
+    console.log("got refused")
+    alert('invitation refused')
+    // proceed to game //todo
+    setOpen(false);
+  });
+
   return (
     <div>
       <Modal
