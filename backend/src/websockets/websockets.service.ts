@@ -65,7 +65,9 @@ export class WebsocketsService {
       this.game.send_all_invitation(socket);
     } catch (e) {
       console.log(e);
-      this.send(socket, 'error', { message: 'Invalid session cookie' });
+      this.send(socket, 'error_token', {
+        message: 'Server got a problem need to be relog',
+      });
       socket.disconnect();
       return;
     }
