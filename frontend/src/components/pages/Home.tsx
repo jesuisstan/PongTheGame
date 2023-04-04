@@ -31,7 +31,7 @@ const Home = () => {
           <div
             style={{
               fontSize: '60px',
-              color: color.PONG_ORANGE
+              color: color.PONG_PINK
             }}
           >
             to Pong The Game
@@ -53,7 +53,7 @@ const Home = () => {
       <div
         style={{
           fontSize: '50px',
-          color: color.PONG_PINK,
+          color: color.PONG_ORANGE,
           marginLeft: '70px',
           marginRight: 'auto',
           marginTop: '300px',
