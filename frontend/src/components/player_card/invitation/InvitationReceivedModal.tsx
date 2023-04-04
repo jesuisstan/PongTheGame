@@ -33,7 +33,7 @@ const InvitationReceivedModal = ({
 
   const declineInvitation = () => {
     console.log('declined');
-    socket.emit('match_invitation_abort', {
+    socket.emit('match_invitation_refuse', {
       nickname: invitation.from.nickname
     });
     setOpen(false);
