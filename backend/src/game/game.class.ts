@@ -60,7 +60,7 @@ export class Game {
     websockets: WebsocketsService,
     achievements: giveAchievementService,
     type: TypeMode,
-    winningScore: number,
+    winScore: number,
     player1: Profile,
     player2?: Profile,
     obstacle?: boolean,
@@ -72,14 +72,14 @@ export class Game {
     this.player2 = player2;
     this.game_state = get_default_game_state(
       type,
-      winningScore,
+      winScore,
       player1,
       player2,
     );
     this.type = type;
     this._reset_ball(this.game_state.ball);
     this.obstacle = obstacle;
-    this.game_state.gameInfos.WinScore = winningScore;
+    this.game_state.gameInfos.winScore = winScore;
   }
 
   async start(onEnd: () => void) {
@@ -204,9 +204,9 @@ export class Game {
       this._send_state_to_players(timeInSeconds);
       this._send_state_to_spectators(timeInSeconds);
       if (
-        (this.game_state.player1.score == this.game_state.gameInfos.WinScore ||
+        (this.game_state.player1.score == this.game_state.gameInfos.winScore ||
           this.game_state.player2.score ==
-            this.game_state.gameInfos.WinScore) &&
+            this.game_state.gameInfos.winScore) &&
         !this.people_left
       ) {
         this.status = Status.ENDED;
@@ -315,7 +315,7 @@ export class Game {
         ? this.game_state.player2
         : this.game_state.player1;
     this.people_left = otherPlayer;
-    this.people_left.score = this.game_state.gameInfos.WinScore;
+    this.people_left.score = this.game_state.gameInfos.winScore;
     leaved.score = 0;
     this.status = Status.ABORTED;
     if (this.game_start_time) {

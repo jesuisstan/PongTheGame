@@ -35,7 +35,7 @@ const InvitationSendModal = ({
   const { setGameState } = useContext(GameStateContext);
   const socket = useContext(WebSocketContext);
   const [obstacleEnabled, setObstacleEnabled] = useState(false);
-  const [winScore, setWinScore] = useState(DEFAULT_WIN_SCORE);
+  const [winScore, setwinScore] = useState(DEFAULT_WIN_SCORE);
   const [disabledOptions, setDisabledOptions] = useState(false);
   const [disabledButton, setDisabledButton] = useState(false);
   const [buttonText, setButtonText] = useState('Invite');
@@ -43,7 +43,7 @@ const InvitationSendModal = ({
 
   const setDefault = () => {
     setObstacleEnabled(false);
-    setWinScore(DEFAULT_WIN_SCORE);
+    setwinScore(DEFAULT_WIN_SCORE);
     setDisabledOptions(false);
     setDisabledButton(false);
     setButtonText('Invite');
@@ -59,7 +59,7 @@ const InvitationSendModal = ({
       socket.emit(
         'match_send_invitation',
         {
-          winscore: winScore,
+          winScore: winScore,
           obstacle: obstacleEnabled,
           nickname: player.nickname
         },
@@ -201,7 +201,7 @@ const InvitationSendModal = ({
                 >
                   <SliderPong
                     disabled={disabledOptions}
-                    setWinScore={setWinScore}
+                    setwinScore={setwinScore}
                   />
                 </div>
               </div>

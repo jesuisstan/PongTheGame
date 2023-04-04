@@ -39,7 +39,7 @@ const App = () => {
     },
     gameInfo: {
       obstacle: undefined,
-      winscore: undefined
+      winScore: undefined
     }
   });
 

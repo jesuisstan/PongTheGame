@@ -192,7 +192,7 @@ export function convert_state_to_sendable(
         paddleHeight: state.gameInfos.paddleHeight,
         ballRadius: state.gameInfos.ballRadius,
         time: Default_params.GAME_TIME - timeInSeconds,
-        WinScore: state.gameInfos.WinScore,
+        winScore: state.gameInfos.winScore,
       },
       player1: {
         paddle: {
@@ -233,7 +233,7 @@ export function convert_state_to_sendable(
         paddleHeight: state.gameInfos.paddleHeight,
         ballRadius: state.gameInfos.ballRadius,
         time: timeInSeconds,
-        WinScore: state.gameInfos.WinScore,
+        winScore: state.gameInfos.winScore,
       },
       player1: {
         paddle: {
@@ -276,7 +276,7 @@ export function convert_state_to_sendable(
         obstacleHeight: state.gameInfos.obstacleHeight,
         obstacleWidth: state.gameInfos.obstacleWidth,
         time: timeInSeconds,
-        WinScore: state.gameInfos.WinScore,
+        winScore: state.gameInfos.winScore,
       },
       player1: {
         paddle: {
@@ -326,7 +326,7 @@ export function convert_invitation(socket: any, payload: any) {
     },
     gameInfo: {
       obstacle: payload.obstacle,
-      winscore: payload.winscore,
+      winScore: payload.winScore,
     },
   };
   return res;

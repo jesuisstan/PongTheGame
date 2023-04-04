@@ -87,7 +87,7 @@ export class GameGateway {
     if (
       !socket ||
       !payload ||
-      !payload.winscore ||
+      !payload.winScore ||
       (!payload.nickname && (payload.obstacle || !payload.obstacle))
     ) {
       return { status: 403, reason: 'Data needed not fetch' };
@@ -115,7 +115,7 @@ export class GameGateway {
     if (
       !socket ||
       !payload ||
-      !payload.winscore ||
+      !payload.winScore ||
       (!payload.nickname && (payload.obstacle || !payload.obstacle))
     ) {
       return { status: 403, reason: 'Data needed not fetch' };

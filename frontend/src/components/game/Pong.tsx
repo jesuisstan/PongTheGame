@@ -16,7 +16,7 @@ const Pong = (props: Props_game) => {
   const [players, set_players] = useState<Player_game[]>(
     props.spectator || !props.players ? [] : [...props.players]
   );
-  const [winScore, setWinScore] = useState<number>(5);
+  const [winScore, setwinScore] = useState<number>(5);
   const state_ref = useRef(false);
 
   const onKeyRelease = (event: KeyboardEvent) => {
@@ -55,10 +55,7 @@ const Pong = (props: Props_game) => {
             score: args.player2.score
           }
         ]);
-        setWinScore(args.gameInfos.winScore);
-console.log('winScore args ->') //todo
-console.log(args.gameInfos.winScore)
-
+        setwinScore(args.gameInfos.winScore);
       }
       window.addEventListener('keydown', onKeyPressRef.current);
       window.addEventListener('keyup', onKeyReleaseRef.current);
@@ -86,7 +83,7 @@ console.log(args.gameInfos.winScore)
             score: args.player2.score
           }
         ]);
-        setWinScore(args.gameInfos.winScore);
+        setwinScore(args.gameInfos.winScore);
       }
       drawState(args, canvasRef);
       if (args.status === 'ended' || args.status === 'aborted') {

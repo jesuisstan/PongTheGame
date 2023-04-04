@@ -48,7 +48,7 @@ const InvitationReceivedModal = ({
     console.log('accepted');
 
     socket.emit('match_invitation_accept', {
-      winscore: invitation.gameInfo.winscore,
+      winScore: invitation.gameInfo.winScore,
       obstacle: invitation.gameInfo.obstacle,
       nickname: invitation.from.nickname
     });
@@ -132,7 +132,7 @@ const InvitationReceivedModal = ({
                   whiteSpace: 'pre'
                 }}
               >
-                win score - [ {invitation.gameInfo.winscore} ]{'\n'}moving
+                win score - [ {invitation.gameInfo.winScore} ]{'\n'}moving
                 obstacle - [ {invitation.gameInfo.obstacle ? 'on' : 'off'} ]
               </Typography>
             </div>

@@ -5,10 +5,10 @@ import * as color from '../../UI/colorsPong';
 
 const SliderPong = ({
   disabled,
-  setWinScore
+  setwinScore
 }: {
   disabled: boolean;
-  setWinScore: Dispatch<SetStateAction<number>>;
+  setwinScore: Dispatch<SetStateAction<number>>;
 }) => {
   const marks = [
     {
@@ -37,7 +37,7 @@ const SliderPong = ({
     event: React.SyntheticEvent | Event,
     value: number | Array<number>
   ) => {
-    if (typeof value === 'number' && value > 0) setWinScore(value);
+    if (typeof value === 'number' && value > 0) setwinScore(value);
   };
 
   return (

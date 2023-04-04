@@ -5,6 +5,6 @@ export type Invitation = {
   };
   gameInfo: {
     obstacle: boolean | undefined;
-    winscore: number | undefined;
+    winScore: number | undefined;
   };
 };

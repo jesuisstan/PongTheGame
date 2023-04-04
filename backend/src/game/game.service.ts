@@ -62,7 +62,7 @@ export class GameService {
       data: {
         createdById: socket.user.id,
         sendToId: user.id,
-        winscore: payload.winscore,
+        winScore: payload.winScore,
         obstacle: payload.obstacle,
       },
     });
@@ -80,7 +80,7 @@ export class GameService {
       select: {
         createdBy: true,
         obstacle: true,
-        winscore: true,
+        winScore: true,
       },
     });
     for (let i = 0; i < allInvit.length; i++) {
@@ -91,7 +91,7 @@ export class GameService {
             avatar: allInvit[i].createdBy.avatar,
           },
         },
-        { obstacle: allInvit[i].obstacle, winscore: allInvit[i].winscore },
+        { obstacle: allInvit[i].obstacle, winScore: allInvit[i].winScore },
       );
       this.websocket.send(socket, 'invitation_game', res);
     }
@@ -124,7 +124,7 @@ export class GameService {
       this.websocket,
       this.achievement,
       type,
-      payload.winscore,
+      payload.winScore,
       { socket: sockets[0], user: sockets[0].user },
       { socket: socket, user: socket.user },
       payload.obstacle,
