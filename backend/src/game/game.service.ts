@@ -149,6 +149,9 @@ export class GameService {
       },
     });
     if (!userId) return { status: 403, reason: 'User not found' };
+    const inviteUserSocket: Socket[] = this.websocket.getSockets([userId.id]);
+    if (!inviteUserSocket[0]) return { status: 400, reason: 'User disconnect' };
+    this.websocket.send(inviteUserSocket[0], 'match_invitation_canceled', {});
     const invit = await this.prisma.matchInvitation.findUnique({
       where: {
         createdById: userId.id,

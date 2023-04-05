@@ -70,12 +70,7 @@ export class Game {
     this.achievements = achievements;
     this.player1 = player1;
     this.player2 = player2;
-    this.game_state = get_default_game_state(
-      type,
-      winScore,
-      player1,
-      player2,
-    );
+    this.game_state = get_default_game_state(type, winScore, player1, player2);
     this.type = type;
     this._reset_ball(this.game_state.ball);
     this.obstacle = obstacle;
