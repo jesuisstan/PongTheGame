@@ -146,13 +146,13 @@ model Message {
   author       User      @relation("MessageAuthor", fields: [authorId], references: [id])
   authorId     Int
   data         String
-  ChatRoom     ChatRoom @relation(fields: [chatRoomName], references: [name])
+  ChatRoom     ChatRoom @relation(fields: [chatRoomName], references: [name], onDelete: Cascade, onUpdate: Cascade)
   chatRoomName String
 }
 
 model Member {
   memberId     Int
-  member       User      @relation("ChatRoomMember", fields: [memberId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  member       User      @relation("ChatRoomMember", fields: [memberId], references: [id])
   isOnline     Boolean
   modes        String
   ChatRoom     ChatRoom @relation(fields: [chatRoomName], references: [name], onDelete: Cascade, onUpdate: Cascade)

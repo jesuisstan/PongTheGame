@@ -53,7 +53,10 @@ export class ChatService {
 
   async getChatRoomByName(name: string) {
     return await this.prisma.chatRoom.findUnique({
-      where: { name: name }
+      where: { name: name },
+      include: {
+        members: true, messages: true, bannedUsers: true
+      }
     })
   }
 
@@ -88,7 +91,7 @@ export class ChatService {
           bannedUsers: {}
         }
       })
-      console.log('created room: '+ r);
+      console.log('created room: '+ Object.entries(r));
       // this.chatRooms.push(room);
 
       // If it is a private conversation
@@ -116,7 +119,11 @@ export class ChatService {
     throw new WsException({ msg: 'findAllMessages: unknown room name!' });
   }
 
-  findAllChatRooms() { return this.prisma.chatRoom.findMany(); }
+  async findAllChatRooms() { 
+    return await this.prisma.chatRoom.findMany({
+      include: { members: true }
+    });
+  }
 
   // Return all members from the chatroom
   async findAllMembers(roomName: string) {
@@ -249,10 +256,6 @@ export class ChatService {
       return false;
     }
     else throw new WsException({ msg: 'isUserBanned: unknown room name!' });
-  }
-
-  async getChatRooms() {
-    return await this.prisma.chatRoom.findMany();
   }
 
   async updateUserModes(roomName: string, userId: number, modes: string) {

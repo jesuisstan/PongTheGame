@@ -171,8 +171,8 @@ Ref: MatchInvitation.sendToId > User.id
 
 Ref: Message.authorId > User.id
 
-Ref: Message.chatRoomName > ChatRoom.name
+Ref: Message.chatRoomName > ChatRoom.name [delete: Cascade]
 
-Ref: Member.memberId > User.id [delete: Cascade]
+Ref: Member.memberId > User.id
 
 Ref: Member.chatRoomName > ChatRoom.name [delete: Cascade]

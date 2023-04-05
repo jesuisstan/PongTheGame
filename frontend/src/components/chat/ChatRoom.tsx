@@ -18,6 +18,7 @@ import AvatarBadge from './utils/AvatarBadge';
 
 // personal css
 import './Chat.css';
+import { User } from '../../types/User';
 
 /*************************************************************
  * Chat room
@@ -113,9 +114,9 @@ const ChatRoom = (props: any) => {
     // Activate listeners and subscribe to events as the component is mounted
     // socket.on('connect', () => console.log('connected to websocket!'))
     socket.on('typingMessage', (
-        roomName: string, userId: number, isTyping: boolean) => {
+        roomName: string, nick: string, isTyping: boolean) => {
       roomName === user.joinedChatRoom && isTyping ?
-        setTypingDisplay(userId + ' is typing...')
+        setTypingDisplay(nick + ' is typing...')
         : setTypingDisplay('')
     })
     socket.on('changePassword', (roomName: string, isDeleted: boolean) => {
@@ -180,13 +181,13 @@ const ChatRoom = (props: any) => {
   const emitTyping = () => {
     socket.emit('typingMessage', {
       roomName: user.joinedChatRoom, 
-      userId: user.id,
+      nick: user.nickname,
       isTyping: true
     });
     timeout = setTimeout(() => {
       socket.emit('typingMessage', {
         roomName: user.joinedChatRoom,
-		userId: user.id,
+		nick: user.nickname,
         isTyping: false
       });
     }, 2000);
@@ -316,10 +317,10 @@ const ChatRoom = (props: any) => {
 
   // When clicking on the 'message' button to send a private
   // message to the user
-  const onPrivMessageClick = (user2Id: number, user2Nick: string) => {
+  const onPrivMessageClick = (user2Id: number, user2: User) => {
     socket.emit('createChatRoom', {
       room: {
-        name: '#' + user.nickname + '/' + user2Nick, /* TODO change to nick */
+        name: '#' + user.nickname + '/' + user2.nickname, /* TODO change to nick */
         modes: '',
         password: '',
         userLimit: 2,
@@ -327,8 +328,8 @@ const ChatRoom = (props: any) => {
         messages: [],
 		bannedUsers: [],
 	},
-	userId: user.id,
-	user2Id: user2Id,
+	user1: user,
+	user2: user2,
     });
   }
 
@@ -579,7 +580,7 @@ const ChatRoom = (props: any) => {
 															<IconButton >
 																<VolumeOff className='black'/>
 															</IconButton>
-															<IconButton onClick={() => onPrivMessageClick(msg.author.id, msg.author.nickname) } >
+															<IconButton onClick={() => onPrivMessageClick(msg.author.id, msg.author) }>
 																<Mail className='black'/>
 															</IconButton>
 															<IconButton onClick={ () =>

@@ -49,26 +49,39 @@ export class ChatGateway {
   @SubscribeMessage('createChatRoom')
   async createChatRoom(
     @MessageBody('room') room: ChatRoomDto,
-    @MessageBody('userId') userId: number,
-    @MessageBody('user2Id') user2Id: number,
+    @MessageBody('user1') user1: User,
+    @MessageBody('user2') user2: User,
   ) {
     // First, check if the room name already exists
     const r = await this.chatService.getChatRoomByName(room.name);
     if (r) {
-      if (!user2Id)
+      // Throw error if both roooms are in the same category (private/public)
+      if (((r.modes.search('i') !== -1) && (user2)) ||
+        ((r.modes.search('i') === -1) && (room.modes.search('i') === -1)))
         throw new WsException({
           msg: 'createChatRoom: room name is already taken!',
         });
-      else return;
     }
+    // In case of a private room, the name of the room is in the form:
+    // #user1user2 => avoid creating doubles in the form #user2user1
+    if (user2)
+    {
+      const roomName = '#' + user2.nickname + '/' + user1.nickname;
+      console.log('roomNammmme ' + roomName)
+      const privRoom = await this.chatService.getChatRoomByName(roomName);
+      if (privRoom)
+        throw new WsException({
+          msg: 'createChatRoom: room name is already taken!',
+        });
+  }
     // Set 'password protected' mode
     if (room.password) room.modes = 'p';
     // Set 'private' mode. This is a conversation between
     // 2 users, which is basically a chat room with 2 users
-    if (user2Id) room.modes = 'i';
+    if (user2) room.modes = 'i';
     // Create a chat room and set user as admin
-    await this.chatService.createChatRoom(room, userId, user2Id);
-    if (!user2Id) {
+    await this.chatService.createChatRoom(room, user1.id, user2.id);
+    if (!user2) {
       console.log('chatRoom emitted: ' + Object.entries(room));
       // Broadcast newly created room to all users
       this.server.emit('createChatRoom', room.name);
@@ -114,11 +127,11 @@ export class ChatGateway {
   @SubscribeMessage('typingMessage')
   typingMessage(
     @MessageBody('roomName') roomName: string,
-    @MessageBody('userId') userId: number,
+    @MessageBody('nick') nick: string,
     @MessageBody('isTyping') isTyping: boolean,
     @ConnectedSocket() client: Socket,
   ) {
-    client.broadcast.emit('typingMessage', roomName, userId, isTyping);
+    client.broadcast.emit('typingMessage', roomName, nick, isTyping);
   }
 
   @SubscribeMessage('isPasswordProtected')

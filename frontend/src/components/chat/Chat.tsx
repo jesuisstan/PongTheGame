@@ -31,7 +31,7 @@ import { UserContext } from '../../contexts/UserContext';
 import { WebSocketContext } from '../../contexts/WebsocketContext';
 import ChatRoom from './ChatRoom';
 import PleaseLogin from '../pages/PleaseLogin';
-import { ChatRoomType } from '../../types/chat';
+import { ChatRoomType, MemberType } from '../../types/chat';
 // personal css
 import './Chat.css';
 
@@ -135,8 +135,8 @@ const Chat = () => {
           messages: [],
           bannedUsers: [],
         },
-        userId: user.id,
-        user2Id: ''
+        user1: user,
+        user2: ''
       });
     setNewChatRoomName('');
     setChatRoomCreateMode(false);
@@ -203,9 +203,11 @@ const Chat = () => {
   //   )
   // };
 
-  const isAuthorizedPrivRoom = (mode: string, users: any) => {
+  const isAuthorizedPrivRoom = (mode: string, members: MemberType[]) => {
     if (mode.indexOf('i') !== -1) {
-      for (const id in users) if (id === String(user.id)) return true;
+      for (const id in members) {
+        if (members[id].memberId === user.id) return true;
+      }
     } else return true;
     return false;
   };
