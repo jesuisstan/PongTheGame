@@ -103,8 +103,8 @@ const Chat = () => {
     socket.on('createChatRoom', (roomName: string) => {
       console.log('Created new chat room [' + roomName + ']');
     });
-    socket.on('exception', (msg: string) => {
-      console.log('ERROR: ' + msg);
+    socket.on('exception', (res) => {
+      console.log('ERROR: ' + res.msg);
     });
 
     // Clean listeners to unsubscribe all callbacks for these events
@@ -148,13 +148,6 @@ const Chat = () => {
     if (type === 'password') setChatRoomPassword(value);
   };
   const onClickJoinRoom = (roomName: string) => {
-    if (user.joinedChatRoom) {
-    socket.emit('quitRoom', {
-      roomName: user.joinedChatRoom,
-      userId: user.id,
-    })
-  }
-    cleanRoomLoginData()
     // Notify that the user has clicked on a 'join' button
     setclickedRoomToJoin(roomName);
     console.log('cllllllllllic -1: ' +clickedRoomToJoin)
@@ -211,7 +204,6 @@ const Chat = () => {
     } else return true;
     return false;
   };
-
   const cleanRoomLoginData = () => {
     user.joinedChatRoom = '';
     setIsPasswordProtected(false);

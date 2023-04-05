@@ -14,18 +14,22 @@ export class ChatService {
     const room = await this.getChatRoomByName(roomName);
     if (!room) throw new WsException({ msg: 'identify: unknown room name!' });
     // Do nothing if user is already identified
-    const members = await this.findAllMembers(roomName);
     var found = false;
     var foundModes = "";
-    for (let i=0; i < members.length; ++i) {
-      if (userId === members[i].memberId) {
+    for (let i=0; i < room.members.length; ++i) {
+      if (userId === room.members[i].memberId) {
         found = true;
-        foundModes = members[i].modes;
-        if (members[i].isOnline === online) return;
+        foundModes = room.members[i].modes;
+        if (room.members[i].isOnline === online) return;
       }
     }
     if (found)
-      this.updateUserModes(roomName, userId, foundModes + modes);
+      await this.prisma.member.update({
+        where: { memberId_chatRoomName: {
+          memberId: userId, chatRoomName: roomName }
+        },
+        data: { isOnline: online, modes: foundModes + modes }
+      })
     else {
       await this.prisma.member.create({
         data: {
@@ -173,10 +177,10 @@ export class ChatService {
   async isUserOper(roomName: string, userId: number) {
     const room = await this.getChatRoomByName(roomName);
     if (room) {
-      const members = await this.findAllMembers(roomName);
       // Look for oper mode ('o') in user's mode
-      for (let i=0; i < members.length; ++i)
-        if (members[i].memberId === userId && members[i].modes.search('o') !== -1)
+      for (let i=0; i < room.members.length; ++i)
+        if (room.members[i].memberId === userId &&
+          room.members[i].modes.search('o') !== -1)
           return true;
       return false;
     }
@@ -186,14 +190,13 @@ export class ChatService {
   async makeOper(roomName: string, userId: number) {
     const room = await this.getChatRoomByName(roomName);
     if (room) {
-      const members = await this.findAllMembers(roomName);
       // Look for oper mode ('o') in user's mode
       // Add 'o' mode if not already there
       var modes = "";
-      for (var i=0; i < members.length; ++i)
-        if (members[i].memberId === userId) {
-          modes = members[i].modes;
-          if (members[i].modes.search('o') === -1)
+      for (var i=0; i < room.members.length; ++i)
+        if (room.members[i].memberId === userId) {
+          modes = room.members[i].modes;
+          if (room.members[i].modes.search('o') === -1)
             modes += 'o';
         }
       // Save the new modes
@@ -210,14 +213,20 @@ export class ChatService {
         var bannedUser = await this.prisma.chatRoom.findUnique({
           where: { name: roomName },
           select: {
-            bannedUsers: { where: { id: userId } }
+            bannedUsers: {
+              where: { id: userId },
+              select: { id: true }
+            }
           }
         });
+        if (bannedUser)
         // If not already banned, push the new user into it
-        this.prisma.chatRoom.update({
-          where: { name: roomName },
-          data: { bannedUsers: { connect: { id: userId } }}
-        })
+        // if (!bannedUser) {
+          this.prisma.chatRoom.update({
+            where: { name: roomName },
+            data: { bannedUsers: { connect: { id: userId } }}
+          })
+      // }
       }
     }
     else throw new WsException({ msg: 'banUser: unknown room name!' });
@@ -270,13 +279,12 @@ export class ChatService {
   async muteUser(roomName: string, userId: number) {
     const room = await this.getChatRoomByName(roomName);
     if (room) {
-      const members = await this.findAllMembers(roomName);
       // Get user's modes and remove 'm' mode if found
       var modes = "";
-      for (var i=0; i < members.length; ++i)
-        if (members[i].memberId === userId) {
-          modes = members[i].modes;
-          if (members[i].modes.search('m') === -1)
+      for (var i=0; i < room.members.length; ++i)
+        if (room.members[i].memberId === userId) {
+          modes = room.members[i].modes;
+          if (room.members[i].modes.search('m') === -1)
             modes += 'm';
         }
       // Save the new modes
@@ -288,13 +296,12 @@ export class ChatService {
   async unMuteUser(roomName: string, userId: number) {
     const room = await this.getChatRoomByName(roomName);
     if (room) {
-      const members = await this.findAllMembers(roomName);
       // Get user's modes and remove 'm' mode if found
       var modes = "";
-      for (var i=0; i < members.length; ++i)
-        if (members[i].memberId === userId) {
-          modes = members[i].modes;
-          if (members[i].modes.search('m') !== -1)
+      for (var i=0; i < room.members.length; ++i)
+        if (room.members[i].memberId === userId) {
+          modes = room.members[i].modes;
+          if (room.members[i].modes.search('m') !== -1)
             modes.replace(/m/g, '');
         }
       // Save the new modes
@@ -305,10 +312,9 @@ export class ChatService {
   async isUserMuted(roomName: string, userId: number) {
     const room = await this.getChatRoomByName(roomName);
     if (room) {
-      const members = await this.findAllMembers(roomName);
       // Look for mute mode ('m') in user's modes
-      for (var i=0; i < members.length; ++i)
-        if (members[i].memberId === userId && members[i].modes.search('m') !== -1)
+      for (var i=0; i < room.members.length; ++i)
+        if (room.members[i].memberId === userId && room.members[i].modes.search('m') !== -1)
           return true;
       return false;
     }

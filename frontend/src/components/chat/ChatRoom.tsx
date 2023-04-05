@@ -135,7 +135,7 @@ const ChatRoom = (props: any) => {
     });
     socket.on('quitRoom', (roomName: string, userId: number) => {
       if (roomName === user.joinedChatRoom)
-        console.log(userId + ' quit room [' + roomName + ']')
+        console.log('user ID: ' + userId + ' quit room [' + roomName + ']')
     });
     socket.on('kickUser', (roomName: string, target: number) => {
       if (roomName === user.joinedChatRoom)
@@ -259,6 +259,7 @@ const ChatRoom = (props: any) => {
       target: target
     })
   }
+
   // When clicking on the 'unban' button to unban a user
   const onUnBanClick = (target: number) => {
     socket.emit('unBanUser', {
@@ -276,7 +277,6 @@ const ChatRoom = (props: any) => {
       return response
     })
   }
-  
   // When clicking on the 'kick' button to kick a user
   const onKickClick = (target: number) => {
     socket.emit('kickUser', {
