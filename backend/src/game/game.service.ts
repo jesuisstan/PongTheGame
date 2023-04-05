@@ -154,7 +154,7 @@ export class GameService {
     this.websocket.send(inviteUserSocket[0], 'match_invitation_canceled', {});
     const invit = await this.prisma.matchInvitation.findUnique({
       where: {
-        createdById: userId.id,
+        createdById: socket.user.id,
       },
     });
     if (!invit) return { status: 404, reason: 'Invitation not found' };
