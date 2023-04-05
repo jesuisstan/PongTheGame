@@ -1,24 +1,22 @@
 import { Dispatch, SetStateAction, useContext, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../../contexts/UserContext';
 import { User } from '../../../types/User';
 import { WebSocketContext } from '../../../contexts/WebsocketContext';
 import { Invitation } from '../../../types/Invitation';
+import { GameStateContext } from '../../../contexts/GameStateContext';
+import { GameStatus } from '../../game/game.interface';
 import errorAlert from '../../UI/errorAlert';
+import Stack from '@mui/material/Stack';
+import Avatar from '@mui/material/Avatar';
 import Modal from '@mui/joy/Modal';
 import ModalClose from '@mui/joy/ModalClose';
 import ModalDialog from '@mui/joy/ModalDialog';
-import Stack from '@mui/material/Stack';
 import Typography from '@mui/joy/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
-import Avatar from '@mui/material/Avatar';
 import * as MUI from '../../UI/MUIstyles';
-import * as color from '../../UI/colorsPong';
-import styles from './styles/PlayerCard.module.css';
-import { GameStateContext } from '../../../contexts/GameStateContext';
-import { Game_status } from '../../game/game.interface';
-import { useNavigate } from 'react-router-dom';
 
 const InvitationReceivedModal = ({
   open,
@@ -30,14 +28,13 @@ const InvitationReceivedModal = ({
   invitation: Invitation;
 }) => {
   const navigate = useNavigate();
+  const { setGameState } = useContext(GameStateContext);
   const { user, setUser } = useContext(UserContext);
   const socket = useContext(WebSocketContext);
   const [loadingDecline, setLoadingDecline] = useState(false);
   const [loadingPlay, setLoadingPlay] = useState(false);
-  const { setGameState } = useContext(GameStateContext);
 
   const declineInvitation = () => {
-    console.log('declined');
     socket.emit('match_invitation_refused', {
       nickname: invitation.from.nickname
     });
@@ -45,8 +42,6 @@ const InvitationReceivedModal = ({
   };
 
   const acceptInvitation = () => {
-    console.log('accepted');
-
     socket.emit('match_invitation_accept', {
       winScore: invitation.gameInfo.winScore,
       obstacle: invitation.gameInfo.obstacle,
@@ -54,7 +49,7 @@ const InvitationReceivedModal = ({
     });
     setOpen(false);
     navigate('/game');
-    setGameState(Game_status.PLAYING);
+    setGameState(GameStatus.BEGIN_GAME);
   };
 
   const setDefault = () => {

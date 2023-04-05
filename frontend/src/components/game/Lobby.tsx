@@ -14,15 +14,22 @@ const Lobby = ({
         <div className={styles.wrapper}>
           <div className={styles.left}>
             <div>Singleplayer</div>
-            <ButtonPong text="Normal" onClick={launchTraining} />
-            <ButtonPong text="tough" onClick={launchTraining} />
+            <ButtonPong
+              text="Train"
+              title="Play with Artificial Intelligence"
+              onClick={launchTraining}
+            />
           </div>
           <div className={styles.center}>
             <div className={styles.line} />
           </div>
           <div className={styles.right}>
             <div>Multiplayer</div>
-            <ButtonPong text="Random" onClick={joinQueue} />
+            <ButtonPong
+              text="Random"
+              title="Play online with random user"
+              onClick={joinQueue}
+            />
             <ButtonPong
               text="Custom"
               onClick={() => console.log('game with friend')}

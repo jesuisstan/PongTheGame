@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import AchievementsListModal from './AchievementsListModal';
-import { Player } from '../../../types/Player';
+import { PlayerProfile } from '../../../types/PlayerProfile';
 import { Achievement } from '../../../types/Achievement';
 import backendAPI from '../../../api/axios-instance';
 import errorAlert from '../../UI/errorAlert';
@@ -14,7 +14,7 @@ const AchievementsBlock = ({
   player,
   socketEvent
 }: {
-  player: Player;
+  player: PlayerProfile;
   socketEvent: number;
 }) => {
   const [open, setOpen] = useState(false);

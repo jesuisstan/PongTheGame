@@ -1,7 +1,10 @@
 import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../contexts/UserContext';
-import { Player } from '../../types/Player';
+import { PlayerProfile } from '../../types/PlayerProfile';
+import { WebSocketContext } from '../../contexts/WebsocketContext';
+import { GameStateContext } from '../../contexts/GameStateContext';
+import { GameStatus } from '../game/game.interface';
 import InvitationSendModal from './invitation/InvitationSendModal';
 import ButtonPong from '../UI/ButtonPong';
 import BadgePong from '../UI/BadgePong';
@@ -16,11 +19,11 @@ import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import * as color from '../UI/colorsPong';
 import styles from './styles/PlayerCard.module.css';
-import { WebSocketContext } from '../../contexts/WebsocketContext';
 
-const InfoBlock = ({ player }: { player: Player }) => {
-  const socket = useContext(WebSocketContext);
+const InfoBlock = ({ player }: { player: PlayerProfile }) => {
   const navigate = useNavigate();
+  const socket = useContext(WebSocketContext);
+  const { setGameState } = useContext(GameStateContext);
   const { user } = useContext(UserContext);
   const [isFriendOfUser, setIsFriendOfUser] = useState(false);
   const [openInvitationModal, setOpenInvitationModal] = useState(false);
@@ -29,7 +32,7 @@ const InfoBlock = ({ player }: { player: Player }) => {
     if (user.nickname !== player.nickname) {
       backendAPI.get(`/friend`).then(
         (response) => {
-          let userFriendsList: Player[] = response.data.friends;
+          let userFriendsList: PlayerProfile[] = response.data.friends;
           let isFriend = userFriendsList.find(
             (friend) => friend.nickname === player.nickname
           );
@@ -68,10 +71,11 @@ const InfoBlock = ({ player }: { player: Player }) => {
     }
   };
 
-  function sendSpectate(id : number) {
-    socket.emit("match_spectate", {id : id});
+  const sendSpectate = (id: number) => {
+    socket.emit('match_spectate', { id: id });
+    setGameState(GameStatus.PLAYING);
     navigate('/game');
-  }
+  };
 
   return (
     <div className={styles.basicInfoBlock}>

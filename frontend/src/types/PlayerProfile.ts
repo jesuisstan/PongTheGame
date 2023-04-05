@@ -1,4 +1,4 @@
-export type Player = {
+export type PlayerProfile = {
   avatar: string | undefined;
   id: number;
   nickname: string;

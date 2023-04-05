@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { UserContext } from '../../contexts/UserContext';
 import { WebSocketContext } from '../../contexts/WebsocketContext';
-import { Player } from '../../types/Player';
+import { PlayerProfile } from '../../types/PlayerProfile';
 import PleaseLogin from '../pages/PleaseLogin';
 import NotFound from '../pages/NotFound';
 import InfoBlock from './InfoBlock';
@@ -18,7 +18,7 @@ const PlayerCard = () => {
   const socket = useContext(WebSocketContext);
   const [socketEvent, setSocketEvent] = useState(0);
   const { user } = useContext(UserContext);
-  const [player, setPlayer] = useState<Player>({
+  const [player, setPlayer] = useState<PlayerProfile>({
     avatar: undefined,
     id: -1,
     nickname: '',

@@ -1,4 +1,4 @@
-import { Game_infos, Game_state, Obstacle, Player, Position } from '../game.interface';
+import { GameInfo, GameState, Obstacle, Player, Position } from '../game.interface';
 import * as colorPong from '../../UI/colorsPong'
 
 
@@ -107,7 +107,7 @@ const drawPaddle = (
   canvasContext: CanvasRenderingContext2D,
   player: Player,
   color: string,
-  gameInfos: Game_infos
+  gameInfos: GameInfo
 ) => {
   if (player.current) {
     drawRect(
@@ -132,7 +132,7 @@ const drawPaddle = (
 const drawObstacle = (
   canvasContext: CanvasRenderingContext2D,
   color: string,
-  gameInfos: Game_infos,
+  gameInfos: GameInfo,
   obstacle : Obstacle,
 ) => {
   if (!gameInfos.obstacleHeight || !gameInfos.obstacleWidth)
@@ -151,7 +151,7 @@ const drawBall = (
   canvasContext: CanvasRenderingContext2D,
   color: string,
   ball: Position,
-  gameInfos: Game_infos
+  gameInfos: GameInfo
 ) => {
   canvasContext.fillStyle = color;
   canvasContext.beginPath();
@@ -159,7 +159,7 @@ const drawBall = (
   canvasContext.fill();
 };
 
-export const drawState = (state: Game_state, canvasRef: any) => {
+export const drawState = (state: GameState, canvasRef: any) => {
   if (!canvasRef.current) return;
   const canvas: any = canvasRef.current;
   const canvasContext = canvas.getContext('2d');
