@@ -6,7 +6,7 @@ services:
     ports:
       - "${FRONTEND_PORT?:}:3000"
     volumes:
-      - ./frontend:/frontend:ro
+      - ./frontend:/frontend
       - frontend_node_modules:/frontend/node_modules/
 
   backend:
@@ -16,7 +16,7 @@ services:
     ports:
       - "${BACKEND_PORT?:}:3000"
     volumes:
-      - ./backend:/backend:ro
+      - ./backend:/backend
       - backend_node_modules:/backend/node_modules/
     networks:
       - private
@@ -25,4 +25,3 @@ services:
 volumes:
   frontend_node_modules: {}
   backend_node_modules: {}
-  backend_dist: {}
