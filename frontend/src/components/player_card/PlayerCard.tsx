@@ -14,6 +14,14 @@ import errorAlert from '../UI/errorAlert';
 import Divider from '@mui/material/Divider';
 import styles from './styles/PlayerCard.module.css';
 
+const VerticalDevider = (
+  <Divider
+    orientation="vertical"
+    flexItem
+    sx={{ backgroundColor: 'rgba(245, 245, 245, 0.3)' }}
+  />
+);
+
 const PlayerCard = () => {
   const socket = useContext(WebSocketContext);
   const [socketEvent, setSocketEvent] = useState(0);
@@ -61,23 +69,11 @@ const PlayerCard = () => {
       </div>
       <div className={styles.playerCard}>
         <InfoBlock player={player} />
-        <Divider
-          orientation="vertical"
-          flexItem
-          sx={{ backgroundColor: 'rgba(245, 245, 245, 0.3)' }}
-        />
+        {VerticalDevider}
         <FriendsBlock player={player} socketEvent={socketEvent} />
-        <Divider
-          orientation="vertical"
-          flexItem
-          sx={{ backgroundColor: 'rgba(245, 245, 245, 0.3)' }}
-        />
+        {VerticalDevider}
         <AchievementsBlock player={player} socketEvent={socketEvent} />
-        <Divider
-          orientation="vertical"
-          flexItem
-          sx={{ backgroundColor: 'rgba(245, 245, 245, 0.3)' }}
-        />
+        {VerticalDevider}
         <MatchHistoryBlock player={player} socketEvent={socketEvent} />
       </div>
     </div>

@@ -1,7 +1,7 @@
 import { useState, useContext } from 'react';
 import { UserContext } from '../../contexts/UserContext';
 import PleaseLogin from '../pages/PleaseLogin';
-import Lobby from './Lobby';
+import Lobby from './lobby/Lobby';
 import Pong from './Pong';
 import QueueModal from './QueueModal';
 import CountdownModal from './CountdownModal';
