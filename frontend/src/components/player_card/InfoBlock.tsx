@@ -82,7 +82,7 @@ const InfoBlock = ({ player }: { player: PlayerProfile }) => {
       <InvitationSendModal
         open={openInvitationModal}
         setOpen={setOpenInvitationModal}
-        player={player}
+        invitee={player.nickname}
       />
       <BadgePong player={player}>
         <Avatar

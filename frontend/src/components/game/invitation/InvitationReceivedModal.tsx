@@ -14,6 +14,7 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 import * as MUI from '../../UI/MUIstyles';
+import errorAlert from '../../UI/errorAlert';
 
 const InvitationReceivedModal = ({
   open,
@@ -52,6 +53,12 @@ const InvitationReceivedModal = ({
     setLoadingDecline(false);
     setLoadingPlay(false);
   };
+
+  socket.on('match_invitation_canceled', () => {
+    setDefault();
+    setOpen(false);
+    errorAlert('Invitation was cancelled');
+  });
 
   return (
     <div>

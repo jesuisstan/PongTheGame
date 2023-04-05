@@ -2,7 +2,6 @@ import { Dispatch, SetStateAction, useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { GameStatusContext } from '../../../contexts/GameStatusContext';
 import { GameStatus } from '../game.interface';
-import { PlayerProfile } from '../../../types/PlayerProfile';
 import { WebSocketContext } from '../../../contexts/WebsocketContext';
 import SliderPong from './SliderPong';
 import errorAlert from '../../UI/errorAlert';
@@ -24,11 +23,11 @@ const DEFAULT_WIN_SCORE = 5;
 const InvitationSendModal = ({
   open,
   setOpen,
-  player
+  invitee
 }: {
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
-  player: PlayerProfile;
+  invitee: string;
 }) => {
   const navigate = useNavigate();
   const { setGameStatus } = useContext(GameStatusContext);
@@ -60,18 +59,18 @@ const InvitationSendModal = ({
         {
           winScore: winScore,
           obstacle: obstacleEnabled,
-          nickname: player.nickname
+          nickname: invitee
         },
         (response: any) => {
           if (response.status === 400) {
             if (response.reason === 'Invitation already send') {
               reject((response.error = 'Invitation is already sent'));
             } else {
-              reject((response.error = `${player.nickname} is occupied`));
+              reject((response.error = `${invitee} is occupied`));
             }
           } else if (response.status === 403) {
             reject(
-              (response.error = `User with nickname "${player.nickname}" is not found`)
+              (response.error = `Player with nickname "${invitee}" was not found`)
             );
           } else if (response.status !== 200) {
             reject((response.error = 'Something went wrong'));
@@ -103,7 +102,7 @@ const InvitationSendModal = ({
 
   const cancelInvitation = () => {
     socket.emit('match_invitation_cancel', {
-      nickname: player.nickname
+      nickname: invitee
     });
   };
 
@@ -119,7 +118,7 @@ const InvitationSendModal = ({
   socket.on('invitation_refused', (args) => {
     setOpen(false);
     setDefault();
-    errorAlert(`${player.nickname} refused your invitation`);
+    errorAlert(`${invitee} refused your invitation`);
   });
 
   return (
@@ -226,7 +225,7 @@ const InvitationSendModal = ({
                 >
                   <LoadingButton
                     type="submit"
-                    title={`Invite ${player.nickname} to play game`}
+                    title={`Invite ${invitee} to play game`}
                     loading={loading}
                     endIcon={
                       buttonText === 'Accepted' ? (
