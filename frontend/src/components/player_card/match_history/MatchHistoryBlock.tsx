@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Player } from '../../../types/Player';
+import { PlayerProfile } from '../../../types/PlayerProfile';
 import { MatchHistory } from '../../../types/MatchHistory';
 import HistoryNoteModal from './HistoryNoteModal';
 import backendAPI from '../../../api/axios-instance';
@@ -13,7 +13,7 @@ const MatchHistoryBlock = ({
   player,
   socketEvent
 }: {
-  player: Player;
+  player: PlayerProfile;
   socketEvent: number;
 }) => {
   const [matchHistory, setMatchHistory] = useState<MatchHistory>({

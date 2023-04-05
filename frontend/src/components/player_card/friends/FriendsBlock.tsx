@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 import { UserContext } from '../../../contexts/UserContext';
-import { Player } from '../../../types/Player';
+import { PlayerProfile } from '../../../types/PlayerProfile';
 import SearchBar from './SearchBar';
 import BadgePong from '../../UI/BadgePong';
 import backendAPI from '../../../api/axios-instance';
@@ -18,11 +18,11 @@ const FriendsBlock = ({
   player,
   socketEvent
 }: {
-  player: Player;
+  player: PlayerProfile;
   socketEvent: number;
 }) => {
   const { user } = useContext(UserContext);
-  const [friendsList, setFriendsList] = useState<Player[]>([]);
+  const [friendsList, setFriendsList] = useState<PlayerProfile[]>([]);
   const [open, setOpen] = useState(false);
 
   const fetchFriendsList = () => {

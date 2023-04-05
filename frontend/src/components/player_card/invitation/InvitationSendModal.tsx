@@ -2,8 +2,8 @@ import { Dispatch, SetStateAction, useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../../contexts/UserContext';
 import { GameStateContext } from '../../../contexts/GameStateContext';
-import { Game_status } from '../../game/game.interface';
-import { Player } from '../../../types/Player';
+import { GameStatus } from '../../game/game.interface';
+import { PlayerProfile } from '../../../types/PlayerProfile';
 import { WebSocketContext } from '../../../contexts/WebsocketContext';
 import SliderPong from './SliderPong';
 import errorAlert from '../../UI/errorAlert';
@@ -29,7 +29,7 @@ const InvitationSendModal = ({
 }: {
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
-  player: Player;
+  player: PlayerProfile;
 }) => {
   const navigate = useNavigate();
   const { setGameState } = useContext(GameStateContext);
@@ -114,7 +114,7 @@ const InvitationSendModal = ({
     setLoading(false);
     setOpen(false);
     navigate('/game');
-    setGameState(Game_status.PLAYING);
+    setGameState(GameStatus.BEGIN_GAME);
   });
 
   socket.on('invitation_refused', (args) => {

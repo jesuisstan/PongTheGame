@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 import { CircularProgress } from '@mui/material';
-import { Game_player, Game_status } from './game.interface';
+import { GameStatus } from './game.interface';
 import { GameStateContext } from '../../contexts/GameStateContext';
 import Typography from '@mui/joy/Typography';
 import Modal from '@mui/joy/Modal';
@@ -15,14 +15,13 @@ const modalDialogStyle = {
   width: 'auto',
   maxWidth: '442px',
   border: '0px solid #000',
-  bgcolor: '#f5f5f5ee',
+  bgcolor: color.PONG_WHITE,
   borderRadius: '4px'
 };
 
 interface CountdownProps {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  players: Game_player[];
   seconds: number;
 }
 
@@ -40,7 +39,7 @@ const CountdownModal = (props: CountdownProps) => {
     if (remainingSeconds === 1) {
     }
     if (remainingSeconds === 0) {
-      setGameState(Game_status.PLAYING);
+      setGameState(GameStatus.PLAYING);
       props.setOpen(false);
       clearInterval(intervalId);
     }
