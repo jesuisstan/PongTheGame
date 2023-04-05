@@ -37,75 +37,28 @@ const Pong = (props: GameProps) => {
     }
   };
 
-  const playPong = () => {
-    socket.on('match_game_state', (args) => {
-      if (players.length === 0) {
-        setPlayers([
-          {
-            ...players[0],
-            infos: args.player1.infos,
-            score: args.player1.score
-          },
-          {
-            ...players[1],
-            infos: args.player2.infos,
-            score: args.player2.score
-          }
-        ]);
-        setwinScore(args.gameInfos.winScore);
-        setCanvasSize({
-          ...canvasSize,
-          width: args.gameInfos.originalWidth,
-          height: args.gameInfos.originalHeight
-        });
-      }
-      window.addEventListener('keydown', onKeyPressRef.current);
-      window.addEventListener('keyup', onKeyReleaseRef.current);
-
-      drawState(args, canvasRef);
-      if (args.status === 'ended' || args.status === 'aborted') {
-        setGameState(GameStatus.ENDED);
-        window.removeEventListener('keydown', onKeyPressRef.current);
-        window.removeEventListener('keyup', onKeyReleaseRef.current);
-      }
-    });
-  };
-
-  const spectatePong = () => {
-    socket.on('match_spectate_state', (args) => {
-      console.log(args);
-      console.log('spectating Pong');
-      if (players.length === 0) {
-        setPlayers([
-          {
-            ...players[0],
-            infos: args.player1.infos,
-            score: args.player1.score
-          },
-          {
-            ...players[1],
-            infos: args.player2.infos,
-            score: args.player2.score
-          }
-        ]);
-        setwinScore(args.gameInfos.winScore);
-        setCanvasSize({
-          ...canvasSize,
-          width: args.gameInfos.originalWidth,
-          height: args.gameInfos.originalHeight
-        });
-      }
-      drawState(args, canvasRef);
-      if (args.status === 'ended' || args.status === 'aborted') {
-        setGameState(GameStatus.ENDED);
-      }
-    });
-  };
-
-  const checkGameAborted = () => {
-    socket.on('game_aborted', (args) => {
-      setGameState(GameStatus.ENDED);
-    });
+  const expandTheGame = (args: any) => {
+    if (players.length === 0) {
+      setPlayers([
+        {
+          ...players[0],
+          infos: args.player1.infos,
+          score: args.player1.score
+        },
+        {
+          ...players[1],
+          infos: args.player2.infos,
+          score: args.player2.score
+        }
+      ]);
+      setwinScore(args.gameInfos.winScore);
+      setCanvasSize({
+        ...canvasSize,
+        width: args.gameInfos.originalWidth,
+        height: args.gameInfos.originalHeight
+      });
+    }
+    drawState(args, canvasRef);
   };
 
   useEffect(() => {
@@ -116,15 +69,40 @@ const Pong = (props: GameProps) => {
     }
 
     const intervalId = setInterval(() => {
+      const playPong = () => {
+        socket.on('match_game_state', (args) => {
+          expandTheGame(args);
+          window.addEventListener('keydown', onKeyPressRef.current);
+          window.addEventListener('keyup', onKeyReleaseRef.current);
+
+          if (args.status === 'ended' || args.status === 'aborted') {
+            setGameState(GameStatus.ENDED);
+            window.removeEventListener('keydown', onKeyPressRef.current);
+            window.removeEventListener('keyup', onKeyReleaseRef.current);
+          }
+        });
+      };
+
       playPong();
+
+      const spectatePong = () => {
+        socket.on('match_spectate_state', (args) => {
+          console.log(args);
+          console.log('spectating Pong');
+          expandTheGame(args);
+          if (args.status === 'ended' || args.status === 'aborted') {
+            setGameState(GameStatus.ENDED);
+          }
+        });
+      };
+
       spectatePong();
-      checkGameAborted();
     }, 1000 / 30);
 
     return () => {
       clearInterval(intervalId);
     };
-  }, [players]);
+  }, [players, socket]);
 
   return (
     <div className={styles.canvasBlock}>
