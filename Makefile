@@ -1,6 +1,6 @@
 # Try removing the dash if you're using the compose plugin
 # (docker compose)
-COMPOSE = docker-compose
+COMPOSE = docker compose
 # COMPOSE = sudo docker-compose
 
 .PHONY: all build up clean fclean re

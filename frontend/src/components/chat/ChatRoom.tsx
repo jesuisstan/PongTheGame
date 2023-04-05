@@ -89,17 +89,17 @@ const ChatRoom = (props: any) => {
 			setMessages(filteredMessages)
 		})
 
-		socket.emit('isUserOper',
-			{ roomName: user.joinedChatRoom, nick: user.nickname },
-			(response: boolean) => {
-				setIsOper(response)
-			}
-		)
-
-		socket.emit('isUserMuted',
+	socket.emit('isUserOper',
 		{ roomName: user.joinedChatRoom, nick: user.nickname },
 		(response: boolean) => {
-			setIsMuted(response)
+			setIsOper(response)
+		}
+	)
+
+	socket.emit('isUserMuted',
+	{ roomName: user.joinedChatRoom, nick: user.nickname },
+	(response: boolean) => {
+		setIsMuted(response)
 		}
 	)
 
@@ -330,10 +330,10 @@ const ChatRoom = (props: any) => {
 		});
 	}
 
-		socket.emit('isUserMuted',
-		{ roomName: user.joinedChatRoom, nick: user.nickname },
-		(response: boolean) => {
-			setIsMuted(response)
+	socket.emit('isUserMuted',
+	{ roomName: user.joinedChatRoom, nick: user.nickname },
+	(response: boolean) => {
+		setIsMuted(response)
 		}
 	)
 
@@ -387,9 +387,7 @@ const ChatRoom = (props: any) => {
 	**************************************************************/
 	return (
 		<>
-			<>
-				{ 
-					// if private message don't display the list of member
+				{ // if private message don't display the list of member
 					user.joinedChatRoom[0] === "#"
 					? <></> 
 					: <AvatarGroup spacing={1} total={Room.length}>
@@ -418,7 +416,7 @@ const ChatRoom = (props: any) => {
 															String(members[nick as any].modes).search('o') === -1}
 														oper={String(members[nick as any].modes).search('o') !== -1} 
 														avatar={String(members[nick as any].avatar)}
-														look={true}/>		
+														look={false}/>		
 													</Button>
 {/*// -------------- Avatar Menu -------------- */}
 												{user.nickname !== nick ?
@@ -477,11 +475,7 @@ const ChatRoom = (props: any) => {
 													: <></>}
 {/*// -------------- End Avatar / Menu -------------- */}					
 						</div>))}
-					</AvatarGroup>
-
-					}
-				</>
-				<>
+					</AvatarGroup> }
 			<div>
 				<Box>
 					<Typography
@@ -537,7 +531,6 @@ const ChatRoom = (props: any) => {
 					</Typography>
 					<Divider />
 					<Grid container spacing={3}>
-						<div></div>
 						<Grid
 							item
 							spacing={3}
@@ -553,14 +546,18 @@ const ChatRoom = (props: any) => {
 							messages.map((msg, index) => (
 							<div key={index}>
 							{ user.nickname === msg.author.nickname 
-								?	<><div className="msgRowR">
-											<div className='msgRight msgBubble'>
-													<p className="msgText">{msg.data}</p>
-													<div className="msgTime">{timeFromNow(msg.timestamp)}</div>
-											</div>
+								?	<div className="msgRowR">
+										<div className='msgRight msgBubble'>
+											<p className="msgText">{msg.data}</p>
+											<div className="msgTime">{timeFromNow(msg.timestamp)}</div>
 										</div>
-									</>
-								: <><div className="msgRowL">
+									</div>
+								: 
+								// Is msg author mute or blocked ?
+								// if yes, display nothing
+								// if no, display message
+								// !isMuted && !isBlocked ? <></> :
+								<div className="msgRowL">
 {/*// -------------- Avatar Badge -------------- */}
 {/* ----------------------------------------------------------------
  HERE ADD FUNCTION TO CHECK IF IS ONLINE, IF IS OPER, IF IS ADMIN
@@ -579,8 +576,7 @@ const ChatRoom = (props: any) => {
 														<div className="msgTime">{timeFromNow(msg.timestamp)}</div>
 												</div>
 										</div>
-									</div>
-								</>}
+								</div>}
 						</div>
 					))}</Stack>
 // -------------- End of message display ----------------
@@ -611,12 +607,10 @@ const ChatRoom = (props: any) => {
 
 					</div>
 					</Grid>
-					<div></div>
-
 				</Grid>
 			</Box>
 		</div>
-	</></> );
+	</> );
 };
 
 export default ChatRoom;
