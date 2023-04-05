@@ -27,7 +27,7 @@ interface QueueModalProps {
 }
 
 const QueueModal = (props: QueueModalProps) => {
-  const { gameState, setGameState } = useContext(GameStateContext);
+  const { setGameState } = useContext(GameStateContext);
   const socket = useContext(WebSocketContext);
 
   const exitQueue = () => {

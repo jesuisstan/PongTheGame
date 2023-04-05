@@ -5,7 +5,7 @@ import { PlayerProfile } from '../../types/PlayerProfile';
 import { WebSocketContext } from '../../contexts/WebsocketContext';
 import { GameStateContext } from '../../contexts/GameStateContext';
 import { GameStatus } from '../game/game.interface';
-import InvitationSendModal from './invitation/InvitationSendModal';
+import InvitationSendModal from '../game/invitation/InvitationSendModal';
 import ButtonPong from '../UI/ButtonPong';
 import BadgePong from '../UI/BadgePong';
 import backendAPI from '../../api/axios-instance';
@@ -47,7 +47,7 @@ const InfoBlock = ({ player }: { player: PlayerProfile }) => {
         }
       );
     }
-  }, []);
+  }, [player.nickname, user.nickname]);
 
   const handleFriend = () => {
     if (isFriendOfUser) {

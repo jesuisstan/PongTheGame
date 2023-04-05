@@ -37,7 +37,7 @@ const MatchHistoryBlock = ({
         errorAlert(`Failed to get player's match history`);
       }
     );
-  }, [socketEvent]);
+  }, [socketEvent, player.nickname]);
 
   return (
     <div

@@ -6,7 +6,7 @@ import { User } from './types/User';
 import { Invitation } from './types/Invitation';
 import AppRoutes from './AppRoutes';
 import Verify2fa from './components/profile/Verify2fa';
-import InvitationReceivedModal from './components/player_card/invitation/InvitationReceivedModal';
+import InvitationReceivedModal from './components/game/invitation/InvitationReceivedModal';
 import backendAPI from './api/axios-instance';
 import './App.css';
 import { GameStateContext } from './contexts/GameStateContext';

@@ -1,8 +1,7 @@
 import { Dispatch, SetStateAction, useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { UserContext } from '../../../contexts/UserContext';
 import { GameStateContext } from '../../../contexts/GameStateContext';
-import { GameStatus } from '../../game/game.interface';
+import { GameStatus } from '../game.interface';
 import { PlayerProfile } from '../../../types/PlayerProfile';
 import { WebSocketContext } from '../../../contexts/WebsocketContext';
 import SliderPong from './SliderPong';

@@ -29,7 +29,7 @@ const AchievementsBlock = ({
         errorAlert(`Failed to get player's achievements`);
       }
     );
-  }, [socketEvent]);
+  }, [socketEvent, player.nickname]);
 
   return (
     <div className={styles.achieveBlock}>

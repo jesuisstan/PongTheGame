@@ -55,7 +55,7 @@ const BadgePong = ({ color, pulse, player, children }: PongBadgeProps) => {
     }
   }));
 
-  return (player.status === 'OFFLINE' && pulse != true) || pulse === false ? (
+  return (player.status === 'OFFLINE' && pulse !== true) || pulse === false ? (
     <StyledBadge
       title={player.status}
       overlap="circular"

@@ -1,12 +1,9 @@
 import { Dispatch, SetStateAction, useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { UserContext } from '../../../contexts/UserContext';
-import { User } from '../../../types/User';
 import { WebSocketContext } from '../../../contexts/WebsocketContext';
 import { Invitation } from '../../../types/Invitation';
 import { GameStateContext } from '../../../contexts/GameStateContext';
-import { GameStatus } from '../../game/game.interface';
-import errorAlert from '../../UI/errorAlert';
+import { GameStatus } from '../game.interface';
 import Stack from '@mui/material/Stack';
 import Avatar from '@mui/material/Avatar';
 import Modal from '@mui/joy/Modal';
@@ -29,7 +26,6 @@ const InvitationReceivedModal = ({
 }) => {
   const navigate = useNavigate();
   const { setGameState } = useContext(GameStateContext);
-  const { user, setUser } = useContext(UserContext);
   const socket = useContext(WebSocketContext);
   const [loadingDecline, setLoadingDecline] = useState(false);
   const [loadingPlay, setLoadingPlay] = useState(false);
