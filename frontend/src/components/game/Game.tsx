@@ -16,7 +16,6 @@ const Game = () => {
   const { user } = useContext(UserContext);
   const { gameStatus, setGameStatus } = useContext(GameStatusContext);
   const { setGameResult } = useContext(GameResultContext);
-
   const [players, setPlayers] = useState<CurrentGamePlayer[]>([]);
   const [openCount, setOpenCount] = useState(false);
   const [openQueueModal, setOpenQueueModal] = useState(false);
@@ -48,15 +47,6 @@ const Game = () => {
   const launchTraining = (): void => {
     setGameStatus(GameStatus.PLAYING);
     socket.emit('match_training', {});
-  };
-
-  //todo get rid of joinMatch???
-  const joinMatch = (player1: PlayerData, player2: PlayerData) => {
-    setPlayers([
-      { infos: player1, score: 0 },
-      { infos: player2, score: 0 }
-    ]);
-    setGameStatus(GameStatus.PLAYING);
   };
 
   const endMatch = () => {

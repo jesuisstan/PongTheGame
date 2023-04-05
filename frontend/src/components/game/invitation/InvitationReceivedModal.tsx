@@ -168,6 +168,7 @@ const InvitationReceivedModal = ({
                   loadingPosition="start"
                   sx={{ minWidth: '120px' }}
                   onClick={() => acceptInvitation()}
+                  disabled={!invitation.from.nickname ? true : false}
                 >
                   Play
                 </LoadingButton>

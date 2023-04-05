@@ -1,13 +1,13 @@
 import ButtonPong from '../../UI/ButtonPong';
 import Divider from '@mui/material/Divider';
-import styles from './Lobby.module.css';
-import { UserContext } from '../../../contexts/UserContext';
 import { useContext } from 'react';
+import { UserContext } from '../../../contexts/UserContext';
 import { useNavigate } from 'react-router-dom';
 import LobbySearchBar from './LobbySearchBar';
 import Box from '@mui/material/Box';
 import Typography from '@mui/joy/Typography';
 import * as color from '../../UI/colorsPong';
+import styles from './Lobby.module.css';
 
 const VerticalDevider = (
   <Divider
