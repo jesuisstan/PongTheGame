@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../contexts/UserContext';
 import { PlayerProfile } from '../../types/PlayerProfile';
 import { WebSocketContext } from '../../contexts/WebsocketContext';
-import { GameStateContext } from '../../contexts/GameStateContext';
+import { GameStatusContext } from '../../contexts/GameStatusContext';
 import { GameStatus } from '../game/game.interface';
 import InvitationSendModal from '../game/invitation/InvitationSendModal';
 import ButtonPong from '../UI/ButtonPong';
@@ -23,7 +23,7 @@ import styles from './styles/PlayerCard.module.css';
 const InfoBlock = ({ player }: { player: PlayerProfile }) => {
   const navigate = useNavigate();
   const socket = useContext(WebSocketContext);
-  const { setGameState } = useContext(GameStateContext);
+  const { setGameStatus } = useContext(GameStatusContext);
   const { user } = useContext(UserContext);
   const [isFriendOfUser, setIsFriendOfUser] = useState(false);
   const [openInvitationModal, setOpenInvitationModal] = useState(false);
@@ -73,7 +73,7 @@ const InfoBlock = ({ player }: { player: PlayerProfile }) => {
 
   const sendSpectate = (id: number) => {
     socket.emit('match_spectate', { id: id });
-    setGameState(GameStatus.PLAYING);
+    setGameStatus(GameStatus.PLAYING);
     navigate('/game');
   };
 

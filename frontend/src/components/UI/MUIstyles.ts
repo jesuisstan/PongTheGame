@@ -3,6 +3,7 @@ import * as color from '../UI/colorsPong'
 export const modalDialog = {
   width: 'auto',
   maxWidth: '442px',
+  minWidth: '300px',
   border: '0px solid #000',
   bgcolor: color.PONG_WHITE,
   borderRadius: '4px',

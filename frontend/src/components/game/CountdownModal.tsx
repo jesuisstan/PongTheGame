@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
 import { CircularProgress } from '@mui/material';
 import { GameStatus } from './game.interface';
-import { GameStateContext } from '../../contexts/GameStateContext';
+import { GameStatusContext } from '../../contexts/GameStatusContext';
 import Typography from '@mui/joy/Typography';
 import Modal from '@mui/joy/Modal';
 import ModalDialog from '@mui/joy/ModalDialog';
@@ -13,7 +13,8 @@ import * as color from '../UI/colorsPong';
 
 const modalDialogStyle = {
   width: 'auto',
-  maxWidth: '442px',
+  maxWidth: '320px',
+  minWidth: '300px',
   border: '0px solid #000',
   bgcolor: color.PONG_WHITE,
   borderRadius: '4px'
@@ -26,7 +27,7 @@ interface CountdownProps {
 }
 
 const CountdownModal = (props: CountdownProps) => {
-  const { setGameState } = useContext(GameStateContext);
+  const { setGameStatus } = useContext(GameStatusContext);
   const [remainingSeconds, setRemainingSeconds] = useState<number>(
     props.seconds
   );
@@ -39,7 +40,7 @@ const CountdownModal = (props: CountdownProps) => {
     if (remainingSeconds === 1) {
     }
     if (remainingSeconds === 0) {
-      setGameState(GameStatus.PLAYING);
+      setGameStatus(GameStatus.PLAYING);
       props.setOpen(false);
       clearInterval(intervalId);
     }
@@ -65,15 +66,22 @@ const CountdownModal = (props: CountdownProps) => {
             />
             <Typography>{remainingSeconds - 1} sec.</Typography>
             <Typography
-              textAlign="center"
               sx={{
-                whiteSpace: 'pre'
+                textAlign: 'left',
+                fontSize: '14px',
+                wordWrap: 'break-word'
               }}
             >
-              Use <KeyboardArrowUpIcon sx={{ color: color.PONG_PINK }} /> and{' '}
-              <KeyboardArrowDownIcon sx={{ color: color.PONG_PINK }} /> keys{' '}
-              {'\n'}
-              to move the paddle
+              <Typography>
+                * Use <KeyboardArrowUpIcon sx={{ color: color.PONG_PINK }} />{' '}
+                and <KeyboardArrowDownIcon sx={{ color: color.PONG_PINK }} />{' '}
+                keys to move the paddle.
+              </Typography>
+              <br />
+              <Typography>
+                ** If your leave the game page during the match, you receive
+                technical lose.
+              </Typography>
             </Typography>
           </Stack>
         </ModalDialog>

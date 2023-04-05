@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { SetStateAction, Dispatch, useContext } from 'react';
 import { GameStatus, GameResult } from './game.interface';
-import { GameStateContext } from '../../contexts/GameStateContext';
+import { GameStatusContext } from '../../contexts/GameStatusContext';
 import Modal from '@mui/joy/Modal';
 import ModalDialog from '@mui/joy/ModalDialog';
 import ModalClose from '@mui/joy/ModalClose';
@@ -23,7 +23,7 @@ const VictoryModal = ({
   gameResult: GameResult | null;
 }) => {
   const navigate = useNavigate();
-  const { setGameState } = useContext(GameStateContext);
+  const { setGameStatus } = useContext(GameStatusContext);
 
   return (
     <div>
@@ -35,7 +35,7 @@ const VictoryModal = ({
             event &&
             (reason === 'closeClick' || reason === 'escapeKeyDown')
           ) {
-            setGameState(GameStatus.LOBBY);
+            setGameStatus(GameStatus.LOBBY);
             setOpen(false);
           }
         }}
@@ -68,10 +68,8 @@ const VictoryModal = ({
             <Typography
               sx={{ color: 'black', textAlign: 'center', marginTop: '10px' }}
             >
-              {gameResult?.winner.name
-                ? gameResult?.winner.name
-                : 'AI'}{' '}
-              wins the round
+              {gameResult?.winner.name ? gameResult?.winner.name : 'AI'} wins
+              the round
             </Typography>
             <div className={styles.scoreBlock}>
               <Avatar

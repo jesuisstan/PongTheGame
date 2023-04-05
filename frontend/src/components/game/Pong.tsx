@@ -1,5 +1,5 @@
 import { useRef, useEffect, useContext, useState } from 'react';
-import { GameStateContext } from '../../contexts/GameStateContext';
+import { GameStatusContext } from '../../contexts/GameStatusContext';
 import { WebSocketContext } from '../../contexts/WebsocketContext';
 import { CurrentGamePlayer, GameProps, GameStatus } from './game.interface';
 import { drawState } from './utils/gameUtils';
@@ -7,7 +7,7 @@ import ScoreBar from './ScoreBar';
 import styles from './styles/Game.module.css';
 
 const Pong = (props: GameProps) => {
-  const { setGameState } = useContext(GameStateContext);
+  const { setGameStatus } = useContext(GameStatusContext);
   const socket = useContext(WebSocketContext);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [winScore, setwinScore] = useState<number>(5);
@@ -76,7 +76,7 @@ const Pong = (props: GameProps) => {
           window.addEventListener('keyup', onKeyReleaseRef.current);
 
           if (args.status === 'ended' || args.status === 'aborted') {
-            setGameState(GameStatus.ENDED);
+            setGameStatus(GameStatus.ENDED);
             window.removeEventListener('keydown', onKeyPressRef.current);
             window.removeEventListener('keyup', onKeyReleaseRef.current);
           }
@@ -91,7 +91,7 @@ const Pong = (props: GameProps) => {
           console.log('spectating Pong');
           expandTheGame(args);
           if (args.status === 'ended' || args.status === 'aborted') {
-            setGameState(GameStatus.ENDED);
+            setGameStatus(GameStatus.ENDED);
           }
         });
       };

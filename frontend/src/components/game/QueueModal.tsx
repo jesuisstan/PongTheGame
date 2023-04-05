@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { WebSocketContext } from '../../contexts/WebsocketContext';
 import { GameStatus } from './game.interface';
-import { GameStateContext } from '../../contexts/GameStateContext';
+import { GameStatusContext } from '../../contexts/GameStatusContext';
 import Typography from '@mui/joy/Typography';
 import Modal from '@mui/joy/Modal';
 import ModalDialog from '@mui/joy/ModalDialog';
@@ -27,11 +27,11 @@ interface QueueModalProps {
 }
 
 const QueueModal = (props: QueueModalProps) => {
-  const { setGameState } = useContext(GameStateContext);
+  const { setGameStatus } = useContext(GameStatusContext);
   const socket = useContext(WebSocketContext);
 
   const exitQueue = () => {
-    setGameState(GameStatus.LOBBY);
+    setGameStatus(GameStatus.LOBBY);
     socket.emit('match_making', { action: 'cancel' });
     props.setOpen(false);
   };

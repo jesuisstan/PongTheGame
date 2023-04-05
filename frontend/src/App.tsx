@@ -9,12 +9,17 @@ import Verify2fa from './components/profile/Verify2fa';
 import InvitationReceivedModal from './components/game/invitation/InvitationReceivedModal';
 import backendAPI from './api/axios-instance';
 import './App.css';
-import { GameStateContext } from './contexts/GameStateContext';
+import { GameStatusContext } from './contexts/GameStatusContext';
+import { GameResult, GameStatus } from './components/game/game.interface';
+import VictoryModal from './components/game/VictoryModal';
+import { GameResultContext } from './contexts/GameResultContext';
 
 const App = () => {
   const socket = useContext(WebSocketContext);
   const [openVerify2fa, setOpenVerify2fa] = useState(false);
   const [openInvitation, setOpenInvitation] = useState(false);
+  const [gameResult, setGameResult] = useState<GameResult | null>(null);
+  const [openVictoryModal, setOpenVictoryModal] = useState(false);
 
   const [user, setUser] = useState<User>({
     avatar: undefined,
@@ -30,7 +35,7 @@ const App = () => {
     joinedChatRoom: ''
   });
 
-  const [gameState, setGameState] = useState('lobby');
+  const [gameStatus, setGameStatus] = useState('lobby');
 
   const [invitation, setInvitation] = useState<Invitation>({
     from: {
@@ -71,15 +76,24 @@ const App = () => {
       <BrowserRouter>
         <div className="App">
           <UserContext.Provider value={{ user, setUser }}>
-            <GameStateContext.Provider value={{ gameState, setGameState }}>
-              <Verify2fa open={openVerify2fa} setOpen={setOpenVerify2fa} />
-              <InvitationReceivedModal
-                open={openInvitation}
-                setOpen={setOpenInvitation}
-                invitation={invitation}
-              />
-              <AppRoutes />
-            </GameStateContext.Provider>
+            <GameStatusContext.Provider value={{ gameStatus, setGameStatus }}>
+              <GameResultContext.Provider value={{ gameResult, setGameResult }}>
+                <Verify2fa open={openVerify2fa} setOpen={setOpenVerify2fa} />
+                <InvitationReceivedModal
+                  open={openInvitation}
+                  setOpen={setOpenInvitation}
+                  invitation={invitation}
+                />
+                {gameStatus === GameStatus.ENDED && (
+                  <VictoryModal
+                    open={!openVictoryModal}
+                    setOpen={setOpenVictoryModal}
+                    gameResult={gameResult}
+                  />
+                )}
+                <AppRoutes />
+              </GameResultContext.Provider>
+            </GameStatusContext.Provider>
           </UserContext.Provider>
         </div>
       </BrowserRouter>
