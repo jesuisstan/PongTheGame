@@ -97,11 +97,14 @@ const FriendsNoteModal = ({
               textAlign: 'left',
               fontSize: '14px',
               paddingTop: '15px',
-              whiteSpace: 'pre'
+              wordWrap: 'break-word'
             }}
           >
-            * Friends status refreshes automatically.{'\n'}
-            ** To refrash Friends list use <RefreshIcon /> button.
+            <Typography>* Friends status refreshes automatically.</Typography>
+            <br />
+            <Typography>
+              ** To refrash Friends list use <RefreshIcon /> button.
+            </Typography>
           </Typography>
         </ModalDialog>
       </Modal>

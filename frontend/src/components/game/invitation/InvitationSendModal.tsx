@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { GameStateContext } from '../../../contexts/GameStateContext';
+import { GameStatusContext } from '../../../contexts/GameStatusContext';
 import { GameStatus } from '../game.interface';
 import { PlayerProfile } from '../../../types/PlayerProfile';
 import { WebSocketContext } from '../../../contexts/WebsocketContext';
@@ -31,7 +31,7 @@ const InvitationSendModal = ({
   player: PlayerProfile;
 }) => {
   const navigate = useNavigate();
-  const { setGameState } = useContext(GameStateContext);
+  const { setGameStatus } = useContext(GameStatusContext);
   const socket = useContext(WebSocketContext);
   const [obstacleEnabled, setObstacleEnabled] = useState(false);
   const [winScore, setwinScore] = useState(DEFAULT_WIN_SCORE);
@@ -102,7 +102,7 @@ const InvitationSendModal = ({
   };
 
   const cancelInvitation = () => {
-    socket.emit('match_invitation_abort', {
+    socket.emit('match_invitation_cancel', {
       nickname: player.nickname
     });
   };
@@ -113,7 +113,7 @@ const InvitationSendModal = ({
     setLoading(false);
     setOpen(false);
     navigate('/game');
-    setGameState(GameStatus.BEGIN_GAME);
+    setGameStatus(GameStatus.BEGIN_GAME);
   });
 
   socket.on('invitation_refused', (args) => {

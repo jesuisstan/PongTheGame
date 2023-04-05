@@ -95,7 +95,7 @@ export class GameGateway {
     return this.game.create_invitation(socket, payload);
   }
 
-  @SubscribeMessage('match_invitation_abort')
+  @SubscribeMessage('match_invitation_cancel')
   async closeInvitation(
     socket: any,
     payload: any,
