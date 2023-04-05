@@ -79,16 +79,8 @@ export class Game {
 
   async start(onEnd: () => void) {
     this.end = onEnd;
-    while (this.start_counter > 0) {
-      await this._wait(1000);
-      this.start_counter--;
-      this._send_to_players('match_starting', { time: this.start_counter });
-    }
-    this._send_to_players('match_starting', { time: this.start_counter });
-    this.status = Status.PLAYING;
-    this._set_players_status('PLAYING');
-    this.game_start_time = new Date();
 
+    this.game_start_time = new Date();
     if (this.type != TypeMode.TRAINING) {
       const tmp_player: (Profile | undefined)[] = [this.player1, this.player2];
       if (!tmp_player[0] || !tmp_player[1]) return;
@@ -113,9 +105,49 @@ export class Game {
           },
         })
       ).id;
+    } else {
+      // const tmp_player: (Profile | undefined)[] = [this.player1, this.player2];
+      // if (!tmp_player[0] || !tmp_player[1]) return;
+      // this.id_game = (
+      //   await this.prisma.match.create({
+      //     data: {
+      //       state: 'Started',
+      //       startDate: this.game_start_time.toISOString(),
+      //       endDate: new Date().toISOString(),
+      //       entries: {
+      //         create: [
+      //           {
+      //             userId: tmp_player[0].user.id,
+      //             score: 0,
+      //           },
+      //           {
+      //             userId: AI, // TODO if create that need to insert a default user IA in database
+      //             score: 0,
+      //           },
+      //         ],
+      //       },
+      //     },
+      //   })
+      // ).id;
     }
-    // else
-    // Type Training mode
+
+    while (this.start_counter > 0) {
+      await this._wait(1000);
+      this.start_counter--;
+      this._send_to_players('match_starting', { time: this.start_counter });
+      if (this.people_left) {
+        this.status = Status.ABORTED;
+        break;
+      }
+    }
+    if (this.status == Status.ABORTED) {
+      this.end();
+      return;
+    }
+    this._send_to_players('match_starting', { time: this.start_counter });
+    this.status = Status.PLAYING;
+    this._set_players_status('PLAYING');
+
     this._game();
   }
 
