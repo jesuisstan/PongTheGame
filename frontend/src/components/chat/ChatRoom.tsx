@@ -234,13 +234,15 @@ const ChatRoom = (props: any) => {
 
   // When clicking on the 'block' button to block a user
   const onBlockClick = (target: number) => {
-    user.blockedUsers.push(target)
-	socket.emit('saveBlockedUsersToDB', {
-		user: user,
-		blockedUsers: user.blockedUsers
-	})
-	console.log("You've blocked " + target + "!")
+	if (target !== user.id) {
+		socket.emit('saveBlockedUsersToDB', {
+			user: user,
+			blockedUsers: user.blockedUsers
+		})
+		console.log("You've blocked " + target + "!")
+		}	
   }
+  onBlockClick(2)
   // When clicking on the 'unblock' button to unblock a user
   const onUnBlockClick = (target: number) => {
     for (var i=0; i < user.blockedUsers.length; ++i)
