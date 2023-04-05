@@ -34,6 +34,7 @@
   "private": true,
   "scripts": {
     "build": "nest build && tsc-alias",
+    "clean": "rimraf dist",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
