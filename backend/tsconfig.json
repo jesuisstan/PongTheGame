@@ -11,7 +11,8 @@
     "outDir": "./dist",
     "baseUrl": "./",
     "rootDir": "src",
-    "incremental": true,
+    "incremental": false,
+    "noEmit": false,
     "skipLibCheck": true,
     "strictNullChecks": true,
     "noImplicitAny": true,
@@ -19,5 +20,5 @@
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
   },
-  "include": ["src", "*.d.ts", "passport-user.d.ts"]
+  "include": ["src", "*.d.ts"]
 }
