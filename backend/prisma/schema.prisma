@@ -14,35 +14,37 @@ datasource db {
 }
 
 model User {
-  id        Int     @id @default(autoincrement()) 
-  nickname  String? @unique
-  username  String
-  avatar    String?
-  profileId String
-  provider  String
-  blockedUsers  Int[]
+  id           Int     @id @default(autoincrement())
+  nickname     String? @unique
+  username     String
+  avatar       String?
+  profileId    String
+  provider     String
+  blockedUsers Int[]
 
-  status        StatusUser @default(ONLINE)
-  totpSecret    TotpSecret?
-  role          Role       @default(USER)
+  status     StatusUser  @default(ONLINE)
+  totpSecret TotpSecret?
+  role       Role        @default(USER)
 
   matchEntries MatchEntry[]
 
-  stats       Stats[]
-  friends     User[] @relation("Friendslist")
-  friendsOf   User[] @relation("Friendslist")
-  achievement UserAchivement[]
-  invitationEmit  MatchInvitation[] @relation("InvitationEmit")
-  invitationReceive   MatchInvitation[] @relation("InvitationReceive")
+  stats             Stats[]
+  friends           User[]            @relation("Friendslist")
+  friendsOf         User[]            @relation("Friendslist")
+  achievement       UserAchivement[]
+  invitationEmit    MatchInvitation[] @relation("InvitationEmit")
+  invitationReceive MatchInvitation[] @relation("InvitationReceive")
+
   @@unique([profileId, provider])
 }
 
 model Stats {
-  id          Int    @id @default(autoincrement())
-  nb_game     Int    @default(0)
-  nb_win      Int    @default(0)
-  User        User   @relation(fields: [userId], references: [id])
-  userId      Int    @unique
+  id      Int  @id @default(autoincrement())
+  nb_game Int  @default(0)
+  nb_win  Int  @default(0)
+  User    User @relation(fields: [userId], references: [id])
+  userId  Int  @unique
+
   @@map("Statistique")
 }
 
@@ -68,21 +70,23 @@ enum Role {
 }
 
 model Achievement {
-  id          Int     @id @default(autoincrement())
-  Name        String  @unique
-  Title       String  @unique
+  id          Int              @id @default(autoincrement())
+  Name        String           @unique
+  Title       String           @unique
   Description String
   icon_path   String?
   user        UserAchivement[]
+
   @@map("Achievements")
 }
 
 model UserAchivement {
- user User @relation(fields : [userId], references: [id])
- userId Int
- achievement   Achievement @relation(fields: [achievementId], references: [id])
- achievementId Int
- @@id([userId, achievementId])
+  user          User        @relation(fields: [userId], references: [id])
+  userId        Int
+  achievement   Achievement @relation(fields: [achievementId], references: [id])
+  achievementId Int
+
+  @@id([userId, achievementId])
 }
 
 model MatchEntry {
@@ -106,13 +110,13 @@ model Match {
 }
 
 model MatchInvitation {
-  id          Int                  @id @default(autoincrement())
-  createdBy   User                 @relation("InvitationEmit", fields: [createdById], references: [id])
-  createdById Int                  @unique
-  sendToId    Int                  
-  sendTo      User                 @relation("InvitationReceive", fields: [sendToId], references: [id])
+  id          Int             @id @default(autoincrement())
+  createdBy   User            @relation("InvitationEmit", fields: [createdById], references: [id])
+  createdById Int             @unique
+  sendToId    Int
+  sendTo      User            @relation("InvitationReceive", fields: [sendToId], references: [id])
   obstacle    Boolean
-  winscore    Int                  @default(5)
+  winscore    Int             @default(5)
   status      InvitationState @default(Pending)
 }
 
