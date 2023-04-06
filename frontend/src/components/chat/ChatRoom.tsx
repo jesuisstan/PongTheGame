@@ -386,20 +386,14 @@ const ChatRoom = (props: any) => {
 	 * Render HTML response
 	**************************************************************/
 	return (
-		<>
-				{ // if private message don't display the list of member
+		<div id="chatBox">
+				{
 					user.joinedChatRoom[0] === "#"
 					? <></> 
 					: <AvatarGroup spacing={1} total={Room.length}>
 					{ 
-// ------------- List of Member's in room ------------- 
 					Object.keys(members).map((nick, index) => (
 						<div key={ index }>
-
-{/* ----------------------------------------------------------------
-					HERE FIND HOW TO DISPLAY THE AVATAR OF THE USER
-				---------------------------------------------------------------- */}
-{/*// -------------- Avatar Clickable -------------- */}
 													<Button
 														aria-controls="basic-menu"
 														aria-haspopup="true"
@@ -408,7 +402,6 @@ const ChatRoom = (props: any) => {
 														? handleAClick 
 														: () => {}}
 														>
-{/*// -------------- Avatar Badge -------------- */}
 													<AvatarBadge
 														nickname={nick}
 														online={Boolean(members[nick as any].isOnline)}
@@ -477,74 +470,51 @@ const ChatRoom = (props: any) => {
 						</div>))}
 					</AvatarGroup> }
 			<div>
-				<Box>
-					<Typography
-						gutterBottom
-						variant='h6'
-						className='black'
-						sx={{
-							display: 'flex',
-							flexDirection: 'row',
-							justifyContent: 'space-around',
-							alignItems: 'center'
-						}}
-					>
+					<Box className='black' id="chatTitle">
 						<IconButton style={{ paddingRight: -1 }} onClick={onReturnClick}>
 							<ArrowBackIosNew
-								
 								className='black'
-								aria-label="return"
-							/>
-						</IconButton>
-						Lets chat here ! {user.joinedChatRoom}
-						<Button
-							id="basic-button"
-							aria-controls="basic-menu"
-							aria-haspopup="true"
-							aria-expanded={Boolean(anchorEl)}
+								aria-label="return"/>
+						</IconButton>        
+						<Typography sx={{ minWidth: 100 }}>Lets chat here ! {user.joinedChatRoom}</Typography>
+						<IconButton
+							title="Room settings"
 							onClick={handleClick}
-						>
+							size="small"
+							sx={{ ml: 2 }}
+							aria-controls={Boolean(anchorEl) ? 'basic-menu' : undefined}
+							aria-haspopup="true"
+							aria-expanded={Boolean(anchorEl) ? 'true' : undefined}>
 							<Settings className='black' />
-						</Button>
+						</IconButton>
 						<Menu
 							id="basic-menu"
 							anchorEl={anchorEl}
 							open={Boolean(anchorEl)}
 							onClose={handleClose}
 							className='black' >
-							<>
-						{ user.joinedChatRoom[0] === "#" 
-						? <></>
-						:	<><MenuItem onClick={() => handleChangePwd(false)} aria-label="change password">
-									<Password sx={{ color: 'black' }} />
-								</MenuItem>
-								<MenuItem onClick={() => handleChangePwd(true)} aria-label="delete password">
-									<Delete sx={{ color: 'black' }} />
-								</MenuItem>
-							</>
-						}
-								<MenuItem onClick={onReturnClick} aria-label="leave room">
-									<ExitToApp className='black' />
-								</MenuItem>
-							</>
+							<MenuItem onClick={() => handleChangePwd(false)} title="Change Password">
+								<Password sx={{ color: 'black' }} />
+							</MenuItem>
+							<MenuItem onClick={() => handleChangePwd(true)} title="Delete Password">
+								<Delete sx={{ color: 'black' }} />
+							</MenuItem>
+							<MenuItem onClick={onReturnClick} title="Leave Room">
+								<ExitToApp className='black' />
+							</MenuItem>
 						</Menu>
-					</Typography>
+					</Box>
 					<Divider />
 					<Grid container spacing={3}>
 						<Grid
 							item
-							spacing={3}
 							id="chat-window"
 							xs={12} >
-					{ 
-// -------------- Begin of display messages --------------
-					messages.length === 0 
-// -------------- If no message: Display "No Message" --------------
+					{ messages.length === 0 
 						? <div className='black'>No Message</div>
-// -------------- Else: Display messages --------------
 						: <Stack className='message-area'> {
 							messages.map((msg, index) => (
-							<div key={index}>
+								<div key={index}>
 							{ user.nickname === msg.author.nickname 
 								?	<div className="msgRowR">
 										<div className='msgRight msgBubble'>
@@ -557,38 +527,31 @@ const ChatRoom = (props: any) => {
 								// if yes, display nothing
 								// if no, display message
 								// !isMuted && !isBlocked ? <></> :
-								<div className="msgRowL">
+									<div className="msgRowL">
 {/*// -------------- Avatar Badge -------------- */}
-{/* ----------------------------------------------------------------
- HERE ADD FUNCTION TO CHECK IF IS ONLINE, IF IS OPER, IF IS ADMIN
-		---------------------------------------------------------------- */}
 										<AvatarBadge
 											nickname={msg.author.nickname}
 											online={true}
+											// playing={}
 											admin={false}
 											oper={true} 
 											avatar={msg.author.avatar}
 											look={true}/>
 										<div>
-												{/* <div className="nickName">{msg.author.nickname}</div> */}
-												<div className="msgLeft msgBubble">
-														<p className="msgText">{msg.data}</p>
-														<div className="msgTime">{timeFromNow(msg.timestamp)}</div>
-												</div>
+											<div className="msgLeft msgBubble">
+												<p className="msgText">{msg.data}</p>
+												<div className="msgTime">{timeFromNow(msg.timestamp)}</div>
+											</div>
 										</div>
-								</div>}
-						</div>
-					))}</Stack>
-// -------------- End of message display ----------------
-							}
-					<div className="chat-room-text">
+									</div>}
+								</div>
+								))}	
+							</Stack>
+					}
+						<Grid item xs={10} className="chat-room-text">
 						<div className='typingButton'>
-						{
-							// Display message to other users if user is currently typing
-							typingDisplay && <div className='black'><CircularProgress color="inherit" />{typingDisplay}</div>
-						}
+						{	typingDisplay && <div className='black'><CircularProgress color="inherit" />{typingDisplay}</div> }
 						</div>
-						<Grid item xs={10}>
 							<FormControl fullWidth onSubmit={onFormSubmit}>
 								<TextField
 									value={messageText}
@@ -605,12 +568,10 @@ const ChatRoom = (props: any) => {
 							</FormControl>
 						</Grid>
 
-					</div>
 					</Grid>
 				</Grid>
-			</Box>
 		</div>
-	</> );
+	</div> );
 };
 
 export default ChatRoom;

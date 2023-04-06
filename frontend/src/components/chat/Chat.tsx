@@ -123,8 +123,7 @@ const Chat = () => {
           bannedNicks: []
         },
         nick: user.nickname,
-        user2: '',
-        avatar: user.avatar,
+        user2: ''
       });
     setNewChatRoomName('');
     setChatRoomCreateMode(false);
@@ -153,11 +152,7 @@ const Chat = () => {
   const joinRoom = (roomName: string) => {
     socket.emit(
       'joinRoom',
-      {
-        roomName: roomName,
-        nickName: user.nickname,
-        avatar: user.avatar,
-      },
+      { roomName: roomName, nickName: user.nickname },
       (response: string) => {
         user.joinedChatRoom = response;
       }
@@ -210,9 +205,9 @@ const Chat = () => {
   return !user.provider ? (
     <PleaseLogin />
   ) : (
-      <Box className="basicCard">
+      <Box id="basicCard">
         <CssBaseline />
-        <Box component="main" className="chatRoomList">
+        <Box component="main" id="chatRoomList">
           {chatRooms.length === 0 ? (
             <Box>
               <List>
@@ -349,7 +344,7 @@ const Chat = () => {
             </Dialog>
           )}
         </Box>
-        <Box component="main" className="chatRoom">
+        <Box component="main" id="chatRoom">
           {joinedRoomName &&
           ((isPasswordProtected && isPasswordRight) || !isPasswordProtected) ? (
             <ChatRoom
