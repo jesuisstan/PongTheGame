@@ -30,3 +30,13 @@ export const modalClose = {
     bgcolor: color.PONG_BLUE_TRANS
   }
 };
+
+export const boxStyle = {
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '21px',
+  maxWidth: '242px',
+  minWidth: '200px',
+  alignItems: 'center',
+  justifyContent: 'center'
+};
