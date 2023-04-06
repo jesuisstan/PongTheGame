@@ -6,7 +6,12 @@ import { useNavigate } from 'react-router-dom';
 import LobbySearchBar from './LobbySearchBar';
 import Box from '@mui/material/Box';
 import Typography from '@mui/joy/Typography';
+import Avatar from '@mui/material/Avatar';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
+import SmartToyIcon from '@mui/icons-material/SmartToy';
 import * as color from '../../UI/colorsPong';
+import * as MUI from '../../UI/MUIstyles';
 import styles from './Lobby.module.css';
 
 const VerticalDevider = (
@@ -33,7 +38,7 @@ const Lobby = ({
         <h5>Pong The Game Lobby</h5>
       </div>
       <div className={styles.playerCard}>
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: '21px' }}>
+        <Box sx={MUI.boxStyle}>
           <Typography
             textColor={color.PONG_ORANGE}
             level="body3"
@@ -42,19 +47,26 @@ const Lobby = ({
           >
             Single mode
           </Typography>
+          <Avatar
+            src={require('../../../assets/singlePlay.jpg')}
+            alt=""
+            variant="rounded"
+            sx={{ width: 100, height: 100 }}
+          />
           <Typography>Practise with artificial intelligence</Typography>
           <div>
             <ButtonPong
               text="Train"
               title="Play with Artificial Intelligence"
               onClick={launchTraining}
+              endIcon={<SmartToyIcon />}
             />
           </div>
         </Box>
 
         {VerticalDevider}
 
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: '21px' }}>
+        <Box sx={MUI.boxStyle}>
           <Typography
             textColor={color.PONG_ORANGE}
             level="body3"
@@ -63,21 +75,27 @@ const Lobby = ({
           >
             Random game
           </Typography>
+          <Avatar
+            src={require('../../../assets/randomGame.jpg')}
+            alt=""
+            variant="rounded"
+            sx={{ width: 100, height: 100 }}
+          />
           <Typography>
             Play classic Ping-Pong with random online player
           </Typography>
           <div>
             <ButtonPong
-              text="Random"
+              text="Play"
               title="Play online with random user"
               onClick={joinQueue}
+              endIcon={<SportsEsportsIcon />}
             />
           </div>
         </Box>
 
         {VerticalDevider}
-
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: '21px' }}>
+        <Box sx={MUI.boxStyle}>
           <Typography
             textColor={color.PONG_ORANGE}
             level="body3"
@@ -86,6 +104,12 @@ const Lobby = ({
           >
             Custom game
           </Typography>
+          <Avatar
+            src={require('../../../assets/customGame.jpg')}
+            alt=""
+            variant="rounded"
+            sx={{ width: 100, height: 100 }}
+          />
           <Typography>
             Invite any player to join your customised game
           </Typography>
@@ -93,8 +117,7 @@ const Lobby = ({
         </Box>
 
         {VerticalDevider}
-
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: '21px' }}>
+        <Box sx={MUI.boxStyle}>
           <Typography
             textColor={color.PONG_ORANGE}
             level="body3"
@@ -103,12 +126,19 @@ const Lobby = ({
           >
             Statistics
           </Typography>
+          <Avatar
+            src={require('../../../assets/trophy.jpg')}
+            alt=""
+            variant="rounded"
+            sx={{ width: 100, height: 100 }}
+          />
           <Typography>Check your results and achievements</Typography>
           <div>
             <ButtonPong
               text="Stats"
               title="Go to player profile"
               onClick={() => navigate(`/players/${user.nickname}`)}
+              endIcon={<ArrowForwardIosIcon />}
             />
           </div>
         </Box>
