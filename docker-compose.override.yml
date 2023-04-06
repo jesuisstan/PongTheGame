@@ -2,26 +2,17 @@ services:
   frontend:
     build:
       context: ./frontend
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile.prod
     ports:
       - "${FRONTEND_PORT?:}:3000"
-    volumes:
-      - ./frontend:/frontend
-      - frontend_node_modules:/frontend/node_modules/
+    networks:
+      - private
 
   backend:
     build:
       context: ./backend
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile.prod
     ports:
-      - "${BACKEND_PORT?:}:3000"
-    volumes:
-      - ./backend:/backend
-      - backend_node_modules:/backend/node_modules/
+      - "3000"
     networks:
       - private
-      - public
-
-volumes:
-  frontend_node_modules: {}
-  backend_node_modules: {}

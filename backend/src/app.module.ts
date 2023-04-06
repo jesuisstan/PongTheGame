@@ -8,15 +8,14 @@ import { PrismaModule } from 'src/prisma/prisma.module';
 import { StatusController } from 'src/status/status.controller';
 import { UserModule } from 'src/user/user.module';
 import { ChatModule } from './chat/chat.module';
-import { GameModule } from './game/game.module';
-import { WebsocketsModule } from './websockets/websockets.module';
-import { StatsModule } from './stats/stats.module';
 import { FriendsModule } from './friends/friends.module';
+import { GameModule } from './game/game.module';
+import { StatsModule } from './stats/stats.module';
+import { WebsocketsModule } from './websockets/websockets.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: '../.env',
       isGlobal: true,
     }),
     AchivementModule,
