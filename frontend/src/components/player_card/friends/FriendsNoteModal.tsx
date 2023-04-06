@@ -100,7 +100,7 @@ const FriendsNoteModal = ({
               wordWrap: 'break-word'
             }}
           >
-            <Typography>* Friends status refreshes automatically.</Typography>
+            <Typography>* Friends' status refreshes automatically.</Typography>
             <br />
             <Typography>
               ** To refrash Friends list use <RefreshIcon /> button.

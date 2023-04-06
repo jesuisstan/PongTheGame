@@ -23,13 +23,6 @@
   white-space: nowrap;
 }
 
-/*.center-button {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}*/
-
 .centeredCard {
   height: calc(100vh - 10px);
   align-self: center;

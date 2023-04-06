@@ -73,3 +73,12 @@
   padding-bottom: 10px;
   padding-top: 10px;
 }
+
+@media (width <= 700px) {
+  .playerCard {
+    line-height: 1.4;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+}

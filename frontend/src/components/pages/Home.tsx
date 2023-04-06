@@ -5,6 +5,7 @@ import ButtonPong from '../UI/ButtonPong';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import * as color from '../UI/colorsPong';
 import styles from './Pages.module.css';
+import '../../App.css'
 
 const Home = () => {
   const navigate = useNavigate();
@@ -14,10 +15,9 @@ const Home = () => {
     <div className={styles.basicHome}>
       <div
         style={{
-          fontSize: '70px',
+          fontSize: '60px',
           color: color.PONG_PINK,
-          marginLeft: '280px',
-          marginRight: 'auto',
+          paddingLeft: '280px',
           marginTop: '60px'
         }}
       >
@@ -30,7 +30,7 @@ const Home = () => {
           W E L C O M E
           <div
             style={{
-              fontSize: '60px',
+              fontSize: '50px',
               color: color.PONG_PINK
             }}
           >
@@ -52,18 +52,17 @@ const Home = () => {
       </div>
       <div
         style={{
-          fontSize: '50px',
+          fontSize: '40px',
           color: color.PONG_ORANGE,
-          marginLeft: '70px',
-          marginRight: 'auto',
-          marginTop: '300px',
+          paddingLeft: '70px',
+          marginTop: '342px',
           textAlign: 'left'
         }}
       >
         W H Y ?
         <div
           style={{
-            fontSize: '40px',
+            fontSize: '30px',
             color: color.PONG_ORANGE,
             borderRadius: '4px'
           }}
