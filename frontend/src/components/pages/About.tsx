@@ -60,7 +60,7 @@ const Home = () => {
           style={styles.daisuke}
           firstName="Daisuke"
           lastName="Tanigawa"
-          description="I agree with everything that Stan says"
+          description="This is a non-mandatory page"
           intraNickname="dtanigaw"
           role="Backend: chat. Docker-compose"
           github="https://github.com/daisvke"

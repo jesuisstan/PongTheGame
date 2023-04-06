@@ -46,8 +46,8 @@ const ChatRoom = (props: any) => {
   // Array including all members
   const [members, setMembers] = useState<MemberType[]>([])
   // Modify password
-  const [oldPassword, setOldPassword] = useState<string>('');
-  const [newPassword, setNewPassword] = useState<string>('');
+  const [oldPassword, setOldPassword] = useState<string>('d');
+  const [newPassword, setNewPassword] = useState<string>('e');
 
 
   socket.emit('findAllMembers', { roomName: user.joinedChatRoom },
@@ -234,15 +234,19 @@ const ChatRoom = (props: any) => {
 
   // When clicking on the 'block' button to block a user
   const onBlockClick = (target: number) => {
-	if (target !== user.id) {
-		socket.emit('saveBlockedUsersToDB', {
+	if (user.id !== target) {
+		// Check if target is not already blocked
+		for (let i=0; i < user.blockedUsers.length; ++i)
+			if (user.blockedUsers[i] === target) return
+		user.blockedUsers.push(target)
+		socket.emit('saveBlockedUserToDB', {
 			user: user,
 			blockedUsers: user.blockedUsers
 		})
 		console.log("You've blocked " + target + "!")
-		}	
+	}
   }
-  onBlockClick(2)
+
   // When clicking on the 'unblock' button to unblock a user
   const onUnBlockClick = (target: number) => {
     for (var i=0; i < user.blockedUsers.length; ++i)

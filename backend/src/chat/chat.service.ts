@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { WsException } from '@nestjs/websockets';
 import { MessageDto, ChatRoomDto } from './dto/chat.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { User } from '@prisma/client';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class ChatService {
@@ -26,8 +26,8 @@ export class ChatService {
     if (found)
       await this.prisma.member.update({
         where: { memberId_chatRoomName: {
-          memberId: userId, chatRoomName: roomName }
-        },
+          memberId: userId, chatRoomName: roomName 
+        }},
         data: { isOnline: online, modes: foundModes + modes }
       })
     else {
@@ -51,16 +51,13 @@ export class ChatService {
             },
             data: { isOnline: false }
       })
-    }
-    else throw new WsException({ msg: 'quitRoom: unknown room name!' });
+    } else throw new WsException({ msg: 'quitRoom: unknown room name!' });
   }
 
   async getChatRoomByName(name: string) {
     return await this.prisma.chatRoom.findUnique({
       where: { name: name },
-      include: {
-        members: true, messages: true, bannedUsers: true
-      }
+      include: { members: true, messages: true, bannedUsers: true }
     })
   }
 
@@ -79,16 +76,27 @@ export class ChatService {
     else throw new WsException({ msg: 'createMessage: unknown room name!' });
   }
 
-  // Create a new chat room object and push it to the chat rooms array
+  async generateHash(password: string) {
+    // We use salt rounds, which is the cost factor (how much time is used to
+    // compute the hash => the more elevated, the more difficult is brute-forcing)
+    const saltRounds = 10;
+    return await bcrypt .hash(password, saltRounds)
+                        .then((res: string) => res)
+                        .catch((err: any) => { throw new WsException({ msg: err.message }); })
+  }
+
+  // Create a new chat room object and push it to the database
   // the creator will get admin privileges
   async createChatRoom(room: ChatRoomDto, userId: number, user2Id: number) {
     if (room) {
-      // Add room to room array
+      // Hash the password before saving it
+      const hash = await this.generateHash(room.password);
+      // Save room to the database
       const r = await this.prisma.chatRoom.create({
         data: {
           name: room.name,
           modes: room.modes,
-          password: room.password,
+          password: hash,
           userLimit: room.userLimit,
           members: {},
           messages: {},
@@ -96,15 +104,12 @@ export class ChatService {
         }
       })
       console.log('created room: '+ Object.entries(r));
-      // this.chatRooms.push(room);
-
       // If it is a private conversation
       if (user2Id) {
         this.identify(room.name, userId, '', false);
         this.identify(room.name, user2Id, '', false);
         return;
       }
-
       // Identify creator as the oper(=admin)
       this.identify(room.name, userId, 'o', false);
     } else
@@ -124,16 +129,12 @@ export class ChatService {
   }
 
   async findAllChatRooms() { 
-    return await this.prisma.chatRoom.findMany({
-      include: { members: true }
-    });
+    return await this.prisma.chatRoom.findMany({ include: { members: true } });
   }
 
   // Return all members from the chatroom
   async findAllMembers(roomName: string) {
-    return this.prisma.member.findMany({
-      where: { chatRoomName: roomName }
-    });
+    return this.prisma.member.findMany({ where: { chatRoomName: roomName } });
   }
 
   async changePassword(roomName: string, newPassword: string) {
@@ -142,12 +143,13 @@ export class ChatService {
       // If a new password was given
       const oldModes = String(await this.prisma.chatRoom.findUnique({
         where: { name: roomName },
-        select: { password: true }
+        select: { modes: true }
       }));
 
       if (newPassword) {
         // If the room wasn't in 'password protected' mode,
         // it gets it
+        newPassword = await this.generateHash(newPassword);
         if (oldModes.search('p') === -1)  {
           await this.prisma.chatRoom.update({
             where: { name: roomName },
@@ -332,11 +334,9 @@ export class ChatService {
   async checkPassword(roomName: string, password: string) {
     const room = await this.getChatRoomByName(roomName);
     if (room) {
-      const res = await this.prisma.chatRoom.findUnique({
-        where: { name: roomName },
-        select: { password: true }
-      });
-      return res?.password === password;
+      // Compare bcrypted stored pwd from the database to the user's given password
+      // bcrypt will hash the given pwd then compared it to the stored hashed pwd
+      return await bcrypt.compare(password, room.password);
     } else
       throw new WsException({ msg: 'isPasswordProtected: unknown room name!' });
   }

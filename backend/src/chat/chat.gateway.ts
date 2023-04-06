@@ -259,7 +259,7 @@ export class ChatGateway {
     return this.chatService.isUserMuted(roomName, userId);
   }
 
-  @SubscribeMessage('saveBlockedUsersToDB')
+  @SubscribeMessage('saveBlockedUserToDB')
   async saveBlockedUsersToDB(
     @MessageBody('user') user: User,
     @MessageBody('blockedUsers') blockedUsers: number[],
