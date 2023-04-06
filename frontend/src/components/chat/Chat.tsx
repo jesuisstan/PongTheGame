@@ -416,7 +416,7 @@ const Chat = () => {
 						</div>
 					)}
 				</Box>
-			</Box>  );
+			</Box>);
 };
 
 export default Chat;
