@@ -69,7 +69,12 @@ const CountdownModal = (props: CountdownProps) => {
               sx={{
                 textAlign: 'left',
                 fontSize: '14px',
-                wordWrap: 'break-word'
+                wordWrap: 'break-word',
+
+                '& > * + *': {
+                  display: 'block',
+                  marginTop: '10px'
+                }
               }}
             >
               <Typography>

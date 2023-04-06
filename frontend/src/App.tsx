@@ -1,18 +1,18 @@
 import { useContext, useEffect, useState } from 'react';
 import { Navigate, BrowserRouter } from 'react-router-dom';
 import { UserContext } from './contexts/UserContext';
-import { WebSocketContext } from './contexts/WebsocketContext';
 import { User } from './types/User';
 import { Invitation } from './types/Invitation';
+import { WebSocketContext } from './contexts/WebsocketContext';
+import { GameResultContext } from './contexts/GameResultContext';
+import { GameStatusContext } from './contexts/GameStatusContext';
+import { GameResult, GameStatus } from './components/game/game.interface';
 import AppRoutes from './AppRoutes';
 import Verify2fa from './components/profile/Verify2fa';
 import InvitationReceivedModal from './components/game/invitation/InvitationReceivedModal';
 import backendAPI from './api/axios-instance';
-import './App.css';
-import { GameStatusContext } from './contexts/GameStatusContext';
-import { GameResult, GameStatus } from './components/game/game.interface';
 import VictoryModal from './components/game/VictoryModal';
-import { GameResultContext } from './contexts/GameResultContext';
+import './App.css';
 
 const App = () => {
   const socket = useContext(WebSocketContext);
