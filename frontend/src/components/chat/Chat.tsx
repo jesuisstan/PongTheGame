@@ -203,7 +203,7 @@ const Chat = () => {
    * Render HTML response
   **************************************************************/
   return !user.provider ? (
-    <PleaseLogin />
+<PleaseLogin />
   ) : (
       <Box id="basicCard">
         <CssBaseline />
@@ -225,7 +225,8 @@ const Chat = () => {
             <Box>
               <List>
                 {/* Mapping chatroom array to retrieve all chatrooms with */}
-                {chatRooms.map((room, index) => (
+                {chatRooms.map(
+                  (room: ChatRoomType, index) => (
                   // Check if this isn't a private conversation of other users
                   isAuthorizedPrivRoom(room.modes, room.users) &&
                   <>
@@ -347,19 +348,16 @@ const Chat = () => {
         <Box component="main" id="chatRoom">
           {joinedRoomName &&
           ((isPasswordProtected && isPasswordRight) || !isPasswordProtected) ? (
-            <ChatRoom
-              cleanRoomLoginData={cleanRoomLoginData}
-            />
+            <ChatRoom cleanRoomLoginData={cleanRoomLoginData} />
           ) : (
-            <div className='black'>
+            <div className="black">
               <h2>Actually no room joined</h2>
               <p>To join a room click on the arrow on the left</p>
               <p>Or add a new chan with the + button</p>
             </div>
           )}
         </Box>
-      </Box>
-  );
+      </Box>  );
 };
 
 export default Chat;

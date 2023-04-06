@@ -103,7 +103,6 @@ const ChatRoom = (props: any) => {
 		}
 	)
 
-
 	/*************************************************************
 	 * Event listeners
 	 **************************************************************/
@@ -346,7 +345,7 @@ const ChatRoom = (props: any) => {
 
 	const handleClose = () => {
 		setAnchorEl(null);
-		onReturnClick();
+		// onReturnClick();
 	};
 
 	const handleChangePwd = (deletePwd: boolean) => {
@@ -387,88 +386,6 @@ const ChatRoom = (props: any) => {
 	**************************************************************/
 	return (
 		<div id="chatBox">
-				{
-					user.joinedChatRoom[0] === "#"
-					? <></> 
-					: <AvatarGroup spacing={1} total={Room.length}>
-					{ 
-					Object.keys(members).map((nick, index) => (
-						<div key={ index }>
-													<Button
-														aria-controls="basic-menu"
-														aria-haspopup="true"
-														aria-expanded={Boolean(anchorAvatar)}
-														onClick={user.avatar !== String(members[nick as any].avatar) 
-														? handleAClick 
-														: () => {}}
-														>
-													<AvatarBadge
-														nickname={nick}
-														online={Boolean(members[nick as any].isOnline)}
-														admin={isOper && (user.nickname !== nick) &&
-															String(members[nick as any].modes).search('o') === -1}
-														oper={String(members[nick as any].modes).search('o') !== -1} 
-														avatar={String(members[nick as any].avatar)}
-														look={false}/>		
-													</Button>
-{/*// -------------- Avatar Menu -------------- */}
-												{user.nickname !== nick ?
-													<Menu
-														anchorEl={anchorAvatar}
-														open={Boolean(anchorAvatar)}
-														onClose={handleAClose}
-														className='black column-barre' >
-{/*// -------------- Menu Icon Part -------------- */}
-														<MenuItem aria-label="back" className='column-barre'>
-																<IconButton >
-																<PersonAdd className='black'/>
-																<span>add friend</span>
-															</IconButton>
-															<IconButton onClick={isMuted ? () => onMuteUserClick(nick): () => onUnMuteUserClick(nick)}>
-																{isMuted ? <VolumeOff className='black'/> : <VolumeUp className='black'/>}
-																<span>mute</span>
-															</IconButton>
-															<IconButton onClick={() => onPrivMessageClick(nick) } >
-																<Mail className='black'/>
-																<span>private msg</span>
-															</IconButton>
-															<IconButton onClick={ () => onUnBlockClick(nick) } >
-																<PanTool className={'black'}/>
-																<PanTool className={'gray'}/>
-																<span>block</span>
-															</IconButton>
-													{isOper && (user.nickname !== nick) &&
-														String(members[nick as any].modes).search('o') === -1 ?
-														<>
-															<IconButton onClick={() => onKickClick(nick)} >
-																<Block className='black'/>
-																<span>kick</span>
-															</IconButton>
-															<IconButton onClick={() => onBanClick(nick)}>
-																<HighlightOff className='black'/>
-																<HighlightOff className='gray'/>
-																<span>ban</span>
-															</IconButton>
-															<IconButton onClick={() => onMakeOperClick(nick)}>
-																<DeveloperMode className={isOper && String(members[nick as any].modes).search('o') === -1 ?
-																"black" : "gray" }/>
-																<span>oper</span>
-															</IconButton><IconButton >
-																<AdminPanelSettings className='black'/>
-																<span>admin</span>
-															</IconButton>
-																</> : <></>
-															} 
-															<IconButton onClick={handleAClose}>
-																<Clear className='black'/>
-																<span>close</span>
-															</IconButton>
-														</MenuItem>
-													</Menu>
-													: <></>}
-{/*// -------------- End Avatar / Menu -------------- */}					
-						</div>))}
-					</AvatarGroup> }
 			<div>
 					<Box className='black' id="chatTitle">
 						<IconButton style={{ paddingRight: -1 }} onClick={onReturnClick}>
@@ -502,10 +419,15 @@ const ChatRoom = (props: any) => {
 							<MenuItem onClick={onReturnClick} title="Leave Room">
 								<ExitToApp className='black' />
 							</MenuItem>
+							<MenuItem onClick={handleClose}>
+								<Clear className='black'/>
+								<span>close</span>
+							</MenuItem>
 						</Menu>
 					</Box>
 					<Divider />
 					<Grid container spacing={3}>
+						<Grid sx={{display: 'flex',	flexGrow: '1'}}></Grid>
 						<Grid
 							item
 							id="chat-window"
@@ -529,15 +451,78 @@ const ChatRoom = (props: any) => {
 								// !isMuted && !isBlocked ? <></> :
 									<div className="msgRowL">
 {/*// -------------- Avatar Badge -------------- */}
-										<AvatarBadge
-											nickname={msg.author.nickname}
-											online={true}
-											// playing={}
-											admin={false}
-											oper={true} 
-											avatar={msg.author.avatar}
-											look={true}/>
-										<div>
+										<Button
+											aria-controls="basic-menu"
+											aria-haspopup="true"
+											aria-expanded={Boolean(anchorAvatar)}
+											onClick={handleAClick}>
+											<AvatarBadge
+												nickname={msg.author.nickname}
+												online={true}/* catch isOnline*/
+												// playing={}/* catch isPlaying*/
+												admin={false}/* catch isAdmin*/
+												oper={true}/* catch isOper*/
+												avatar={msg.author.avatar}
+												look={true}/>
+										</Button>
+										{user.nickname !== msg.author.nickname
+										?	<Menu
+												anchorEl={anchorAvatar}
+												open={Boolean(anchorAvatar)}
+												onClose={handleAClose}
+												className='black column-barre' >
+												<MenuItem
+													aria-label="back" 
+													className='column-barre'>{/* catch usrProfil (profil/nickname)*/}
+													<IconButton >
+													<PersonAdd className='black'/>
+													<span>add friend</span>
+												</IconButton>
+												<IconButton
+													onClick={isMuted 
+													? () => onMuteUserClick(msg.author.nickname)
+													: () => onUnMuteUserClick(msg.author.nickname)}>{/* catch makeUsrMute / makeUsrUnMute*/}
+													{isMuted ? <VolumeOff className='black'/> : <VolumeUp className='black'/>}{/* catch isMute*/}
+													<span>mute</span>
+												</IconButton>
+												<IconButton
+													onClick={() => onPrivMessageClick(msg.author.nickname) } >{/* catch makePrivateMsg*/}
+													<Mail className='black'/>
+													<span>private msg</span>
+												</IconButton>
+												<IconButton
+													onClick={ () => onUnBlockClick(msg.author.nickname) } >{/* catch makeBlock / makeUnBlock*/}
+													<PanTool className={'black'}/>{/* catch isBlock*/}
+													<span>block</span>
+												</IconButton>
+												{/* catch isAdmin or isOper*/}
+												{isOper ?
+												<>
+													<IconButton
+														onClick={() => onKickClick(msg.author.nickname)} >{/* catch makekick*/}
+														<Block className='black'/>
+														<span>kick</span>
+													</IconButton>
+													<IconButton
+														onClick={() => onBanClick(msg.author.nickname)}>{/* catch makeBan / makeUnBan*/}
+														<HighlightOff className='black'/>{/* catch isBan*/}
+														<span>ban</span>
+													</IconButton>
+													<IconButton
+														onClick={() => onMakeOperClick(msg.author.nickname)}>{/* catch makeAdmin*/}
+														<DeveloperMode className="black"/>{/* catch isAdmin os isOper*/}
+														<span>admin</span>
+													</IconButton>
+														</> : <></> } 
+													<IconButton
+														onClick={handleAClose}>
+														<Clear className='black'/>
+														<span>close</span>
+													</IconButton>
+												</MenuItem>
+											</Menu>
+											: <></>}
+														<div>
 											<div className="msgLeft msgBubble">
 												<p className="msgText">{msg.data}</p>
 												<div className="msgTime">{timeFromNow(msg.timestamp)}</div>
@@ -568,8 +553,9 @@ const ChatRoom = (props: any) => {
 							</FormControl>
 						</Grid>
 
+						</Grid>
+						<Grid sx={{display: 'flex',	flexGrow: '1'}}></Grid>
 					</Grid>
-				</Grid>
 		</div>
 	</div> );
 };

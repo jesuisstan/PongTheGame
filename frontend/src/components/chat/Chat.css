@@ -1,5 +1,6 @@
 #basicCard {
 	width: 100vw;
+	min-height: 650px;
 	height: 100vh;
 	padding-top: 44px;
 	max-height: calc(100vh - 56px);
@@ -12,8 +13,10 @@
 	width: 30vw;
 	min-width: 175px;
 	max-width: 250px;
-	background-color: rgba(0, 0, 0, 0.80);
 	height: calc(100vh - 56px);
+	min-height: 650px;
+
+	background-color: rgba(0, 0, 0, 0.80);
 }
 
 #chatRoom {
@@ -23,18 +26,22 @@
 	min-width: calc(100vw - 190px);
 	max-width: calc(100vw - 250px);
 	height: calc(100vh - 56px) ;
-	max-height: calc(100vh - 56px);
+	min-height: 650px;
 	background-color: rgba(255, 255, 255, 0.8);
+	display: flex;
+	/* align-items: center; */
+	justify-content: center;
+
 }
 
 #chatBox {
-	width: 100%;
-	height: 100%;
-	padding-top: 5px;
+	width: 70vw;
+	height: auto;
+	min-height: 647px;
 	display: flex;
 	flex-direction: column;
 	align-content: center;
-	justify-content: center;
+	justify-content: space-around;
 }
 
 #chatTitle {
@@ -58,8 +65,8 @@
 }
  
 #chat-window {
-	max-height: 85vh;
-	height: 100vh;
+	height: 83vh;
+	min-height: 565px;
 	max-width: 700px;
 	position: relative;
 	margin-top: 35px;
@@ -67,56 +74,56 @@
 	background-color: rgba(163, 143, 164, 0.364);
 	border-radius: 45px;
 	display: flex;
-	justify-content: center;
-	flex-grow: 4;
+	justify-content: flex-end;
+	flex-grow: 3;
 }
- #chat-window-messages {
-	 height: 100%;
-	 overflow-y: overlay;
-	 overflow-wrap: break-word;
- }
+
+#chat-window-messages {
+	height: 100%;
+	overflow-y: overlay;
+	overflow-wrap: break-word;
+}
  
- .chat-room-text {
-	 width: 70vw;
-	 max-width: 1100px;
-	 display: flex;
-	 flex-direction: row;
-	 align-items: center;
-	 justify-content: space-around;
-	 position: absolute;
-	 bottom: 20px;
-	 right: 5vw;
- }
+.chat-room-text {
+	width: 70vw;
+	max-width: 1100px;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-around;
+	position: absolute;
+	bottom: 20px;
+	right: 5vw;
+}
  
 .message-area {
-	 max-width: 1000px;
-	 width: auto;
-	 height: 72vh;
-	 padding: 10px;
-	 justify-content: flex-start;
-	 display: flex;
-	 overflow-y: overlay;
-	 flex-grow: 2;
-	}
+	max-width: 1000px;
+	width: auto;
+	height: 70vh;
+	padding: 10px;
+	justify-content: flex-start;
+	display: flex;
+	overflow-y: overlay;
+	flex-grow: 2;
+}
 
-
- .limitText {
-	 margin-left: -35px;
-	 width: 100%;
-	 max-width: 100px;
-	 overflow: hidden;
-	 text-overflow: ellipsis;
-	 white-space: nowrap;
- }
+.limitText {
+	margin-left: -35px;
+	width: 100%;
+	max-width: 100px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
  
- .limitText:hover {
-	 overflow: visible;
-	 color: rgba(228, 98, 139, 0.91);
-	 background-color: rgba(0, 0, 0, 0.815);
-	 min-width: 101%;
-	 display: inline-flex;
-	 vertical-align: middle;
- }
+.limitText:hover {
+	overflow: visible;
+	color: rgba(228, 98, 139, 0.91);
+	background-color: rgba(0, 0, 0, 0.815);
+	min-width: 101%;
+	display: inline-flex;
+	vertical-align: middle;
+}
 
 .typingButton {
 	width: 80px;
