@@ -1,3 +1,4 @@
+import { Padding } from '@mui/icons-material';
 import * as color from '../UI/colorsPong'
 
 export const modalDialog = {
@@ -39,4 +40,14 @@ export const boxStyle = {
   minWidth: '200px',
   alignItems: 'center',
   justifyContent: 'center'
+};
+
+export const warningBoxStyle = {
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '15px',
+  minWidth: '200px',
+  alignItems: 'center',
+  justifyContent: 'center',
+  paddingTop: "11px"
 };
