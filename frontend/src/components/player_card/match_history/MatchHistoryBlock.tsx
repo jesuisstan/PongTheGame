@@ -8,6 +8,7 @@ import Typography from '@mui/joy/Typography';
 import IconButton from '@mui/material/IconButton';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import * as color from '../../UI/colorsPong';
+import styles from '../styles/PlayerCard.module.css';
 
 const MatchHistoryBlock = ({
   player,
@@ -40,14 +41,7 @@ const MatchHistoryBlock = ({
   }, [socketEvent, player.nickname]);
 
   return (
-    <div
-      style={{
-        minWidth: '210px',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '21px'
-      }}
-    >
+    <div className={styles.historyBlock}>
       <Typography
         textColor={color.PONG_ORANGE}
         level="body3"
