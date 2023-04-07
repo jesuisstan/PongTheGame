@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import { insert_achievement } from './achievement';
+import { insert_AI } from './user';
 
 export const prisma = new PrismaClient();
 
@@ -15,6 +16,7 @@ async function main() {
   if (size == 0) {
     console.log(`Start seeding ...`);
     insert_achievement();
+    insert_AI();
     console.log(`Seeding finished.`);
   } else {
     console.log(`Seed not needed.`);
