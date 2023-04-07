@@ -106,7 +106,6 @@ const ChatRoom = (props: any) => {
    **************************************************************/
   useEffect(() => {
     // Activate listeners and subscribe to events as the component is mounted
-    // socket.on('connect', () => console.log('connected to websocket!'))
     socket.on('typingMessage', (
         roomName: string, nick: string, isTyping: boolean) => {
       roomName === user.joinedChatRoom && isTyping ?
@@ -150,7 +149,6 @@ const ChatRoom = (props: any) => {
     socket.on('muteUser', (roomName: string, target: number) => {
       if (roomName === user.joinedChatRoom)
         console.log(target + ' has been muted!')
-      if (target === user.id) props.cleanRoomLoginData()
     })
     socket.on('unMuteUser', (roomName: string, target: number) => {
       if (roomName === user.joinedChatRoom)
@@ -160,34 +158,43 @@ const ChatRoom = (props: any) => {
     // Clean listeners to unsubscribe all callbacks for these events
     // before the component is unmounted
     return () => {
-    //   socket.off('connect')
-      socket.off('createMessage')
-      socket.off('typingMessage')
-      socket.off('makeOper')
-      socket.off('joinRoom')
-      socket.off('quitRoom')
-      socket.off('kickUser')
-      socket.off('banUser')
-      socket.off('unBanUser')
+		socket.off('createMessage')
+		socket.off('typingMessage')
+		socket.off('changePassword')
+		socket.off('makeOper')
+		socket.off('joinRoom')
+		socket.off('quitRoom')
+		socket.off('kickUser')
+		socket.off('banUser')
+		socket.off('unBanUser')
+		socket.off('MuteUser')
+		socket.off('unMuteUser')
     }
   }, [])
 
-  const apiIsMuted = (userId: number) => {
-	return new Promise((resolve, reject) => {
-		socket.emit('isUserMuted',
-		{ roomName: user.joinedChatRoom, userId: userId },
-		(res: boolean) => { resolve(res); })
-	})
-}
+
+	/*************************************************************
+	* Mode getters
+	**************************************************************/
+
+	const isMuted = (userId: number) => {
+		for (let i=0; i < members.length; ++i)
+			if (members[i].memberId === userId && members[i].modes.indexOf('m') !== -1)
+				return true;
+		return false;
+	}
+
+	const isBanned = async(user: any) => {
+		await socket.emit('isUserBanned', { roomName: user.joinedChatRoom, userId: user.id },
+		(response: boolean) => {
+			return response
+		})
+	}
 
 
-
-const isMuted = async(userId: number) => {
-	const ismuted = await apiIsMuted(userId)
-console.log("isittttttt: "+ ismuted)
-return ismuted
-
-}
+  	/*************************************************************
+	* Events
+	**************************************************************/
 
   // Emit that user is typing, or not typing after timeout
   let timeout;
@@ -293,14 +300,7 @@ return ismuted
     })  
   }
 
-  const isUserBanned = async(userId: number) => {
-    await socket.emit('isUserBanned', {
-      roomName: user.joinedChatRoom,
-      userId: userId
-    }, (response: boolean) => {
-      return response
-    })
-  }
+
   // When clicking on the 'kick' button to kick a user
   const onKickClick = async(target: number) => {
     await socket.emit('kickUser', {
@@ -392,14 +392,6 @@ return ismuted
 		return false;
 	}}
 
-	const [isUserBan, setIsUserBan] = useState<boolean>(false);
-	
-	const isBan = async(user: any) => {
-		await socket.emit('isUserBanned', { roomName: user.joinedChatRoom, userId: user.id },
-		(response: boolean) => {
-			setIsUserBan(response)
-		})
-	}
 	
 	/*************************************************************
 	 * Render HTML response

@@ -196,7 +196,7 @@ export class ChatService {
     if (room) {
       // Look for oper mode ('o') in user's mode
       // Add 'o' mode if not already there
-      var modes = "";
+      var modes = '';
       for (var i=0; i < room.members.length; ++i)
         if (room.members[i].memberId === userId) {
           modes = room.members[i].modes;
@@ -317,20 +317,19 @@ export class ChatService {
         }
       // Save the new modes
       await this.updateUserModes(roomName, userId, modes);
-    }
-    else throw new WsException({ msg: 'muteUser: unknown room name!' });
+    } else throw new WsException({ msg: 'muteUser: unknown room name!' });
   }
 
   async unMuteUser(roomName: string, userId: number) {
     const room = await this.getChatRoomByName(roomName);
     if (room) {
       // Get user's modes and remove 'm' mode if found
-      var modes = "";
+      var modes = '';
       for (var i=0; i < room.members.length; ++i)
         if (room.members[i].memberId === userId) {
           modes = room.members[i].modes;
           if (modes.search('m') !== -1)
-            modes.replace(/m/g, '');
+            modes = modes.replace(/m/g, '');
         }
       // Save the new modes
       await this.updateUserModes(roomName, userId, modes);
