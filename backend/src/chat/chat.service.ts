@@ -150,20 +150,20 @@ export class ChatService {
     const room = await this.getChatRoomByName(roomName);
     if (room) {
       // If a new password was given
-      const oldModes = String(await this.prisma.chatRoom.findUnique({
+      const oldModes = await this.prisma.chatRoom.findUnique({
         where: { name: roomName },
         select: { modes: true }
-      }));
-
-      if (newPassword) {
+      })
+      if (oldModes) {
+      if (newPassword && newPassword !== '') {
         // If the room wasn't in 'password protected' mode,
         // it gets it
         newPassword = await this.generateHash(newPassword);
-        if (oldModes.search('p') === -1)  {
+        if (oldModes.modes.search('p') === -1)  {
           await this.prisma.chatRoom.update({
             where: { name: roomName },
             data: {
-              modes: oldModes + 'p',
+              modes: oldModes.modes + 'p',
               password: newPassword
             }
           })
@@ -174,14 +174,14 @@ export class ChatService {
           where: { name: roomName },
           data: { password: '' }
         }) // and we remove the 'password protected' mode
-        if (oldModes.search('p') !== -1) {
-          var modes = oldModes.replace(/p/g, '');
+        if (oldModes.modes.search('p') !== -1) {
+          var modes = oldModes.modes.replace(/p/g, '');
           await this.prisma.chatRoom.update({
             where: { name: roomName },
             data: { modes: modes }
           })
         }
-      }
+      }}
     } else throw new WsException({ msg: 'changePassword: unknown room name!' });
   }
 

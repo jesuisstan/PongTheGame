@@ -158,11 +158,11 @@ export class ChatGateway {
     @MessageBody('newPassword') newPassword: string,
   ) {
     // First, check the current password
-    if (newPassword &&
+    if (newPassword && newPassword !== '' &&
       await this.checkPassword(roomName, currentPassword) === false)
       throw new WsException({ msg: 'changePassword: wrong password!' });
     await this.chatService.changePassword(roomName, newPassword);
-    const isDeleted = newPassword ? false : true;
+    const isDeleted = newPassword && newPassword !== '' ? false : true;
     this.server.emit('changePassword', roomName, isDeleted);
   }
 
