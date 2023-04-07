@@ -211,24 +211,14 @@ export class ChatService {
     const room = await this.getChatRoomByName(roomName);
     if (room) {
       if (userId) {
-        // Check if user isn't already banned
-        var res = await this.prisma.chatRoom.findUnique({
-          where: { name: roomName },
-          select: {
-            bannedUsers: {
-              where: { id: userId },
-              select: { id: true } // Return only the user id if it exists
-            }
-          }
-        });
         // user.id is loaded inside bannedUsers
         // If not already banned, push the new user into it
-        if (res?.bannedUsers) { 
+        if (await this.isUserBanned(roomName, userId) === false) {
           await this.prisma.chatRoom.update({
             where: { name: roomName },
             data: { bannedUsers: { connect: { id: userId } }}
           })
-        }
+        } else throw new WsException({ msg: 'unBanUser: user is already banned!' })
       }
     }
     else throw new WsException({ msg: 'banUser: unknown room name!' });
@@ -238,32 +228,23 @@ export class ChatService {
     const room = await this.getChatRoomByName(roomName);
     if (room) {
       if (userId) {
-        // Check if user is banned
-        const bannedUser = await this.prisma.chatRoom.findUnique({
-          where: { name: roomName },
-          select: {
-            bannedUsers: { where: { id: userId } }
-          }
-        });
-        // If banned, delete the user from the list
-        this.prisma.chatRoom.update({
-          where: { name: roomName },
-          data: { bannedUsers: { disconnect: { id: userId } }}
-        })
+        if (await this.isUserBanned(roomName, userId) === true) {
+          // If banned, delete the user from the list
+          await this.prisma.chatRoom.update({
+            where: { name: roomName },
+            data: { bannedUsers: { disconnect: { id: userId } }}
+          })
+        } else throw new WsException({ msg: 'unBanUser: user is not banned!' })
       }
-    } else throw new WsException({ msg: 'banUser: unknown room name!' });
+    } else throw new WsException({ msg: 'unBanUser: unknown room name!' });
   }
 
   async isUserBanned(roomName: string, userId: number) {
     const room = await this.getChatRoomByName(roomName);
     if (room) {
-      const res = await this.prisma.chatRoom.findUnique({
-        where: { name: roomName },
-        select: {
-          bannedUsers: { where: { id: userId } },
-        }
-      });
-      if (res?.bannedUsers[0]) return true;
+      for (let i=0; i < room.bannedUsers.length; ++i)
+        if (room.bannedUsers[i].id === userId)
+          return true;
       return false;
     }
     else throw new WsException({ msg: 'isUserBanned: unknown room name!' });
