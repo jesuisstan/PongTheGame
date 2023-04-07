@@ -103,6 +103,8 @@ const ChatRoom = (props: any) => {
 			self ? setIsUserOper(response) : setIsOper(response)
 		}
 	)}
+	checkIfOper(user.id, true)
+
 
   /*************************************************************
    * Event listeners
@@ -188,8 +190,12 @@ const ChatRoom = (props: any) => {
 	}
 	
 	const checkIfBanned = async(userId: number) => {
+		// get all banned users and loop
+
+		
 		await socket.emit('isUserBanned', { roomName: user.joinedChatRoom, userId: userId },
 		(response: boolean) => { setIsBanned(response); })
+		return isBanned;
 	}
 
 	const isUserBlocked = (userId: number) => {
@@ -396,9 +402,6 @@ const ChatRoom = (props: any) => {
 
 	const handleAClick = (event: any, userId: number) => {
 		setAnchorAvatar(event.currentTarget);
-		checkIfBanned(userId);
-		checkIfOper(userId, false);
-
 	};
 
 	const handleAClose = () => {
@@ -522,7 +525,7 @@ const ChatRoom = (props: any) => {
 													<span>block</span>
 												</IconButton>
 	
-												{isOper ?
+												{isUserOper ?
 												<>
 													<IconButton
 														onClick={() => onKickClick(msg.author.id)} >
@@ -530,7 +533,7 @@ const ChatRoom = (props: any) => {
 														<span>kick</span>
 													</IconButton>
 													<IconButton
-														onClick={isBanned ?
+														onClick={checkIfBanned(msg.author.id) ?
 															() => onUnBanClick(msg.author.id)
 															: () => onBanClick(msg.author.id)}>
 														<HighlightOff className='black'/>
