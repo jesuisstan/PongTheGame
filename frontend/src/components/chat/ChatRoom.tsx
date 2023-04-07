@@ -253,6 +253,11 @@ const ChatRoom = (props: any) => {
       if (user.blockedUsers[i] === target)
       {
         user.blockedUsers.splice(i, 1)
+		user.blockedUsers.push(target)
+		socket.emit('saveBlockedUserToDB', {
+			user: user,
+			blockedUsers: user.blockedUsers
+		})
         break;
       }
   }
@@ -274,8 +279,6 @@ const ChatRoom = (props: any) => {
       target: target
     })  
   }
-  onUnBanClick(2)
-
 
   const isUserBanned = (userId: number) => {
     socket.emit('isUserBanned', {
@@ -378,8 +381,8 @@ const ChatRoom = (props: any) => {
 
 	const isUserBlocked = (usr: any) => {
 		for (const blockedUser in user.blockedUsers) {
-				if (user.blockedUsers[user.id])
-						return true;
+			if (user.blockedUsers[user.id])
+				return true;
 		return false;
 	}}
 

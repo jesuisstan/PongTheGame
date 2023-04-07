@@ -207,6 +207,49 @@ export class ChatService {
     else throw new WsException({ msg: 'makeOper: unknown room name!' });
   }
 
+  // async blockUser(roomName: string, userId: number) {
+  //   const room = await this.getChatRoomByName(roomName);
+  //   if (room) {
+  //     if (userId) {
+  //       // user.id is loaded inside bannedUsers
+  //       // If not already banned, push the new user into it
+  //       if (await this.isUserBlocked(roomName, userId) === false) {
+  //         await this.prisma.chatRoom.update({
+  //           where: { name: roomName },
+  //           data: { bannedUsers: { connect: { id: userId } }}
+  //         })
+  //       } else throw new WsException({ msg: 'unBanUser: user is already banned!' })
+  //     }
+  //   }
+  //   else throw new WsException({ msg: 'banUser: unknown room name!' });
+  // }
+
+  // async unblockUser(roomName: string, userId: number) {
+  //   const room = await this.getChatRoomByName(roomName);
+  //   if (room) {
+  //     if (userId) {
+  //       if (await this.isUserBlocked(roomName, userId) === true) {
+  //         // If banned, delete the user from the list
+  //         await this.prisma.chatRoom.update({
+  //           where: { name: roomName },
+  //           data: { bannedUsers: { disconnect: { id: userId } }}
+  //         })
+  //       } else throw new WsException({ msg: 'unBanUser: user is not banned!' })
+  //     }
+  //   } else throw new WsException({ msg: 'unBanUser: unknown room name!' });
+  // // }
+
+  // async isUserBlocked(user: User, userId: number) {
+  //   const room = await this.getChatRoomByName(roomName);
+  //   if (room) {
+  //     for (let i=0; i < room.bannedUsers.length; ++i)
+  //       if (room.bannedUsers[i].id === userId)
+  //         return true;
+  //     return false;
+  //   }
+  //   else throw new WsException({ msg: 'isUserBlocked: unknown room name!' });
+  // }
+
   async banUser(roomName: string, userId: number) {
     const room = await this.getChatRoomByName(roomName);
     if (room) {
