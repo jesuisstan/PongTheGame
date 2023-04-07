@@ -1,5 +1,4 @@
 import ButtonPong from '../../UI/ButtonPong';
-import Divider from '@mui/material/Divider';
 import { useContext } from 'react';
 import { UserContext } from '../../../contexts/UserContext';
 import { useNavigate } from 'react-router-dom';
@@ -10,17 +9,10 @@ import Avatar from '@mui/material/Avatar';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 import SmartToyIcon from '@mui/icons-material/SmartToy';
+import DeviderPong from '../../UI/DeviderPong';
 import * as color from '../../UI/colorsPong';
 import * as MUI from '../../UI/MUIstyles';
 import styles from './Lobby.module.css';
-
-const VerticalDevider = (
-  <Divider
-    orientation="vertical"
-    flexItem
-    sx={{ backgroundColor: 'rgba(245, 245, 245, 0.3)' }}
-  />
-);
 
 const Lobby = ({
   joinQueue,
@@ -37,7 +29,7 @@ const Lobby = ({
       <div className={styles.header}>
         <h5>Pong The Game Lobby</h5>
       </div>
-      <div className={styles.playerCard}>
+      <div className={styles.lobbyCard}>
         <Box sx={MUI.boxStyle}>
           <Typography
             textColor={color.PONG_ORANGE}
@@ -64,7 +56,7 @@ const Lobby = ({
           </div>
         </Box>
 
-        {VerticalDevider}
+        <DeviderPong />
 
         <Box sx={MUI.boxStyle}>
           <Typography
@@ -94,7 +86,8 @@ const Lobby = ({
           </div>
         </Box>
 
-        {VerticalDevider}
+        <DeviderPong />
+
         <Box sx={MUI.boxStyle}>
           <Typography
             textColor={color.PONG_ORANGE}
@@ -116,7 +109,8 @@ const Lobby = ({
           <LobbySearchBar />
         </Box>
 
-        {VerticalDevider}
+        <DeviderPong />
+
         <Box sx={MUI.boxStyle}>
           <Typography
             textColor={color.PONG_ORANGE}

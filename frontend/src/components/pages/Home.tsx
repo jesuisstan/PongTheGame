@@ -3,9 +3,8 @@ import { useContext } from 'react';
 import { UserContext } from '../../contexts/UserContext';
 import ButtonPong from '../UI/ButtonPong';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import * as color from '../UI/colorsPong';
-import styles from './Pages.module.css';
-import '../../App.css'
+import styles from './styles/Home.module.css';
+import '../../App.css';
 
 const Home = () => {
   const navigate = useNavigate();
@@ -13,35 +12,10 @@ const Home = () => {
 
   return (
     <div className={styles.basicHome}>
-      <div
-        style={{
-          fontSize: '60px',
-          color: color.PONG_PINK,
-          paddingLeft: '280px',
-          marginTop: '60px'
-        }}
-      >
-        <div
-          style={{
-            borderRadius: '4px',
-            textAlign: 'left'
-          }}
-        >
-          W E L C O M E
-          <div
-            style={{
-              fontSize: '50px',
-              color: color.PONG_PINK
-            }}
-          >
-            to Pong The Game
-          </div>
-        </div>
-        <div
-          style={{
-            textAlign: 'left'
-          }}
-        >
+      <div className={styles.welcome}>
+        <div style={{ letterSpacing: '0.25em' }}>WELCOME</div>
+        <div style={{ fontSize: '50px' }}>to Pong The Game</div>
+        <div>
           <ButtonPong
             text={user.provider ? 'Continue' : 'Start'}
             onClick={() => navigate('/login')}
@@ -50,25 +24,9 @@ const Home = () => {
           />
         </div>
       </div>
-      <div
-        style={{
-          fontSize: '40px',
-          color: color.PONG_ORANGE,
-          paddingLeft: '70px',
-          marginTop: '342px',
-          textAlign: 'left'
-        }}
-      >
-        W H Y ?
-        <div
-          style={{
-            fontSize: '30px',
-            color: color.PONG_ORANGE,
-            borderRadius: '4px'
-          }}
-        >
-          to play Ping-Pong with others
-        </div>
+      <div className={styles.why}>
+        <div style={{ letterSpacing: '0.25em' }}>WHY?</div>
+        <div style={{ fontSize: '30px' }}>to play Ping-Pong with others</div>
       </div>
     </div>
   );

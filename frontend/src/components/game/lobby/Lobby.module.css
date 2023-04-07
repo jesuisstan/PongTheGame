@@ -1,7 +1,7 @@
 .basicCard {
   width: 100%;
   height: 100%;
-  max-width: 1042px;
+  max-width: 2042px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -15,7 +15,7 @@
   margin-right: auto;
 }
 
-.playerCard {
+.lobbyCard {
   align-self: center;
   display: flex;
   flex-direction: row;
@@ -31,64 +31,15 @@
   margin-right: auto;
 }
 
-.basicInfoBlock {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 21px;
-  min-width: 210px;
-}
-
-.achieveBlock {
-  min-width: 210px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 21px;
-}
-
-.friendsBlock {
-  min-width: 210px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 21px;
-}
-
-.friendLine {
-  display: flex;
-  flex-direction: row;
-  gap: 21px;
-}
-
-.searchForm {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  padding-bottom: 10px;
-  padding-top: 10px;
-}
-
-.searchForm {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  padding-bottom: 10px;
-  padding-top: 10px;
-}
-
-@media (width <= 700px) {
-  .playerCard {
+@media (width <= 900px) {
+  .lobbyCard {
     line-height: 1.4;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    margin-bottom: 42px;
   }
-  .MuiDivider-root {
-    orientation: horizontal;
+  .header {
+    margin-top: 63px;
   }
-
 }
