@@ -195,6 +195,7 @@ const Chat = () => {
 		else return true;
 		return false;
 	}
+	// console.log(chatRooms);
 	
 	const cleanRoomLoginData = () => {
 		user.joinedChatRoom = '';
@@ -232,7 +233,6 @@ const Chat = () => {
 									(room: ChatRoomType, index) => (
 									// Check if this isn't a private conversation of other users
 									isAuthorizedPrivRoom(room.modes, room.users) &&
-									<>
 									<ListItem key={index} disablePadding>
 										<ListItemIcon sx={{ color: 'white' }}>
 											{
@@ -323,7 +323,6 @@ const Chat = () => {
 											</ListItemIcon>
 										</ListItemButton>
 									</ListItem>
-									</>
 								))}
 							</List>
 						</Box>
