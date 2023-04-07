@@ -39,13 +39,17 @@ const ChatRoom = (props: any) => {
 	const [typingDisplay, setTypingDisplay] = useState<string>('')
 	// Message input field value
 	const [messageText, setMessageText] = useState<string>('')
-	// Checks if the user is oper(=admin) in the chat room
+	// Checks if a target user is oper(=admin) in the chat room
 	const [isOper, setIsOper] = useState<boolean>(false)
+	// Checks if the user is oper(=admin) in the chat room
+	const [isUserOper, setIsUserOper] = useState<boolean>(false)
 	// Array including all members
 	const [members, setMembers] = useState<MemberType[]>([])
 	// Modify password
 	const [oldPassword, setOldPassword] = useState<string>('');
 	const [newPassword, setNewPassword] = useState<string>('');
+	// Checks if the target user is banned from the room
+	const [isBanned, setIsBanned] = useState<Boolean>(false)
 
 
   const findAllMembers = async() => {
@@ -91,15 +95,14 @@ const ChatRoom = (props: any) => {
     })}
 	findAllMessages();
 
-	const isUserOper = async() => {
+	// If self=true, we check if the user is oper, not a target
+	const checkIfOper = async(userId: number, self: boolean) => {
 		await socket.emit('isUserOper',
-		{ roomName: user.joinedChatRoom, userId: user.id },
+		{ roomName: user.joinedChatRoom, userId: userId },
 		(response: boolean) => {
-			setIsOper(response)
+			self ? setIsUserOper(response) : setIsOper(response)
 		}
 	)}
-	isUserOper();
-
 
   /*************************************************************
    * Event listeners
@@ -174,7 +177,7 @@ const ChatRoom = (props: any) => {
 
 
 	/*************************************************************
-	* Mode getters
+	* Status getters
 	**************************************************************/
 
 	const isMuted = (userId: number) => {
@@ -183,13 +186,18 @@ const ChatRoom = (props: any) => {
 				return true;
 		return false;
 	}
-
-	const isBanned = async(user: any) => {
-		await socket.emit('isUserBanned', { roomName: user.joinedChatRoom, userId: user.id },
-		(response: boolean) => {
-			return response
-		})
+	
+	const checkIfBanned = async(userId: number) => {
+		await socket.emit('isUserBanned', { roomName: user.joinedChatRoom, userId: userId },
+		(response: boolean) => { setIsBanned(response); })
 	}
+
+	const isUserBlocked = (userId: number) => {
+		for (const blockedUser in user.blockedUsers) {
+			if (user.blockedUsers[userId])
+				return true;
+		return false;
+	}}
 
 
   	/*************************************************************
@@ -319,6 +327,15 @@ const ChatRoom = (props: any) => {
     })  
   }
 
+  // When clicking on the 'oper' button to make a user oper
+  const onUnMakeOperClick = (target: number) => {
+    socket.emit('unMakeOper', {
+      roomName: user.joinedChatRoom,
+      userId: user.id,
+      target: target
+    })  
+  }
+
   // When clicking on the 'mute' button to mute a user
   const onMuteUserClick = (target: number) => {
     socket.emit('muteUser', {
@@ -377,20 +394,17 @@ const ChatRoom = (props: any) => {
 		});
 	};
 
-	const handleAClick = (event: any) => {
+	const handleAClick = (event: any, userId: number) => {
 		setAnchorAvatar(event.currentTarget);
+		checkIfBanned(userId);
+		checkIfOper(userId, false);
+
 	};
 
 	const handleAClose = () => {
 		setAnchorAvatar(null);
 	};
 
-	const isUserBlocked = (usr: any) => {
-		for (const blockedUser in user.blockedUsers) {
-			if (user.blockedUsers[user.id])
-				return true;
-		return false;
-	}}
 
 	
 	/*************************************************************
@@ -467,13 +481,13 @@ const ChatRoom = (props: any) => {
 											aria-controls="basic-menu"
 											aria-haspopup="true"
 											aria-expanded={Boolean(anchorAvatar)}
-											onClick={handleAClick}>
+											onClick={e => handleAClick(e, msg.author.id)}>
 											<AvatarBadge
 												nickname={msg.author.nickname}
 												online={true}/* catch isOnline*/
 												// playing={}/* catch isPlaying*/
 												admin={false}/* catch isAdmin*/
-												oper={true}/* catch isOper*/
+												oper={isOper}
 												avatar={msg.author.avatar}
 												look={true}/>
 										</Button>
@@ -507,22 +521,26 @@ const ChatRoom = (props: any) => {
 													<PanTool className={'black'}/>{/* catch isBlock*/}
 													<span>block</span>
 												</IconButton>
-												{/* catch isAdmin or isOper*/}
+	
 												{isOper ?
 												<>
 													<IconButton
-														onClick={() => onKickClick(msg.author.id)} >{/* catch makekick*/}
+														onClick={() => onKickClick(msg.author.id)} >
 														<Block className='black'/>
 														<span>kick</span>
 													</IconButton>
 													<IconButton
-														onClick={() => onBanClick(msg.author.id)}>{/* catch makeBan / makeUnBan*/}
-														<HighlightOff className='black'/>{/* catch isBan*/}
+														onClick={isBanned ?
+															() => onUnBanClick(msg.author.id)
+															: () => onBanClick(msg.author.id)}>
+														<HighlightOff className='black'/>
 														<span>ban</span>
 													</IconButton>
 													<IconButton
-														onClick={() => onMakeOperClick(msg.author.id)}>{/* catch makeAdmin*/}
-														<DeveloperMode className="black"/>{/* catch isAdmin os isOper*/}
+														onClick={isUserOper ?
+															() => onUnMakeOperClick(msg.author.id)
+															: () => onMakeOperClick(msg.author.id)}>
+														<DeveloperMode className="black"/>
 														<span>admin</span>
 													</IconButton>
 														</> : <></> } 
