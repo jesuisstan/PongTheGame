@@ -140,13 +140,6 @@
 
 /* --------------- Modal part --------------- */
 
-.modal-style {
-	max-width: 500;
-  border: 0px solid #000;
-  background-color: #f5f5f5ee;
-  border-radius: 4px;
-}
-
 .modal-title {
 	margin: 0;
 	line-height: 1.42857143;

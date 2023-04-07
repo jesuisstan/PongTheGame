@@ -22,6 +22,7 @@ import { ChatRoomType } from "../../types/chat";
 import './Chat.css';
 import { ModalClose, ModalDialog } from '@mui/joy';
 import { LoadingButton } from '@mui/lab';
+import * as MUI from '../UI/MUIstyles';
 
 /*************************************************************
  * Chat entrance
@@ -252,7 +253,7 @@ const Chat = () => {
 														onClose={handleClosePass}>
 														<ModalDialog
 															aria-labelledby="basic-modal-dialog-title"
-															className="modal-style">
+															sx={MUI.modalDialog}>
 															<ModalClose onClick={handleClosePass}/>
 															<Typography 
 										            id="basic-modal-dialog-title"
@@ -344,7 +345,7 @@ const Chat = () => {
 								onClose={handleClose}>
 								<ModalDialog
 									aria-labelledby="basic-modal-dialog-title"
-									className="modal-style">
+									sx={MUI.modalDialog}>
 									<ModalClose onClick={handleClose}/>
 									<Typography 
 										id="basic-modal-dialog-title"

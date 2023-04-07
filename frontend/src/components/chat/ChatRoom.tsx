@@ -2,12 +2,12 @@ import { SetStateAction, useContext, useEffect, useState } from 'react';
 import { WebSocketContext, socket } from '../../contexts/WebsocketContext';
 import {
 	Send, Delete, ArrowBackIosNew, Settings,PersonAddAlt, Password,
-	ExitToApp, Mail, Clear, PanTool, PersonAdd, VolumeUp, VolumeOff, Room, Block, HighlightOff, AdminPanelSettings, DeveloperMode
+	ExitToApp, Mail, Clear, PanTool, PersonAdd, VolumeUp, VolumeOff, Room, Block, HighlightOff, AdminPanelSettings, DeveloperMode, PeopleAlt
 	} from '@mui/icons-material';
 import {
 	Box, Button, Divider, FormControl, Grid, IconButton, Stack,
 	Menu, MenuItem,TextField, Typography, CircularProgress,
-	AvatarGroup, FormGroup, FormControlLabel, Switch
+	AvatarGroup, FormGroup, FormControlLabel, Switch, Drawer
 			} from '@mui/material';
 
 // personal components
@@ -18,6 +18,7 @@ import AvatarBadge from './utils/AvatarBadge';
 
 // personal css
 import './Chat.css';
+import MemberList from './utils/MemberList';
 
 /*************************************************************
  * Chat room
@@ -338,6 +339,15 @@ const ChatRoom = (props: any) => {
 
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 	const [anchorAvatar, setAnchorAvatar] = useState<null | HTMLElement>(null);
+	const [openList, setOpenList] = useState(false);
+
+	const handleListClick = () => {
+		setOpenList(!openList);
+	};
+
+	const handleListClose = () => {
+		setOpenList(false);
+	};
 
 	const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
 		setAnchorEl(event.currentTarget);
@@ -394,36 +404,39 @@ const ChatRoom = (props: any) => {
 								aria-label="return"/>
 						</IconButton>        
 						<Typography sx={{ minWidth: 100 }}>Lets chat here ! {user.joinedChatRoom}</Typography>
-						<IconButton
-							title="Room settings"
-							onClick={handleClick}
-							size="small"
-							sx={{ ml: 2 }}
-							aria-controls={Boolean(anchorEl) ? 'basic-menu' : undefined}
-							aria-haspopup="true"
-							aria-expanded={Boolean(anchorEl) ? 'true' : undefined}>
-							<Settings className='black' />
-						</IconButton>
-						<Menu
-							id="basic-menu"
-							anchorEl={anchorEl}
-							open={Boolean(anchorEl)}
-							onClose={handleClose}
-							className='black' >
-							<MenuItem onClick={() => handleChangePwd(false)} title="Change Password">
-								<Password sx={{ color: 'black' }} />
-							</MenuItem>
-							<MenuItem onClick={() => handleChangePwd(true)} title="Delete Password">
-								<Delete sx={{ color: 'black' }} />
-							</MenuItem>
-							<MenuItem onClick={onReturnClick} title="Leave Room">
-								<ExitToApp className='black' />
-							</MenuItem>
-							<MenuItem onClick={handleClose}>
-								<Clear className='black'/>
-								<span>close</span>
-							</MenuItem>
-						</Menu>
+						<div style={{ display: 'flex', flexDirection: 'row'}}>
+							<MemberList members={members}/>
+							<IconButton
+								title="Room settings"
+								onClick={handleClick}
+								size="small"
+								sx={{ ml: 2 }}
+								aria-controls={Boolean(anchorEl) ? 'basic-menu' : undefined}
+								aria-haspopup="true"
+								aria-expanded={Boolean(anchorEl) ? 'true' : undefined}>
+								<Settings className='black' />
+							</IconButton>
+							<Menu
+								id="basic-menu"
+								anchorEl={anchorEl}
+								open={Boolean(anchorEl)}
+								onClose={handleClose}
+								className='black' >
+								<MenuItem onClick={() => handleChangePwd(false)} title="Change Password">
+									<Password sx={{ color: 'black' }} />
+								</MenuItem>
+								<MenuItem onClick={() => handleChangePwd(true)} title="Delete Password">
+									<Delete sx={{ color: 'black' }} />
+								</MenuItem>
+								<MenuItem onClick={onReturnClick} title="Leave Room">
+									<ExitToApp className='black' />
+								</MenuItem>
+								<MenuItem onClick={handleClose}>
+									<Clear className='black'/>
+									<span>close</span>
+								</MenuItem>
+							</Menu>
+						</div>
 					</Box>
 					<Divider />
 					<Grid container spacing={3}>
