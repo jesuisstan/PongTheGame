@@ -172,12 +172,22 @@ const ChatRoom = (props: any) => {
     }
   }, [])
 
-  	const isMuted = (userId: number) => {
-		return socket.emit('isUserMuted',
-			{ roomName: user.joinedChatRoom, userId: userId },
-			(res: boolean) => { return res; }
-		)
-	}
+  const apiIsMuted = (userId: number) => {
+	return new Promise((resolve, reject) => {
+		socket.emit('isUserMuted',
+		{ roomName: user.joinedChatRoom, userId: userId },
+		(res: boolean) => { resolve(res); })
+	})
+}
+
+
+
+const isMuted = async(userId: number) => {
+	const ismuted = await apiIsMuted(userId)
+console.log("isittttttt: "+ ismuted)
+return ismuted
+
+}
 
   // Emit that user is typing, or not typing after timeout
   let timeout;

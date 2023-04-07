@@ -204,7 +204,7 @@ export class ChatService {
             modes += 'o';
         }
       // Save the new modes
-      this.updateUserModes(roomName, userId, modes);
+      await this.updateUserModes(roomName, userId, modes);
     }
     else throw new WsException({ msg: 'makeOper: unknown room name!' });
   }
@@ -316,7 +316,7 @@ export class ChatService {
             modes += 'm';
         }
       // Save the new modes
-      this.updateUserModes(roomName, userId, modes);
+      await this.updateUserModes(roomName, userId, modes);
     }
     else throw new WsException({ msg: 'muteUser: unknown room name!' });
   }
@@ -333,7 +333,7 @@ export class ChatService {
             modes.replace(/m/g, '');
         }
       // Save the new modes
-      this.updateUserModes(roomName, userId, modes);
+      await this.updateUserModes(roomName, userId, modes);
     } else throw new WsException({ msg: 'unMuteUser: unknown room name!' });
   }
 
