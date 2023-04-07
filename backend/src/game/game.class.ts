@@ -106,29 +106,33 @@ export class Game {
         })
       ).id;
     } else {
-      // const tmp_player: (Profile | undefined)[] = [this.player1, this.player2];
-      // if (!tmp_player[0] || !tmp_player[1]) return;
-      // this.id_game = (
-      //   await this.prisma.match.create({
-      //     data: {
-      //       state: 'Started',
-      //       startDate: this.game_start_time.toISOString(),
-      //       endDate: new Date().toISOString(),
-      //       entries: {
-      //         create: [
-      //           {
-      //             userId: tmp_player[0].user.id,
-      //             score: 0,
-      //           },
-      //           {
-      //             userId: AI, // TODO if create that need to insert a default user IA in database
-      //             score: 0,
-      //           },
-      //         ],
-      //       },
-      //     },
-      //   })
-      // ).id;
+      const AI = await this.prisma.user.findUnique({
+        where: {
+          id: 1,
+        },
+      });
+      if (!AI) return;
+      this.id_game = (
+        await this.prisma.match.create({
+          data: {
+            state: 'Started',
+            startDate: this.game_start_time.toISOString(),
+            endDate: new Date().toISOString(),
+            entries: {
+              create: [
+                {
+                  userId: this.player1.user.id,
+                  score: 0,
+                },
+                {
+                  userId: AI.id,
+                  score: 0,
+                },
+              ],
+            },
+          },
+        })
+      ).id;
     }
 
     while (this.start_counter > 0) {
@@ -270,52 +274,57 @@ export class Game {
     reason: string,
   ) {
     timeInSeconds;
-
+    let profile_winner: User | undefined;
+    let profile_loser: User | undefined;
     this._set_players_status('ONLINE');
     const res = this._result_string(winner, loser, reason);
     this.websockets.send(this.player1.socket, 'match_result', res);
-    if (this.type != TypeMode.TRAINING)
+    if (this.type != TypeMode.TRAINING) {
       this.websockets.send(this.player2?.socket, 'match_result', res);
-    const profile_winner: User | undefined = winner.profile?.user;
-    const profile_loser: User | undefined = loser.profile?.user;
+      profile_winner = winner.profile?.user;
+      profile_loser = loser.profile?.user;
+    } else {
+      const AI: User | null = await this.prisma.user.findUnique({
+        where: {
+          nickname: 'AI',
+        },
+      });
+      if (!AI) return;
+      if (winner.profile?.user == undefined) {
+        profile_winner = AI;
+        profile_loser = loser.profile?.user;
+      } else {
+        profile_loser = AI;
+        profile_winner = loser.profile?.user;
+      }
+    }
     if (!profile_winner || !profile_loser) return;
     await this.prisma.match.update({
       where: { id: this.id_game },
       data: {
         state: 'Finished',
         endDate: new Date().toISOString(),
-        entries: {
-          create: [
-            {
-              userId: profile_winner.id,
-              score: loser.score,
-            },
-            {
-              userId: profile_loser.id,
-              score: winner.score,
-            },
-          ],
+      },
+    });
+    if (this.type != TypeMode.TRAINING) {
+      await this.prisma.stats.update({
+        where: {
+          userId: winner.profile?.user.id,
         },
-      },
-    });
-    await this.prisma.stats.update({
-      where: {
-        userId: winner.profile?.user.id,
-      },
-      data: {
-        nb_win: { increment: 1 },
-        nb_game: { increment: 1 },
-      },
-    });
-
-    await this.prisma.stats.update({
-      where: {
-        userId: loser.profile?.user.id,
-      },
-      data: {
-        nb_game: { increment: 1 },
-      },
-    });
+        data: {
+          nb_win: { increment: 1 },
+          nb_game: { increment: 1 },
+        },
+      });
+      await this.prisma.stats.update({
+        where: {
+          userId: loser.profile?.user.id,
+        },
+        data: {
+          nb_game: { increment: 1 },
+        },
+      });
+    }
     await this.achievements.getAchievement(this.player1.user);
     await this.achievements.getAchievement(this.player2?.user);
   }
@@ -345,17 +354,15 @@ export class Game {
     this.people_left.score = this.game_state.gameInfos.winScore;
     leaved.score = 0;
     this.status = Status.ABORTED;
-    if (this.game_start_time) {
-      const now = new Date();
-      const timePlayed = now.getTime() - this.game_start_time.getTime();
-      const timeInSeconds = Math.floor(timePlayed / 1000);
-      this._register_game(
-        otherPlayer,
-        leaved,
-        timeInSeconds,
-        'Player left the game',
-      );
-    }
+    const now = new Date();
+    const timePlayed = now.getTime() - this.game_start_time.getTime();
+    const timeInSeconds = Math.floor(timePlayed / 1000);
+    this._register_game(
+      otherPlayer,
+      leaved,
+      timeInSeconds,
+      'Player left the game',
+    );
     this._set_players_status('ONLINE');
     this.end();
   }
@@ -454,6 +461,7 @@ export class Game {
     paddleHeight: number,
     isPlayer1: boolean,
   ) {
+    let paddleFrontUpCollideZone: any;
     let paddleFrontMiddleCollideZone: any;
     let paddleFrontDownCollideZone: any;
     if (ball.collidable) {
@@ -463,13 +471,13 @@ export class Game {
         width: ballRadius * 2,
         height: ballRadius * 2,
       };
-      const paddleFrontUpCollideZone: any = {
-        x: paddle.x,
-        y: paddle.y,
-        width: 2,
-        height: paddleHeight / 3,
-      };
       if (isPlayer1) {
+        paddleFrontUpCollideZone = {
+          x: paddle.x + Default_params.PADDLE_WIDTH,
+          y: paddle.y,
+          width: 2,
+          height: paddleHeight / 3,
+        };
         paddleFrontMiddleCollideZone = {
           x: paddle.x + Default_params.PADDLE_WIDTH,
           y: paddle.y + paddleHeight / 3,
@@ -483,6 +491,12 @@ export class Game {
           height: paddleHeight / 3,
         };
       } else {
+        paddleFrontUpCollideZone = {
+          x: paddle.x,
+          y: paddle.y,
+          width: 2,
+          height: paddleHeight / 3,
+        };
         paddleFrontMiddleCollideZone = {
           x: paddle.x,
           y: paddle.y + paddleHeight / 3,

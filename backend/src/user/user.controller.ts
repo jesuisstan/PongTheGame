@@ -47,7 +47,7 @@ export class UserController {
   })
   async getUserByNickname(@Param('nickname') nickname: string) {
     const user = await this.users.findUserByNickname(nickname);
-    if (user === null) throw new NotFoundException();
+    if (user === null || user.nickname == 'AI') throw new NotFoundException();
     this.websocket.modifyTheUserSocket(user.id);
     return user;
   }

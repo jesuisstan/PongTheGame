@@ -107,7 +107,6 @@ const InvitationSendModal = ({
   };
 
   socket.on('invitation_accepted', (args) => {
-    console.log('invitation_accepted');
     setButtonText('Accepted');
     setLoading(false);
     setOpen(false);

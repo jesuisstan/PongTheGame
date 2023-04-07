@@ -66,7 +66,7 @@ const App = () => {
     setOpenInvitation(true);
   });
 
-  socket.on('error_token', (args) => {
+  socket.on('error_socket', (args) => {
     alert(args.message); // TODO Check how to do that
     console.log(args);
   });
