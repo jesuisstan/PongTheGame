@@ -337,9 +337,11 @@ const ChatRoom = (props: any) => {
 		}
 	)
 
+
+
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-	const [anchorAvatar, setAnchorAvatar] = useState<null | HTMLElement>(null);
 	const [openList, setOpenList] = useState(false);
+	const [userStatus, setUserStatus] = useState()
 
 	const handleListClick = () => {
 		setOpenList(!openList);
@@ -364,14 +366,6 @@ const ChatRoom = (props: any) => {
 			currentPassword: oldPassword,
 			newPassword: deletePwd ? '' : newPassword,
 		});
-	};
-
-	const handleAClick = (event: any) => {
-		setAnchorAvatar(event.currentTarget);
-	};
-
-	const handleAClose = () => {
-		setAnchorAvatar(null);
 	};
 
 	const isUserBlocked = (usr: any) => {
@@ -464,11 +458,6 @@ const ChatRoom = (props: any) => {
 								// !isMuted && !isBlocked ? <></> :
 									<div className="msgRowL">
 {/*// -------------- Avatar Badge -------------- */}
-										<Button
-											aria-controls="basic-menu"
-											aria-haspopup="true"
-											aria-expanded={Boolean(anchorAvatar)}
-											onClick={handleAClick}>
 											<AvatarBadge
 												nickname={msg.author.nickname}
 												online={true}/* catch isOnline*/
@@ -477,72 +466,14 @@ const ChatRoom = (props: any) => {
 												oper={true}/* catch isOper*/
 												avatar={msg.author.avatar}
 												look={true}/>
-										</Button>
-										{user.nickname !== msg.author.nickname
-										?	<Menu
-												anchorEl={anchorAvatar}
-												open={Boolean(anchorAvatar)}
-												onClose={handleAClose}
-												className='black column-barre' >
-												<MenuItem
-													aria-label="back" 
-													className='column-barre'>{/* catch usrProfil (profil/nickname)*/}
-													<IconButton >
-													<PersonAdd className='black'/>
-													<span>add friend</span>
-												</IconButton>
-												<IconButton
-													onClick={isMuted 
-													? () => onMuteUserClick(msg.author.nickname)
-													: () => onUnMuteUserClick(msg.author.nickname)}>{/* catch makeUsrMute / makeUsrUnMute*/}
-													{isMuted ? <VolumeOff className='black'/> : <VolumeUp className='black'/>}{/* catch isMute*/}
-													<span>mute</span>
-												</IconButton>
-												<IconButton
-													onClick={() => onPrivMessageClick(msg.author.nickname) } >{/* catch makePrivateMsg*/}
-													<Mail className='black'/>
-													<span>private msg</span>
-												</IconButton>
-												<IconButton
-													onClick={ () => onUnBlockClick(msg.author.nickname) } >{/* catch makeBlock / makeUnBlock*/}
-													<PanTool className={'black'}/>{/* catch isBlock*/}
-													<span>block</span>
-												</IconButton>
-												{/* catch isAdmin or isOper*/}
-												{isOper ?
-												<>
-													<IconButton
-														onClick={() => onKickClick(msg.author.nickname)} >{/* catch makekick*/}
-														<Block className='black'/>
-														<span>kick</span>
-													</IconButton>
-													<IconButton
-														onClick={() => onBanClick(msg.author.nickname)}>{/* catch makeBan / makeUnBan*/}
-														<HighlightOff className='black'/>{/* catch isBan*/}
-														<span>ban</span>
-													</IconButton>
-													<IconButton
-														onClick={() => onMakeOperClick(msg.author.nickname)}>{/* catch makeAdmin*/}
-														<DeveloperMode className="black"/>{/* catch isAdmin os isOper*/}
-														<span>admin</span>
-													</IconButton>
-														</> : <></> } 
-													<IconButton
-														onClick={handleAClose}>
-														<Clear className='black'/>
-														<span>close</span>
-													</IconButton>
-												</MenuItem>
-											</Menu>
-											: <></>}
-														<div>
-											<div className="msgLeft msgBubble">
-												<p className="msgText">{msg.data}</p>
-												<div className="msgTime">{timeFromNow(msg.timestamp)}</div>
+											<div>
+												<div className="msgLeft msgBubble">
+													<p className="msgText">{msg.data}</p>
+													<div className="msgTime">{timeFromNow(msg.timestamp)}</div>
+												</div>
 											</div>
-										</div>
-									</div>}
-								</div>
+										</div>}
+									</div>
 								))}	
 							</Stack>
 					}

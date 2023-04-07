@@ -3,6 +3,7 @@ import { MemberType } from "../../../types/chat";
 import { Box, Button, Divider, Drawer, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
 import { PeopleAlt } from '@mui/icons-material';
 import AvatarBadge from './AvatarBadge';
+import UserMenu from './UserMenu';
 
 
 type Anchor = "right";
@@ -30,22 +31,13 @@ const MemberList = ({ members }: { members: MemberType[] }) => {
     <Box
       sx={{ width: 250 }}
       role="presentation"
-      onClick={toggleDrawer(anchor, false)}
+      onClick={toggleDrawer(anchor, true)}
       onKeyDown={toggleDrawer(anchor, false)}
     >
       <List>
         {Object.keys(members).map((id, index) => (
 				<div key={ index } >
-          {/* <Button */}
-					  <AvatarBadge
-					  	nickname={"Nickname"}
-					  	// playing={true} // catch isPlaying
-					  	online={true} // catch isOnline
-					  	admin={true} // catch isAdmin
-					  	oper={true} // catch isOper
-					  	avatar={"Nickname Avatar"} // catch avatar
-					  	look={true}/> Catch Username here
-          {/* </Button> */}
+          <UserMenu member={members[id as any]} />
         </div>
         ))}
       </List>
