@@ -265,7 +265,7 @@ const ChatRoom = (props: any) => {
       target: target
     })
   }
-
+  onBanClick(2)
   // When clicking on the 'unban' button to unban a user
   const onUnBanClick = (target: number) => {
     socket.emit('unBanUser', {

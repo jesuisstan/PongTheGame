@@ -155,7 +155,7 @@ model Member {
   member       User      @relation("ChatRoomMember", fields: [memberId], references: [id])
   isOnline     Boolean
   modes        String
-  ChatRoom     ChatRoom @relation(fields: [chatRoomName], references: [name], onDelete: Cascade, onUpdate: Cascade)
+  ChatRoom     ChatRoom @relation(fields: [chatRoomName], references: [name])
   chatRoomName String
 
   @@id([memberId, chatRoomName])

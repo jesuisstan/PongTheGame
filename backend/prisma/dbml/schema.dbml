@@ -175,4 +175,4 @@ Ref: Message.chatRoomName > ChatRoom.name [delete: Cascade]
 
 Ref: Member.memberId > User.id
 
-Ref: Member.chatRoomName > ChatRoom.name [delete: Cascade]
+Ref: Member.chatRoomName > ChatRoom.name

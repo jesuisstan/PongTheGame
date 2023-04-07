@@ -212,23 +212,23 @@ export class ChatService {
     if (room) {
       if (userId) {
         // Check if user isn't already banned
-        var bannedUser = await this.prisma.chatRoom.findUnique({
+        var res = await this.prisma.chatRoom.findUnique({
           where: { name: roomName },
           select: {
             bannedUsers: {
               where: { id: userId },
-              select: { id: true }
+              select: { id: true } // Return only the user id if it exists
             }
           }
         });
-        if (bannedUser)
+        // user.id is loaded inside bannedUsers
         // If not already banned, push the new user into it
-        // if (!bannedUser) {
-          this.prisma.chatRoom.update({
+        if (res?.bannedUsers) { 
+          await this.prisma.chatRoom.update({
             where: { name: roomName },
             data: { bannedUsers: { connect: { id: userId } }}
           })
-      // }
+        }
       }
     }
     else throw new WsException({ msg: 'banUser: unknown room name!' });
