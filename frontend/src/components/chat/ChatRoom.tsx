@@ -418,16 +418,19 @@ const ChatRoom = (props: any) => {
 								className='black' >
 								<MenuItem onClick={() => handleChangePwd(false)} title="Change Password">
 									<Password sx={{ color: 'black' }} />
+									<span> Change pwd</span>
 								</MenuItem>
 								<MenuItem onClick={() => handleChangePwd(true)} title="Delete Password">
 									<Delete sx={{ color: 'black' }} />
+									<span> Delete pwd</span>
 								</MenuItem>
 								<MenuItem onClick={onReturnClick} title="Leave Room">
 									<ExitToApp className='black' />
+									<span> Leave room</span>
 								</MenuItem>
 								<MenuItem onClick={handleClose}>
 									<Clear className='black'/>
-									<span>close</span>
+									<span>Close</span>
 								</MenuItem>
 							</Menu>
 						</div>

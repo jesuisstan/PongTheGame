@@ -15,7 +15,6 @@
 	max-width: 250px;
 	height: calc(100vh - 56px);
 	min-height: 650px;
-
 	background-color: rgba(0, 0, 0, 0.80);
 }
 
@@ -32,6 +31,13 @@
 	/* align-items: center; */
 	justify-content: center;
 
+}
+
+.column {
+	display: flex;
+	flex-direction: column;
+	align-self: center;
+	justify-content: flex-end;
 }
 
 #chatBox {

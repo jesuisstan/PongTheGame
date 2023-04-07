@@ -22,7 +22,7 @@ const UserMenu = (member: any) => {
 				aria-controls="basic-menu"
 				aria-haspopup="true"
 				aria-expanded={Boolean(anchorAvatar)}
-				onClick={/*user.avatar !== String(members[id as any])
+				onClick={/*user.avatar !== String(members[id as any]) // catch isNotUserActive
 				?*/ handleAClick 
 				/* : () => {} */ }>
 			  <AvatarBadge
@@ -32,51 +32,50 @@ const UserMenu = (member: any) => {
 				  admin={true} // catch isAdmin
 				  oper={true} // catch isOper
 				  avatar={"Nickname Avatar"} // catch avatar
-				  look={true}/>	Catch Nickname here
+				  look={true}/><span style={{ color: 'black' }}>Catch Nickname here</span>
 			</Button>
       <Menu
 				anchorEl={anchorAvatar}
 				open={Boolean(anchorAvatar)}
 				onClose={handleAClose}
-				className='black column-barre' >
-				<MenuItem aria-label="back" className='column-barre'>
-					<IconButton onClick={handleAClick}>{/* catch profil */}
+				className='black' >
+				<MenuItem aria-label="user-menu" className='column'>
+					<IconButton size="small" sx={{ml:2}} onClick={handleAClick}>{/* catch profil */}
 						<PersonAdd className='black'/>
-						<span>add friend</span>
+						<span>Add friend</span>
 					</IconButton>
-					<IconButton onClick={handleAClick}>{/* catch makeMute / makeUnMute */}
+					<IconButton size="small" sx={{ml:2}} onClick={handleAClick}>{/* catch makeMute / makeUnMute */}
 						{/* catch isMuted ? <VolumeOff className='black'/> :*/ <VolumeUp className='black'/>}
-						<span>mute</span>
+						<span>Mute</span>
 					</IconButton>
-					<IconButton onClick={handleAClick}>{/* catch sendPrivateMsg */}
+					<IconButton size="small" sx={{ml:2}} onClick={handleAClick}>{/* catch sendPrivateMsg */}
 						<Mail className='black'/>
-						<span>private msg</span>
+						<span>Private msg</span>
 					</IconButton>
-					<IconButton onClick={handleAClick}>{/* catch makeBlock / makeUnBlock */}
+					<IconButton size="small" sx={{ml:2}} onClick={handleAClick}>{/* catch makeBlock / makeUnBlock */}
 						<PanTool className={'black'}/>
-						<span>block</span>
+						<span>Block</span>
 					</IconButton>
 			{
 			// && catch isUserOper/isUserAdmin and isNotUserActive if true
 				<>
-					<IconButton onClick={handleAClick}>{/* catch makeKick */}
+					<IconButton size="small" sx={{ml:2}} onClick={handleAClick}>{/* catch makeKick */}
 						<Block className='black'/>
-						<span>kick</span>
+						<span>Kick</span>
 					</IconButton>
-					<IconButton onClick={handleAClick}>{/* catch makeBan / makeUnBan*/}
+					<IconButton size="small" sx={{ml:2}} onClick={handleAClick}>{/* catch makeBan / makeUnBan*/}
 						<HighlightOff className='black'/>
-						<span>ban</span>
+						<span>Ban</span>
 					</IconButton>
-					<IconButton onClick={handleAClick}>{/* catch makeAdmin */}
-						<DeveloperMode className={"black"}/>
+					<IconButton size="small" sx={{ml:2}} onClick={handleAClick}>{/* catch makeAdmin */}
 						<AdminPanelSettings className='black'/>
 						<span>Admin</span>
 					</IconButton>
 				</> // else : <></>
 					} 
-					<IconButton onClick={handleAClose}>
+					<IconButton size="small" sx={{ml:2}} onClick={handleAClose}>
 						<Clear className='black'/>
-						<span>close</span>
+						<span>Close</span>
 					</IconButton>
 				</MenuItem>
 			</Menu>
