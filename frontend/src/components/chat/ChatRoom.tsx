@@ -147,7 +147,7 @@ const ChatRoom = (props: any) => {
 		  console.log('user ID: ' + userId + ' joined chatroom [' + roomName + ']');
     });
     socket.on('quitRoom', (roomName: string, userId: number) => {
-      if (roomName === user.joinedChatRoom) {
+      if (userId === user.id && roomName === user.joinedChatRoom) {
 		props.cleanRoomLoginData()
         console.log('user ID: ' + userId + ' quit room [' + roomName + ']')
 	  }
@@ -533,7 +533,10 @@ const ChatRoom = (props: any) => {
 													<span>private msg</span>
 												</IconButton>
 												<IconButton
-													onClick={ () => onUnBlockClick(msg.author.id) } >{/* catch makeBlock / makeUnBlock*/}
+													onClick={isUserBlocked(msg.author.id) ?
+														() => onUnBlockClick(msg.author.id)
+														: () => onBlockClick(msg.author.id)
+													} >
 													<PanTool className={'black'}/>{/* catch isBlock*/}
 													<span>block</span>
 												</IconButton>

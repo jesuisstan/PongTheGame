@@ -152,6 +152,12 @@ const Chat = () => {
   };
   // When clicking on a room name to join it
   const onClickJoinRoom = async(roomName: string) => {
+    if (roomName !== user.joinedChatRoom) {
+      await socket.emit('quitRoom', {
+        roomName: user.joinedChatRoom,
+        userId: user.id,
+      })
+    }
     // Notify that the user has clicked on a 'join' button
     setClickedRoomToJoin(roomName);
     handleClickOpenP();
