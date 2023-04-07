@@ -97,6 +97,7 @@ const Chat = () => {
   const handleClosePass = () => {
     setOpenPass(false);
   };
+
   /*************************************************************
    * Event listeners
    **************************************************************/
@@ -151,10 +152,7 @@ const Chat = () => {
     if (type === 'password') setChatRoomPassword(value);
   };
   // When clicking on a room name to join it
-  const onClickJoinRoom = async(roomName: string) => {
-    // Notify that the user has clicked on a 'join' button
-    setClickedRoomToJoin(roomName);
-    handleClickOpenP();
+  const onClickJoinRoom = async(roomName: string, modes: string) => {
     // Quit current joined room first
     if (user.joinedChatRoom && roomName !== user.joinedChatRoom) {
       await socket.emit('quitRoom', {
@@ -162,14 +160,17 @@ const Chat = () => {
         userId: user.id,
       })
     }
+      // Notify that the user has clicked on a 'join' button
+      // Put this code AFTER the previous quitRoom, since it
+      // cleans clickedRoomToJoin
+      setClickedRoomToJoin(roomName);
+      handleClickOpenP();
     // Check if the corresponding chat room is password protected
-    await socket.emit(
-      'isPasswordProtected',
-      { roomName: roomName },
-      (response: boolean) => {
-        setIsPasswordProtected(response);
-    });
-      isPasswordProtected ? onPasswordSubmit() : joinRoom(roomName);
+    if (modes.indexOf('p') !== -1) setIsPasswordProtected(true)
+    else {
+      setIsPasswordProtected(false)
+      joinRoom(roomName);
+    }
   };
   // Join a chatroom if no password has been set
   const joinRoom = async (roomName: string) => {
@@ -188,14 +189,14 @@ const Chat = () => {
         'checkPassword',
         { roomName: clickedRoomToJoin, password: inputPassword },
         (response: boolean) => {
-          response === true
-            ? setIsPasswordRight(true) 
-            : setIsPasswordRight(false);
+          if (response === true) {
+            joinRoom(clickedRoomToJoin)
+            setIsPasswordRight(true)
+          } else setIsPasswordRight(false);
       });
-      if (isPasswordRight) joinRoom(clickedRoomToJoin);
+    } 
       setInputPassword('');
       handleClosePass();
-    }
   };
   // Check if user is authorized to see the private chat room
   const isAuthorizedPrivRoom = (mode: string, members: MemberType[]) => {
@@ -209,7 +210,6 @@ const Chat = () => {
   // Clean all data about the joined room
   const cleanRoomLoginData = () => {
     user.joinedChatRoom = '';
-    setClickedRoomToJoin('');
     setIsPasswordProtected(false);
     setIsPasswordRight(false);
   };
@@ -291,7 +291,7 @@ const Chat = () => {
                           </Dialog>
                         </>
                       )}
-                    <ListItemButton onClick={() => onClickJoinRoom(room.name)}>
+                    <ListItemButton onClick={() => onClickJoinRoom(room.name, room.modes)}>
                       <ListItemText
                         tabIndex={-1}
                         primary={

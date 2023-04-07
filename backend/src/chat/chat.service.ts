@@ -355,13 +355,13 @@ export class ChatService {
     throw new WsException({ msg: 'isUserMuted: unknown room name!' });
   }
 
-  async isPasswordProtected(roomName: string) {
-    const room = await this.getChatRoomByName(roomName);
-    if (room) {
-      return room.password !== '' ? true : false;
-    } else
-      throw new WsException({ msg: 'isPasswordProtected: unknown room name!' });
-  }
+  // async isPasswordProtected(roomName: string) {
+  //   const room = await this.getChatRoomByName(roomName);
+  //   if (room) {
+  //     return room.password && room.password !== '' ? true : false;
+  //   } else
+  //     throw new WsException({ msg: 'isPasswordProtected: unknown room name!' });
+  // }
 
   async checkPassword(roomName: string, password: string) {
     const room = await this.getChatRoomByName(roomName);

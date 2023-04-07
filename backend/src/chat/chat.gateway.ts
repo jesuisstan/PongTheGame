@@ -138,10 +138,10 @@ export class ChatGateway {
     client.broadcast.emit('typingMessage', roomName, nick, isTyping);
   }
 
-  @SubscribeMessage('isPasswordProtected')
-  async isPasswordProtected(@MessageBody('roomName') roomName: string) {
-    return await this.chatService.isPasswordProtected(roomName);
-  }
+  // @SubscribeMessage('isPasswordProtected')
+  // async isPasswordProtected(@MessageBody('roomName') roomName: string) {
+  //   return await this.chatService.isPasswordProtected(roomName);
+  // }
 
   @SubscribeMessage('checkPassword')
   async checkPassword(
