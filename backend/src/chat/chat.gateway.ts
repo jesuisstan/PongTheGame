@@ -102,6 +102,11 @@ export class ChatGateway {
     return await this.chatService.findAllMembers(roomName);
   }
 
+  @SubscribeMessage('findAllBannedMembers')
+  async findAllBannedMembers(@MessageBody('roomName') roomName: string) {
+    return await this.chatService.findAllBannedMembers(roomName);
+  }
+
   @SubscribeMessage('joinRoom')
   async joinRoom(
     @MessageBody('roomName') roomName: string,

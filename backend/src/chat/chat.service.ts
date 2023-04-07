@@ -139,6 +139,13 @@ export class ChatService {
     return this.prisma.member.findMany({ where: { chatRoomName: roomName } });
   }
 
+    // Return all members from the chatroom
+    async findAllBannedMembers(roomName: string) {
+      const room = await this.getChatRoomByName(roomName);
+      if (room) return room.bannedUsers;
+      else throw new WsException({ msg: 'findAllBannedMembers: unknown room name!' });
+    }
+
   async changePassword(roomName: string, newPassword: string) {
     const room = await this.getChatRoomByName(roomName);
     if (room) {

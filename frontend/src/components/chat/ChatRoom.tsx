@@ -45,12 +45,18 @@ const ChatRoom = (props: any) => {
 	const [isUserOper, setIsUserOper] = useState<boolean>(false)
 	// Array including all members
 	const [members, setMembers] = useState<MemberType[]>([])
+	// Array including all the banned users from the room
+	const [bannedMembers, setBannedMembers] = useState<User[]>([])
 	// Modify password
 	const [oldPassword, setOldPassword] = useState<string>('');
 	const [newPassword, setNewPassword] = useState<string>('');
 	// Checks if the target user is banned from the room
 	const [isBanned, setIsBanned] = useState<Boolean>(false)
 
+
+	/*************************************************************
+	* State getters
+	**************************************************************/
 
   const findAllMembers = async() => {
 	await socket.emit('findAllMembers', { roomName: user.joinedChatRoom },
@@ -59,6 +65,15 @@ const ChatRoom = (props: any) => {
 		}
 	)}
 	findAllMembers();
+
+	const findAllBanned = async() => {
+		await socket.emit('findAllBannedMembers', { roomName: user.joinedChatRoom },
+		(response: User[]) => {
+			setBannedMembers(response)
+		})
+	}
+	findAllBanned();
+
   // Get all messages from messages array in chat.service
   // and fill the messages variable
   const findAllMessages = async() => {
@@ -106,9 +121,9 @@ const ChatRoom = (props: any) => {
 	checkIfOper(user.id, true)
 
 
-  /*************************************************************
-   * Event listeners
-   **************************************************************/
+	/*************************************************************
+	* Event listeners
+	**************************************************************/
   useEffect(() => {
     // Activate listeners and subscribe to events as the component is mounted
     socket.on('typingMessage', (
@@ -189,13 +204,11 @@ const ChatRoom = (props: any) => {
 		return false;
 	}
 	
-	const checkIfBanned = async(userId: number) => {
-		// get all banned users and loop
-
-		
-		await socket.emit('isUserBanned', { roomName: user.joinedChatRoom, userId: userId },
-		(response: boolean) => { setIsBanned(response); })
-		return isBanned;
+	const checkIfBanned = (userId: number) => {
+		for (const bannedUser in bannedMembers)
+			if (bannedMembers[bannedUser].id === userId)
+				return true;
+		return false;
 	}
 
 	const isUserBlocked = (userId: number) => {
