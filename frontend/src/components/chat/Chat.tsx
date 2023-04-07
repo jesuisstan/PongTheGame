@@ -152,15 +152,16 @@ const Chat = () => {
   };
   // When clicking on a room name to join it
   const onClickJoinRoom = async(roomName: string) => {
-    if (roomName !== user.joinedChatRoom) {
+    // Notify that the user has clicked on a 'join' button
+    setClickedRoomToJoin(roomName);
+    handleClickOpenP();
+    // Quit current joined room first
+    if (user.joinedChatRoom && roomName !== user.joinedChatRoom) {
       await socket.emit('quitRoom', {
         roomName: user.joinedChatRoom,
         userId: user.id,
       })
     }
-    // Notify that the user has clicked on a 'join' button
-    setClickedRoomToJoin(roomName);
-    handleClickOpenP();
     // Check if the corresponding chat room is password protected
     await socket.emit(
       'isPasswordProtected',
@@ -168,11 +169,10 @@ const Chat = () => {
       (response: boolean) => {
         setIsPasswordProtected(response);
     });
-      isPasswordProtected === false ? joinRoom(roomName) : onPasswordSubmit();
+      isPasswordProtected ? onPasswordSubmit() : joinRoom(roomName);
   };
   // Join a chatroom if no password has been set
   const joinRoom = async (roomName: string) => {
-
     await socket.emit(
       'joinRoom',
       { roomName: roomName, userId: user.id },
@@ -193,7 +193,6 @@ const Chat = () => {
             : setIsPasswordRight(false);
       });
       if (isPasswordRight) joinRoom(clickedRoomToJoin);
-      setClickedRoomToJoin('');
       setInputPassword('');
       handleClosePass();
     }
@@ -259,6 +258,7 @@ const Chat = () => {
                     </ListItemIcon>
                     {clickedRoomToJoin === room.name &&
                       room.modes.indexOf('p') !== -1 && (
+                        // If 'password protected' mode is found, launch the password dialog
                         // if the room is already joined, don't display the password dialog
                         <>
                           <Dialog
