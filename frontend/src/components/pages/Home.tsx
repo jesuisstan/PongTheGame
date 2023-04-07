@@ -1,74 +1,74 @@
-import { useNavigate } from 'react-router-dom';
-import { useContext } from 'react';
-import { UserContext } from '../../contexts/UserContext';
-import ButtonPong from '../UI/ButtonPong';
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import * as color from '../UI/colorsPong';
+import Peer from '../UI/Peer';
+import Typography from '@mui/joy/Typography';
 import styles from './Pages.module.css';
-import '../../App.css'
 
 const Home = () => {
-  const navigate = useNavigate();
-  const { user } = useContext(UserContext);
-
   return (
-    <div className={styles.basicHome}>
-      <div
-        style={{
-          fontSize: '60px',
-          color: color.PONG_PINK,
-          paddingLeft: '280px',
-          marginTop: '60px'
-        }}
-      >
-        <div
-          style={{
-            borderRadius: '4px',
-            textAlign: 'left'
-          }}
-        >
-          W E L C O M E
-          <div
-            style={{
-              fontSize: '50px',
-              color: color.PONG_PINK
-            }}
-          >
-            to Pong The Game
-          </div>
-        </div>
-        <div
-          style={{
-            textAlign: 'left'
-          }}
-        >
-          <ButtonPong
-            text={user.provider ? 'Continue' : 'Start'}
-            onClick={() => navigate('/login')}
-            endIcon={<ArrowForwardIosIcon />}
-            inversedColors
-          />
-        </div>
+    <div className={styles.basicCard}>
+      <div style={{ marginTop: '21px' }}>
+        <h5>Why?</h5>
+        <p>Thanks to this website, you will play Ping-Pong with others</p>
       </div>
-      <div
-        style={{
-          fontSize: '40px',
-          color: color.PONG_ORANGE,
-          paddingLeft: '70px',
-          marginTop: '342px',
-          textAlign: 'left'
-        }}
-      >
-        W H Y ?
-        <div
-          style={{
-            fontSize: '30px',
-            color: color.PONG_ORANGE,
-            borderRadius: '4px'
-          }}
+      <div className={styles.aboutHeader}>
+        <Typography
+          id="basic-list-demo"
+          level="body3"
+          textTransform="uppercase"
+          fontWeight="lg"
         >
-          to play Ping-Pong with others
-        </div>
+          We, being faithful to the original Pong (1972), are:
+        </Typography>
+      </div>
+      <div className={styles.aboutCards}>
+        <Peer
+          style={styles.benjamin}
+          firstName="Benjamin"
+          lastName="Brassart"
+          description="I need a coffee"
+          intraNickname="bbrassar"
+          role="Backend: authentication, 2FA, avatar upload"
+          github="https://github.com/benjaminbrassart"
+        />
+        <Peer
+          style={styles.barbara}
+          firstName="Barbara"
+          lastName="Cano"
+          description="I made this shit and i wanna die 💀🔫"
+          intraNickname="bcano"
+          role="Frontend: chat, teammate card template"
+          github="https://github.com/BarbaraC12"
+        />
+      </div>
+      <div className={styles.aboutCards}>
+        <Peer
+          style={styles.florian}
+          firstName="Florian"
+          lastName="Catinaud"
+          description="An asshole with a Keyboard"
+          intraNickname="fcatinau"
+          role="Backend: Game, Friends, Achievements & Stats"
+          github="https://github.com/Balgor18"
+        />
+        <Peer
+          style={styles.stan}
+          firstName="Stanislav"
+          lastName="Krivtsoff"
+          description="Let's do it! ⚡"
+          intraNickname="acaren"
+          role="Frontend: the entire frontend except for the Chat page"
+          github="https://github.com/jesuisstan"
+        />
+      </div>
+      <div className={styles.aboutCards}>
+        <Peer
+          style={styles.daisuke}
+          firstName="Daisuke"
+          lastName="Tanigawa"
+          description="'Catch phrase'"
+          intraNickname="dtanigaw"
+          role="Backend: chat, docker-compose..."
+          github="https://github.com/daisvke"
+        />
       </div>
     </div>
   );

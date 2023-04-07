@@ -14,19 +14,19 @@ const AvatarBadge = (member: IMember) => {
 
 	const colorO = (member.online) ? "success" : "error";
 	const colorA = (member.admin) ? "info" :( (member.oper) ? "warning" : undefined);
-	const avatar = (member.nickname) ? stringAvatar(member.nickname) : undefined;
+	const avatar = (member.avatar) ? member.avatar : undefined;
 
 	return ( <>
 		{member.look === false
 			? <> {!member.avatar
 				? <Avatar alt={ member.nickname } {...stringAvatar(member.nickname)} />
-				: <Avatar alt={ member.nickname } src={ member.avatar } />
+				: <Avatar alt={ member.nickname } src={ avatar } />
 			}	</>
 			:	<Badge	color={colorA} overlap='circular' variant='dot' anchorOrigin={{vertical:'top', horizontal:'right' }} >
 					<Badge	color={colorO} overlap='circular' variant='dot' anchorOrigin={{vertical:'bottom', horizontal:'right' }} >
 						{!member.avatar
 							? <Avatar alt={ member.nickname } {...stringAvatar(member.nickname)} />
-							: <Avatar alt={ member.nickname } src={ member.avatar } />
+							: <Avatar alt={ member.nickname } src={avatar} />
 						}
 					</Badge>
 				</Badge>

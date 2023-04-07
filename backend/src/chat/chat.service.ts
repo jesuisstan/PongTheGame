@@ -9,7 +9,9 @@ export class ChatService {
 
   constructor(private readonly prisma: PrismaService) {}
 
-  async identify(roomName: string, userId: number, modes: string, online: boolean) {
+  async identify(
+    roomName: string, userId: number, modes: string, online: boolean
+    ) {
     // Check if room exists
     const room = await this.getChatRoomByName(roomName);
     if (!room) throw new WsException({ msg: 'identify: unknown room name!' });
@@ -90,7 +92,7 @@ export class ChatService {
   async createChatRoom(room: ChatRoomDto, userId: number, user2Id: number) {
     if (room) {
       // Hash the password before saving it
-      const hash = await this.generateHash(room.password);
+      const hash = room.password ? await this.generateHash(room.password) : ''
       // Save room to the database
       const r = await this.prisma.chatRoom.create({
         data: {
@@ -310,7 +312,7 @@ export class ChatService {
       for (var i=0; i < room.members.length; ++i)
         if (room.members[i].memberId === userId) {
           modes = room.members[i].modes;
-          if (room.members[i].modes.search('m') === -1)
+          if (modes.search('m') === -1)
             modes += 'm';
         }
       // Save the new modes
@@ -327,7 +329,7 @@ export class ChatService {
       for (var i=0; i < room.members.length; ++i)
         if (room.members[i].memberId === userId) {
           modes = room.members[i].modes;
-          if (room.members[i].modes.search('m') !== -1)
+          if (modes.search('m') !== -1)
             modes.replace(/m/g, '');
         }
       // Save the new modes
@@ -362,6 +364,6 @@ export class ChatService {
       // bcrypt will hash the given pwd then compared it to the stored hashed pwd
       return await bcrypt.compare(password, room.password);
     } else
-      throw new WsException({ msg: 'isPasswordProtected: unknown room name!' });
+      throw new WsException({ msg: 'checkPassword: unknown room name!' });
   }
 }

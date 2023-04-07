@@ -145,7 +145,7 @@ model Session {
 
 model Message {
   id           Int       @id @default(autoincrement())
-  author       User      @relation("MessageAuthor", fields: [authorId], references: [id])
+  author       User      @relation("MessageAuthor", fields: [authorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   authorId     Int
   data         String
   ChatRoom     ChatRoom @relation(fields: [chatRoomName], references: [name], onDelete: Cascade, onUpdate: Cascade)
@@ -154,10 +154,10 @@ model Message {
 
 model Member {
   memberId     Int
-  member       User      @relation("ChatRoomMember", fields: [memberId], references: [id])
+  member       User      @relation("ChatRoomMember", fields: [memberId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   isOnline     Boolean
   modes        String
-  ChatRoom     ChatRoom @relation(fields: [chatRoomName], references: [name])
+  ChatRoom     ChatRoom @relation(fields: [chatRoomName], references: [name], onDelete: Cascade, onUpdate: Cascade)
   chatRoomName String
 
   @@id([memberId, chatRoomName])

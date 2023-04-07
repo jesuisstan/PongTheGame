@@ -171,10 +171,10 @@ Ref: MatchInvitation.createdById > User.id
 
 Ref: MatchInvitation.sendToId > User.id
 
-Ref: Message.authorId > User.id
+Ref: Message.authorId > User.id [delete: Cascade]
 
 Ref: Message.chatRoomName > ChatRoom.name [delete: Cascade]
 
-Ref: Member.memberId > User.id
+Ref: Member.memberId > User.id [delete: Cascade]
 
-Ref: Member.chatRoomName > ChatRoom.name
+Ref: Member.chatRoomName > ChatRoom.name [delete: Cascade]

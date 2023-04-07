@@ -50,7 +50,7 @@ export class ChatGateway {
     @MessageBody('room') room: ChatRoomDto,
     @MessageBody('user1') user1: User,
     @MessageBody('user2') user2: User,
-  ) {
+    ) {
     // First, check if the room name already exists
     const r = await this.chatService.getChatRoomByName(room.name);
     if (r) {
@@ -109,7 +109,7 @@ export class ChatGateway {
   ) {
     if (await this.chatService.isUserBanned(roomName, userId) === true)
       throw new WsException({ msg: 'joinRoom: User is banned.' });
-    this.chatService.identify(roomName, userId, '', true);
+    await this.chatService.identify(roomName, userId, '', true);
     this.server.emit('joinRoom', roomName, userId);
     return roomName;
   }
