@@ -12,12 +12,14 @@ import Verify2fa from './components/profile/Verify2fa';
 import InvitationReceivedModal from './components/game/invitation/InvitationReceivedModal';
 import backendAPI from './api/axios-instance';
 import VictoryModal from './components/game/VictoryModal';
+import WarningModal from './components/UI/WarningModal';
 import './App.css';
 
 const App = () => {
   const socket = useContext(WebSocketContext);
   const [openVerify2fa, setOpenVerify2fa] = useState(false);
   const [openInvitation, setOpenInvitation] = useState(false);
+  const [openWarning, setOpenWarning] = useState(false);
   const [gameResult, setGameResult] = useState<GameResult | null>(null);
   const [openVictoryModal, setOpenVictoryModal] = useState(false);
 
@@ -67,7 +69,8 @@ const App = () => {
   });
 
   socket.on('error_socket', (args) => {
-    alert(args.message); // TODO Check how to do that
+    //alert(args.message); // TODO Check how to do that
+    setOpenWarning(true);
     console.log(args);
   });
 
@@ -84,6 +87,7 @@ const App = () => {
                   setOpen={setOpenInvitation}
                   invitation={invitation}
                 />
+                <WarningModal open={openWarning} setOpen={setOpenWarning} />
                 {gameStatus === GameStatus.ENDED && (
                   <VictoryModal
                     open={!openVictoryModal}
