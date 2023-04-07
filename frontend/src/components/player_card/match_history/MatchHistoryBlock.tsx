@@ -1,16 +1,19 @@
 import { useEffect, useState } from 'react';
-import { Player } from '../../types/Player';
-import { MatchHistory } from '../../types/MatchHistory';
-import backendAPI from '../../api/axios-instance';
-import errorAlert from '../UI/errorAlert';
+import { PlayerProfile } from '../../../types/PlayerProfile';
+import { MatchHistory } from '../../../types/MatchHistory';
+import HistoryNoteModal from './HistoryNoteModal';
+import backendAPI from '../../../api/axios-instance';
+import errorAlert from '../../UI/errorAlert';
 import Typography from '@mui/joy/Typography';
-import * as color from '../UI/colorsPong';
+import IconButton from '@mui/material/IconButton';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import * as color from '../../UI/colorsPong';
 
 const MatchHistoryBlock = ({
   player,
   socketEvent
 }: {
-  player: Player;
+  player: PlayerProfile;
   socketEvent: number;
 }) => {
   const [matchHistory, setMatchHistory] = useState<MatchHistory>({
@@ -18,6 +21,7 @@ const MatchHistoryBlock = ({
     wins: '-',
     loses: '-'
   });
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     backendAPI.get(`/stats/${player.nickname}`).then(
@@ -33,7 +37,7 @@ const MatchHistoryBlock = ({
         errorAlert(`Failed to get player's match history`);
       }
     );
-  }, [socketEvent]);
+  }, [socketEvent, player.nickname]);
 
   return (
     <div
@@ -45,7 +49,7 @@ const MatchHistoryBlock = ({
       }}
     >
       <Typography
-        textColor={color.PONG_BLUE}
+        textColor={color.PONG_ORANGE}
         level="body3"
         textTransform="uppercase"
         fontWeight="lg"
@@ -58,7 +62,7 @@ const MatchHistoryBlock = ({
       <div>
         <Typography
           level="h1"
-          textColor={color.PONG_BLUE}
+          textColor={color.PONG_ORANGE}
           fontWeight="lg"
           textAlign="left"
         >
@@ -70,6 +74,24 @@ const MatchHistoryBlock = ({
         <Typography component="legend" textAlign="left">
           Loses: {matchHistory.loses}
         </Typography>
+      </div>
+      <div>
+        <IconButton
+          color="primary"
+          title={'Note'}
+          onClick={() => setOpen(true)}
+        >
+          <HelpOutlineIcon
+            fontSize="large"
+            sx={{
+              color: 'black',
+              '&:hover': {
+                color: color.PONG_PINK
+              }
+            }}
+          />
+        </IconButton>
+        <HistoryNoteModal open={open} setOpen={setOpen} />
       </div>
     </div>
   );

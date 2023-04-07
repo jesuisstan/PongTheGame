@@ -1,10 +1,4 @@
-import {
-  Controller,
-  Param,
-  Get,
-  UseGuards,
-  ParseIntPipe,
-} from '@nestjs/common';
+import { Controller, Param, Get, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiTags, ApiResponse } from '@nestjs/swagger';
 import { IsAuthenticatedGuard } from 'src/auth/auth.guard';
 import { StatsService } from './stats.service';

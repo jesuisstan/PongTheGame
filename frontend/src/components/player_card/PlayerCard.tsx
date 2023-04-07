@@ -2,23 +2,31 @@ import { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { UserContext } from '../../contexts/UserContext';
 import { WebSocketContext } from '../../contexts/WebsocketContext';
-import { Player } from '../../types/Player';
+import { PlayerProfile } from '../../types/PlayerProfile';
 import PleaseLogin from '../pages/PleaseLogin';
 import NotFound from '../pages/NotFound';
 import InfoBlock from './InfoBlock';
-import FriendsBlock from './FriendsBlock';
-import AchievementsBlock from './AchievementsBlock';
-import MatchHistoryBlock from './MatchHistoryBlock';
+import FriendsBlock from './friends/FriendsBlock';
+import AchievementsBlock from './achievements/AchievementsBlock';
+import MatchHistoryBlock from './match_history/MatchHistoryBlock';
 import backendAPI from '../../api/axios-instance';
 import errorAlert from '../UI/errorAlert';
 import Divider from '@mui/material/Divider';
 import styles from './styles/PlayerCard.module.css';
 
+const VerticalDevider = (
+  <Divider
+    orientation="vertical"
+    flexItem
+    sx={{ backgroundColor: 'rgba(245, 245, 245, 0.3)' }}
+  />
+);
+
 const PlayerCard = () => {
   const socket = useContext(WebSocketContext);
   const [socketEvent, setSocketEvent] = useState(0);
   const { user } = useContext(UserContext);
-  const [player, setPlayer] = useState<Player>({
+  const [player, setPlayer] = useState<PlayerProfile>({
     avatar: undefined,
     id: -1,
     nickname: '',
@@ -61,23 +69,11 @@ const PlayerCard = () => {
       </div>
       <div className={styles.playerCard}>
         <InfoBlock player={player} />
-        <Divider
-          orientation="vertical"
-          flexItem
-          sx={{ backgroundColor: 'rgba(245, 245, 245, 0.3)' }}
-        />
+        {VerticalDevider}
         <FriendsBlock player={player} socketEvent={socketEvent} />
-        <Divider
-          orientation="vertical"
-          flexItem
-          sx={{ backgroundColor: 'rgba(245, 245, 245, 0.3)' }}
-        />
+        {VerticalDevider}
         <AchievementsBlock player={player} socketEvent={socketEvent} />
-        <Divider
-          orientation="vertical"
-          flexItem
-          sx={{ backgroundColor: 'rgba(245, 245, 245, 0.3)' }}
-        />
+        {VerticalDevider}
         <MatchHistoryBlock player={player} socketEvent={socketEvent} />
       </div>
     </div>

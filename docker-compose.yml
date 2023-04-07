@@ -42,14 +42,14 @@ services:
     container_name: backend
     image: node:18.13.0-alpine3.16
     working_dir: /backend
-    command: sh -cx 'apk add --no-cache curl && yarn install && yarn prisma db push && yarn run test && yarn prisma db seed && yarn run start:debug'
-    # && yarn run test:e2e:docker
+    command: sh -cx 'apk add --no-cache curl && yarn install && yarn prisma db push && yarn run test && yarn prisma db seed && yarn run prisma_studio && yarn run start:debug'
     ports:
       - "${BACKEND_PORT}:${BACKEND_PORT}"
       - 5555:5555 # TODO remove is for prisma studio
     env_file:
       - .env
     environment:
+      NEST_DEBUG : null # TODO REMOVE THIS ('true' break compilation on other machines)
       BACKEND_PORT: ${BACKEND_PORT}
       FRONTEND_URL: ${FRONTEND_URL}
       SESSION_SECRET: ${SESSION_SECRET}

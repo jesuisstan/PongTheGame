@@ -3,6 +3,7 @@ import * as color from '../UI/colorsPong'
 export const modalDialog = {
   width: 'auto',
   maxWidth: '442px',
+  minWidth: '300px',
   border: '0px solid #000',
   bgcolor: color.PONG_WHITE,
   borderRadius: '4px',
@@ -28,4 +29,14 @@ export const modalClose = {
   ':hover': {
     bgcolor: color.PONG_BLUE_TRANS
   }
+};
+
+export const boxStyle = {
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '21px',
+  maxWidth: '242px',
+  minWidth: '200px',
+  alignItems: 'center',
+  justifyContent: 'center'
 };

@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
-import { SetStateAction, Dispatch } from 'react';
-import { Game_status, Game_result } from './game.interface';
+import { SetStateAction, Dispatch, useContext } from 'react';
+import { GameStatus, GameResult } from './game.interface';
+import { GameStatusContext } from '../../contexts/GameStatusContext';
 import Modal from '@mui/joy/Modal';
 import ModalDialog from '@mui/joy/ModalDialog';
 import ModalClose from '@mui/joy/ModalClose';
@@ -15,16 +16,15 @@ import styles from './styles/VictoryModal.module.css';
 const VictoryModal = ({
   open,
   setOpen,
-  setGameState,
   gameResult
 }: {
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
-  setGameState: React.Dispatch<React.SetStateAction<Game_status>>;
-  gameResult: Game_result | null;
+  gameResult: GameResult | null;
 }) => {
   const navigate = useNavigate();
-  console.log(gameResult); //todo
+  const { setGameStatus } = useContext(GameStatusContext);
+
   return (
     <div>
       <Modal
@@ -35,7 +35,7 @@ const VictoryModal = ({
             event &&
             (reason === 'closeClick' || reason === 'escapeKeyDown')
           ) {
-            setGameState(Game_status.LOBBY);
+            setGameStatus(GameStatus.LOBBY);
             setOpen(false);
           }
         }}
@@ -47,13 +47,29 @@ const VictoryModal = ({
           <ModalClose sx={MUI.modalClose} />
           <Typography sx={MUI.modalHeader}>Game over!</Typography>
           <Stack spacing={2}>
+            {gameResult?.reason === 'Player left the game' && (
+              <Typography
+                sx={{
+                  color: 'black',
+                  textAlign: 'center',
+                  marginTop: '10px',
+                  whiteSpace: 'pre'
+                }}
+              >
+                <WarningAmberIcon
+                  fontSize="large"
+                  sx={{ color: color.PONG_PINK }}
+                />
+                {'\n'}
+                {gameResult?.loser.name} left the game {'\n'}
+                and receives technical lose
+              </Typography>
+            )}
             <Typography
               sx={{ color: 'black', textAlign: 'center', marginTop: '10px' }}
             >
-              {gameResult?.winner.name
-                ? gameResult?.winner.name
-                : 'Artificial Intelligence'}{' '}
-              wins the round
+              {gameResult?.winner.name ? gameResult?.winner.name : 'AI'} wins
+              the round
             </Typography>
             <div className={styles.scoreBlock}>
               <Avatar
@@ -92,24 +108,6 @@ const VictoryModal = ({
                 }}
               />
             </div>
-            {gameResult?.reason === 'Player left the game' && (
-              <Typography
-                sx={{
-                  color: 'black',
-                  textAlign: 'center',
-                  marginTop: '10px',
-                  whiteSpace: 'pre'
-                }}
-              >
-                <WarningAmberIcon
-                  fontSize="large"
-                  sx={{ color: color.PONG_PINK }}
-                />
-                {'\n'}
-                {gameResult?.loser.name} left the game {'\n'}
-                and receives technical lose
-              </Typography>
-            )}
           </Stack>
         </ModalDialog>
       </Modal>

@@ -3,7 +3,7 @@ import { GameState, Profile, Status, TypeMode } from './Interface';
 
 export function normal_state(
   player1: Profile,
-  winingScore: number,
+  winScore: number,
   player2?: Profile,
 ) {
   const res = {
@@ -13,7 +13,7 @@ export function normal_state(
       paddleHeight: Default_params.PADDLE_HEIGHT,
       paddleWidth: Default_params.PADDLE_WIDTH,
       ballRadius: Default_params.BALL_RADIUS,
-      winingScore: winingScore,
+      winScore: winScore,
     },
     player1: {
       profile: player1,
@@ -52,7 +52,7 @@ export function normal_state(
   return res;
 }
 
-export function training_state(player1: Profile, winingScore: number) {
+export function training_state(player1: Profile, winScore: number) {
   const res = {
     gameInfos: {
       width: Default_params.GAME_WIDTH,
@@ -60,7 +60,7 @@ export function training_state(player1: Profile, winingScore: number) {
       paddleHeight: Default_params.PADDLE_HEIGHT,
       paddleWidth: Default_params.PADDLE_WIDTH,
       ballRadius: Default_params.BALL_RADIUS,
-      winingScore: winingScore,
+      winScore: winScore,
     },
     player1: {
       profile: player1,
@@ -100,7 +100,7 @@ export function training_state(player1: Profile, winingScore: number) {
 
 export function custom_state(
   player1: Profile,
-  winingScore: number,
+  winScore: number,
   player2?: Profile,
 ) {
   const res = {
@@ -112,7 +112,7 @@ export function custom_state(
       ballRadius: Default_params.BALL_RADIUS,
       obstacleHeight: Default_params.OBSTACLE_HEIGHT,
       obstacleWidth: Default_params.OBSTACLE_WIDTH,
-      winingScore: winingScore,
+      winScore: winScore,
     },
     player1: {
       profile: player1,
@@ -160,17 +160,17 @@ export function custom_state(
 
 export function get_default_game_state(
   type: TypeMode,
-  winingScore: number,
+  winScore: number,
   player1: Profile,
   player2?: Profile,
 ): GameState {
   let res: any;
   if (type == TypeMode.NORMAL) {
-    res = normal_state(player1, winingScore, player2);
+    res = normal_state(player1, winScore, player2);
   } else if (type == TypeMode.TRAINING) {
-    res = training_state(player1, winingScore);
+    res = training_state(player1, winScore);
   } else if (type == TypeMode.CUSTOM) {
-    res = custom_state(player1, winingScore, player2);
+    res = custom_state(player1, winScore, player2);
   }
   return res;
 }
@@ -192,7 +192,7 @@ export function convert_state_to_sendable(
         paddleHeight: state.gameInfos.paddleHeight,
         ballRadius: state.gameInfos.ballRadius,
         time: Default_params.GAME_TIME - timeInSeconds,
-        WinScore: state.gameInfos.WinScore,
+        winScore: state.gameInfos.winScore,
       },
       player1: {
         paddle: {
@@ -233,7 +233,7 @@ export function convert_state_to_sendable(
         paddleHeight: state.gameInfos.paddleHeight,
         ballRadius: state.gameInfos.ballRadius,
         time: timeInSeconds,
-        WinScore: state.gameInfos.WinScore,
+        winScore: state.gameInfos.winScore,
       },
       player1: {
         paddle: {
@@ -276,7 +276,7 @@ export function convert_state_to_sendable(
         obstacleHeight: state.gameInfos.obstacleHeight,
         obstacleWidth: state.gameInfos.obstacleWidth,
         time: timeInSeconds,
-        WinScore: state.gameInfos.WinScore,
+        winScore: state.gameInfos.winScore,
       },
       player1: {
         paddle: {
@@ -326,7 +326,7 @@ export function convert_invitation(socket: any, payload: any) {
     },
     gameInfo: {
       obstacle: payload.obstacle,
-      winscore: payload.winscore,
+      winScore: payload.winScore,
     },
   };
   return res;

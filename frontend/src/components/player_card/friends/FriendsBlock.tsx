@@ -1,26 +1,29 @@
 import { useContext, useEffect, useState } from 'react';
-import { UserContext } from '../../contexts/UserContext';
-import { Player } from '../../types/Player';
+import { UserContext } from '../../../contexts/UserContext';
+import { PlayerProfile } from '../../../types/PlayerProfile';
 import SearchBar from './SearchBar';
-import BadgePong from '../UI/BadgePong';
-import backendAPI from '../../api/axios-instance';
-import errorAlert from '../UI/errorAlert';
+import BadgePong from '../../UI/BadgePong';
+import backendAPI from '../../../api/axios-instance';
+import errorAlert from '../../UI/errorAlert';
+import FriendsNoteModal from './FriendsNoteModal';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import Typography from '@mui/joy/Typography';
 import Avatar from '@mui/material/Avatar';
 import IconButton from '@mui/material/IconButton';
 import RefreshIcon from '@mui/icons-material/Refresh';
-import * as color from '../UI/colorsPong';
-import styles from './styles/PlayerCard.module.css';
+import * as color from '../../UI/colorsPong';
+import styles from '../styles/PlayerCard.module.css';
 
 const FriendsBlock = ({
   player,
   socketEvent
 }: {
-  player: Player;
+  player: PlayerProfile;
   socketEvent: number;
 }) => {
   const { user } = useContext(UserContext);
-  const [friendsList, setFriendsList] = useState<Player[]>([]);
+  const [friendsList, setFriendsList] = useState<PlayerProfile[]>([]);
+  const [open, setOpen] = useState(false);
 
   const fetchFriendsList = () => {
     backendAPI.get(`/friend/${player.nickname}`).then(
@@ -40,7 +43,7 @@ const FriendsBlock = ({
   return (
     <div className={styles.friendsBlock}>
       <Typography
-        textColor={color.PONG_BLUE}
+        textColor={color.PONG_ORANGE}
         level="body3"
         textTransform="uppercase"
         fontWeight="lg"
@@ -91,6 +94,22 @@ const FriendsBlock = ({
         </div>
       </div>
       <div>
+        <FriendsNoteModal open={open} setOpen={setOpen} player={player} />
+        <IconButton
+          color="primary"
+          title={'Note'}
+          onClick={() => setOpen(true)}
+        >
+          <HelpOutlineIcon
+            fontSize="large"
+            sx={{
+              color: 'black',
+              '&:hover': {
+                color: color.PONG_PINK
+              }
+            }}
+          />
+        </IconButton>
         <IconButton
           color="primary"
           title={'Refresh the list'}

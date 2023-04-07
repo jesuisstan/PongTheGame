@@ -1,8 +1,11 @@
 import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../contexts/UserContext';
-import { Player } from '../../types/Player';
-import InvitationModal from './InvitationModal';
+import { PlayerProfile } from '../../types/PlayerProfile';
+import { WebSocketContext } from '../../contexts/WebsocketContext';
+import { GameStatusContext } from '../../contexts/GameStatusContext';
+import { GameStatus } from '../game/game.interface';
+import InvitationSendModal from '../game/invitation/InvitationSendModal';
 import ButtonPong from '../UI/ButtonPong';
 import BadgePong from '../UI/BadgePong';
 import backendAPI from '../../api/axios-instance';
@@ -10,15 +13,17 @@ import errorAlert from '../UI/errorAlert';
 import Typography from '@mui/joy/Typography';
 import Avatar from '@mui/material/Avatar';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import PersonOffIcon from '@mui/icons-material/PersonOff';
-import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import * as color from '../UI/colorsPong';
 import styles from './styles/PlayerCard.module.css';
 
-const InfoBlock = ({ player }: { player: Player }) => {
+const InfoBlock = ({ player }: { player: PlayerProfile }) => {
   const navigate = useNavigate();
+  const socket = useContext(WebSocketContext);
+  const { setGameStatus } = useContext(GameStatusContext);
   const { user } = useContext(UserContext);
   const [isFriendOfUser, setIsFriendOfUser] = useState(false);
   const [openInvitationModal, setOpenInvitationModal] = useState(false);
@@ -27,16 +32,14 @@ const InfoBlock = ({ player }: { player: Player }) => {
     if (user.nickname !== player.nickname) {
       backendAPI.get(`/friend`).then(
         (response) => {
-          let userFriendsList: Player[] = response.data.friends;
+          let userFriendsList: PlayerProfile[] = response.data.friends;
           let isFriend = userFriendsList.find(
             (friend) => friend.nickname === player.nickname
           );
           if (isFriend) {
             setIsFriendOfUser(true);
-            console.log(`${player.nickname} is in the friends list.`);
           } else {
             setIsFriendOfUser(false);
-            console.log(`${player.nickname} is not in the friends list.`);
           }
         },
         (error) => {
@@ -44,7 +47,7 @@ const InfoBlock = ({ player }: { player: Player }) => {
         }
       );
     }
-  }, []);
+  }, [player.nickname, user.nickname]);
 
   const handleFriend = () => {
     if (isFriendOfUser) {
@@ -68,12 +71,18 @@ const InfoBlock = ({ player }: { player: Player }) => {
     }
   };
 
+  const sendSpectate = (id: number) => {
+    socket.emit('match_spectate', { id: id });
+    setGameStatus(GameStatus.PLAYING);
+    navigate('/game');
+  };
+
   return (
     <div className={styles.basicInfoBlock}>
-      <InvitationModal
+      <InvitationSendModal
         open={openInvitationModal}
         setOpen={setOpenInvitationModal}
-        player={player}
+        invitee={player.nickname}
       />
       <BadgePong player={player}>
         <Avatar
@@ -85,7 +94,7 @@ const InfoBlock = ({ player }: { player: Player }) => {
       </BadgePong>
       <div>
         <Typography
-          textColor={color.PONG_BLUE}
+          textColor={color.PONG_ORANGE}
           level="body3"
           textTransform="uppercase"
           fontWeight="lg"
@@ -96,7 +105,7 @@ const InfoBlock = ({ player }: { player: Player }) => {
       </div>
       <div>
         <Typography
-          textColor={color.PONG_BLUE}
+          textColor={color.PONG_ORANGE}
           level="body3"
           textTransform="uppercase"
           fontWeight="lg"
@@ -125,7 +134,7 @@ const InfoBlock = ({ player }: { player: Player }) => {
           <ButtonPong
             text={'Watch'}
             title={`Spectate the current game of ${player.nickname}`}
-            onClick={() => console.log('time for spectating')}
+            onClick={() => sendSpectate(player.id)}
             startIcon={<VisibilityIcon />}
             disabled={player.status === 'PLAYING' ? false : true}
           />

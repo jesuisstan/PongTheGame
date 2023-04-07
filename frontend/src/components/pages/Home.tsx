@@ -5,6 +5,7 @@ import ButtonPong from '../UI/ButtonPong';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import * as color from '../UI/colorsPong';
 import styles from './Pages.module.css';
+import '../../App.css'
 
 const Home = () => {
   const navigate = useNavigate();
@@ -14,16 +15,14 @@ const Home = () => {
     <div className={styles.basicHome}>
       <div
         style={{
-          fontSize: '70px',
+          fontSize: '60px',
           color: color.PONG_PINK,
-          marginLeft: '260px',
-          marginRight: 'auto',
+          paddingLeft: '280px',
           marginTop: '60px'
         }}
       >
         <div
           style={{
-            background: 'rgba(0, 0, 0, 0.35)',
             borderRadius: '4px',
             textAlign: 'left'
           }}
@@ -31,8 +30,8 @@ const Home = () => {
           W E L C O M E
           <div
             style={{
-              fontSize: '60px',
-              color: color.PONG_WHITE
+              fontSize: '50px',
+              color: color.PONG_PINK
             }}
           >
             to Pong The Game
@@ -53,20 +52,18 @@ const Home = () => {
       </div>
       <div
         style={{
-          fontSize: '50px',
-          color: color.PONG_PINK,
-          marginLeft: '84px',
-          marginRight: 'auto',
-          marginTop: '300px',
+          fontSize: '40px',
+          color: color.PONG_ORANGE,
+          paddingLeft: '70px',
+          marginTop: '342px',
           textAlign: 'left'
         }}
       >
         W H Y ?
         <div
           style={{
-            fontSize: '40px',
-            color: color.PONG_WHITE,
-            background: 'rgba(0, 0, 0, 0.35)',
+            fontSize: '30px',
+            color: color.PONG_ORANGE,
             borderRadius: '4px'
           }}
         >

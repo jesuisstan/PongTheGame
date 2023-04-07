@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import { User, StatusUser } from '@prisma/client';
+import { Inject, forwardRef, Injectable } from '@nestjs/common';
+import { User, StatusUser, MatchInvitation } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { WebsocketsService } from 'src/websockets/websockets.service';
 import { Game } from './game.class';
@@ -14,6 +14,7 @@ export class GameService {
   games: Game[] = [];
 
   constructor(
+    @Inject(forwardRef(() => WebsocketsService))
     private readonly websocket: WebsocketsService,
     private readonly prisma: PrismaService,
     private readonly achievement: giveAchievementService,
@@ -30,7 +31,10 @@ export class GameService {
     this._treat_queue(this.game_queue);
   }
 
-  async create_invitation(socket: any, payload: any) {
+  async create_invitation(
+    socket: any,
+    payload: any,
+  ): Promise<{ status: number; reason: string }> {
     const user: { id: number; status: StatusUser } | null =
       await this.prisma.user.findUnique({
         where: {
@@ -41,100 +45,138 @@ export class GameService {
           status: true,
         },
       });
-    if (!user) {
-      this.websocket.send(socket, 'match_invitation_error', {
-        status: 'error',
-        error: 'User not found',
-      });
-      return;
-    }
-    if (user.status == 'PLAYING') {
-      this.websocket.send(socket, 'match_invitation_error', {
-        status: 'error',
-        error: 'User already in game',
-      });
-      return;
-    }
+    if (!user) return { status: 403, reason: 'User not found' };
+    if (user.status == 'PLAYING')
+      return { status: 400, reason: 'User Already in game' };
     const already_exist = await this.prisma.matchInvitation.findMany({
       where: {
         createdById: socket.user.id,
-        sendToId: user.id,
       },
     });
-    if (already_exist) {
-      this.websocket.send(socket, 'match_invitation_error', {
-        status: 'error',
-        error: 'Invitation already send',
-      });
-      return;
-    }
+    if (already_exist.length > 0)
+      return { status: 400, reason: 'Invitation already send' };
     const invited_socket: Socket[] = this.websocket.getSockets([user.id]);
-    if (!invited_socket || !invited_socket[0]) {
-      this.websocket.send(socket, 'match_invitation_error', {
-        status: 'error',
-        error: 'User offline',
-      });
-      return;
-    }
+    if (!invited_socket || !invited_socket[0])
+      return { status: 400, reason: 'User offline' };
     await this.prisma.matchInvitation.create({
       data: {
         createdById: socket.user.id,
         sendToId: user.id,
+        winScore: payload.winScore,
+        obstacle: payload.obstacle,
       },
     });
     const res = convert_invitation(socket, payload);
     this.websocket.send(invited_socket[0], 'invitation_game', res);
+    return { status: 200, reason: 'Invitation send' };
   }
 
-  async game_friend_start(socket: any, payload: any) {
+  async send_all_invitation(socket: any) {
+    if (!socket) return;
+    const allInvit = await this.prisma.matchInvitation.findMany({
+      where: {
+        sendToId: socket.user.id,
+      },
+      select: {
+        createdBy: true,
+        obstacle: true,
+        winScore: true,
+      },
+    });
+    for (let i = 0; i < allInvit.length; i++) {
+      const res = convert_invitation(
+        {
+          user: {
+            nickname: allInvit[i].createdBy.nickname,
+            avatar: allInvit[i].createdBy.avatar,
+          },
+        },
+        { obstacle: allInvit[i].obstacle, winScore: allInvit[i].winScore },
+      );
+      this.websocket.send(socket, 'invitation_game', res);
+    }
+  }
+
+  async game_friend_start(
+    socket: any,
+    payload: any,
+  ): Promise<{ status: number; reason: string }> {
     // The user accepted the game invitation
     const type: TypeMode =
       payload.obstacle == true ? TypeMode.CUSTOM : TypeMode.NORMAL;
     const user: { id: number } | null = await this.prisma.user.findUnique({
       where: {
-        nickname: payload.from.nickname,
+        nickname: payload.nickname,
       },
       select: {
         id: true,
       },
     });
-    if (!user) {
-      this.websocket.send(socket, 'match_invitation_error', {
-        status: 'error',
-        error: 'Opponents not found',
-      });
-      return;
-    }
+    if (!user) return { status: 403, reason: 'User not found' };
     const sockets: any = this.websocket.getSockets([user.id]);
-    if (!sockets[0]) {
-      this.websocket.send(socket, 'match_invitation_error', {
-        status: 'error',
-        error: 'Opponents log out',
-      });
-      return;
-    }
-    this._delete_user_invitations([user.id, socket.user.id]);
+    if (!sockets[0]) return { status: 400, reason: 'Opponents log out' };
+    this.websocket.send(sockets[0], 'invitation_accepted', '');
+    this.websocket.send(sockets[0], 'match_custom_start', '');
+    this.websocket.send(socket, 'match_custom_start', '');
+    this._delete_user_invitations(user.id);
     const game = new Game(
       this.prisma,
       this.websocket,
       this.achievement,
       type,
-      payload.winscore,
+      payload.winScore,
       { socket: sockets[0], user: sockets[0].user },
       { socket: socket, user: socket.user },
       payload.obstacle,
     );
     this.games.push(game);
-
     game.start(() => {
       this.games.splice(this.games.indexOf(game), 1);
     });
+    return { status: 200, reason: 'Game start' };
   }
-  private async _delete_user_invitations(userId: number[]) {
+
+  async game_abort(
+    socket: any,
+    nickname: string,
+  ): Promise<{ status: number; reason: string }> {
+    const userId: { id: number } | null = await this.prisma.user.findUnique({
+      where: {
+        nickname: nickname,
+      },
+      select: {
+        id: true,
+      },
+    });
+    if (!userId) return { status: 403, reason: 'User not found' };
+    const inviteUserSocket: Socket[] = this.websocket.getSockets([userId.id]);
+    if (!inviteUserSocket[0]) return { status: 400, reason: 'User disconnect' };
+    this.websocket.send(inviteUserSocket[0], 'match_invitation_canceled', {});
+    const invit = await this.prisma.matchInvitation.findUnique({
+      where: {
+        createdById: socket.user.id,
+      },
+    });
+    if (!invit) return { status: 404, reason: 'Invitation not found' };
+    this._delete_user_invitations(socket.user.id);
+    return { status: 200, reason: 'Success' };
+  }
+
+  async delete_invitation(user: User) {
+    const invit: MatchInvitation | null =
+      await this.prisma.matchInvitation.findUnique({
+        where: {
+          createdById: user.id,
+        },
+      });
+    if (!invit) return;
+    this._delete_user_invitations(user.id);
+  }
+
+  private async _delete_user_invitations(createdID: number) {
     await this.prisma.matchInvitation.delete({
       where: {
-        createdById: userId[0],
-        sendToId: userId[1],
+        createdById: createdID,
       },
     });
   }
@@ -142,21 +184,18 @@ export class GameService {
   async refuseInvitation(socket: any, payload: any) {
     const user: { id: number } | null = await this.prisma.user.findUnique({
       where: {
-        nickname: payload.from.nickname,
+        nickname: payload.nickname,
       },
       select: {
         id: true,
       },
     });
-    if (!user) {
-      this.websocket.send(socket, 'match_invitation_error', {
-        status: 'error',
-        error: 'User not found',
-      });
-      return;
-    }
-    this._delete_user_invitations([user.id, socket.user.id]);
+    if (!user) return { status: 404, reason: 'user not found' };
+    const socketUserCreate: Socket[] = this.websocket.getSockets([user.id]);
+    this.websocket.send(socketUserCreate[0], 'invitation_refused', '');
+    this._delete_user_invitations(user.id);
   }
+
   async create_training_game(player: any) {
     const msg = {
       action: 'match',
@@ -205,11 +244,10 @@ export class GameService {
         this.prisma,
         this.websocket,
         this.achievement,
-        TypeMode.CUSTOM,
+        TypeMode.NORMAL,
         5,
         { socket: player1, user: player1.user },
         { socket: player2, user: player2.user },
-        true,
       );
       this.games.push(game);
       game.start(() => {

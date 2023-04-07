@@ -1,14 +1,11 @@
 .basicCard {
   width: 100%;
   height: 100%;
-  margin-top: 44px;
-  margin-bottom: 22px;
-  align-self: center;
+  max-width: 1042px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  overflow: auto;
 }
 
 .header {
@@ -74,6 +71,15 @@
   padding-top: 10px;
 }
 
+.searchForm {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: 10px;
+  padding-top: 10px;
+}
+
 @media (width <= 700px) {
   .playerCard {
     line-height: 1.4;
@@ -81,4 +87,8 @@
     align-items: center;
     justify-content: center;
   }
+  .MuiDivider-root {
+    orientation: horizontal;
+  }
+
 }

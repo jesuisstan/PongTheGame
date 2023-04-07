@@ -150,8 +150,6 @@ const Chat = () => {
   const onClickJoinRoom = (roomName: string) => {
     // Notify that the user has clicked on a 'join' button
     setclickedRoomToJoin(roomName);
-    console.log('cllllllllllic -1: ' +clickedRoomToJoin)
-
     handleClickOpenP();
     // Check if the corresponding chat room is password protected
     socket.emit(
@@ -175,8 +173,6 @@ const Chat = () => {
   };
   // Check if the password is right
   const onPasswordSubmit = () => {
-    console.log('cllllllllllic 0: ' +clickedRoomToJoin)
-
     socket.emit('checkPassword',
       { roomName: clickedRoomToJoin, password: inputPassword },
       (response: boolean) => {
@@ -185,7 +181,6 @@ const Chat = () => {
           : setIsPasswordRight(false);
       }
     );
-    console.log('cllllllllllic 1: ' +clickedRoomToJoin)
     if (isPasswordRight) joinRoom(clickedRoomToJoin);
     setInputPassword('');
   };

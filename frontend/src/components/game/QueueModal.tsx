@@ -1,14 +1,15 @@
 import { useContext } from 'react';
-import Typography from '@mui/joy/Typography';
 import { WebSocketContext } from '../../contexts/WebsocketContext';
-import { Game_status } from './game.interface';
+import { GameStatus } from './game.interface';
+import { GameStatusContext } from '../../contexts/GameStatusContext';
+import Typography from '@mui/joy/Typography';
 import Modal from '@mui/joy/Modal';
 import ModalDialog from '@mui/joy/ModalDialog';
 import ModalClose from '@mui/joy/ModalClose';
 import Stack from '@mui/material/Stack';
 import LoadingButton from '@mui/lab/LoadingButton';
 import CircularProgress from '@mui/material/CircularProgress';
-import NotInterestedIcon from '@mui/icons-material/NotInterested';
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import * as MUI from '../UI/MUIstyles';
 import * as color from '../UI/colorsPong';
 
@@ -23,14 +24,14 @@ const modalDialogStyle = {
 interface QueueModalProps {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  setGameState: (gameState: Game_status) => void;
 }
 
 const QueueModal = (props: QueueModalProps) => {
+  const { setGameStatus } = useContext(GameStatusContext);
   const socket = useContext(WebSocketContext);
 
   const exitQueue = () => {
-    props.setGameState(Game_status.LOBBY);
+    setGameStatus(GameStatus.LOBBY);
     socket.emit('match_making', { action: 'cancel' });
     props.setOpen(false);
   };
@@ -60,7 +61,7 @@ const QueueModal = (props: QueueModalProps) => {
             />
             <LoadingButton
               type="reset"
-              startIcon={<NotInterestedIcon sx={{ color: color.PONG_PINK }} />}
+              startIcon={<HighlightOffIcon />}
               variant="contained"
               color="inherit"
               onClick={exitQueue}

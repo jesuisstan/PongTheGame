@@ -36,14 +36,13 @@ export class ChatGateway {
         msg.author.id &&
         await this.chatService.isUserMuted(roomName, msg.author.id) === false
       )
-      this.chatService.createMessage(roomName, msg);
+      await this.chatService.createMessage(roomName, msg);
       console.log('message emitted: ' + Object.entries(msg));
       // Broadcast received message to all users
-      this.server.emit('createMessage');
+      await this.server.emit('createMessage');
     }
-    throw new WsException({
-      msg: 'createMessage: message is empty!',
-    });
+    else
+      throw new WsException({ msg: 'createMessage: message is empty!', });
   }
 
   @SubscribeMessage('createChatRoom')
@@ -89,18 +88,18 @@ export class ChatGateway {
   }
 
   @SubscribeMessage('findAllMessages')
-  findAllMessages(@MessageBody('roomName') roomName: string) {
-    return this.chatService.findAllMessages(roomName);
+  async findAllMessages(@MessageBody('roomName') roomName: string) {
+    return await this.chatService.findAllMessages(roomName);
   }
 
   @SubscribeMessage('findAllChatRooms')
-  findAllChatRooms() {
-    return this.chatService.findAllChatRooms();
+  async findAllChatRooms() {
+    return await this.chatService.findAllChatRooms();
   }
 
   @SubscribeMessage('findAllMembers')
-  findAllMembers(@MessageBody('roomName') roomName: string) {
-    return this.chatService.findAllMembers(roomName);
+  async findAllMembers(@MessageBody('roomName') roomName: string) {
+    return await this.chatService.findAllMembers(roomName);
   }
 
   @SubscribeMessage('joinRoom')
@@ -116,11 +115,11 @@ export class ChatGateway {
   }
 
   @SubscribeMessage('quitRoom')
-  quitRoom(
+  async quitRoom(
     @MessageBody('roomName') roomName: string,
     @MessageBody('userId') userId: number,
   ) {
-    this.chatService.quitRoom(roomName, userId);
+    await this.chatService.quitRoom(roomName, userId);
     this.server.emit('quitRoom', roomName, userId);
   }
 
@@ -157,17 +156,17 @@ export class ChatGateway {
     if (newPassword &&
       await this.checkPassword(roomName, currentPassword) === false)
       throw new WsException({ msg: 'changePassword: wrong password!' });
-    this.chatService.changePassword(roomName, newPassword);
+    await this.chatService.changePassword(roomName, newPassword);
     const isDeleted = newPassword ? false : true;
     this.server.emit('changePassword', roomName, isDeleted);
   }
 
   @SubscribeMessage('isUserOper')
-  isUserOper(
+  async isUserOper(
     @MessageBody('roomName') roomName: string,
     @MessageBody('userId') userId: number,
   ) {
-    return this.chatService.isUserOper(roomName, userId);
+    return await this.chatService.isUserOper(roomName, userId);
   }
 
   // Give a target user the oper status
@@ -180,7 +179,7 @@ export class ChatGateway {
     // First, check if the user has the admin rights
     if (await this.isUserOper(roomName, userId) === false)
       throw new WsException({ msg: 'makeOper: user is not oper!' });
-    this.chatService.makeOper(roomName, target);
+    await this.chatService.makeOper(roomName, target);
     this.server.emit('makeOper', roomName, target);
   }
 
@@ -193,7 +192,7 @@ export class ChatGateway {
     // First, check if the user has the admin rights
     if (await this.isUserOper(roomName, userId) === false)
       throw new WsException({ msg: 'banUser: user is not oper!' });
-    this.chatService.banUser(roomName, target);
+    await this.chatService.banUser(roomName, target);
     this.server.emit('banUser', roomName, target);
   }
 
@@ -206,16 +205,16 @@ export class ChatGateway {
     // First, check if the user has the admin rights
     if (await this.isUserOper(roomName, userId) === false)
       throw new WsException({ msg: 'unBanUser: user is not oper!' });
-    this.chatService.unBanUser(roomName, target);
+    await this.chatService.unBanUser(roomName, target);
     this.server.emit('unBanUser', roomName, target);
   }
 
   @SubscribeMessage('isUserBanned')
-  isUserBanned(
+  async isUserBanned(
     @MessageBody('roomName') roomName: string,
     @MessageBody('userId') userId: number,
   ) {
-    return this.chatService.isUserBanned(roomName, userId);
+    return await this.chatService.isUserBanned(roomName, userId);
   }
 
   @SubscribeMessage('kickUser')
@@ -227,7 +226,7 @@ export class ChatGateway {
     // First, check if the user has the admin rights
     if (await this.isUserOper(roomName, userId) === false)
       throw new WsException({ msg: 'kickUser: user is not oper!' });
-    this.chatService.quitRoom(roomName, target);
+    await this.chatService.quitRoom(roomName, target);
     this.server.emit('kickUser', roomName, target);
   }
 
@@ -243,20 +242,20 @@ export class ChatGateway {
     if (await this.isUserOper(roomName, userId) === false)
       throw new WsException({ msg: 'muteUser: user is not oper!' });
     if (mute === true) {
-      this.chatService.muteUser(roomName, target);
+      await this.chatService.muteUser(roomName, target);
       this.server.emit('muteUser', roomName, target);
     } else {
-      this.chatService.unMuteUser(roomName, target);
+      await this.chatService.unMuteUser(roomName, target);
       this.server.emit('unMuteUser', roomName, target);
     }
   }
 
   @SubscribeMessage('isUserMuted')
-  isUserMuted(
+  async isUserMuted(
     @MessageBody('roomName') roomName: string,
     @MessageBody('userId') userId: number,
   ) {
-    return this.chatService.isUserMuted(roomName, userId);
+    return await this.chatService.isUserMuted(roomName, userId);
   }
 
   @SubscribeMessage('saveBlockedUserToDB')

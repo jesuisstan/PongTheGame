@@ -86,8 +86,10 @@ Table MatchInvitation {
   id Int [pk, increment]
   createdBy User [not null]
   createdById Int [unique, not null]
-  sendToId Int [unique, not null]
+  sendToId Int [not null]
   sendTo User [not null]
+  obstacle Boolean [not null]
+  winScore Int [not null, default: 5]
   status InvitationState [not null, default: 'Pending']
 }
 

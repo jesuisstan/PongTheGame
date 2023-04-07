@@ -1,4 +1,4 @@
-import { Player } from '../../types/Player';
+import { PlayerProfile } from '../../types/PlayerProfile';
 import Badge from '@mui/material/Badge';
 import { styled } from '@mui/material/styles';
 import * as colorPong from '../UI/colorsPong';
@@ -6,7 +6,7 @@ import * as colorPong from '../UI/colorsPong';
 interface PongBadgeProps {
   color?: string;
   pulse?: boolean;
-  player: Player;
+  player: PlayerProfile;
   children: React.ReactNode;
 }
 
@@ -55,8 +55,9 @@ const BadgePong = ({ color, pulse, player, children }: PongBadgeProps) => {
     }
   }));
 
-  return (player.status === 'OFFLINE' && pulse != true) || pulse === false ? (
+  return (player.status === 'OFFLINE' && pulse !== true) || pulse === false ? (
     <StyledBadge
+      title={player.status}
       overlap="circular"
       anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
       variant="dot"
@@ -65,6 +66,7 @@ const BadgePong = ({ color, pulse, player, children }: PongBadgeProps) => {
     </StyledBadge>
   ) : (
     <StyledPulseBadge
+      title={player.status}
       overlap="circular"
       anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
       variant="dot"
