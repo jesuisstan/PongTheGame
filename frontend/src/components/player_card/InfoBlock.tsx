@@ -73,7 +73,7 @@ const InfoBlock = ({ player }: { player: PlayerProfile }) => {
 
   const sendSpectate = (id: number) => {
     socket.emit('match_spectate', { id: id });
-    setGameStatus(GameStatus.PLAYING);
+    setGameStatus(GameStatus.SPECTATE);
     navigate('/game');
   };
 

@@ -34,15 +34,13 @@ export class ChatGateway {
     if (msg) {
       if (
         msg.author.id &&
-        await this.chatService.isUserMuted(roomName, msg.author.id) === false
+        (await this.chatService.isUserMuted(roomName, msg.author.id)) === false
       )
-      await this.chatService.createMessage(roomName, msg);
+        await this.chatService.createMessage(roomName, msg);
       console.log('message emitted: ' + Object.entries(msg));
       // Broadcast received message to all users
       await this.server.emit('createMessage');
-    }
-    else
-      throw new WsException({ msg: 'createMessage: message is empty!', });
+    } else throw new WsException({ msg: 'createMessage: message is empty!' });
   }
 
   @SubscribeMessage('createChatRoom')
@@ -50,28 +48,29 @@ export class ChatGateway {
     @MessageBody('room') room: ChatRoomDto,
     @MessageBody('user1') user1: User,
     @MessageBody('user2') user2: User,
-    ) {
+  ) {
     // First, check if the room name already exists
     const r = await this.chatService.getChatRoomByName(room.name);
     if (r) {
       // Throw error if both roooms are in the same category (private/public)
-      if (((r.modes.search('i') !== -1) && (user2)) ||
-        ((r.modes.search('i') === -1) && (room.modes.search('i') === -1)))
+      if (
+        (r.modes.search('i') !== -1 && user2) ||
+        (r.modes.search('i') === -1 && room.modes.search('i') === -1)
+      )
         throw new WsException({
           msg: 'createChatRoom: room name is already taken!',
         });
     }
     // In case of a private room, the name of the room is in the form:
     // #user1user2 => avoid creating doubles in the form #user2user1
-    if (user2)
-    {
+    if (user2) {
       const roomName = '#' + user2.nickname + '/' + user1.nickname;
       const privRoom = await this.chatService.getChatRoomByName(roomName);
       if (privRoom)
         throw new WsException({
           msg: 'createChatRoom: room name is already taken!',
         });
-  }
+    }
     // Set 'password protected' mode
     if (room.password) room.modes = 'p';
     // Set 'private' mode. This is a conversation between
@@ -111,7 +110,7 @@ export class ChatGateway {
     @MessageBody('roomName') roomName: string,
     @MessageBody('userId') userId: number,
   ) {
-    if (await this.chatService.isUserBanned(roomName, userId) === true)
+    if ((await this.chatService.isUserBanned(roomName, userId)) === true)
       throw new WsException({ msg: 'joinRoom: User is banned.' });
     await this.chatService.identify(roomName, userId, '', true);
     this.server.emit('joinRoom', roomName, userId);
@@ -152,8 +151,11 @@ export class ChatGateway {
     @MessageBody('newPassword') newPassword: string,
   ) {
     // First, check the current password
-    if (newPassword && newPassword !== '' &&
-      await this.checkPassword(roomName, currentPassword) === false)
+    if (
+      newPassword &&
+      newPassword !== '' &&
+      (await this.checkPassword(roomName, currentPassword)) === false
+    )
       throw new WsException({ msg: 'changePassword: wrong password!' });
     await this.chatService.changePassword(roomName, newPassword);
     const isDeleted = newPassword && newPassword !== '' ? false : true;
@@ -177,7 +179,7 @@ export class ChatGateway {
     @MessageBody('target') target: number,
   ) {
     // First, check if the user has the admin rights
-    if (await this.hasUserPriv(roomName, userId, target) === false)
+    if ((await this.hasUserPriv(roomName, userId, target)) === false)
       throw new WsException({ msg: 'makeAdmin: user is not oper!' });
     await this.chatService.makeAdmin(roomName, target);
     this.server.emit('makeAdmin', roomName, target);
@@ -190,7 +192,7 @@ export class ChatGateway {
     @MessageBody('target') target: number,
   ) {
     // First, check if the user has the admin rights
-    if (await this.hasUserPriv(roomName, userId, target) === false)
+    if ((await this.hasUserPriv(roomName, userId, target)) === false)
       throw new WsException({ msg: 'banUser: user is not oper!' });
     await this.chatService.banUser(roomName, target);
     await this.chatService.quitRoom(roomName, target);
@@ -204,7 +206,7 @@ export class ChatGateway {
     @MessageBody('target') target: number,
   ) {
     // First, check if the user has the admin rights
-    if (await this.hasUserPriv(roomName, userId, target) === false)
+    if ((await this.hasUserPriv(roomName, userId, target)) === false)
       throw new WsException({ msg: 'unBanUser: user is not oper!' });
     await this.chatService.unBanUser(roomName, target);
     this.server.emit('unBanUser', roomName, target);
@@ -225,7 +227,7 @@ export class ChatGateway {
     @MessageBody('target') target: number,
   ) {
     // First, check if the user has the admin rights
-    if (await this.hasUserPriv(roomName, userId, target) === false)
+    if ((await this.hasUserPriv(roomName, userId, target)) === false)
       throw new WsException({ msg: 'kickUser: user is not oper!' });
     await this.chatService.quitRoom(roomName, target);
     this.server.emit('kickUser', roomName, target);
@@ -240,7 +242,7 @@ export class ChatGateway {
     @MessageBody('mute') mute: boolean,
   ) {
     // First, check if the user has the admin rights
-    if (await this.hasUserPriv(roomName, userId, target) === false)
+    if ((await this.hasUserPriv(roomName, userId, target)) === false)
       throw new WsException({ msg: 'muteUser: user is not oper!' });
     if (mute === true) {
       await this.chatService.muteUser(roomName, target);
@@ -266,8 +268,8 @@ export class ChatGateway {
   ) {
     const { id } = user;
     await this.prisma.user.update({
-      data: {blockedUsers},
-      where: {id},
+      data: { blockedUsers },
+      where: { id },
     });
   }
 }

@@ -20,15 +20,13 @@ const Game = () => {
   const [openCount, setOpenCount] = useState(false);
   const [openQueueModal, setOpenQueueModal] = useState(false);
 
-  if (user.provider && user.nickname) {
-    socket.on('matchmaking', (args) => {
-      setGameStatus(GameStatus.BEGIN_GAME);
-    });
+  socket.on('matchmaking', (args) => {
+    setGameStatus(GameStatus.BEGIN_GAME);
+  });
 
-    socket.on('match_result', (args) => {
-      setGameResult(args);
-    });
-  }
+  socket.on('match_result', (args) => {
+    setGameResult(args);
+  });
 
   socket.on('match_spectate', (args) => {
     if (args.status && args.status === 'success')
