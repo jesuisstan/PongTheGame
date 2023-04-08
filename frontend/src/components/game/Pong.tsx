@@ -62,11 +62,6 @@ const Pong = (props: GameProps) => {
   };
 
   useEffect(() => {
-    if (props.spectator) {
-      return () => {
-        socket.emit('match_spectate_leave', {});
-      };
-    }
 
     const intervalId = setInterval(() => {
       const playPong = () => {
@@ -87,9 +82,8 @@ const Pong = (props: GameProps) => {
 
       const spectatePong = () => {
         socket.on('match_spectate_state', (args) => {
-          console.log(args);
-          console.log('spectating Pong');
           expandTheGame(args);
+          console.log(args.status);
           if (args.status === 'ended' || args.status === 'aborted') {
             setGameStatus(GameStatus.ENDED);
           }

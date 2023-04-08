@@ -64,7 +64,7 @@ export class WebsocketsService {
       this.sockets.push(socket);
       this.game.send_all_invitation(socket);
     } catch (e) {
-      console.log(e);
+      console.log(e); // Triger with expiration NORMAL
       this.send(socket, 'error_socket', {
         message: 'Server got a problem need to be relog',
       });
@@ -74,16 +74,14 @@ export class WebsocketsService {
   }
 
   async modifyTheUserSocket(id: number) {
-    // MEMO TMP NEED TO DECOMMENT
-    // const socket: any = this.getSockets([id])[0];
-    // const user = await this.prismaService.user.findUnique({
-    //   where: { id: id },
-    // });
-    // console.log(socket);
-    // if (!socket) return;
-    // socket['user'] = user;
-    // this.sockets.push(socket);
-    // return;
+    const socket: any = this.getSockets([id])[0];
+    const user = await this.prismaService.user.findUnique({
+      where: { id: id },
+    });
+    if (!socket) return;
+    socket['user'] = user;
+    this.sockets.push(socket);
+    return;
   }
 
   registerOnClose(socket: any, action: () => void) {

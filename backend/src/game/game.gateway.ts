@@ -1,6 +1,5 @@
 import { WebSocketGateway, SubscribeMessage } from '@nestjs/websockets';
 import { GameService } from './game.service';
-import { PrismaService } from 'src/prisma/prisma.service';
 import { WebsocketsService } from 'src/websockets/websockets.service';
 import { Socket } from 'socket.io';
 
@@ -49,13 +48,7 @@ export class GameGateway {
   async spectateMatch(socket: any, payload: any) {
     if (!payload || !payload.id) return;
     const game = this.game.get_game_where_player_is(payload.id);
-    if (!game) {
-      this.websockets.send(socket, 'match_spectate_error', {
-        status: 'error',
-        error: 'Game not found',
-      });
-      return;
-    }
+    if (!game) return { status: 404, reason: 'Game not found' };
     this.websockets.send(socket, 'match_spectate', {
       status: 'success',
     });
@@ -138,6 +131,7 @@ export class GameGateway {
   async spectateLeave(socket: any) {
     const game = this.game.get_game_where_spectator_is(socket.user.id);
     if (!game) return;
+    this.websockets.send(socket, 'match_spec_change_state', {});
     game.remove_spectator(socket);
   }
 }
