@@ -42,7 +42,7 @@ const ChatRoom = (props: any) => {
 	// Checks if a target user is oper(=admin) in the chat room
 	const [isOper, setIsOper] = useState<boolean>(false)
 	// Checks if the user is oper(=admin) in the chat room
-	const [isUserOper, setIsUserOper] = useState<boolean>(false)
+	const [isUserAdmin, setisUserAdmin] = useState<boolean>(false)
 	// Array including all members
 	const [members, setMembers] = useState<MemberType[]>([])
 	// Array including all the banned users from the room
@@ -110,16 +110,6 @@ const ChatRoom = (props: any) => {
     })}
 	findAllMessages();
 
-	// If self=true, we check if the user is oper, not a target
-	const checkIfOper = async(userId: number, self: boolean) => {
-		await socket.emit('isUserOper',
-		{ roomName: user.joinedChatRoom, userId: userId },
-		(response: boolean) => {
-			self ? setIsUserOper(response) : setIsOper(response)
-		}
-	)}
-	checkIfOper(user.id, true)
-
 
 	/*************************************************************
 	* Event listeners
@@ -138,7 +128,7 @@ const ChatRoom = (props: any) => {
         console.log('Password from ' + roomName + ' has been ' + isDeleted);
       }
     })
-    socket.on('makeOper', (roomName: string, target: number) => {
+    socket.on('makeAdmin', (roomName: string, target: number) => {
       if (roomName === user.joinedChatRoom)
         console.log(target + ' is Oper now!')
     })
@@ -181,7 +171,7 @@ const ChatRoom = (props: any) => {
 		socket.off('createMessage')
 		socket.off('typingMessage')
 		socket.off('changePassword')
-		socket.off('makeOper')
+		socket.off('makeAdmin')
 		socket.off('joinRoom')
 		socket.off('quitRoom')
 		socket.off('kickUser')
@@ -218,6 +208,12 @@ const ChatRoom = (props: any) => {
 		return false;
 	}}
 
+	const checkIfOwner = (userId: number) => {
+		for (const member in members)
+			if (members[member].modes.indexOf('o') !== -1)
+				return true;
+		return false;
+	}
 
   	/*************************************************************
 	* Events
@@ -338,8 +334,8 @@ const ChatRoom = (props: any) => {
   }
 
   // When clicking on the 'oper' button to make a user oper
-  const onMakeOperClick = (target: number) => {
-    socket.emit('makeOper', {
+  const onmakeAdminClick = (target: number) => {
+    socket.emit('makeAdmin', {
       roomName: user.joinedChatRoom,
       userId: user.id,
       target: target
@@ -347,8 +343,8 @@ const ChatRoom = (props: any) => {
   }
 
   // When clicking on the 'oper' button to make a user oper
-  const onUnMakeOperClick = (target: number) => {
-    socket.emit('unMakeOper', {
+  const onUnmakeAdminClick = (target: number) => {
+    socket.emit('unmakeAdmin', {
       roomName: user.joinedChatRoom,
       userId: user.id,
       target: target
@@ -541,7 +537,7 @@ const ChatRoom = (props: any) => {
 													<span>block</span>
 												</IconButton>
 	
-												{isUserOper ?
+												{isUserAdmin ?
 												<>
 													<IconButton
 														onClick={() => onKickClick(msg.author.id)} >
@@ -556,13 +552,13 @@ const ChatRoom = (props: any) => {
 														<span>ban</span>
 													</IconButton>
 													<IconButton
-														onClick={isUserOper ?
-															() => onUnMakeOperClick(msg.author.id)
-															: () => onMakeOperClick(msg.author.id)}>
+														onClick={isUserAdmin ?
+															() => onUnmakeAdminClick(msg.author.id)
+															: () => onmakeAdminClick(msg.author.id)}>
 														<DeveloperMode className="black"/>
 														<span>admin</span>
 													</IconButton>
-														</> : <></> } 
+														</> : <></> } isOper
 													<IconButton
 														onClick={handleAClose}>
 														<Clear className='black'/>

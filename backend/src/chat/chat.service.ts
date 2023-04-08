@@ -112,7 +112,7 @@ export class ChatService {
         this.identify(room.name, user2Id, '', false);
         return;
       }
-      // Identify creator as the oper(=admin)
+      // Identify creator as the owner
       this.identify(room.name, userId, 'o', false);
     } else
       throw new WsException({
@@ -185,35 +185,35 @@ export class ChatService {
     } else throw new WsException({ msg: 'changePassword: unknown room name!' });
   }
 
-  async isUserOper(roomName: string, userId: number) {
+  async isUserAdmin(roomName: string, userId: number) {
     const room = await this.getChatRoomByName(roomName);
     if (room) {
-      // Look for oper mode ('o') in user's mode
+      // Look for owner mode ('o') in user's mode
       for (let i=0; i < room.members.length; ++i)
         if (room.members[i].memberId === userId &&
-          room.members[i].modes.search('o') !== -1)
+          room.members[i].modes.search('a') !== -1)
           return true;
       return false;
     }
-    throw new WsException({ msg: 'isUserOper: unknown room name!' });
+    throw new WsException({ msg: 'isUserAdmin: unknown room name!' });
   }
 
-  async makeOper(roomName: string, userId: number) {
+  async makeAdmin(roomName: string, userId: number) {
     const room = await this.getChatRoomByName(roomName);
     if (room) {
-      // Look for oper mode ('o') in user's mode
-      // Add 'o' mode if not already there
+      // Look for admin mode ('a') in user's mode
+      // Add 'a' mode if not already there
       var modes = '';
       for (var i=0; i < room.members.length; ++i)
         if (room.members[i].memberId === userId) {
           modes = room.members[i].modes;
-          if (room.members[i].modes.search('o') === -1)
-            modes += 'o';
+          if (room.members[i].modes.search('a') === -1)
+            modes += 'a';
         }
       // Save the new modes
       await this.updateUserModes(roomName, userId, modes);
     }
-    else throw new WsException({ msg: 'makeOper: unknown room name!' });
+    else throw new WsException({ msg: 'makeAdmin: unknown room name!' });
   }
 
   // async blockUser(roomName: string, userId: number) {
