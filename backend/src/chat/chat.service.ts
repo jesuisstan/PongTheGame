@@ -3,6 +3,7 @@ import { WsException } from '@nestjs/websockets';
 import { MessageDto, ChatRoomDto } from './dto/chat.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
+import { Member } from './entities/chat.entity';
 
 @Injectable()
 export class ChatService {
@@ -59,7 +60,12 @@ export class ChatService {
   async getChatRoomByName(name: string) {
     return await this.prisma.chatRoom.findUnique({
       where: { name: name },
-      include: { members: true, messages: true, bannedUsers: true }
+      include: {
+        members: true,
+        messages: { 
+          include: { author: true }
+        },
+        bannedUsers: true }
     })
   }
 
@@ -209,18 +215,27 @@ export class ChatService {
     throw new WsException({ msg: 'hasUserPriv: unknown room name!' });
   }
 
+  modifyModes(members: Member[], userId: number, mode: string, del: boolean) {
+    var modes = '';
+      // Look for mode in user's mode
+      // Add mode if not already there
+      for (var i=0; i < members.length; ++i)
+        if (members[i].memberId === userId) {
+          modes = members[i].modes;
+          if (!del && members[i].modes.search(mode) === -1)
+            modes += mode;
+          else if (del) {
+            var regex = '/' + mode + '/g';
+            modes.replace(regex, '');
+          }
+      }
+    return modes;
+  }
+
   async makeAdmin(roomName: string, userId: number) {
-    const room = await this.getChatRoomByName(roomName);
+    const room: ChatRoomDto | null = await this.getChatRoomByName(roomName);
     if (room) {
-      // Look for admin mode ('a') in user's mode
-      // Add 'a' mode if not already there
-      var modes = '';
-      for (var i=0; i < room.members.length; ++i)
-        if (room.members[i].memberId === userId) {
-          modes = room.members[i].modes;
-          if (room.members[i].modes.search('a') === -1)
-            modes += 'a';
-        }
+      var modes = this.modifyModes(room.members, userId, 'a', false)
       // Save the new modes
       await this.updateUserModes(roomName, userId, modes);
     }
