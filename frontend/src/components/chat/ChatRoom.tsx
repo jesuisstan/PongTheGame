@@ -192,41 +192,41 @@ const ChatRoom = (props: any) => {
 	* Status getters
 	**************************************************************/
 
-	const isMuted = (userId: number) => {
+	const isMuted = (userId: number): boolean => {
 		for (let i=0; i < members.length; ++i)
 			if (members[i].memberId === userId && members[i].modes.indexOf('m') !== -1)
 				return true;
 		return false;
 	}
 	
-	const checkIfBanned = (userId: number) => {
+	const checkIfBanned = (userId: number): boolean => {
 		for (const bannedUser in bannedMembers)
 			if (bannedMembers[bannedUser].id === userId)
 				return true;
 		return false;
 	}
 
-	const isUserBlocked = (userId: number) => {
-		for (const blockedUser in user.blockedUsers) {
+	const isUserBlocked = (userId: number): boolean => {
+		for (const blockedUser in user.blockedUsers)
 			if (user.blockedUsers[userId])
 				return true;
 		return false;
-	}}
+	}
 
-	const checkIfOwner = (userId: number) => {
+	const checkIfOwner = (userId: number): boolean => {
 		return props.room.owner === userId ? true : false;
 	}
 
-	const checkIfAdmin = (userId: number) => {
+	const checkIfAdmin = (userId: number): boolean => {
 		for (const member in members)
 			if (members[member].modes.indexOf('a') !== -1)
 				return true;
 		return false;
 	}
 
-	const checkPrivileges = (target: number) => {
+	const checkPrivileges = (target: number): boolean => {
 		// If target is the owner, we stop here: cannot do anything against owners
-		if (target === props.room.owner) return;
+		if (target === props.room.owner) return false;
 		// Look for the user asking for privilege
 		for (let i=0; i < members.length; ++i) {
 			if (members[i].memberId === user.id) {

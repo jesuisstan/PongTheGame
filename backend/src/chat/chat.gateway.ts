@@ -190,11 +190,11 @@ export class ChatGateway {
       // Send the first character of the mode name; ex: mute => 'm'
       var modes: string =
         await this.chatService.modifyModes(room.members, target, mode[0], off);
+      // Save the new modes
       await this.chatService.updateUserModes(roomName, target, modes);
       // Create event name, ex: unmuteUser
       const event: string = (off ? 'un' : '') + mode + 'User';
       this.server.emit(event, roomName, target);
-      // Save the new modes
     }
   }
   
