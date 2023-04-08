@@ -97,6 +97,7 @@ export class ChatService {
       const r = await this.prisma.chatRoom.create({
         data: {
           name: room.name,
+          owner: userId,
           modes: room.modes,
           password: hash,
           userLimit: room.userLimit,
@@ -185,17 +186,26 @@ export class ChatService {
     } else throw new WsException({ msg: 'changePassword: unknown room name!' });
   }
 
-  async isUserAdmin(roomName: string, userId: number) {
+  async hasUserPriv(roomName: string, userId: number, target: number) {
     const room = await this.getChatRoomByName(roomName);
     if (room) {
-      // Look for owner mode ('o') in user's mode
-      for (let i=0; i < room.members.length; ++i)
-        if (room.members[i].memberId === userId &&
-          room.members[i].modes.search('a') !== -1)
-          return true;
-      return false;
+      // If target is the owner, we stop here: cannot do anything against owners
+      if (target === room.owner) return;
+      // Look for the user asking for privilege
+      for (let i=0; i < room.members.length; ++i) {
+          if (room.members[i].memberId === userId) {
+            // If user is neither owner or admin, we stop here
+            if (userId !== room.owner && room.members[i].modes.search('a') === -1)
+              return false
+            // Otherwise, there is no reason not to give privilege
+            return true;
+          }
+      }
+      throw new WsException({
+        msg: 'hasUserPriv: unknown member in [' + roomName + ']!'
+      });
     }
-    throw new WsException({ msg: 'isUserAdmin: unknown room name!' });
+    throw new WsException({ msg: 'hasUserPriv: unknown room name!' });
   }
 
   async makeAdmin(roomName: string, userId: number) {

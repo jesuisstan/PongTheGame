@@ -124,6 +124,7 @@ Table Member {
 
 Table ChatRoom {
   name String [pk]
+  owner Int [not null]
   modes String [not null]
   password String [not null]
   userLimit Int [not null]

@@ -7,6 +7,7 @@ export class Message {
 
 export class ChatRoom {
   name: string;
+  owner: number;
   modes: string;
   password: string;
   userLimit: number;

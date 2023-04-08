@@ -132,6 +132,7 @@ const Chat = () => {
       await socket.emit('createChatRoom', {
         room: {
           name: newChatRoomName,
+          owner: user.id,
           modes: '',
           password: chatRoomPassword,
           userLimit: 0,
@@ -154,7 +155,7 @@ const Chat = () => {
   // When clicking on a room name to join it
   const onClickJoinRoom = async(roomName: string, modes: string) => {
     // Quit current joined room first
-    if (user.joinedChatRoom && roomName !== user.joinedChatRoom) {
+    if (user.joinedChatRoom && roomName !== user.joinedChatRoom?.name) {
       await socket.emit('quitRoom', {
         roomName: user.joinedChatRoom,
         userId: user.id,
@@ -177,7 +178,7 @@ const Chat = () => {
     await socket.emit(
       'joinRoom',
       { roomName: roomName, userId: user.id },
-      (response: string) => {
+      (response: ChatRoomType) => {
         user.joinedChatRoom = response;
         setClickedRoomToJoin('');
     });
@@ -209,7 +210,7 @@ const Chat = () => {
   };
   // Clean all data about the joined room
   const cleanRoomLoginData = () => {
-    user.joinedChatRoom = '';
+    user.joinedChatRoom = undefined;
     setIsPasswordProtected(false);
     setIsPasswordRight(false);
   };
@@ -365,7 +366,7 @@ const Chat = () => {
         <Box component="main" id="chatRoom">
           {user.joinedChatRoom &&
           ((isPasswordProtected && isPasswordRight) || !isPasswordProtected) ? (
-            <ChatRoom cleanRoomLoginData={cleanRoomLoginData} />
+            <ChatRoom cleanRoomLoginData={cleanRoomLoginData} room={user.joinedChatRoom} />
           ) : (
             <div className="black">
               <h2>Actually no room joined</h2>

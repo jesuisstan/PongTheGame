@@ -32,7 +32,7 @@ const App = () => {
     totpSecret: null,
     username: '',
     blockedUsers: [],
-    joinedChatRoom: ''
+    joinedChatRoom: undefined,
   });
 
   const [gameStatus, setGameStatus] = useState('lobby');

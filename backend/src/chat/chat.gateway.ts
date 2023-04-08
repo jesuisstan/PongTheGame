@@ -116,7 +116,7 @@ export class ChatGateway {
       throw new WsException({ msg: 'joinRoom: User is banned.' });
     await this.chatService.identify(roomName, userId, '', true);
     this.server.emit('joinRoom', roomName, userId);
-    return roomName;
+    return await this.chatService.getChatRoomByName(roomName);
   }
 
   @SubscribeMessage('quitRoom')
@@ -161,12 +161,13 @@ export class ChatGateway {
     this.server.emit('changePassword', roomName, isDeleted);
   }
 
-  @SubscribeMessage('isUserAdmin')
-  async isUserAdmin(
+  @SubscribeMessage('hasUserPriv')
+  async hasUserPriv(
     @MessageBody('roomName') roomName: string,
     @MessageBody('userId') userId: number,
+    @MessageBody('target') target: number,
   ) {
-    return await this.chatService.isUserAdmin(roomName, userId);
+    return await this.chatService.hasUserPriv(roomName, userId, target);
   }
 
   // Give a target user the oper status
@@ -177,7 +178,7 @@ export class ChatGateway {
     @MessageBody('target') target: number,
   ) {
     // First, check if the user has the admin rights
-    if (await this.isUserAdmin(roomName, userId) === false)
+    if (await this.hasUserPriv(roomName, userId, target) === false)
       throw new WsException({ msg: 'makeAdmin: user is not oper!' });
     await this.chatService.makeAdmin(roomName, target);
     this.server.emit('makeAdmin', roomName, target);
@@ -190,7 +191,7 @@ export class ChatGateway {
     @MessageBody('target') target: number,
   ) {
     // First, check if the user has the admin rights
-    if (await this.isUserAdmin(roomName, userId) === false)
+    if (await this.hasUserPriv(roomName, userId, target) === false)
       throw new WsException({ msg: 'banUser: user is not oper!' });
     await this.chatService.banUser(roomName, target);
     this.server.emit('banUser', roomName, target);
@@ -203,7 +204,7 @@ export class ChatGateway {
     @MessageBody('target') target: number,
   ) {
     // First, check if the user has the admin rights
-    if (await this.isUserAdmin(roomName, userId) === false)
+    if (await this.hasUserPriv(roomName, userId, target) === false)
       throw new WsException({ msg: 'unBanUser: user is not oper!' });
     await this.chatService.unBanUser(roomName, target);
     this.server.emit('unBanUser', roomName, target);
@@ -224,7 +225,7 @@ export class ChatGateway {
     @MessageBody('target') target: number,
   ) {
     // First, check if the user has the admin rights
-    if (await this.isUserAdmin(roomName, userId) === false)
+    if (await this.hasUserPriv(roomName, userId, target) === false)
       throw new WsException({ msg: 'kickUser: user is not oper!' });
     await this.chatService.quitRoom(roomName, target);
     this.server.emit('kickUser', roomName, target);
@@ -239,7 +240,7 @@ export class ChatGateway {
     @MessageBody('mute') mute: boolean,
   ) {
     // First, check if the user has the admin rights
-    if (await this.isUserAdmin(roomName, userId) === false)
+    if (await this.hasUserPriv(roomName, userId, target) === false)
       throw new WsException({ msg: 'muteUser: user is not oper!' });
     if (mute === true) {
       await this.chatService.muteUser(roomName, target);

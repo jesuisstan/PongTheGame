@@ -14,6 +14,7 @@ export type MemberType = {
 
 export type ChatRoomType = {
 	name: string;
+	owner: number;
 	modes: string;
 	password: string;
 	userLimit: number;

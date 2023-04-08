@@ -165,6 +165,7 @@ model Member {
 
 model ChatRoom {
   name        String    @id
+  owner       Int
   modes       String
   password    String
   userLimit   Int

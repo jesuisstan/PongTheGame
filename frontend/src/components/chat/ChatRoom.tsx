@@ -32,17 +32,17 @@ const ChatRoom = (props: any) => {
 	**************************************************************/
 	const socket = useContext(WebSocketContext)
 	const { user, setUser } = useContext(UserContext)
+	// Array including all members
+	const [members, setMembers] = useState<MemberType[]>(props.room.members)
+	// Array including all the banned users from the room
+	const [bannedMembers, setBannedMembers] = useState<User[]>(props.room.bannedMembers)
 	// Array including all message objects (author + msg) excluding
 	// messages from blocked users/users who blocked the user
-	const [messages, setMessages] = useState<Message[]>([])
+	const [messages, setMessages] = useState<Message[]>(props.room.messages)
 	// Display typing state of the user
 	const [typingDisplay, setTypingDisplay] = useState<string>('')
 	// Message input field value
 	const [messageText, setMessageText] = useState<string>('')
-	// Array including all members
-	const [members, setMembers] = useState<MemberType[]>([])
-	// Array including all the banned users from the room
-	const [bannedMembers, setBannedMembers] = useState<User[]>([])
 	// Modify password
 	const [oldPassword, setOldPassword] = useState<string>('');
 	const [newPassword, setNewPassword] = useState<string>('');
@@ -52,10 +52,12 @@ const ChatRoom = (props: any) => {
 
 	/*************************************************************
 	* State getters
+	*
+	* We keep fetching the data to get all the updates
 	**************************************************************/
 
-  const findAllMembers = async() => {
-	await socket.emit('findAllMembers', { roomName: user.joinedChatRoom },
+  	const findAllMembers = async() => {
+	await socket.emit('findAllMembers', { roomName: props.room.name },
 		(response: MemberType[]) => {
 		setMembers(response)
 		}
@@ -63,101 +65,101 @@ const ChatRoom = (props: any) => {
 	findAllMembers();
 
 	const findAllBanned = async() => {
-		await socket.emit('findAllBannedMembers', { roomName: user.joinedChatRoom },
+		await socket.emit('findAllBannedMembers', { roomName: props.room.name },
 		(response: User[]) => {
 			setBannedMembers(response)
 		})
 	}
 	findAllBanned();
 
-  // Get all messages from messages array in chat.service
-  // and fill the messages variable
-  const findAllMessages = async() => {
+	// Get all messages from messages array in chat.service
+	// and fill the messages variable
+	const findAllMessages = async() => {
 	await socket.emit('findAllMessages',
-    { roomName: user.joinedChatRoom },
-    (response: Message[]) => {
-      // Array including all the messages, even the ones from
-      // blocked users/users who blocked the user
-      const messagesToFilter = response
-      for (let i = messagesToFilter.length - 1; i >= 0; --i) {
-        // First we filter the recipient's blocked users
-        let found = false;
-        for (const blockedUser in user.blockedUsers) {
-          if (messagesToFilter[i].author.id === user.blockedUsers[blockedUser])
-          {
-            messagesToFilter.splice(i, 1);
-            found = true;
-            break;
-          }
-        }
-        // Then we filter the sender's blocked users
-        if (found === false) {
-          for (const blockedUser in messagesToFilter[i].author.blockedUsers) {
-            if (user.id === messagesToFilter[i].author.blockedUsers[blockedUser])
-            {
-              messagesToFilter.splice(i, 1);
-              break;
-            }
-          }
-        }
-      }
-      const filteredMessages = messagesToFilter
-      setMessages(filteredMessages)
-    })}
+	{ roomName: props.room.name },
+	(response: Message[]) => {
+		// Array including all the messages, even the ones from
+		// blocked users/users who blocked the user
+		const messagesToFilter = response
+		for (let i = messagesToFilter.length - 1; i >= 0; --i) {
+		// First we filter the recipient's blocked users
+		let found = false;
+		for (const blockedUser in user.blockedUsers) {
+			if (messagesToFilter[i].author.id === user.blockedUsers[blockedUser])
+			{
+			messagesToFilter.splice(i, 1);
+			found = true;
+			break;
+			}
+		}
+		// Then we filter the sender's blocked users
+		if (found === false) {
+			for (const blockedUser in messagesToFilter[i].author.blockedUsers) {
+			if (user.id === messagesToFilter[i].author.blockedUsers[blockedUser])
+			{
+				messagesToFilter.splice(i, 1);
+				break;
+			}
+			}
+		}
+		}
+		const filteredMessages = messagesToFilter
+		setMessages(filteredMessages)
+	})}
 	findAllMessages();
 
 
 	/*************************************************************
 	* Event listeners
 	**************************************************************/
-  useEffect(() => {
+  	useEffect(() => {
     // Activate listeners and subscribe to events as the component is mounted
     socket.on('typingMessage', (
         roomName: string, nick: string, isTyping: boolean) => {
-      roomName === user.joinedChatRoom && isTyping ?
+      roomName === props.room.name && isTyping ?
         setTypingDisplay(nick + ' is typing...')
         : setTypingDisplay('')
     })
     socket.on('changePassword', (roomName: string, isDeleted: boolean) => {
-      if (roomName === user.joinedChatRoom) {
+      if (roomName === props.room.name) {
         const status = isDeleted ? 'deleted' : 'modified';
         console.log('Password from ' + roomName + ' has been ' + isDeleted);
       }
     })
     socket.on('makeAdmin', (roomName: string, target: number) => {
-      if (roomName === user.joinedChatRoom)
+      if (roomName === props.room.name)
         console.log(target + ' is Oper now!')
     })
     socket.on('joinRoom', (roomName: string, userId: number) => {
-      if (roomName === user.joinedChatRoom)
+      if (roomName === props.room.name)
 		  console.log('user ID: ' + userId + ' joined chatroom [' + roomName + ']');
     });
     socket.on('quitRoom', (roomName: string, userId: number) => {
-      if (userId === user.id && roomName === user.joinedChatRoom) {
+      if (userId === user.id && roomName === props.room.name) {
 		props.cleanRoomLoginData()
         console.log('user ID: ' + userId + ' quit room [' + roomName + ']')
 	  }
     });
     socket.on('kickUser', (roomName: string, target: number) => {
-      if (roomName === user.joinedChatRoom)
+      if (roomName === props.room.name)
         console.log(target + ' has been kicked!')
       if (target === user.id) props.cleanRoomLoginData()
     });
       socket.on('banUser', (roomName: string, target: number) => {
-      if (roomName === user.joinedChatRoom)
+      if (roomName === props.room.name)
         console.log(target + ' has been banned!')
       if (target === user.id) props.cleanRoomLoginData()
     })
     socket.on('unBanUser', (roomName: string, target: number) => {
-      if (roomName === user.joinedChatRoom)
+      if (roomName === props.room.name)
         console.log(target + ' has been unbanned!')
     })
     socket.on('muteUser', (roomName: string, target: number) => {
-      if (roomName === user.joinedChatRoom)
+      if (roomName === props.room.name)
         console.log(target + ' has been muted!')
     })
     socket.on('unMuteUser', (roomName: string, target: number) => {
-      if (roomName === user.joinedChatRoom)
+      if (roomName === props.room.name)
         console.log(target + ' has been unmuted!')
     })
 
@@ -205,16 +207,29 @@ const ChatRoom = (props: any) => {
 	}}
 
 	const checkIfOwner = (userId: number) => {
-		for (const member in members)
-			if (members[member].modes.indexOf('o') !== -1)
-				return true;
-		return false;
+		return props.room.owner === userId ? true : false;
 	}
 
 	const checkIfAdmin = (userId: number) => {
 		for (const member in members)
 			if (members[member].modes.indexOf('a') !== -1)
 				return true;
+		return false;
+	}
+
+	const checkPrivileges = (target: number) => {
+		// If target is the owner, we stop here: cannot do anything against owners
+		if (target === props.room.owner) return;
+		// Look for the user asking for privilege
+		for (let i=0; i < members.length; ++i) {
+			if (members[i].memberId === user.id) {
+			// If user is neither owner or admin, we stop here
+			if (user.id !== props.room.owner && members[i].modes.indexOf('a') !== -1)
+				return false
+			// Otherwise, there is no reason not to give privilege
+			return true;
+			}
+		}
 		return false;
 	}
 
@@ -227,13 +242,13 @@ const ChatRoom = (props: any) => {
   let timeout;
   const emitTyping = () => {
     socket.emit('typingMessage', {
-      roomName: user.joinedChatRoom, 
+      roomName: props.room.name, 
       nick: user.nickname,
       isTyping: true
     });
     timeout = setTimeout(() => {
       socket.emit('typingMessage', {
-        roomName: user.joinedChatRoom,
+        roomName: props.room.name,
 		nick: user.nickname,
         isTyping: false
       });
@@ -252,7 +267,7 @@ const ChatRoom = (props: any) => {
 		e.preventDefault();
 		if (messageText)
 			await socket.emit('createMessage', {
-				roomName: user.joinedChatRoom,
+				roomName: props.room.name,
 				message: {
 					author: user,
 					data: messageText,
@@ -266,7 +281,7 @@ const ChatRoom = (props: any) => {
   // When clicking on the 'return' button
   const onReturnClick = async() => {
     await socket.emit('quitRoom', {
-      roomName: user.joinedChatRoom,
+      roomName: props.room.name,
       userId: user.id,
     })
     props.cleanRoomLoginData()
@@ -312,7 +327,7 @@ const ChatRoom = (props: any) => {
   // When clicking on the 'ban' button to ban a user
   const onBanClick = (target: number) => {
     socket.emit('banUser', {
-      roomName: user.joinedChatRoom,
+      roomName: props.room.name,
       userId: user.id,
       target: target
     })
@@ -321,7 +336,7 @@ const ChatRoom = (props: any) => {
   // When clicking on the 'unban' button to unban a user
   const onUnBanClick = (target: number) => {
     socket.emit('unBanUser', {
-      roomName: user.joinedChatRoom,
+      roomName: props.room.name,
       userId: user.id,
       target: target
     })  
@@ -331,7 +346,7 @@ const ChatRoom = (props: any) => {
   // When clicking on the 'kick' button to kick a user
   const onKickClick = async(target: number) => {
     await socket.emit('kickUser', {
-      roomName: user.joinedChatRoom,
+      roomName: props.room.name,
       userId: user.id,
       target: target
     })
@@ -340,7 +355,7 @@ const ChatRoom = (props: any) => {
   // When clicking on the 'oper' button to make a user oper
   const onmakeAdminClick = (target: number) => {
     socket.emit('makeAdmin', {
-      roomName: user.joinedChatRoom,
+      roomName: props.room.name,
       userId: user.id,
       target: target
     })  
@@ -349,7 +364,7 @@ const ChatRoom = (props: any) => {
   // When clicking on the 'oper' button to make a user oper
   const onUnmakeAdminClick = (target: number) => {
     socket.emit('unmakeAdmin', {
-      roomName: user.joinedChatRoom,
+      roomName: props.room.name,
       userId: user.id,
       target: target
     })  
@@ -358,7 +373,7 @@ const ChatRoom = (props: any) => {
   // When clicking on the 'mute' button to mute a user
   const onMuteUserClick = (target: number) => {
     socket.emit('muteUser', {
-      roomName: user.joinedChatRoom,
+      roomName: props.room.name,
       userId: user.id,
       target: target,
       mute: true
@@ -368,7 +383,7 @@ const ChatRoom = (props: any) => {
   // When clicking on the 'unmute' button to unmute a user
   const onUnMuteUserClick = (target: number) => {
     socket.emit('muteUser', {
-      roomName: user.joinedChatRoom,
+      roomName: props.room.name,
       userId: user.id,
       target: target,
       mute: false
@@ -381,7 +396,8 @@ const ChatRoom = (props: any) => {
     socket.emit('createChatRoom', {
       room: {
         name: '#' + user.nickname + '/' + user2.nickname, /* TODO change to nick */
-        modes: '',
+		owner: user.id,
+		modes: '',
         password: '',
         userLimit: 2,
         members: {},
@@ -407,7 +423,7 @@ const ChatRoom = (props: any) => {
 
 	const handleChangePwd = async(deletePwd: boolean) => {
 		await socket.emit('changePassword', {
-			roomName: user.joinedChatRoom,
+			roomName: props.room.name,
 			currentPassword: oldPassword,
 			newPassword: deletePwd ? '' : newPassword,
 		});
@@ -435,7 +451,7 @@ const ChatRoom = (props: any) => {
 								className='black'
 								aria-label="return"/>
 						</IconButton>        
-						<Typography sx={{ minWidth: 100 }}>Lets chat here ! {user.joinedChatRoom}</Typography>
+						<Typography sx={{ minWidth: 100 }}>Lets chat here ! {props.room.name}</Typography>
 						<IconButton
 							title="Room settings"
 							onClick={handleClick}
@@ -521,13 +537,6 @@ const ChatRoom = (props: any) => {
 													<span>add friend</span>
 												</IconButton>
 												<IconButton
-													onClick={isMuted(msg.author.id)
-													? () => onUnMuteUserClick(msg.author.id)
-													: () => onMuteUserClick(msg.author.id)}>{/* catch makeUsrMute / makeUsrUnMute*/}
-													{isMuted(msg.author.id) ? <VolumeOff className='black'/> : <VolumeUp className='black'/>}{/* catch isMute*/}
-													<span>mute</span>
-												</IconButton>
-												<IconButton
 													onClick={() => onPrivMessageClick(msg.author) } >{/* catch makePrivateMsg*/}
 													<Mail className='black'/>
 													<span>private msg</span>
@@ -541,9 +550,15 @@ const ChatRoom = (props: any) => {
 													<span>block</span>
 												</IconButton>
 	
-												{checkIfOwner(user.id) === true
-													|| (checkIfAdmin(msg.author.id) === true && !checkIfOwner(user.id)) ?
+												{checkPrivileges(msg.author.id) ?
 												<>
+												<IconButton
+													onClick={isMuted(msg.author.id)
+													? () => onUnMuteUserClick(msg.author.id)
+													: () => onMuteUserClick(msg.author.id)}>{/* catch makeUsrMute / makeUsrUnMute*/}
+													{isMuted(msg.author.id) ? <VolumeOff className='black'/> : <VolumeUp className='black'/>}{/* catch isMute*/}
+													<span>mute</span>
+												</IconButton>
 													<IconButton
 														onClick={() => onKickClick(msg.author.id)} >
 														<Block className='black'/>
@@ -557,14 +572,13 @@ const ChatRoom = (props: any) => {
 														<span>ban</span>
 													</IconButton>
 													<IconButton
-														onClick={checkIfOwner(user.id) === true
-															|| (checkIfAdmin(msg.author.id) === true && !checkIfOwner(user.id)) ?
+														onClick={checkPrivileges(msg.author.id) ?
 															() => onUnmakeAdminClick(msg.author.id)
 															: () => onmakeAdminClick(msg.author.id)}>
 														<DeveloperMode className="black"/>
 														<span>admin</span>
 													</IconButton>
-														</> : <></> } isOper
+														</> : <></> }
 													<IconButton
 														onClick={handleAClose}>
 														<Clear className='black'/>
