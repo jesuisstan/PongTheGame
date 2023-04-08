@@ -338,47 +338,73 @@ const Chat = () => {
           )}
           {/* Chatroom create mode form */}
           {chatRoomCreateMode && (
-            <Dialog
-              open={open}
-              onClose={handleClose}
-              onSubmit={onChatRoomCreateModeSubmit}
-            >
-              <DialogTitle>Create room</DialogTitle>
-              <DialogContent>
-                <DialogContentText>
-                  Your are free to add a password or not to this chatroom.
-                </DialogContentText>
-                <TextField
-                  autoFocus
-                  required={true}
-                  helperText="Limit 20 characters"
-                  inputProps={{ inputMode: 'text', maxLength: 20 }}
-                  margin="dense"
-                  id="name"
-                  label="Chatroom name"
-                  type="name"
-                  value={newChatRoomName}
-                  onChange={(e) => onValueChange('name', e.target.value)}
-                  fullWidth
-                  variant="standard"
-                />
-                <TextField
-                  margin="dense"
-                  id="password"
-                  label="Room password"
-                  type="password"
-                  value={chatRoomPassword}
-                  onChange={(e) => onValueChange('password', e.target.value)}
-                  fullWidth
-                  variant="standard"
-                />
-              </DialogContent>
-              <DialogActions>
-                <Button onClick={handleClose}>Cancel</Button>
-                <Button onClick={onChatRoomCreateModeSubmit}>Create</Button>
-              </DialogActions>
-            </Dialog>
-          )}
+						<div>
+						<Modal
+							className='black'
+							open={open}
+							onSubmit={onChatRoomCreateModeSubmit}
+							onClose={handleClose}>
+							<ModalDialog
+								aria-labelledby="basic-modal-dialog-title"
+								sx={MUI.modalDialog}>
+								<ModalClose onClick={handleClose}/>
+								<Typography
+									id="basic-modal-dialog-title"
+									component="h2"
+									className="modal-title">
+									Create room
+									</Typography>
+									<form onSubmit={onPasswordSubmit}>
+										<Stack spacing={2}>
+											<Stack spacing={1}>
+											<Typography component="h3" sx={{ color: 'rgb(37, 120, 204)' }}>
+												Type the Room name
+											</Typography>
+											<TextField
+												autoFocus
+												required={true}
+												helperText="Limit 20 characters"
+												inputProps={{ inputMode: 'text', maxLength: 20 }}
+												
+												id="name"
+												type="name"
+												value={newChatRoomName}
+												// helperText={error} // error message
+												// error={!!error} // set to true to change the border/helperText color to red
+												onChange={(e) => onValueChange('name', e.target.value)}
+											/>
+											</Stack>
+											<Stack spacing={1}>
+												<Typography component="h3" sx={{ color: 'rgb(37, 120, 204)' }}>
+												
+												</Typography>
+												<Typography>
+												Your are free to add a password or not.
+												</Typography>
+												<TextField
+												type="password"
+												value={chatRoomPassword}
+												placeholder="Password"
+												// helperText={error} // error message
+												// error={!!error} // set to true to change the border/helperText color to red
+												onChange={(e) => onValueChange('password', e.target.value)}
+											/>
+											</Stack>
+											<LoadingButton
+												type="submit"
+												onClick={onChatRoomCreateModeSubmit}
+												startIcon={<LockOpenRounded />}
+												variant="contained"
+												color="inherit"
+											>
+												CREATE
+											</LoadingButton>
+										</Stack>
+									</form>
+							</ModalDialog>
+						</Modal>
+				</div>
+				)}
         </Box>
         <Box component="main" id="chatRoom">
           {user.joinedChatRoom &&

@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { MemberType } from "../../../types/chat";
-import { Box, Button, Divider, Drawer, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
+import { Box, Drawer, IconButton, List } from '@mui/material';
 import { PeopleAlt } from '@mui/icons-material';
-import AvatarBadge from './AvatarBadge';
 import UserMenu from './UserMenu';
 
 

@@ -3,10 +3,15 @@ import { MemberType } from "../../../types/chat";
 import AvatarBadge from "./AvatarBadge";
 import { AdminPanelSettings, Block, Clear, DeveloperMode, HighlightOff, Mail, PanTool, PersonAdd, VolumeOff, VolumeUp } from "@mui/icons-material";
 import { useState } from "react";
+import IconPersoButton from "./IconPersoButton";
+import { useContext } from "react";
+import { UserContext } from "../../../contexts/UserContext";
 
-const UserMenu = (member: any) => {
+
+const UserMenu = (member: MemberType | any) => {
 	
-  const [anchorAvatar, setAnchorAvatar] = useState<null | HTMLElement>(null);
+	const [anchorAvatar, setAnchorAvatar] = useState<null | HTMLElement>(null);
+	const { user, setUser } = useContext(UserContext)
 
   const handleAClick = (event: any) => {
 		setAnchorAvatar(event.currentTarget);
@@ -27,10 +32,9 @@ const UserMenu = (member: any) => {
 				/* : () => {} */ }>
 			  <AvatarBadge
 				  nickname={"Nickname"}
-				  // playing={true} // catch isPlaying
-				  online={true} // catch isOnline
-				  admin={true} // catch isAdmin
-				  oper={true} // catch isOper
+				  status={"ONLINE"} // catch isOnline
+				  admin={member.modes === 'a'} // catch isAdmin
+				  oper={member.modes === 'o'} // catch isOper
 				  avatar={"Nickname Avatar"} // catch avatar
 				  look={true}/><span style={{ color: 'black' }}>Catch Nickname here</span>
 			</Button>
@@ -40,50 +44,64 @@ const UserMenu = (member: any) => {
 				onClose={handleAClose}
 				className='black' >
 				<MenuItem aria-label="user-menu" className='column'>
-					<IconButton size="small" sx={{ml:2}} onClick={handleAClick}>{/* catch profil */}
-						<PersonAdd className='black'/>
-						<span>Add friend</span>
-					</IconButton>
-					<IconButton size="small" sx={{ml:2}} onClick={handleAClick}>{/* catch makeMute / makeUnMute */}
-						{/* catch isMuted ? <VolumeOff className='black'/> :*/ <VolumeUp className='black'/>}
-						<span>Mute</span>
-					</IconButton>
-					<IconButton size="small" sx={{ml:2}} onClick={handleAClick}>{/* catch sendPrivateMsg */}
-						<Mail className='black'/>
-						<span>Private msg</span>
-					</IconButton>
-					<IconButton size="small" sx={{ml:2}} onClick={handleAClick}>{/* catch makeBlock / makeUnBlock */}
-						<PanTool className={'black'}/>
-						<span>Block</span>
-					</IconButton>
-			{
-			// && catch isUserOper/isUserAdmin and isNotUserActive if true
-				<>
-					<IconButton size="small" sx={{ml:2}} onClick={handleAClick}>{/* catch makeKick */}
-						<Block className='black'/>
-						<span>Kick</span>
-					</IconButton>
-					<IconButton size="small" sx={{ml:2}} onClick={handleAClick}>{/* catch makeBan / makeUnBan*/}
-						<HighlightOff className='black'/>
-						<span>Ban</span>
-					</IconButton>
-					<IconButton size="small" sx={{ml:2}} onClick={handleAClick}>{/* catch makeAdmin */}
-						<AdminPanelSettings className='black'/>
-						<span>Admin</span>
-					</IconButton>
-				</> // else : <></>
-					} 
-					<IconButton size="small" sx={{ml:2}} onClick={handleAClose}>
-						<Clear className='black'/>
-						<span>Close</span>
-					</IconButton>
+					<IconPersoButton 
+						cond={true} 
+						true={handleAClose} // Path to profil usr
+						icon={<PersonAdd className='black'/>}
+						text='Profil'
+						false={null}
+						iconAlt={null}
+						textAlt={null}/>
+					{/* <IconButton size="small" sx={{ml:2}} onClick={isMuted(msg.author.id)
+						 ? () => onUnMuteUserClick(msg.author.id)
+						 : () => onMuteUserClick(msg.author.id)}>
+					 	 {isMuted(msg.author.id) ? <VolumeOff className='black'/> : <VolumeUp className='black'/>}
+					 	<span>Mute</span>
+					 </IconButton>
+					 <IconButton size="small" sx={{ml:2}} onClick={() => onPrivMessageClick(msg.author)}>
+					 	<Mail className='black'/>
+					 	<span>PM</span>
+					 </IconButton>
+					 <IconButton size="small" sx={{ml:2}} onClick={isUserBlocked(msg.author.id)
+					 	?	() => onUnBlockClick(msg.author.id)
+					 	: () => onBlockClick(msg.author.id)}>
+					 	<PanTool className={'black'}/>
+					 	<span>Block</span>
+					 </IconButton>
+					 { // isUserOper || user.id !== member.memberId ? 
+					 <>
+					 <IconButton size="small" sx={{ml:2}} onClick={() => onKickClick(msg.author.id)} >
+					 	<Block className='black'/>
+					 	<span>Kick</span>
+					 </IconButton>
+					 <IconButton size="small" sx={{ml:2}} onClick={checkIfBanned(msg.author.id)
+					 	? () => onUnBanClick(msg.author.id)
+					 	: () => onBanClick(msg.author.id)}>
+					 	<HighlightOff className='black'/>
+					 	<span>Ban</span>
+					 </IconButton>
+					 <IconButton size="small" sx={{ml:2}} onClick={isUserOper ?
+					 	() => onUnMakeOperClick(msg.author.id)
+					 	: () => onMakeOperClick(msg.author.id)}>
+					 	<AdminPanelSettings className='black'/>
+					 	<span>Admin</span>
+					 </IconButton>
+					 </> // : <></>
+					 }  */}
+					<IconPersoButton 
+						cond={true} 
+						true={handleAClose}
+						icon={<Clear className='black'/>}
+						text='Close'
+						false={null}
+						iconAlt={null}
+						textAlt={null}/>
 				</MenuItem>
 			</Menu>
-      
-      
     </div>
   )
 
 };
 
-export default UserMenu; 
+export default UserMenu;
+
