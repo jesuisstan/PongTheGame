@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { SetStateAction, Dispatch, useContext } from 'react';
+import { SetStateAction, Dispatch, useContext, useEffect } from 'react';
 import { GameStatus, GameResult } from './game.interface';
 import { GameStatusContext } from '../../contexts/GameStatusContext';
 import Modal from '@mui/joy/Modal';
@@ -85,6 +85,7 @@ const VictoryModal = ({
                 title={gameResult?.winner.name}
                 onClick={() => {
                   if (gameResult?.winner?.name) {
+                    setOpen(false);
                     navigate(`/players/${gameResult.winner.name}`);
                   }
                 }}
@@ -103,6 +104,7 @@ const VictoryModal = ({
                 title={gameResult?.loser.name}
                 onClick={() => {
                   if (gameResult?.loser?.name) {
+                    setOpen(false);
                     navigate(`/players/${gameResult.loser.name}`);
                   }
                 }}

@@ -37,9 +37,7 @@ const CountdownModal = (props: CountdownProps) => {
       setRemainingSeconds((prevRemainingSeconds) => prevRemainingSeconds - 1);
     }, 1000);
 
-    if (remainingSeconds === 1) {
-    }
-    if (remainingSeconds === 0) {
+    if (remainingSeconds <= 0) {
       setGameStatus(GameStatus.PLAYING);
       props.setOpen(false);
       clearInterval(intervalId);
@@ -48,7 +46,7 @@ const CountdownModal = (props: CountdownProps) => {
     return () => clearInterval(intervalId);
   }, [remainingSeconds]);
 
-  const progress = (props.seconds - remainingSeconds) / (props.seconds - 1);
+  const progress = (props.seconds - remainingSeconds + 1) / (props.seconds );
 
   return (
     <div>
@@ -61,7 +59,7 @@ const CountdownModal = (props: CountdownProps) => {
           <Stack spacing={2} alignItems="center" justifyContent="center">
             <CircularProgress
               variant="determinate"
-              value={progress * 100}
+              value={progress * 100 + 100}
               sx={{ color: color.PONG_PINK, marginTop: '10px' }}
             />
             <Typography>{remainingSeconds - 1} sec.</Typography>
