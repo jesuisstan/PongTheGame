@@ -127,7 +127,7 @@ export class ChatService {
     const room = await this.getChatRoomByName(roomName);
     if (room) return await this.prisma.message.findMany({
       where: { chatRoomName: roomName },
-      select: { author: true, data: true }
+      select: { author: true, data: true, timestamp: true }
     });
     throw new WsException({ msg: 'findAllMessages: unknown room name!' });
   }
