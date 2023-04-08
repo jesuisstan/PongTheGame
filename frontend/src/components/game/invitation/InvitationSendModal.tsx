@@ -38,6 +38,7 @@ const InvitationSendModal = ({
   const [disabledButton, setDisabledButton] = useState(false);
   const [buttonText, setButtonText] = useState('Invite');
   const [loading, setLoading] = useState(false);
+  const [invitationSent, setInvitationSent] = useState(false);
 
   const setDefault = () => {
     setObstacleEnabled(false);
@@ -76,6 +77,7 @@ const InvitationSendModal = ({
             reject((response.error = 'Something went wrong'));
           } else {
             resolve(response);
+            setInvitationSent(true);
           }
         }
       );
@@ -101,9 +103,11 @@ const InvitationSendModal = ({
   };
 
   const cancelInvitation = () => {
-    socket.emit('match_invitation_cancel', {
-      nickname: invitee
-    });
+    if (invitationSent) {
+      socket.emit('match_invitation_cancel', {
+        nickname: invitee
+      });
+    }
   };
 
   socket.on('invitation_accepted', (args) => {
