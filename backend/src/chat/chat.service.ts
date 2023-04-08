@@ -5,6 +5,8 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
 import { Member } from './entities/chat.entity';
 
+import { User } from '@prisma/client';
+
 @Injectable()
 export class ChatService {
 
@@ -12,9 +14,9 @@ export class ChatService {
 
   async identify(
     roomName: string, userId: number, modes: string, online: boolean
-    ) {
+    ): Promise<void> {
     // Check if room exists
-    const room = await this.getChatRoomByName(roomName);
+    const room: ChatRoomDto | null = await this.getChatRoomByName(roomName);
     if (!room) throw new WsException({ msg: 'identify: unknown room name!' });
     // Do nothing if user is already identified
     var found = false;
@@ -45,8 +47,8 @@ export class ChatService {
     }
   }
 
-  async quitRoom(roomName: string, userId: number) {
-    const room = await this.getChatRoomByName(roomName);
+  async quitRoom(roomName: string, userId: number): Promise<void> {
+    const room: ChatRoomDto | null = await this.getChatRoomByName(roomName);
     if (room) {
       await this.prisma.member.update({
             where: { memberId_chatRoomName: {
@@ -57,7 +59,7 @@ export class ChatService {
     } else throw new WsException({ msg: 'quitRoom: unknown room name!' });
   }
 
-  async getChatRoomByName(name: string) {
+  async getChatRoomByName(name: string): Promise<ChatRoomDto | null> {
     return await this.prisma.chatRoom.findUnique({
       where: { name: name },
       include: {
@@ -70,8 +72,8 @@ export class ChatService {
   }
 
   // Create a new message object and push it to the messages array
-  async createMessage(roomName: string, msg: MessageDto) {
-    const room = await this.getChatRoomByName(roomName);
+  async createMessage(roomName: string, msg: MessageDto): Promise<void> {
+    const room: ChatRoomDto | null = await this.getChatRoomByName(roomName);
     if (room) {
       await this.prisma.message.create({
         data: {
@@ -85,21 +87,24 @@ export class ChatService {
     else throw new WsException({ msg: 'createMessage: unknown room name!' });
   }
 
-  async generateHash(password: string) {
+  async generateHash(password: string): Promise<string> {
     // We use salt rounds, which is the cost factor (how much time is used to
     // compute the hash => the more elevated, the more difficult is brute-forcing)
     const saltRounds = 10;
     return await bcrypt .hash(password, saltRounds)
                         .then((res: string) => res)
-                        .catch((err: any) => { throw new WsException({ msg: err.message }); })
+                        .catch((err: any) => {
+                          throw new WsException({ msg: err.message });
+                        })
   }
 
   // Create a new chat room object and push it to the database
   // the creator will get admin privileges
-  async createChatRoom(room: ChatRoomDto, userId: number, user2Id: number) {
+  async createChatRoom(room: ChatRoomDto, userId: number, user2Id: number)
+    : Promise<void> {
     if (room) {
       // Hash the password before saving it
-      const hash = room.password ? await this.generateHash(room.password) : ''
+      const hash: string = room.password ? await this.generateHash(room.password) : ''
       // Save room to the database
       const r = await this.prisma.chatRoom.create({
         data: {
@@ -129,8 +134,8 @@ export class ChatService {
   }
 
   // Return all messages from the chatroom
-  async findAllMessages(roomName: string) {
-    const room = await this.getChatRoomByName(roomName);
+  async findAllMessages(roomName: string): Promise<MessageDto[]> {
+    const room: ChatRoomDto | null = await this.getChatRoomByName(roomName);
     if (room) return await this.prisma.message.findMany({
       where: { chatRoomName: roomName },
       select: { author: true, data: true, timestamp: true }
@@ -138,24 +143,24 @@ export class ChatService {
     throw new WsException({ msg: 'findAllMessages: unknown room name!' });
   }
 
-  async findAllChatRooms() { 
+  async findAllChatRooms(): Promise<any[]> {
     return await this.prisma.chatRoom.findMany({ include: { members: true } });
   }
 
   // Return all members from the chatroom
-  async findAllMembers(roomName: string) {
+  async findAllMembers(roomName: string): Promise<Member[]> {
     return this.prisma.member.findMany({ where: { chatRoomName: roomName } });
   }
 
     // Return all members from the chatroom
-    async findAllBannedMembers(roomName: string) {
-      const room = await this.getChatRoomByName(roomName);
+    async findAllBannedMembers(roomName: string): Promise<User[]> {
+      const room: ChatRoomDto | null = await this.getChatRoomByName(roomName);
       if (room) return room.bannedUsers;
       else throw new WsException({ msg: 'findAllBannedMembers: unknown room name!' });
     }
 
-  async changePassword(roomName: string, newPassword: string) {
-    const room = await this.getChatRoomByName(roomName);
+  async changePassword(roomName: string, newPassword: string): Promise<void> {
+    const room: ChatRoomDto | null = await this.getChatRoomByName(roomName);
     if (room) {
       // If a new password was given
       const oldModes = await this.prisma.chatRoom.findUnique({
@@ -193,11 +198,11 @@ export class ChatService {
     } else throw new WsException({ msg: 'changePassword: unknown room name!' });
   }
 
-  async hasUserPriv(roomName: string, userId: number, target: number) {
+  async hasUserPriv(roomName: string, userId: number, target: number): Promise<boolean> {
     const room = await this.getChatRoomByName(roomName);
     if (room) {
       // If target is the owner, we stop here: cannot do anything against owners
-      if (target === room.owner) return;
+      if (target === room.owner) return false;
       // Look for the user asking for privilege
       for (let i=0; i < room.members.length; ++i) {
           if (room.members[i].memberId === userId) {
@@ -215,8 +220,9 @@ export class ChatService {
     throw new WsException({ msg: 'hasUserPriv: unknown room name!' });
   }
 
-  modifyModes(members: Member[], userId: number, mode: string, del: boolean) {
-    var modes = '';
+  modifyModes(members: Member[], userId: number, mode: string, del: boolean)
+    : string {
+    var modes: string = '';
       // Look for mode in user's mode
       // Add mode if not already there
       for (var i=0; i < members.length; ++i) {
@@ -233,7 +239,7 @@ export class ChatService {
     return modes;
   }
 
-  async updateUserModes(roomName: string, userId: number, modes: string) {
+  async updateUserModes(roomName: string, userId: number, modes: string): Promise<void> {
     await this.prisma.member.update({
       where: { memberId_chatRoomName: {
         memberId: userId, chatRoomName: roomName }
@@ -242,61 +248,18 @@ export class ChatService {
     })
   }
 
-  async makeAdmin(roomName: string, userId: number) {
+  async makeAdmin(roomName: string, userId: number): Promise<void> {
     const room: ChatRoomDto | null = await this.getChatRoomByName(roomName);
     if (room) {
-      var modes = this.modifyModes(room.members, userId, 'a', false)
+      var modes: string = this.modifyModes(room.members, userId, 'a', false)
       // Save the new modes
       await this.updateUserModes(roomName, userId, modes);
     }
     else throw new WsException({ msg: 'makeAdmin: unknown room name!' });
   }
 
-  // async blockUser(roomName: string, userId: number) {
-  //   const room = await this.getChatRoomByName(roomName);
-  //   if (room) {
-  //     if (userId) {
-  //       // user.id is loaded inside bannedUsers
-  //       // If not already banned, push the new user into it
-  //       if (await this.isUserBlocked(roomName, userId) === false) {
-  //         await this.prisma.chatRoom.update({
-  //           where: { name: roomName },
-  //           data: { bannedUsers: { connect: { id: userId } }}
-  //         })
-  //       } else throw new WsException({ msg: 'unBanUser: user is already banned!' })
-  //     }
-  //   }
-  //   else throw new WsException({ msg: 'banUser: unknown room name!' });
-  // }
-
-  // async unblockUser(roomName: string, userId: number) {
-  //   const room = await this.getChatRoomByName(roomName);
-  //   if (room) {
-  //     if (userId) {
-  //       if (await this.isUserBlocked(roomName, userId) === true) {
-  //         // If banned, delete the user from the list
-  //         await this.prisma.chatRoom.update({
-  //           where: { name: roomName },
-  //           data: { bannedUsers: { disconnect: { id: userId } }}
-  //         })
-  //       } else throw new WsException({ msg: 'unBanUser: user is not banned!' })
-  //     }
-  //   } else throw new WsException({ msg: 'unBanUser: unknown room name!' });
-  // // }
-
-  // async isUserBlocked(user: User, userId: number) {
-  //   const room = await this.getChatRoomByName(roomName);
-  //   if (room) {
-  //     for (let i=0; i < room.bannedUsers.length; ++i)
-  //       if (room.bannedUsers[i].id === userId)
-  //         return true;
-  //     return false;
-  //   }
-  //   else throw new WsException({ msg: 'isUserBlocked: unknown room name!' });
-  // }
-
-  async banUser(roomName: string, userId: number) {
-    const room = await this.getChatRoomByName(roomName);
+  async banUser(roomName: string, userId: number): Promise<void> {
+    const room: ChatRoomDto | null = await this.getChatRoomByName(roomName);
     if (room) {
       if (userId) {
         // user.id is loaded inside bannedUsers
@@ -312,8 +275,8 @@ export class ChatService {
     else throw new WsException({ msg: 'banUser: unknown room name!' });
   }
 
-  async unBanUser(roomName: string, userId: number) {
-    const room = await this.getChatRoomByName(roomName);
+  async unBanUser(roomName: string, userId: number): Promise<void> {
+    const room: ChatRoomDto | null = await this.getChatRoomByName(roomName);
     if (room) {
       if (userId) {
         if (await this.isUserBanned(roomName, userId) === true) {
@@ -327,8 +290,8 @@ export class ChatService {
     } else throw new WsException({ msg: 'unBanUser: unknown room name!' });
   }
 
-  async isUserBanned(roomName: string, userId: number) {
-    const room = await this.getChatRoomByName(roomName);
+  async isUserBanned(roomName: string, userId: number): Promise<boolean> {
+    const room: ChatRoomDto | null = await this.getChatRoomByName(roomName);
     if (room) {
       for (let i=0; i < room.bannedUsers.length; ++i)
         if (room.bannedUsers[i].id === userId)
@@ -338,26 +301,8 @@ export class ChatService {
     else throw new WsException({ msg: 'isUserBanned: unknown room name!' });
   }
 
-  // async muteUser(roomName: string, userId: number) {
-  //   const room = await this.getChatRoomByName(roomName);
-  //   if (room) {
-  //     var modes = this.modifyModes(room.members, userId, 'm', false);
-  //     // Save the new modes
-  //     await this.updateUserModes(roomName, userId, modes);
-  //   } else throw new WsException({ msg: 'muteUser: unknown room name!' });
-  // }
-
-  // async unMuteUser(roomName: string, userId: number) {
-  //   const room = await this.getChatRoomByName(roomName);
-  //   if (room) {
-  //     var modes = this.modifyModes(room.members, userId, 'm', true);
-  //     // Save the new modes
-  //     await this.updateUserModes(roomName, userId, modes);
-  //   } else throw new WsException({ msg: 'unMuteUser: unknown room name!' });
-  // }
-
-  async isUserMuted(roomName: string, userId: number) {
-    const room = await this.getChatRoomByName(roomName);
+  async isUserMuted(roomName: string, userId: number): Promise<boolean> {
+    const room: ChatRoomDto | null = await this.getChatRoomByName(roomName);
     if (room) {
       // Look for mute mode ('m') in user's modes
       for (var i=0; i < room.members.length; ++i)
@@ -368,16 +313,8 @@ export class ChatService {
     throw new WsException({ msg: 'isUserMuted: unknown room name!' });
   }
 
-  // async isPasswordProtected(roomName: string) {
-  //   const room = await this.getChatRoomByName(roomName);
-  //   if (room) {
-  //     return room.password && room.password !== '' ? true : false;
-  //   } else
-  //     throw new WsException({ msg: 'isPasswordProtected: unknown room name!' });
-  // }
-
-  async checkPassword(roomName: string, password: string) {
-    const room = await this.getChatRoomByName(roomName);
+  async checkPassword(roomName: string, password: string): Promise<boolean> {
+    const room: ChatRoomDto | null = await this.getChatRoomByName(roomName);
     if (room) {
       // Compare bcrypted stored pwd from the database to the user's given password
       // bcrypt will hash the given pwd then compared it to the stored hashed pwd

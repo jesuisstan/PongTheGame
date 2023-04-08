@@ -28,7 +28,7 @@ export class ChatGateway {
   async createMessage(
     @MessageBody('roomName') roomName: string,
     @MessageBody('message') msg: MessageDto,
-  ) {
+  ): Promise<void> {
     // Create a message object using the create method from chat.service,
     // but only is the user hasn't been muted
     if (msg) {
