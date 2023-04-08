@@ -3,19 +3,20 @@ import { User } from '@prisma/client';
 export class Message {
   author: User;
   data: string;
+  timestamp: Date;
 }
 
 export class ChatRoom {
   name: string;
+  owner: number;
   modes: string;
   password: string;
   userLimit: number;
-  users: {
-    [id: number]: {
-      isOnline: boolean;
-      modes: string;
-    };
-  };
+	members: {
+		id: number;
+		isOnline: boolean;
+		modes: string;
+	}
   messages: Message[];
   bannedUsers: number[];
 }

@@ -14,35 +14,40 @@ datasource db {
 }
 
 model User {
-  id        Int     @id @default(autoincrement()) 
-  nickname  String? @unique
-  username  String
-  avatar    String?
-  profileId String
-  provider  String
-  blockedUsers  Int[]
+  id           Int     @id @default(autoincrement())
+  nickname     String? @unique
+  username     String
+  avatar       String?
+  profileId    String
+  provider     String
+  blockedUsers Int[]
 
-  status        StatusUser @default(ONLINE)
-  totpSecret    TotpSecret?
-  role          Role       @default(USER)
+  status     StatusUser  @default(ONLINE)
+  totpSecret TotpSecret?
+  role       Role        @default(USER)
 
   matchEntries MatchEntry[]
 
-  stats       Stats[]
-  friends     User[] @relation("Friendslist")
-  friendsOf   User[] @relation("Friendslist")
-  achievement UserAchivement[]
-  invitationEmit  MatchInvitation[] @relation("InvitationEmit")
-  invitationReceive   MatchInvitation[] @relation("InvitationReceive")
+  stats             Stats[]
+  friends           User[]            @relation("Friendslist")
+  friendsOf         User[]            @relation("Friendslist")
+  achievement       UserAchivement[]
+  invitationEmit    MatchInvitation[] @relation("InvitationEmit")
+  invitationReceive MatchInvitation[] @relation("InvitationReceive")
+  Message           Message[]         @relation("MessageAuthor")
+  Member            Member[]          @relation("ChatRoomMember")
+  ChatRoom          ChatRoom[]
+  
   @@unique([profileId, provider])
 }
 
 model Stats {
-  id          Int    @id @default(autoincrement())
-  nb_game     Int    @default(0)
-  nb_win      Int    @default(0)
-  User        User   @relation(fields: [userId], references: [id])
-  userId      Int    @unique
+  id      Int  @id @default(autoincrement())
+  nb_game Int  @default(0)
+  nb_win  Int  @default(0)
+  User    User @relation(fields: [userId], references: [id])
+  userId  Int  @unique
+
   @@map("Statistique")
 }
 
@@ -68,21 +73,23 @@ enum Role {
 }
 
 model Achievement {
-  id          Int     @id @default(autoincrement())
-  Name        String  @unique
-  Title       String  @unique
+  id          Int              @id @default(autoincrement())
+  Name        String           @unique
+  Title       String           @unique
   Description String
   icon_path   String?
   user        UserAchivement[]
+
   @@map("Achievements")
 }
 
 model UserAchivement {
- user User @relation(fields : [userId], references: [id])
- userId Int
- achievement   Achievement @relation(fields: [achievementId], references: [id])
- achievementId Int
- @@id([userId, achievementId])
+  user          User        @relation(fields: [userId], references: [id])
+  userId        Int
+  achievement   Achievement @relation(fields: [achievementId], references: [id])
+  achievementId Int
+
+  @@id([userId, achievementId])
 }
 
 model MatchEntry {
@@ -134,4 +141,36 @@ model Session {
   sid       String   @unique
   data      String
   expiresAt DateTime
+}
+
+model Message {
+  id           Int       @id @default(autoincrement())
+  author       User      @relation("MessageAuthor", fields: [authorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  authorId     Int
+  data         String
+  timestamp    DateTime
+  ChatRoom     ChatRoom @relation(fields: [chatRoomName], references: [name], onDelete: Cascade, onUpdate: Cascade)
+  chatRoomName String
+}
+
+model Member {
+  memberId     Int
+  member       User      @relation("ChatRoomMember", fields: [memberId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  isOnline     Boolean
+  modes        String
+  ChatRoom     ChatRoom @relation(fields: [chatRoomName], references: [name], onDelete: Cascade, onUpdate: Cascade)
+  chatRoomName String
+
+  @@id([memberId, chatRoomName])
+}
+
+model ChatRoom {
+  name        String    @id
+  owner       Int
+  modes       String
+  password    String
+  userLimit   Int
+  members     Member[]
+  messages    Message[]
+  bannedUsers User[]
 }

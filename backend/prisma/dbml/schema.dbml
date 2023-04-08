@@ -20,6 +20,9 @@ Table User {
   achievement UserAchivement [not null]
   invitationEmit MatchInvitation [not null]
   invitationReceive MatchInvitation [not null]
+  Message Message [not null]
+  Member Member [not null]
+  ChatRoom ChatRoom [not null]
 
   indexes {
     (profileId, provider) [unique]
@@ -97,6 +100,40 @@ Table Session {
   expiresAt DateTime [not null]
 }
 
+Table Message {
+  id Int [pk, increment]
+  author User [not null]
+  authorId Int [not null]
+  data String [not null]
+  timestamp DateTime [not null]
+  ChatRoom ChatRoom [not null]
+  chatRoomName String [not null]
+}
+
+Table Member {
+  memberId Int [not null]
+  member User [not null]
+  isOnline Boolean [not null]
+  modes String [not null]
+  ChatRoom ChatRoom [not null]
+  chatRoomName String [not null]
+
+  indexes {
+    (memberId, chatRoomName) [pk]
+  }
+}
+
+Table ChatRoom {
+  name String [pk]
+  owner Int [not null]
+  modes String [not null]
+  password String [not null]
+  userLimit Int [not null]
+  members Member [not null]
+  messages Message [not null]
+  bannedUsers User [not null]
+}
+
 Enum StatusUser {
   ONLINE
   OFFLINE
@@ -135,3 +172,11 @@ Ref: MatchEntry.matchId > Match.id [delete: Cascade]
 Ref: MatchInvitation.createdById > User.id
 
 Ref: MatchInvitation.sendToId > User.id
+
+Ref: Message.authorId > User.id [delete: Cascade]
+
+Ref: Message.chatRoomName > ChatRoom.name [delete: Cascade]
+
+Ref: Member.memberId > User.id [delete: Cascade]
+
+Ref: Member.chatRoomName > ChatRoom.name [delete: Cascade]
