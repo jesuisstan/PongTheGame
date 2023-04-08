@@ -39,10 +39,6 @@ const ChatRoom = (props: any) => {
 	const [typingDisplay, setTypingDisplay] = useState<string>('')
 	// Message input field value
 	const [messageText, setMessageText] = useState<string>('')
-	// Checks if a target user is oper(=admin) in the chat room
-	const [isOper, setIsOper] = useState<boolean>(false)
-	// Checks if the user is oper(=admin) in the chat room
-	const [isUserAdmin, setisUserAdmin] = useState<boolean>(false)
 	// Array including all members
 	const [members, setMembers] = useState<MemberType[]>([])
 	// Array including all the banned users from the room
@@ -214,6 +210,14 @@ const ChatRoom = (props: any) => {
 				return true;
 		return false;
 	}
+
+	const checkIfAdmin = (userId: number) => {
+		for (const member in members)
+			if (members[member].modes.indexOf('a') !== -1)
+				return true;
+		return false;
+	}
+
 
   	/*************************************************************
 	* Events
@@ -498,8 +502,8 @@ const ChatRoom = (props: any) => {
 												nickname={msg.author.nickname}
 												online={true}/* catch isOnline*/
 												// playing={}/* catch isPlaying*/
-												admin={false}/* catch isAdmin*/
-												oper={isOper}
+												admin={checkIfAdmin(msg.author.id)}/* catch isAdmin*/
+												oper={checkIfOwner(msg.author.id)}
 												avatar={msg.author.avatar}
 												look={true}/>
 										</Button>
@@ -537,7 +541,8 @@ const ChatRoom = (props: any) => {
 													<span>block</span>
 												</IconButton>
 	
-												{isUserAdmin ?
+												{checkIfOwner(user.id) === true
+													|| (checkIfAdmin(msg.author.id) === true && !checkIfOwner(user.id)) ?
 												<>
 													<IconButton
 														onClick={() => onKickClick(msg.author.id)} >
@@ -552,7 +557,8 @@ const ChatRoom = (props: any) => {
 														<span>ban</span>
 													</IconButton>
 													<IconButton
-														onClick={isUserAdmin ?
+														onClick={checkIfOwner(user.id) === true
+															|| (checkIfAdmin(msg.author.id) === true && !checkIfOwner(user.id)) ?
 															() => onUnmakeAdminClick(msg.author.id)
 															: () => onmakeAdminClick(msg.author.id)}>
 														<DeveloperMode className="black"/>
