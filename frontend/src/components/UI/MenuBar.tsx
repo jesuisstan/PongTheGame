@@ -8,6 +8,8 @@ import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import * as color from '../UI/colorsPong';
 import styles from './UI.module.css';
 
 const URL_LOGOUT = `${process.env.REACT_APP_URL_BACKEND}/auth/logout`;
@@ -46,7 +48,7 @@ const MenuBar = () => {
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <div className={styles.burger}>⋮</div>
+                <MoreVertIcon style={{ fill: color.PONG_WHITE }} />
                 <Avatar alt="" src={user.avatar} />
                 <div className={styles.nickname}>{user.nickname}</div>
               </IconButton>
@@ -94,6 +96,9 @@ const MenuBar = () => {
           </Button>
           <Button variant="text">
             <NavLink to="game">Game</NavLink>
+          </Button>
+          <Button variant="text">
+            <NavLink to="about">Info</NavLink>
           </Button>
         </div>
         <div className={styles.right}>

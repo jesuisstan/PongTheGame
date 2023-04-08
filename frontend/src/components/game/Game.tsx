@@ -1,101 +1,81 @@
-import { useState, useContext, useRef, useEffect } from 'react';
+import { useState, useContext } from 'react';
 import { UserContext } from '../../contexts/UserContext';
 import PleaseLogin from '../pages/PleaseLogin';
-import styles from './styles/Game.module.css';
+import Lobby from './lobby/Lobby';
 import Pong from './Pong';
-import {
-  Game_player,
-  Game_result,
-  Game_status,
-  Player_info
-} from './game.interface';
-import ButtonPong from '../UI/ButtonPong';
+import QueueModal from './QueueModal';
+import CountdownModal from './CountdownModal';
+import { CurrentGamePlayer, GameStatus, PlayerData } from './game.interface';
 import { WebSocketContext } from '../../contexts/WebsocketContext';
-import Start_game from './Start_game';
-import Queue from './Queue';
-import VictoryModal from './VictoryModal';
+import { GameStatusContext } from '../../contexts/GameStatusContext';
+import { GameResultContext } from '../../contexts/GameResultContext';
+import styles from './styles/Game.module.css';
 
 const Game = () => {
   const socket = useContext(WebSocketContext);
+  const { user } = useContext(UserContext);
+  const { gameStatus, setGameStatus } = useContext(GameStatusContext);
+  const { setGameResult } = useContext(GameResultContext);
+  const [players, setPlayers] = useState<CurrentGamePlayer[]>([]);
+  const [openCount, setOpenCount] = useState(false);
+  const [openQueueModal, setOpenQueueModal] = useState(false);
 
-  const { user, setUser } = useContext(UserContext);
-  const state_ref = useRef(Game_status.LOBBY);
-  const [result, setResult] = useState<Game_result | null>(null);
-  const [game_state, set_game_state] = useState(Game_status.LOBBY);
-  const [players, set_players] = useState<Game_player[]>([]);
-  const [open, setOpen] = useState(false);
+  if (user.provider && user.nickname) {
+    socket.on('matchmaking', (args) => {
+      setGameStatus(GameStatus.BEGIN_GAME);
+    });
 
-  socket.on('matchmaking', (args) => {
-    set_game_state(Game_status.BEGIN_GAME);
+    socket.on('match_result', (args) => {
+      setGameResult(args);
+    });
+  }
+
+  socket.on('match_spectate', (args) => {
+    if (args.status && args.status === 'success')
+      setGameStatus(GameStatus.SPECTATE);
   });
 
-  // const { send_message } = socket.emit()
-  function join_queu() {
-    set_game_state(Game_status.QUEUE);
+  socket.on('match_custom_start', (args) => {
+    setGameStatus(GameStatus.BEGIN_GAME);
+  });
+
+  const joinQueue = (): void => {
+    setGameStatus(GameStatus.QUEUE);
     socket.emit('match_making', { action: 'join' });
-  }
+  };
 
-  function join_match(player1: Player_info, player2: Player_info) {
-    set_players([
-      { infos: player1, score: 0 },
-      { infos: player2, score: 0 }
-    ]);
-    set_game_state(Game_status.PLAYING);
-  }
+  const launchTraining = (): void => {
+    setGameStatus(GameStatus.PLAYING);
+    socket.emit('match_training', {});
+  };
 
-  useEffect(() => {
-    state_ref.current = game_state;
-  }, [game_state]);
+  const endMatch = () => {
+    setGameStatus(GameStatus.LOBBY);
+  };
 
-  socket.on('match_result', (args) => {
-    setResult(args);
-  });
-
-  function endMatch() {
-    set_game_state(Game_status.LOBBY);
-  }
-
-  return !user.provider ? (
+  return !user.provider || (user.provider && !user.nickname) ? (
     <PleaseLogin />
   ) : (
     <div className={styles.parent}>
       <div className={styles.canvasBlock}>
-        {game_state === Game_status.LOBBY && (
-          <ButtonPong
-            text="test pong"
-            onClick={() => {
-              join_queu();
-            }}
+        {gameStatus === GameStatus.LOBBY && (
+          <Lobby joinQueue={joinQueue} launchTraining={launchTraining} />
+        )}
+        {gameStatus === GameStatus.QUEUE && (
+          <QueueModal open={!openQueueModal} setOpen={setOpenQueueModal} />
+        )}
+        {gameStatus === GameStatus.BEGIN_GAME && (
+          <CountdownModal
+            open={!openCount}
+            setOpen={setOpenCount}
+            seconds={5}
           />
         )}
-        {game_state === Game_status.ENDED && (
-          <VictoryModal
-            open={!open}
-            setOpen={setOpen}
-            gameResult={result}
-            setGameState={set_game_state}
-          />
+        {gameStatus === GameStatus.PLAYING && (
+          <Pong spectator={false} players={players} setEndMatch={endMatch} />
         )}
-        {game_state === Game_status.QUEUE && (
-          <Queue set_game_state={set_game_state} join_match={join_match} />
-        )}
-        {game_state === Game_status.BEGIN_GAME && (
-          <Start_game players={players} set_game_state={set_game_state} />
-        )}
-        {game_state === Game_status.PLAYING && (
-          <Pong
-            spectator={false}
-            players={players}
-            set_game_state={set_game_state}
-            endMatch={endMatch}
-          />
-        )}
-        {game_state === Game_status.SPECTATE && (
-          <Pong
-            spectator={true}
-            set_game_state={set_game_state}
-            endMatch={endMatch}
-          />
+        {gameStatus === GameStatus.SPECTATE && (
+          <Pong spectator={true} setEndMatch={endMatch} />
         )}
       </div>
     </div>

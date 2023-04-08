@@ -1,34 +1,32 @@
 import { useRef, useEffect, useContext, useState } from 'react';
+import { GameStatusContext } from '../../contexts/GameStatusContext';
 import { WebSocketContext } from '../../contexts/WebsocketContext';
-import { Player_game, Props_game, Game_status } from './game.interface';
-import { draw_state } from './utils/gameUtils';
+import { CurrentGamePlayer, GameProps, GameStatus } from './game.interface';
+import { drawState } from './utils/gameUtils';
 import ScoreBar from './ScoreBar';
 import styles from './styles/Game.module.css';
 
-const CANVAS_HEIGHT = 600;
-const CANVAS_WIDTH = 800;
-
-function Pong(props: Props_game) {
+const Pong = (props: GameProps) => {
+  const { setGameStatus } = useContext(GameStatusContext);
   const socket = useContext(WebSocketContext);
-  const [already_draw, set_already_draw] = useState<boolean>(false);
-  const [time, set_time] = useState(300);
-  const canvas_ref = useRef<HTMLCanvasElement>(null);
-  const [ctx, set_ctx] = useState(null);
-  const [players, set_players] = useState<Player_game[]>(
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [winScore, setwinScore] = useState<number>(5);
+  const [canvasSize, setCanvasSize] = useState({ width: 800, height: 600 });
+  const [players, setPlayers] = useState<CurrentGamePlayer[]>(
     props.spectator || !props.players ? [] : [...props.players]
   );
 
-  const state_ref = useRef(false);
+  const onKeyRelease = (event: KeyboardEvent) => {
+    keyHandler(event, 'release');
+  };
 
-  function on_key_release(event: KeyboardEvent) {
-    on_key(event, 'release');
-  }
+  const onKeyPress = (event: KeyboardEvent) => {
+    keyHandler(event, 'press');
+  };
+  const onKeyReleaseRef = useRef(onKeyRelease);
+  const onKeyPressRef = useRef(onKeyPress);
 
-  function on_key_press(event: KeyboardEvent) {
-    on_key(event, 'press');
-  }
-
-  function on_key(event: KeyboardEvent, action: string) {
+  const keyHandler = (event: KeyboardEvent, action: string) => {
     switch (event.key) {
       case 'ArrowUp':
         socket.emit('match_game_input', { action: action, direction: 'up' });
@@ -37,98 +35,89 @@ function Pong(props: Props_game) {
         socket.emit('match_game_input', { action: action, direction: 'down' });
         break;
     }
-  }
-
-  const foo1 = () => {
-    socket.on('match_game_state', (args) => {
-      // if (props.spectator) {
-      // For specator mode need to check the current He need to be false for the player1 and player 2
-      if (players.length == 0) {
-        set_players([
-          {
-            ...players[0],
-            infos: args.player1.infos,
-            score: args.player1.score
-          },
-          {
-            ...players[1],
-            infos: args.player2.infos,
-            score: args.player2.score
-          }
-        ]);
-      }
-      set_time(args.gameInfos.time);
-      draw_state(args, canvas_ref);
-      if (args.status === 'ended') {
-        props.set_game_state(Game_status.ENDED);
-        // TODO clear the canvas for reprint the lobby
-        console.log('Game_finished');
-      }
-    });
   };
 
-  const foo2 = () => {
-    socket.on('game_aborted', (args) => {
-      console.log(args.reason);
-      // TODO need to clear canvas adn change alert for something else
-    });
+  const expandTheGame = (args: any) => {
+    if (players.length === 0) {
+      setPlayers([
+        {
+          ...players[0],
+          infos: args.player1.infos,
+          score: args.player1.score
+        },
+        {
+          ...players[1],
+          infos: args.player2.infos,
+          score: args.player2.score
+        }
+      ]);
+      setwinScore(args.gameInfos.winScore);
+      setCanvasSize({
+        ...canvasSize,
+        width: args.gameInfos.originalWidth,
+        height: args.gameInfos.originalHeight
+      });
+    }
+    drawState(args, canvasRef);
   };
 
   useEffect(() => {
-    if (!state_ref.current) {
-      state_ref.current = true;
-      if (props.spectator) {
-        return () => {
-          socket.emit('match_spectate_leave', {});
-        };
-      }
-      window.addEventListener('keydown', on_key_press);
-      window.addEventListener('keyup', on_key_release);
-
-      const intervalId = setInterval(() => {
-        foo1();
-        foo2();
-      }, 1000 / 30);
-
+    if (props.spectator) {
       return () => {
-        clearInterval(intervalId);
-        //window.removeEventListener('keydown', on_key_press);
-        //window.removeEventListener('keyup', on_key_release);
+        socket.emit('match_spectate_leave', {});
       };
     }
-  }, [players]);
-  //console.log('players out of useEffect');
 
-  //console.log(players);
-  let winScore = 5; // todo temp value. Request from server
+    const intervalId = setInterval(() => {
+      const playPong = () => {
+        socket.on('match_game_state', (args) => {
+          expandTheGame(args);
+          window.addEventListener('keydown', onKeyPressRef.current);
+          window.addEventListener('keyup', onKeyReleaseRef.current);
+
+          if (args.status === 'ended' || args.status === 'aborted') {
+            setGameStatus(GameStatus.ENDED);
+            window.removeEventListener('keydown', onKeyPressRef.current);
+            window.removeEventListener('keyup', onKeyReleaseRef.current);
+          }
+        });
+      };
+
+      playPong();
+
+      const spectatePong = () => {
+        socket.on('match_spectate_state', (args) => {
+          console.log(args);
+          console.log('spectating Pong');
+          expandTheGame(args);
+          if (args.status === 'ended' || args.status === 'aborted') {
+            setGameStatus(GameStatus.ENDED);
+          }
+        });
+      };
+
+      spectatePong();
+    }, 1000 / 30);
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [players, socket]);
+
   return (
     <div className={styles.canvasBlock}>
-      {/* {players.length > 0 && (
-				<div>
-					 <div>
-						{ Player 1 Info}
-						/> */}
-      {/* Timer of the game */}
-      {/* Player 2 info }
-					</div>
-				</div>
-					)} */}
       {players.length > 0 && (
-        <ScoreBar
-          winScore={winScore}
-          players={players}
-          //gameOn={gameOn}
-        ></ScoreBar>
+        <ScoreBar winScore={winScore} players={players}></ScoreBar>
       )}
       <canvas
         className={styles.canvas}
         id="test"
-        ref={canvas_ref}
-        width={CANVAS_WIDTH}
-        height={CANVAS_HEIGHT}
+        ref={canvasRef}
+        width={canvasSize.width}
+        height={canvasSize.height}
       />
     </div>
   );
-}
+};
 
 export default Pong;

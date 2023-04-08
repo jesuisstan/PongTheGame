@@ -18,11 +18,12 @@ a {
 }
 
 a:hover {
-  color: rgba(253, 80, 135, 0.91);
+  transition-duration: 0.5s;
+  color: rgb(253, 80, 135);
 }
 
 h5 {
-  font-size: x-large;
+  font-size: large;
   text-transform: uppercase;
   font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
   font-weight: 500;
@@ -36,9 +37,8 @@ h5 {
 }
 
 .active {
-  color: rgb(37, 120, 204);
+  color: rgb(253, 80, 135);
   font-weight: bold;
-  text-decoration: underline;
 }
 
 .swal2-container.swal2-backdrop-show,

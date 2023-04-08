@@ -41,7 +41,3 @@ fclean: clean
 	# sudo docker system prune --volumes --all --force 2> /dev/null
 
 re: fclean all
-
-# Launch prisma studio
-prisma-studio:
-	docker exec -it backend sh -c 'yarn prisma studio'

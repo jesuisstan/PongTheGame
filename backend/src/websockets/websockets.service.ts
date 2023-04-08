@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { Socket } from 'socket.io';
+import { GameService } from 'src/game/game.service';
 
 @Injectable()
 export class WebsocketsService {
@@ -13,6 +14,8 @@ export class WebsocketsService {
     private readonly jwt: JwtService,
     private readonly prismaService: PrismaService,
     private readonly config: ConfigService,
+    @Inject(forwardRef(() => GameService))
+    private readonly game: GameService, // private readonly game: GameService,
   ) {}
 
   async registerSocket(socket: any) {
@@ -49,33 +52,38 @@ export class WebsocketsService {
         socket.disconnect();
         return;
       }
-
       await this.prismaService.user.update({
         where: { id: user.id },
         data: { status: 'ONLINE' },
       });
       this.sendToAll(this.sockets, 'user_status', {
-        id: user.id,
+        nickname: user.nickname,
         status: 'ONLINE',
       });
       socket['user'] = user;
       this.sockets.push(socket);
+      this.game.send_all_invitation(socket);
     } catch (e) {
       console.log(e);
-      this.send(socket, 'error', { message: 'Invalid session cookie' });
+      this.send(socket, 'error_token', {
+        message: 'Server got a problem need to be relog',
+      });
       socket.disconnect();
       return;
     }
   }
 
   async modifyTheUserSocket(id: number) {
-    const socket: any = this.getSockets([id])[0];
-    const user = await this.prismaService.user.findUnique({
-      where: { id: id },
-    });
-    socket['user'] = user;
-    this.sockets.push(socket);
-    return;
+    // MEMO TMP NEED TO DECOMMENT
+    // const socket: any = this.getSockets([id])[0];
+    // const user = await this.prismaService.user.findUnique({
+    //   where: { id: id },
+    // });
+    // console.log(socket);
+    // if (!socket) return;
+    // socket['user'] = user;
+    // this.sockets.push(socket);
+    // return;
   }
 
   registerOnClose(socket: any, action: () => void) {
@@ -96,10 +104,11 @@ export class WebsocketsService {
       where: { id: socket.user.id },
       data: { status: 'OFFLINE' },
     });
-    this.broadcast('user-status', {
-      id: socket.user.id,
+    this.broadcast('user_status', {
+      nickname: socket.user.nickname,
       status: 'OFFLINE',
     });
+    this.game.delete_invitation(socket.user);
   }
 
   send(client: any, event: string, data: any) {

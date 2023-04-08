@@ -1,4 +1,4 @@
-import { Player_game } from './game.interface';
+import { CurrentGamePlayer } from './game.interface';
 import styles from './styles/ScoreBar.module.css';
 
 const ScoreBar = ({
@@ -6,7 +6,7 @@ const ScoreBar = ({
   players
 }: {
   winScore: number;
-  players: Player_game[];
+  players: CurrentGamePlayer[];
 }) => {
   return (
     <div className={styles.scoreBar}>
@@ -15,7 +15,8 @@ const ScoreBar = ({
       </div>
       <div className={styles.center}>Win score: {winScore}</div>
       <div className={styles.right}>
-        {players![1].infos.name}: {players![1].score}
+        {players![1].infos.name ? players![1].infos.name : 'AI'}:{' '}
+        {players![1].score}
       </div>{' '}
     </div>
   );

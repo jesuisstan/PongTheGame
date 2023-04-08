@@ -1,8 +1,4 @@
-import {
-  WebSocketGateway,
-  WebSocketServer,
-  SubscribeMessage,
-} from '@nestjs/websockets';
+import { WebSocketGateway, SubscribeMessage } from '@nestjs/websockets';
 import { GameService } from './game.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { WebsocketsService } from 'src/websockets/websockets.service';
@@ -12,7 +8,6 @@ import { Socket } from 'socket.io';
 export class GameGateway {
   constructor(
     private readonly game: GameService,
-    private readonly prisma: PrismaService,
     private readonly websockets: WebsocketsService,
   ) {}
 
@@ -32,6 +27,16 @@ export class GameGateway {
     }
   }
 
+  @SubscribeMessage('match_training')
+  async training(socket: Socket, payload: any) {
+    this.game.create_training_game(socket);
+  }
+
+  @SubscribeMessage('match_leave')
+  async leave(socket: Socket, payload: any) {
+    this.game.leave_game(socket);
+  }
+
   @SubscribeMessage('match_game_input')
   async gameInput(socket: any, payload: any) {
     if (!payload || !payload.action || !payload.direction) return;
@@ -45,7 +50,7 @@ export class GameGateway {
     if (!payload || !payload.id) return;
     const game = this.game.get_game_where_player_is(payload.id);
     if (!game) {
-      this.websockets.send(socket, 'match_spectate', {
+      this.websockets.send(socket, 'match_spectate_error', {
         status: 'error',
         error: 'Game not found',
       });
@@ -62,7 +67,7 @@ export class GameGateway {
     if (!payload || !payload.name) return;
     const game = this.game.get_game_where_player_is_by_name(payload.name);
     if (!game) {
-      this.websockets.send(socket, 'match_spectate', {
+      this.websockets.send(socket, 'match_spectate_error', {
         status: 'error',
         error: 'Game not found',
       });
@@ -74,27 +79,60 @@ export class GameGateway {
     game.add_spectator(socket);
   }
 
-  // @SubscribeMessage('match_send_invitation') // Send match invitation
-  // async invitation_match(socket: any, payload: any) {
-  //   // Inside the payload need to have the second user socket
-  //   this.websockets.send(
-  //     payload.opponent.socket[1],
-  //     'invitation_notification',
-  //     {},
-  //   ); // TODO send invitation to a user
-  //   // this.game.create_friend_game([socket, payload.opponent.socket], payload.opponent.socket.id)
-  //   // const game = this.game.get_game_where_spectator_is(socket.user.id);
-  //   // if (!game) return;
-  //   // game.remove_spectator(socket);
-  // }
+  @SubscribeMessage('match_send_invitation')
+  async getInvitation(
+    socket: any,
+    payload: any,
+  ): Promise<{ status: number; reason: string }> {
+    if (
+      !socket ||
+      !payload ||
+      !payload.winScore ||
+      (!payload.nickname && (payload.obstacle || !payload.obstacle))
+    ) {
+      return { status: 403, reason: 'Data needed not fetch' };
+    }
+    return this.game.create_invitation(socket, payload);
+  }
 
-  // @SubscribeMessage('match_invitation_accept')
-  // async invitation_match_accept(socket: any, payload: any) {
-  //   // Inside the payload need to have the second user socket
-  //   console.log(socket);
-  //   console.log(payload);
-  //   // this.game.create_friend_game([socket, payload.opponent.socket], payload.opponent.socket.id);
-  // }
+  @SubscribeMessage('match_invitation_cancel')
+  async closeInvitation(
+    socket: any,
+    payload: any,
+  ): Promise<{ status: number; reason: string }> {
+    if (!socket || !payload || !payload.nickname) {
+      return { status: 403, reason: 'Data needed not fetch' };
+    }
+    return this.game.game_abort(socket, payload.nickname);
+  }
+
+  @SubscribeMessage('match_invitation_accept')
+  async match_invitation_accept(
+    socket: Socket,
+    payload: any,
+  ): Promise<{ status: number; reason: string }> {
+    // Need the from | win score | obstacle
+    if (
+      !socket ||
+      !payload ||
+      !payload.winScore ||
+      (!payload.nickname && (payload.obstacle || !payload.obstacle))
+    ) {
+      return { status: 403, reason: 'Data needed not fetch' };
+    }
+    return this.game.game_friend_start(socket, payload);
+  }
+
+  @SubscribeMessage('match_invitation_refused')
+  async match_invitation_refuse(
+    socket: Socket,
+    payload: any,
+  ): Promise<{ status: number; reason: string }> {
+    if (!socket || !payload || !payload.nickname)
+      return { status: 403, reason: 'Data needed not fetch' };
+    await this.game.refuseInvitation(socket, payload);
+    return { status: 200, reason: 'Ok' };
+  }
 
   @SubscribeMessage('match_spectate_leave')
   async spectateLeave(socket: any) {

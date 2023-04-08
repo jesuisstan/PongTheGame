@@ -8,17 +8,12 @@ import TextField from '@mui/material/TextField';
 import Modal from '@mui/joy/Modal';
 import ModalDialog from '@mui/joy/ModalDialog';
 import ModalClose from '@mui/joy/ModalClose';
-import Stack from '@mui/joy/Stack';
-import Typography from '@mui/joy/Typography';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
 import errorAlert from '../UI/errorAlert';
 import backendAPI from '../../api/axios-instance';
-
-const modalDialogStyle = {
-  maxWidth: 500,
-  border: '0px solid #000',
-  bgcolor: '#f5f5f5ee',
-  borderRadius: '4px'
-};
+import * as MUI from '../UI/MUIstyles';
+import axios from 'axios';
 
 const EditNickname = ({
   open,
@@ -27,19 +22,19 @@ const EditNickname = ({
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
 }) => {
-  const { user, setUser } = useContext(UserContext);
+  const { setUser } = useContext(UserContext);
   const [text, setText] = useState('');
   const [error, setError] = useState('');
   const [load, setLoad] = useState(false);
   const [buttonText, setButtonText] = useState('Submit');
 
-  const handleTextInput = (event: any) => {
+  const handleTextInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = event.target.value;
-    if (!newValue.match(/[%<>\\$|/?* +^.()[\]]/)) {
-      setError('');
+    if (newValue.match(/^[A-Za-z0-9_-]*$/)) {
       setText(newValue);
+      setError('');
     } else {
-      setError('Forbidden: [ ] < > ^ $ % . \\ | / ? * + ( ) space');
+      setError('Allowed: A-Z _ a-z - 0-9');
     }
   };
 
@@ -54,20 +49,18 @@ const EditNickname = ({
   };
 
   const setNickname = (value: string) => {
-    return backendAPI
-      .patch(
-        '/user/setnickname',
-        { nickname: value }
-      )
-      .then(
-        (response) => {
-          setUser(response.data);
-        },
-        (error) => {
-          console.log(error);
-          error.request.status === 400 ? warningNameUsed() : warningWentWrong();
+    return backendAPI.patch('/user/setnickname', { nickname: value }).then(
+      (response) => {
+        setUser(response.data);
+      },
+      (error) => {
+        if (axios.isAxiosError(error) && error.response?.status === 409) {
+          warningNameUsed();
+        } else {
+          warningWentWrong();
         }
-      );
+      }
+    );
   };
 
   const handleSubmit = async (event: React.FormEvent) => {
@@ -90,22 +83,19 @@ const EditNickname = ({
         sx={{ color: 'black' }}
         open={open}
         onClose={(event, reason) => {
-          if (event && reason === 'closeClick') setOpen(false);
+          if (event && reason === 'closeClick') {
+            setError('');
+            setOpen(false);
+          }
         }}
       >
         <ModalDialog
           aria-labelledby="basic-modal-dialog-title"
-          sx={modalDialogStyle}
+          sx={MUI.modalDialog}
         >
-          <ModalClose />
-          <Typography
-            id="basic-modal-dialog-title"
-            component="h2"
-            sx={{ color: 'black' }}
-          >
-            Modifying your nickname
-          </Typography>
-          <form onSubmit={handleSubmit}>
+          <ModalClose sx={MUI.modalClose} />
+          <Typography sx={MUI.modalHeader}>Modifying nickname</Typography>
+          <form style={{ marginTop: '10px' }} onSubmit={handleSubmit}>
             <Stack spacing={2}>
               <FormControl>
                 <FormLabel sx={{ color: 'black' }}>

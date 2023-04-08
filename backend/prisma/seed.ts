@@ -1,6 +1,5 @@
 import { PrismaClient } from '@prisma/client';
 import { insert_achievement } from './achievement';
-import { insert_admin } from './user';
 
 export const prisma = new PrismaClient();
 

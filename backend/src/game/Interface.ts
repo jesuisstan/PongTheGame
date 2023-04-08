@@ -14,6 +14,12 @@ export enum InvitationState {
   FINISHED = 'Finished',
 }
 
+export enum TypeMode {
+  NORMAL = 'Normal',
+  TRAINING = 'Training',
+  CUSTOM = 'Custom',
+}
+
 export interface Position {
   x: number;
   y: number;
@@ -30,7 +36,7 @@ export interface Profile {
 }
 
 export interface Player {
-  profile: Profile;
+  profile?: Profile;
   paddle: Position;
   score: number;
   event: 'up' | 'down' | null;
@@ -49,7 +55,14 @@ export interface GameInfos {
   paddleHeight: number;
   paddleWidth: number;
   ballRadius: number;
-  WinScore?: number;
+  winScore: number;
+  obstacleHeight?: number;
+  obstacleWidth?: number;
+}
+
+export interface Obstacle {
+  position: Position;
+  direction: number;
 }
 
 export interface GameState {
@@ -57,4 +70,5 @@ export interface GameState {
   player1: Player;
   player2: Player;
   ball: Ball;
+  obstacle?: Obstacle;
 }

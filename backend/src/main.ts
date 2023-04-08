@@ -6,6 +6,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { PrismaSessionStore } from '@quixo3/prisma-session-store';
 import * as cookieParser from 'cookie-parser';
 import * as ExpressSession from 'express-session';
+import helmet from 'helmet';
 import * as passport from 'passport';
 import { AppModule } from 'src/app.module';
 import { Config } from 'src/config.interface';
@@ -16,16 +17,18 @@ import { SocketAdapter } from './chat/socketAdapter';
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
-  // Define websocket settings for the chat page
-  app.useWebSocketAdapter(new SocketAdapter(app));
-
   const config = app.get(ConfigService<Config>);
   const prisma = app.get(PrismaService);
+
+  // Define websocket settings for the chat page
+  app.useWebSocketAdapter(new SocketAdapter(app));
 
   await prisma.enableShutdownHooks(app);
 
   setupSwagger(app);
   setupSession(app, config, prisma);
+
+  app.use(helmet());
 
   app.useGlobalPipes(
     new ValidationPipe({
@@ -34,8 +37,8 @@ async function bootstrap() {
   );
 
   app.enableCors({
-    origin: true,
     credentials: true,
+    origin: config.getOrThrow('FRONTEND_URL'),
   });
 
   await app.listen(config.getOrThrow('BACKEND_PORT'));
@@ -66,6 +69,7 @@ function setupSwagger(app: NestExpressApplication) {
     .addTag('Achivement', 'Manipulate achievement')
     .addTag('Statistique', 'Get statistique from match')
     .addTag('Game', 'Create a game vs a friends')
+    .addTag('Friends', 'Add friends')
     .build();
 
   const swagger = SwaggerModule.createDocument(app, swaggerConfig);

@@ -10,13 +10,11 @@ export class ChatRoom {
   modes: string;
   password: string;
   userLimit: number;
-  users: {
-    [nick: string]: {
-      isOnline: boolean;
-      modes: string;
-      avatar: string;
-    };
-  };
+	members: {
+		id: number;
+		isOnline: boolean;
+		modes: string;
+	}
   messages: Message[];
-  bannedNicks: string[];
+  bannedUsers: number[];
 }

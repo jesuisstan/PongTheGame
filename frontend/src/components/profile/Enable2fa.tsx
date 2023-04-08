@@ -7,19 +7,16 @@ import QRCode from 'qrcode';
 import Modal from '@mui/joy/Modal';
 import ModalClose from '@mui/joy/ModalClose';
 import ModalDialog from '@mui/joy/ModalDialog';
-import Stack from '@mui/joy/Stack';
+import Stack from '@mui/material/Stack';
 import Typography from '@mui/joy/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
 import TextField from '@mui/material/TextField';
 import SaveIcon from '@mui/icons-material/Save';
-import styles from './Profile.module.css';
-
-const modalDialogStyle = {
-  maxWidth: 500,
-  border: '0px solid #000',
-  bgcolor: '#f5f5f5ee',
-  borderRadius: '4px'
-};
+import AdbIcon from '@mui/icons-material/Adb';
+import AppleIcon from '@mui/icons-material/Apple';
+import * as MUI from '../UI/MUIstyles';
+import * as color from '../UI/colorsPong'
+import styles from './styles/Profile.module.css';
 
 const Enable2fa = ({
   open,
@@ -113,19 +110,15 @@ const Enable2fa = ({
       >
         <ModalDialog
           aria-labelledby="basic-modal-dialog-title"
-          sx={modalDialogStyle}
+          sx={MUI.modalDialog}
         >
-          <ModalClose />
-          <Typography
-            id="basic-modal-dialog-title"
-            component="h2"
-            sx={{ color: 'black' }}
-          >
+          <ModalClose sx={MUI.modalClose} />
+          <Typography id="basic-modal-dialog-title" sx={MUI.modalHeader}>
             Setting up 2-Step Verification
           </Typography>
           <form onSubmit={handleSubmit}>
             <Stack spacing={2}>
-              <Typography component="h3" sx={{ color: 'rgb(37, 120, 204)' }}>
+              <Typography component="h3" sx={{ color: color.PONG_BLUE }}>
                 Configuring Google Authenticator
               </Typography>
               <Stack spacing={1}>
@@ -135,23 +128,33 @@ const Enable2fa = ({
                     href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2&hl=fr&gl=US"
                     target="_blank"
                     rel="noreferrer"
+                    title="Proceed to Google Play"
                   >
-                    <img
-                      className={styles.logo}
-                      src={require('../../assets/androidLogo.png')}
-                      alt=""
+                    <AdbIcon
+                      fontSize="large"
+                      sx={{
+                        color: 'black',
+                        '&:hover': {
+                          color: color.PONG_PINK
+                        }
+                      }}
                     />
                   </a>{' '}
-                  /{' '}
+                  or{' '}
                   <a
                     href="https://apps.apple.com/fr/app/google-authenticator/id388497605"
                     target="_blank"
                     rel="noreferrer"
+                    title="Proceed to App Store"
                   >
-                    <img
-                      className={styles.logo}
-                      src={require('../../assets/appleLogo.png')}
-                      alt=""
+                    <AppleIcon
+                      fontSize="large"
+                      sx={{
+                        color: 'black',
+                        '&:hover': {
+                          color: color.PONG_PINK
+                        }
+                      }}
                     />
                   </a>
                 </Typography>
@@ -164,7 +167,7 @@ const Enable2fa = ({
                 </Typography>
               </Stack>
               <div>
-                <Typography component="h3" sx={{ color: 'rgb(37, 120, 204)' }}>
+                <Typography component="h3" sx={{ color: color.PONG_BLUE }}>
                   Scan QR Code
                 </Typography>
                 <div className={styles.QRbox}>
@@ -184,7 +187,7 @@ const Enable2fa = ({
                 </div>
               </div>
               <div>
-                <Typography component="h3" sx={{ color: 'rgb(37, 120, 204)' }}>
+                <Typography component="h3" sx={{ color: color.PONG_BLUE }}>
                   Verify Code
                 </Typography>
               </div>

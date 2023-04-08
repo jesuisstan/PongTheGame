@@ -7,7 +7,7 @@ import {
 import {
 	Box, Button, Divider, FormControl, Grid, IconButton, Stack,
 	Menu, MenuItem,TextField, Typography, CircularProgress,
-	AvatarGroup, FormGroup, FormControlLabel, Switch, Drawer
+	AvatarGroup, FormGroup, FormControlLabel, Switch
 			} from '@mui/material';
 
 // personal components
@@ -18,7 +18,6 @@ import AvatarBadge from './utils/AvatarBadge';
 
 // personal css
 import './Chat.css';
-import MemberList from './utils/MemberList';
 
 /*************************************************************
  * Chat room
@@ -39,160 +38,206 @@ const ChatRoom = (props: any) => {
 	const [typingDisplay, setTypingDisplay] = useState<string>('')
 	// Message input field value
 	const [messageText, setMessageText] = useState<string>('')
-	// Checks if the user is oper(=admin) in the chat room
+	// Checks if a target user is oper(=admin) in the chat room
 	const [isOper, setIsOper] = useState<boolean>(false)
-	// Checks if the user is muted in the chat room
-	const [isMuted, setIsMuted] = useState<boolean>(false)
+	// Checks if the user is oper(=admin) in the chat room
+	const [isUserOper, setIsUserOper] = useState<boolean>(false)
 	// Array including all members
 	const [members, setMembers] = useState<MemberType[]>([])
+	// Array including all the banned users from the room
+	const [bannedMembers, setBannedMembers] = useState<User[]>([])
 	// Modify password
 	const [oldPassword, setOldPassword] = useState<string>('');
 	const [newPassword, setNewPassword] = useState<string>('');
+	// Checks if the target user is banned from the room
+	const [isBanned, setIsBanned] = useState<Boolean>(false)
 
-
-	socket.emit('findAllMembers', { roomName: user.joinedChatRoom },
-		(response: MemberType[]) => {
-			setMembers(response)
-		}
-	)
-	// Get all messages from messages array in chat.service
-	// and fill the messages variable
-	socket.emit('findAllMessages',
-		{ roomName: user.joinedChatRoom },
-		(response: Message[]) => {
-			// Array including all the messages, even the ones from
-			// blocked users/users who blocked the user
-			const messagesToFilter = response
-
-			for (let i = messagesToFilter.length - 1; i >= 0; --i) {
-				// First we filter the recipient's blocked users
-				let found = false;
-				for (const blockedUser in user.blockedUsers) {
-					if (messagesToFilter[i].author.nickname === user.blockedUsers[blockedUser])
-					{
-						messagesToFilter.splice(i, 1);
-						found = true;
-						break;
-					}
-				}
-				// Then we filter the sender's blocked users
-				if (found === false) {
-					for (const blockedUser in messagesToFilter[i].author.blockedUsers) {
-						if (user.nickname === messagesToFilter[i].author.blockedUsers[blockedUser])
-						{
-							messagesToFilter.splice(i, 1);
-							break;
-						}
-					}
-				}
-			}
-			const filteredMessages = messagesToFilter
-			setMessages(filteredMessages)
-		})
-
-	socket.emit('isUserOper',
-		{ roomName: user.joinedChatRoom, nick: user.nickname },
-		(response: boolean) => {
-			setIsOper(response)
-		}
-	)
-
-	socket.emit('isUserMuted',
-	{ roomName: user.joinedChatRoom, nick: user.nickname },
-	(response: boolean) => {
-		setIsMuted(response)
-		}
-	)
 
 	/*************************************************************
-	 * Event listeners
-	 **************************************************************/
-	useEffect(() => {
-		// Activate listeners and subscribe to events as the component is mounted
-		socket.on('connect', () => console.log('connected to websocket!'))
-		socket.on(
-			'createMessage',
-			() => console.log('createMessage event received!')
-		)
-		socket.on('typingMessage', (
-				roomName: string, nick: string, isTyping: boolean) => {
-			roomName === user.joinedChatRoom && isTyping ?
-				setTypingDisplay(nick + ' is typing...')
-				: setTypingDisplay('')
-		})
-		socket.on('changePassword', (roomName: string, isDeleted: boolean) => {
-			if (roomName === user.joinedChatRoom) {
-				const status = isDeleted ? 'deleted' : 'modified';
-				console.log('Password from ' + roomName + ' has been ' + isDeleted);
-			}
-		})
-		socket.on('makeOper', (roomName: string, target: string) => {
-			if (roomName === user.joinedChatRoom)
-				console.log(target + ' is Oper now!')
-		})
-		socket.on('joinRoom', (roomName: string, nick: string) => {
-			if (roomName === user.joinedChatRoom)
-				console.log(nick + ' joined chatroom [' + roomName + ']');
-		});
-		socket.on('quitRoom', (roomName: string, nick: string) => {
-			if (roomName === user.joinedChatRoom)
-				console.log(nick + ' quit room [' + roomName + ']')
-		});
-		socket.on('kickUser', (roomName: string, target: string) => {
-			if (roomName === user.joinedChatRoom)
-				console.log(target + ' has been kicked!')
-			if (target === user.nickname) props.cleanRoomLoginData()
-		});
-			socket.on('banUser', (roomName: string, target: string) => {
-			if (roomName === user.joinedChatRoom)
-				console.log(target + ' has been banned!')
-			if (target === user.nickname) props.cleanRoomLoginData()
-		})
-		socket.on('unBanUser', (roomName: string, target: string) => {
-			if (roomName === user.joinedChatRoom)
-				console.log(target + ' has been unbanned!')
-		})
-		socket.on('muteUser', (roomName: string, target: string) => {
-			if (roomName === user.joinedChatRoom)
-				console.log(target + ' has been muted!')
-			if (target === user.nickname) props.cleanRoomLoginData()
-		})
-		socket.on('unMuteUser', (roomName: string, target: string) => {
-			if (roomName === user.joinedChatRoom)
-				console.log(target + ' has been unmuted!')
-		})
+	* State getters
+	**************************************************************/
 
-		// Clean listeners to unsubscribe all callbacks for these events
-		// before the component is unmounted
-		return () => {
-			socket.off('connect')
-			socket.off('createMessage')
-			socket.off('typingMessage')
-			socket.off('makeOper')
-			socket.off('joinRoom')
-			socket.off('quitRoom')
-			socket.off('kickUser')
-			socket.off('banUser')
-			socket.off('unBanUser')
+  const findAllMembers = async() => {
+	await socket.emit('findAllMembers', { roomName: user.joinedChatRoom },
+		(response: MemberType[]) => {
+		setMembers(response)
 		}
-	}, [])
+	)}
+	findAllMembers();
 
-	// Emit that user is typing, or not typing after timeout
-	let timeout;
-	const emitTyping = () => {
-		socket.emit('typingMessage', {
-			roomName: user.joinedChatRoom,
-			nick: user.nickname,
-			isTyping: true
-		});
-		timeout = setTimeout(() => {
-			socket.emit('typingMessage', {
-				roomName: user.joinedChatRoom,
-				nick: user.nickname,
-				isTyping: false
-			});
-		}, 2000);
-	};
+	const findAllBanned = async() => {
+		await socket.emit('findAllBannedMembers', { roomName: user.joinedChatRoom },
+		(response: User[]) => {
+			setBannedMembers(response)
+		})
+	}
+	findAllBanned();
+
+  // Get all messages from messages array in chat.service
+  // and fill the messages variable
+  const findAllMessages = async() => {
+	await socket.emit('findAllMessages',
+    { roomName: user.joinedChatRoom },
+    (response: Message[]) => {
+      // Array including all the messages, even the ones from
+      // blocked users/users who blocked the user
+      const messagesToFilter = response
+      for (let i = messagesToFilter.length - 1; i >= 0; --i) {
+        // First we filter the recipient's blocked users
+        let found = false;
+        for (const blockedUser in user.blockedUsers) {
+          if (messagesToFilter[i].author.id === user.blockedUsers[blockedUser])
+          {
+            messagesToFilter.splice(i, 1);
+            found = true;
+            break;
+          }
+        }
+        // Then we filter the sender's blocked users
+        if (found === false) {
+          for (const blockedUser in messagesToFilter[i].author.blockedUsers) {
+            if (user.id === messagesToFilter[i].author.blockedUsers[blockedUser])
+            {
+              messagesToFilter.splice(i, 1);
+              break;
+            }
+          }
+        }
+      }
+      const filteredMessages = messagesToFilter
+      setMessages(filteredMessages)
+    })}
+	findAllMessages();
+
+	// If self=true, we check if the user is oper, not a target
+	const checkIfOper = async(userId: number, self: boolean) => {
+		await socket.emit('isUserOper',
+		{ roomName: user.joinedChatRoom, userId: userId },
+		(response: boolean) => {
+			self ? setIsUserOper(response) : setIsOper(response)
+		}
+	)}
+	checkIfOper(user.id, true)
+
+
+	/*************************************************************
+	* Event listeners
+	**************************************************************/
+  useEffect(() => {
+    // Activate listeners and subscribe to events as the component is mounted
+    socket.on('typingMessage', (
+        roomName: string, nick: string, isTyping: boolean) => {
+      roomName === user.joinedChatRoom && isTyping ?
+        setTypingDisplay(nick + ' is typing...')
+        : setTypingDisplay('')
+    })
+    socket.on('changePassword', (roomName: string, isDeleted: boolean) => {
+      if (roomName === user.joinedChatRoom) {
+        const status = isDeleted ? 'deleted' : 'modified';
+        console.log('Password from ' + roomName + ' has been ' + isDeleted);
+      }
+    })
+    socket.on('makeOper', (roomName: string, target: number) => {
+      if (roomName === user.joinedChatRoom)
+        console.log(target + ' is Oper now!')
+    })
+    socket.on('joinRoom', (roomName: string, userId: number) => {
+      if (roomName === user.joinedChatRoom)
+		  console.log('user ID: ' + userId + ' joined chatroom [' + roomName + ']');
+    });
+    socket.on('quitRoom', (roomName: string, userId: number) => {
+      if (userId === user.id && roomName === user.joinedChatRoom) {
+		props.cleanRoomLoginData()
+        console.log('user ID: ' + userId + ' quit room [' + roomName + ']')
+	  }
+    });
+    socket.on('kickUser', (roomName: string, target: number) => {
+      if (roomName === user.joinedChatRoom)
+        console.log(target + ' has been kicked!')
+      if (target === user.id) props.cleanRoomLoginData()
+    });
+      socket.on('banUser', (roomName: string, target: number) => {
+      if (roomName === user.joinedChatRoom)
+        console.log(target + ' has been banned!')
+      if (target === user.id) props.cleanRoomLoginData()
+    })
+    socket.on('unBanUser', (roomName: string, target: number) => {
+      if (roomName === user.joinedChatRoom)
+        console.log(target + ' has been unbanned!')
+    })
+    socket.on('muteUser', (roomName: string, target: number) => {
+      if (roomName === user.joinedChatRoom)
+        console.log(target + ' has been muted!')
+    })
+    socket.on('unMuteUser', (roomName: string, target: number) => {
+      if (roomName === user.joinedChatRoom)
+        console.log(target + ' has been unmuted!')
+    })
+
+    // Clean listeners to unsubscribe all callbacks for these events
+    // before the component is unmounted
+    return () => {
+		socket.off('createMessage')
+		socket.off('typingMessage')
+		socket.off('changePassword')
+		socket.off('makeOper')
+		socket.off('joinRoom')
+		socket.off('quitRoom')
+		socket.off('kickUser')
+		socket.off('banUser')
+		socket.off('unBanUser')
+		socket.off('MuteUser')
+		socket.off('unMuteUser')
+    }
+  }, [])
+
+
+	/*************************************************************
+	* Status getters
+	**************************************************************/
+
+	const isMuted = (userId: number) => {
+		for (let i=0; i < members.length; ++i)
+			if (members[i].memberId === userId && members[i].modes.indexOf('m') !== -1)
+				return true;
+		return false;
+	}
+	
+	const checkIfBanned = (userId: number) => {
+		for (const bannedUser in bannedMembers)
+			if (bannedMembers[bannedUser].id === userId)
+				return true;
+		return false;
+	}
+
+	const isUserBlocked = (userId: number) => {
+		for (const blockedUser in user.blockedUsers) {
+			if (user.blockedUsers[userId])
+				return true;
+		return false;
+	}}
+
+
+  	/*************************************************************
+	* Events
+	**************************************************************/
+
+  // Emit that user is typing, or not typing after timeout
+  let timeout;
+  const emitTyping = () => {
+    socket.emit('typingMessage', {
+      roomName: user.joinedChatRoom, 
+      nick: user.nickname,
+      isTyping: true
+    });
+    timeout = setTimeout(() => {
+      socket.emit('typingMessage', {
+        roomName: user.joinedChatRoom,
+		nick: user.nickname,
+        isTyping: false
+      });
+    }, 2000);
+  };
 
 	// Activated whenever the user is typing on the message input field
 	const onTyping = (msg: string) => {
@@ -202,10 +247,10 @@ const ChatRoom = (props: any) => {
 
 	// On submit, send the nickName with the written message from the input field
 	// to the backend, as a createMessage event
-	const onFormSubmit = (e: any) => {
+	const onFormSubmit = async(e: any) => {
 		e.preventDefault();
 		if (messageText)
-			socket.emit('createMessage', {
+			await socket.emit('createMessage', {
 				roomName: user.joinedChatRoom,
 				message: {
 					author: user,
@@ -217,118 +262,135 @@ const ChatRoom = (props: any) => {
 		setMessageText('');
 	};
 
-	// When clicking on the 'return' button
-	const onReturnClick = () => {
-		socket.emit('quitRoom', {
-			roomName: user.joinedChatRoom,
-			nick: user.nickname
-		})
-		props.cleanRoomLoginData()
-	}
+  // When clicking on the 'return' button
+  const onReturnClick = async() => {
+    await socket.emit('quitRoom', {
+      roomName: user.joinedChatRoom,
+      userId: user.id,
+    })
+    props.cleanRoomLoginData()
+  }
 
-	// const checkIfBlocked = (target: string) => {
-	//   for (const blockedUser in user.blockedUsers)
-	//     if (target === user.blockedUsers[blockedUser])
-	//       return true
-	//   return false
-	// }
+  // const checkIfBlocked = (target: number) => {
+  //   for (const blockedUser in user.blockedUsers)
+  //     if (target === user.blockedUsers[blockedUser])
+  //       return true
+  //   return false
+  // }
 
-	// When clicking on the 'block' button to block a user
-	const onBlockClick = (target: string) => {
+  // When clicking on the 'block' button to block a user
+  const onBlockClick = async(target: number) => {
+	if (user.id !== target) {
+		// Check if target is not already blocked
+		for (let i=0; i < user.blockedUsers.length; ++i)
+			if (user.blockedUsers[i] === target) return
 		user.blockedUsers.push(target)
+		await socket.emit('saveBlockedUserToDB', {
+			user: user,
+			blockedUsers: user.blockedUsers
+		})
+		console.log("You've blocked " + target + "!")
 	}
-	// When clicking on the 'unblock' button to unblock a user
-	const onUnBlockClick = (target: string) => {
-		for (var i=0; i < user.blockedUsers.length; ++i)
-			if (user.blockedUsers[i] === target)
-			{
-				user.blockedUsers.splice(i, 1)
-				break;
-			}
-	}
+  }
 
-	// When clicking on the 'ban' button to ban a user
-	const onBanClick = (target: string) => {
-		socket.emit('banUser', {
-			roomName: user.joinedChatRoom,
-			nick: user.nickname,
-			target: target
+  // When clicking on the 'unblock' button to unblock a user
+  const onUnBlockClick = async(target: number) => {
+    for (var i=0; i < user.blockedUsers.length; ++i)
+      if (user.blockedUsers[i] === target)
+      {
+        user.blockedUsers.splice(i, 1)
+		user.blockedUsers.push(target)
+		await socket.emit('saveBlockedUserToDB', {
+			user: user,
+			blockedUsers: user.blockedUsers
 		})
-	}
-	// When clicking on the 'unban' button to unban a user
-	const onUnBanClick = (target: string) => {
-		socket.emit('unBanUser', {
-			roomName: user.joinedChatRoom,
-			nick: user.nickname,
-			target: target
-		})
-	}
+        break;
+      }
+  }
 
-	const isUserBanned = (nick: string) => {
-		socket.emit('isUserBanned', {
-			roomName: user.joinedChatRoom,
-			nick: nick
-		}, (response: boolean) => {
-			return response
-		})
-	}
-	
-	// When clicking on the 'kick' button to kick a user
-	const onKickClick = (target: string) => {
-		socket.emit('kickUser', {
-			roomName: user.joinedChatRoom,
-			nick: user.nickname,
-			target: target
-		})
-	}
+  // When clicking on the 'ban' button to ban a user
+  const onBanClick = (target: number) => {
+    socket.emit('banUser', {
+      roomName: user.joinedChatRoom,
+      userId: user.id,
+      target: target
+    })
+  }
 
-	// When clicking on the 'oper' button to make a user oper
-	const onMakeOperClick = (target: string) => {
-		socket.emit('makeOper', {
-			roomName: user.joinedChatRoom,
-			nick: user.nickname,
-			target: target
-		})
-	}
+  // When clicking on the 'unban' button to unban a user
+  const onUnBanClick = (target: number) => {
+    socket.emit('unBanUser', {
+      roomName: user.joinedChatRoom,
+      userId: user.id,
+      target: target
+    })  
+  }
 
-	// When clicking on the 'mute' button to mute a user
-	const onMuteUserClick = (target: string) => {
-		socket.emit('muteUser', {
-			roomName: user.joinedChatRoom,
-			nick: user.nickname,
-			target: target,
-			mute: true
-		})
-	}
 
-	// When clicking on the 'unmute' button to unmute a user
-	const onUnMuteUserClick = (target: string) => {
-		socket.emit('muteUser', {
-			roomName: user.joinedChatRoom,
-			nick: user.nickname,
-			target: target,
-			mute: false
-		})
-	}
+  // When clicking on the 'kick' button to kick a user
+  const onKickClick = async(target: number) => {
+    await socket.emit('kickUser', {
+      roomName: user.joinedChatRoom,
+      userId: user.id,
+      target: target
+    })
+  }
 
-	// When clicking on the 'message' button to send a private
-	// message to the user
-	const onPrivMessageClick = (user2: string) => {
-		socket.emit('createChatRoom', {
-			room: {
-				name: '#' + user.nickname + '/' + user2,
-				modes: '',
-				password: '',
-				userLimit: 2,
-				users: {},
-				messages: [],
-				bannedNicks: []
-			},
-			nick: user.nickname,
-			user2: user2,
-			avatar: user.avatar,
-		});
-	}
+  // When clicking on the 'oper' button to make a user oper
+  const onMakeOperClick = (target: number) => {
+    socket.emit('makeOper', {
+      roomName: user.joinedChatRoom,
+      userId: user.id,
+      target: target
+    })  
+  }
+
+  // When clicking on the 'oper' button to make a user oper
+  const onUnMakeOperClick = (target: number) => {
+    socket.emit('unMakeOper', {
+      roomName: user.joinedChatRoom,
+      userId: user.id,
+      target: target
+    })  
+  }
+
+  // When clicking on the 'mute' button to mute a user
+  const onMuteUserClick = (target: number) => {
+    socket.emit('muteUser', {
+      roomName: user.joinedChatRoom,
+      userId: user.id,
+      target: target,
+      mute: true
+    })  
+  }
+
+  // When clicking on the 'unmute' button to unmute a user
+  const onUnMuteUserClick = (target: number) => {
+    socket.emit('muteUser', {
+      roomName: user.joinedChatRoom,
+      userId: user.id,
+      target: target,
+      mute: false
+    })
+  }
+
+  // When clicking on the 'message' button to send a private
+  // message to the user
+  const onPrivMessageClick = (user2: User) => {
+    socket.emit('createChatRoom', {
+      room: {
+        name: '#' + user.nickname + '/' + user2.nickname, /* TODO change to nick */
+        modes: '',
+        password: '',
+        userLimit: 2,
+        members: {},
+        messages: [],
+		bannedUsers: [],
+	},
+	user1: user,
+	user2: user2,
+    });
+  }
 
 	socket.emit('isUserMuted',
 	{ roomName: user.joinedChatRoom, nick: user.nickname },
@@ -336,8 +398,6 @@ const ChatRoom = (props: any) => {
 		setIsMuted(response)
 		}
 	)
-
-
 
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 	const [openList, setOpenList] = useState(false);
@@ -360,30 +420,23 @@ const ChatRoom = (props: any) => {
 		// onReturnClick();
 	};
 
-	const handleChangePwd = (deletePwd: boolean) => {
-		socket.emit('changePassword', {
+	const handleChangePwd = async(deletePwd: boolean) => {
+		await socket.emit('changePassword', {
 			roomName: user.joinedChatRoom,
 			currentPassword: oldPassword,
 			newPassword: deletePwd ? '' : newPassword,
 		});
 	};
 
-	const isUserBlocked = (usr: any) => {
-		for (const blockedUser in user.blockedUsers) {
-				if (user.blockedUsers[usr.nickname])
-						return true;
-		return false;
-	}}
+	const handleAClick = (event: any) => {
+		setAnchorAvatar(event.currentTarget);
+	};
 
-	const [isUserBan, setIsUserBan] = useState<boolean>(false);
-	
-	const isBan = (user: any) => {
-		socket.emit('isUserBanned', { roomName: user.joinedChatRoom, nick: user.nickname },
-		(response: boolean) => {
-			setIsUserBan(response)
-		}
-		)
-	}
+	const handleAClose = () => {
+		setAnchorAvatar(null);
+	};
+
+
 	
 	/*************************************************************
 	 * Render HTML response
@@ -447,7 +500,7 @@ const ChatRoom = (props: any) => {
 						: <Stack className='message-area'> {
 							messages.map((msg, index) => (
 								<div key={index}>
-							{ user.nickname === msg.author.nickname 
+							{ user.id === msg.author.id
 								?	<div className="msgRowR">
 										<div className='msgRight msgBubble'>
 											<p className="msgText">{msg.data}</p>
@@ -461,22 +514,85 @@ const ChatRoom = (props: any) => {
 								// !isMuted && !isBlocked ? <></> :
 									<div className="msgRowL">
 {/*// -------------- Avatar Badge -------------- */}
+										<Button
+											aria-controls="basic-menu"
+											aria-haspopup="true"
+											aria-expanded={Boolean(anchorAvatar)}
+											onClick={handleAClick}>
 											<AvatarBadge
 												nickname={msg.author.nickname}
 												online={true}/* catch isOnline*/
 												// playing={}/* catch isPlaying*/
 												admin={false}/* catch isAdmin*/
-												oper={true}/* catch isOper*/
+												oper={isOper}
 												avatar={msg.author.avatar}
 												look={true}/>
-											<div>
-												<div className="msgLeft msgBubble">
-													<p className="msgText">{msg.data}</p>
-													<div className="msgTime">{timeFromNow(msg.timestamp)}</div>
-												</div>
+										</Button>
+										{user.nickname !== msg.author.nickname
+										?	<Menu
+												anchorEl={anchorAvatar}
+												open={Boolean(anchorAvatar)}
+												onClose={handleAClose}
+												className='black column-barre' >
+												<MenuItem
+													aria-label="back" 
+													className='column-barre'>{/* catch usrProfil (profil/nickname)*/}
+													<IconButton >
+													<PersonAdd className='black'/>
+													<span>add friend</span>
+												</IconButton>
+												<IconButton
+													onClick={isMuted 
+													? () => onMuteUserClick(msg.author.nickname)
+													: () => onUnMuteUserClick(msg.author.nickname)}>{/* catch makeUsrMute / makeUsrUnMute*/}
+													{isMuted ? <VolumeOff className='black'/> : <VolumeUp className='black'/>}{/* catch isMute*/}
+													<span>mute</span>
+												</IconButton>
+												<IconButton
+													onClick={() => onPrivMessageClick(msg.author.nickname) } >{/* catch makePrivateMsg*/}
+													<Mail className='black'/>
+													<span>private msg</span>
+												</IconButton>
+												<IconButton
+													onClick={ () => onUnBlockClick(msg.author.nickname) } >{/* catch makeBlock / makeUnBlock*/}
+													<PanTool className={'black'}/>{/* catch isBlock*/}
+													<span>block</span>
+												</IconButton>
+												{/* catch isAdmin or isOper*/}
+												{isOper ?
+												<>
+													<IconButton
+														onClick={() => onKickClick(msg.author.nickname)} >{/* catch makekick*/}
+														<Block className='black'/>
+														<span>kick</span>
+													</IconButton>
+													<IconButton
+														onClick={() => onBanClick(msg.author.nickname)}>{/* catch makeBan / makeUnBan*/}
+														<HighlightOff className='black'/>{/* catch isBan*/}
+														<span>ban</span>
+													</IconButton>
+													<IconButton
+														onClick={() => onMakeOperClick(msg.author.nickname)}>{/* catch makeAdmin*/}
+														<DeveloperMode className="black"/>{/* catch isAdmin os isOper*/}
+														<span>admin</span>
+													</IconButton>
+														</> : <></> } 
+													<IconButton
+														onClick={handleAClose}>
+														<Clear className='black'/>
+														<span>close</span>
+													</IconButton>
+												</MenuItem>
+											</Menu>
+											: <></>}
+														<div>
+											<div className="msgLeft msgBubble">
+												<p className="msgText">{msg.data}</p>
+												<div className="msgTime">{timeFromNow(msg.timestamp)}</div>
 											</div>
-										</div>}
-									</div>
+										</div>
+									</div>}
+								</div>
 								))}	
 							</Stack>
 					}

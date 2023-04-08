@@ -29,10 +29,10 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   cleanDb() {
     return this.$transaction([
       this.achievement.deleteMany(),
-      this.friends.deleteMany(),
       this.match.deleteMany(),
       this.user.deleteMany(),
       this.matchEntry.deleteMany(),
+      this.chatRoom.deleteMany(),
       this.session.deleteMany(),
     ]);
   }

@@ -1,0 +1,131 @@
+.basicCard {
+  width: 100%;
+  height: 100%;
+  margin-top: 44px;
+  margin-bottom: 22px;
+  align-self: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: auto;
+}
+
+.header {
+  margin-top: 21px;
+  margin-bottom: 21px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.profileCard {
+  align-self: center;
+  display: flex;
+  overflow: auto;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.box {
+  font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
+  line-height: 1.75;
+  letter-spacing: 0.02857em;
+  width: 300px;
+  height: 300px;
+  box-shadow: 0px 5px 33px -21px whitesmoke;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.35);
+  flex-direction: column;
+  gap: 21px;
+}
+
+.left {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  font-size: 21px;
+  color: whitesmoke;
+  align-items: flex-end;
+}
+
+.right {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  font-size: 21px;
+  color: whitesmoke;
+  align-items: flex-start;
+  max-height: 600px;
+  overflow: auto;
+}
+
+.center {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.line {
+  width: 1px;
+  height: 75%;
+  background-color: whitesmoke;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  z-index: -1;
+}
+
+.up {
+  margin-top: 21px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.bottom {
+  display: flex;
+  align-items: flex-end;
+  margin-bottom: 21px;
+  flex-grow: 1;
+}
+
+.QRbox {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin-top: 15px;
+}
+
+.QRimage {
+  height: 200px;
+  width: 200px;
+}
+
+.logo {
+  width: 4%;
+  height: 4%;
+  min-height: 19px;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+.logo:hover {
+  transform: scale(1.4);
+}
+
+.bottomAvatarBox {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+  flex-grow: 1;
+  gap: 10px;
+}
