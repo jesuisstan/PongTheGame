@@ -46,7 +46,7 @@ export class WebsocketsService {
         return;
       }
       if (this.getSockets([user.id]).length > 0) {
-        this.send(socket, 'error', {
+        this.send(socket, 'error_socket', {
           message: 'You are already connected',
         });
         socket.disconnect();
@@ -65,7 +65,7 @@ export class WebsocketsService {
       this.game.send_all_invitation(socket);
     } catch (e) {
       console.log(e);
-      this.send(socket, 'error_token', {
+      this.send(socket, 'error_socket', {
         message: 'Server got a problem need to be relog',
       });
       socket.disconnect();

@@ -193,6 +193,7 @@ export class ChatGateway {
     if (await this.hasUserPriv(roomName, userId, target) === false)
       throw new WsException({ msg: 'banUser: user is not oper!' });
     await this.chatService.banUser(roomName, target);
+    await this.chatService.quitRoom(roomName, target);
     this.server.emit('banUser', roomName, target);
   }
 

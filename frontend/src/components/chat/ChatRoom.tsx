@@ -128,7 +128,7 @@ const ChatRoom = (props: any) => {
     })
     socket.on('makeAdmin', (roomName: string, target: number) => {
       if (roomName === props.room.name)
-        console.log(target + ' is Oper now!')
+        console.log(target + ' is admin now!')
     })
     socket.on('joinRoom', (roomName: string, userId: number) => {
       if (roomName === props.room.name)
@@ -572,7 +572,7 @@ const ChatRoom = (props: any) => {
 														<span>ban</span>
 													</IconButton>
 													<IconButton
-														onClick={checkPrivileges(msg.author.id) ?
+														onClick={checkIfAdmin(msg.author.id) ?
 															() => onUnmakeAdminClick(msg.author.id)
 															: () => onmakeAdminClick(msg.author.id)}>
 														<DeveloperMode className="black"/>

@@ -11,16 +11,8 @@ import AchievementsBlock from './achievements/AchievementsBlock';
 import MatchHistoryBlock from './match_history/MatchHistoryBlock';
 import backendAPI from '../../api/axios-instance';
 import errorAlert from '../UI/errorAlert';
-import Divider from '@mui/material/Divider';
+import DeviderPong from '../UI/DeviderPong';
 import styles from './styles/PlayerCard.module.css';
-
-const VerticalDevider = (
-  <Divider
-    orientation="vertical"
-    flexItem
-    sx={{ backgroundColor: 'rgba(245, 245, 245, 0.3)' }}
-  />
-);
 
 const PlayerCard = () => {
   const socket = useContext(WebSocketContext);
@@ -69,11 +61,11 @@ const PlayerCard = () => {
       </div>
       <div className={styles.playerCard}>
         <InfoBlock player={player} />
-        {VerticalDevider}
+        <DeviderPong />
         <FriendsBlock player={player} socketEvent={socketEvent} />
-        {VerticalDevider}
+        <DeviderPong />
         <AchievementsBlock player={player} socketEvent={socketEvent} />
-        {VerticalDevider}
+        <DeviderPong />
         <MatchHistoryBlock player={player} socketEvent={socketEvent} />
       </div>
     </div>

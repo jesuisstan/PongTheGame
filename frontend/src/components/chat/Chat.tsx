@@ -114,7 +114,7 @@ const Chat = () => {
     // Clean listeners to unsubscribe all callbacks for these events
     // before the component is unmounted
     return () => {
-      socket.off('connect');
+      // socket.off('connect');
       socket.off('createChatRoom');
       socket.off('exception');
     };

@@ -107,7 +107,6 @@ const InvitationSendModal = ({
   };
 
   socket.on('invitation_accepted', (args) => {
-    console.log('invitation_accepted');
     setButtonText('Accepted');
     setLoading(false);
     setOpen(false);
@@ -227,6 +226,7 @@ const InvitationSendModal = ({
                     type="submit"
                     title={`Invite ${invitee} to play game`}
                     loading={loading}
+                    loadingPosition="end"
                     endIcon={
                       buttonText === 'Accepted' ? (
                         <CheckCircleOutlineIcon />
@@ -236,7 +236,6 @@ const InvitationSendModal = ({
                     }
                     variant="contained"
                     color="inherit"
-                    loadingPosition="end"
                     disabled={disabledButton}
                     sx={{ minWidth: '130px' }}
                   >

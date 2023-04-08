@@ -1,5 +1,5 @@
-# Try removing the dash if you're using the compose plugin
-# (docker compose)
+# Use 'docker compose' if you are using the plugin,
+# otherwise use 'docker-compose'
 COMPOSE = docker compose
 # COMPOSE = sudo docker-compose
 
