@@ -4,7 +4,6 @@ import { MessageDto, ChatRoomDto } from './dto/chat.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
 import { Member } from './entities/chat.entity';
-
 import { User } from '@prisma/client';
 
 @Injectable()
@@ -100,8 +99,8 @@ export class ChatService {
 
   // Create a new chat room object and push it to the database
   // the creator will get admin privileges
-  async createChatRoom(room: ChatRoomDto, userId: number, user2Id: number)
-    : Promise<void> {
+  async createChatRoom(room: ChatRoomDto, userId: number, user2Id: number
+    ): Promise<void> {
     if (room) {
       // Hash the password before saving it
       const hash: string = room.password ? await this.generateHash(room.password) : ''
@@ -220,8 +219,8 @@ export class ChatService {
     throw new WsException({ msg: 'hasUserPriv: unknown room name!' });
   }
 
-  modifyModes(members: Member[], userId: number, mode: string, del: boolean)
-    : string {
+  modifyModes(members: Member[], userId: number, mode: string, del: boolean
+    ): string {
     var modes: string = '';
       // Look for mode in user's mode
       // Add mode if not already there
