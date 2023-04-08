@@ -126,10 +126,6 @@ const ChatRoom = (props: any) => {
         console.log('Password from ' + roomName + ' has been ' + isDeleted);
       }
     })
-    socket.on('makeAdmin', (roomName: string, target: number) => {
-      if (roomName === props.room.name)
-        console.log(target + ' is admin now!')
-    })
     socket.on('joinRoom', (roomName: string, userId: number) => {
       if (roomName === props.room.name)
 		  console.log('user ID: ' + userId + ' joined chatroom [' + roomName + ']');
@@ -145,12 +141,22 @@ const ChatRoom = (props: any) => {
         console.log(target + ' has been kicked!')
       if (target === user.id) props.cleanRoomLoginData()
     });
+	// User has made admin
+    socket.on('adminUser', (roomName: string, target: number) => {
+		if (roomName === props.room.name)
+			console.log(target + ' is admin now!')
+	})
+	// User is not admin anymore
+	socket.on('unadminUser', (roomName: string, target: number) => {
+		if (roomName === props.room.name)
+			console.log('user ID: ' + target + ' is not admin anymore now!')
+	})
       socket.on('banUser', (roomName: string, target: number) => {
       if (roomName === props.room.name)
         console.log(target + ' has been banned!')
       if (target === user.id) props.cleanRoomLoginData()
     })
-    socket.on('unBanUser', (roomName: string, target: number) => {
+    socket.on('unbanUser', (roomName: string, target: number) => {
       if (roomName === props.room.name)
         console.log(target + ' has been unbanned!')
     })
@@ -158,7 +164,7 @@ const ChatRoom = (props: any) => {
       if (roomName === props.room.name)
         console.log(target + ' has been muted!')
     })
-    socket.on('unMuteUser', (roomName: string, target: number) => {
+    socket.on('unmuteUser', (roomName: string, target: number) => {
       if (roomName === props.room.name)
         console.log(target + ' has been unmuted!')
     })
@@ -169,14 +175,15 @@ const ChatRoom = (props: any) => {
 		socket.off('createMessage')
 		socket.off('typingMessage')
 		socket.off('changePassword')
-		socket.off('makeAdmin')
 		socket.off('joinRoom')
 		socket.off('quitRoom')
 		socket.off('kickUser')
+		socket.off('adminUser')
+		socket.off('unadminUser')
 		socket.off('banUser')
-		socket.off('unBanUser')
-		socket.off('MuteUser')
-		socket.off('unMuteUser')
+		socket.off('unbanUser')
+		socket.off('muteUser')
+		socket.off('unmuteUser')
     }
   }, [])
 
@@ -324,24 +331,15 @@ const ChatRoom = (props: any) => {
       }
   }
 
-  // When clicking on the 'ban' button to ban a user
-  const onBanClick = (target: number) => {
-    socket.emit('banUser', {
-      roomName: props.room.name,
-      userId: user.id,
-      target: target
-    })
+  // When clicking on the 'ban' button to ban/unban a user
+  const onBanClick = (target: number, off: boolean) => {
+	socket.emit('banUser', {
+		roomName: props.room.name,
+		userId: user.id,
+		target: target,
+		off: off,
+	})
   }
-
-  // When clicking on the 'unban' button to unban a user
-  const onUnBanClick = (target: number) => {
-    socket.emit('unBanUser', {
-      roomName: props.room.name,
-      userId: user.id,
-      target: target
-    })  
-  }
-
 
   // When clicking on the 'kick' button to kick a user
   const onKickClick = async(target: number) => {
@@ -353,40 +351,24 @@ const ChatRoom = (props: any) => {
   }
 
   // When clicking on the 'oper' button to make a user oper
-  const onmakeAdminClick = (target: number) => {
-    socket.emit('makeAdmin', {
-      roomName: props.room.name,
-      userId: user.id,
-      target: target
-    })  
+  const onMakeAdminClick = (target: number, off: boolean) => {
+    socket.emit('toggleMemberMode', {
+		roomName: props.room.name,
+		userId: user.id,
+		target: target,
+		mode: 'admin',
+		off: off,
+	})
   }
 
-  // When clicking on the 'oper' button to make a user oper
-  const onUnmakeAdminClick = (target: number) => {
-    socket.emit('unmakeAdmin', {
-      roomName: props.room.name,
-      userId: user.id,
-      target: target
-    })  
-  }
-
-  // When clicking on the 'mute' button to mute a user
-  const onMuteUserClick = (target: number) => {
-    socket.emit('muteUser', {
+  // When clicking on the 'mute' button to mute/unmute a user
+  const onMuteClick = (target: number, off: boolean) => {
+    socket.emit('toggleMemberMode', {
       roomName: props.room.name,
       userId: user.id,
       target: target,
-      mute: true
-    })  
-  }
-
-  // When clicking on the 'unmute' button to unmute a user
-  const onUnMuteUserClick = (target: number) => {
-    socket.emit('muteUser', {
-      roomName: props.room.name,
-      userId: user.id,
-      target: target,
-      mute: false
+	  mode: 'mute',
+      off: off,
     })
   }
 
@@ -554,8 +536,8 @@ const ChatRoom = (props: any) => {
 												<>
 												<IconButton
 													onClick={isMuted(msg.author.id)
-													? () => onUnMuteUserClick(msg.author.id)
-													: () => onMuteUserClick(msg.author.id)}>{/* catch makeUsrMute / makeUsrUnMute*/}
+													? () => onMuteClick(msg.author.id, true)
+													: () => onMuteClick(msg.author.id, false)}>
 													{isMuted(msg.author.id) ? <VolumeOff className='black'/> : <VolumeUp className='black'/>}{/* catch isMute*/}
 													<span>mute</span>
 												</IconButton>
@@ -566,15 +548,15 @@ const ChatRoom = (props: any) => {
 													</IconButton>
 													<IconButton
 														onClick={checkIfBanned(msg.author.id) ?
-															() => onUnBanClick(msg.author.id)
-															: () => onBanClick(msg.author.id)}>
+															() => onBanClick(msg.author.id, true)
+															: () => onBanClick(msg.author.id, false)}>
 														<HighlightOff className='black'/>
 														<span>ban</span>
 													</IconButton>
 													<IconButton
 														onClick={checkIfAdmin(msg.author.id) ?
-															() => onUnmakeAdminClick(msg.author.id)
-															: () => onmakeAdminClick(msg.author.id)}>
+															() => onMakeAdminClick(msg.author.id, true)
+															: () => onMakeAdminClick(msg.author.id, false)}>
 														<DeveloperMode className="black"/>
 														<span>admin</span>
 													</IconButton>

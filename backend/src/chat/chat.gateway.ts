@@ -169,45 +169,54 @@ export class ChatGateway {
     return await this.chatService.hasUserPriv(roomName, userId, target);
   }
 
-  // Give a target user the oper status
-  @SubscribeMessage('makeAdmin')
-  async makeAdmin(
+  // Toggle member modes inside a chat room
+  @SubscribeMessage('toggleMemberMode')
+  async toggleMemberMode(
     @MessageBody('roomName') roomName: string,
     @MessageBody('userId') userId: number,
     @MessageBody('target') target: number,
+    @MessageBody('mode') mode: string,
+    @MessageBody('off') off: boolean,
   ) {
     // First, check if the user has the admin rights
     if (await this.hasUserPriv(roomName, userId, target) === false)
-      throw new WsException({ msg: 'makeAdmin: user is not oper!' });
-    await this.chatService.makeAdmin(roomName, target);
-    this.server.emit('makeAdmin', roomName, target);
+      throw new WsException({ msg: 'muteUser: user doesn\'t have enough privileges!' });
+    const room = await this.chatService.getChatRoomByName(roomName);
+    if (room) {
+      // Send the first character of the mode name; ex: mute => 'm'
+      var modes = await this.chatService.modifyModes(room.members, target, mode[0], off);
+      await this.chatService.updateUserModes(roomName, target, modes);
+      // Create event name, ex: unmuteUser
+      const event = (off ? 'un' : '') + mode + 'User';
+      this.server.emit(event, roomName, target);
+      // Save the new modes
+    }
   }
 
+  @SubscribeMessage('isUserMuted')
+  async isUserMuted(
+    @MessageBody('roomName') roomName: string,
+    @MessageBody('userId') userId: number,
+  ) {
+    return await this.chatService.isUserMuted(roomName, userId);
+  }
+  
   @SubscribeMessage('banUser')
   async banUser(
     @MessageBody('roomName') roomName: string,
     @MessageBody('userId') userId: number,
     @MessageBody('target') target: number,
+    @MessageBody('off') off: boolean,
   ) {
+    const event = (off ? 'un' : '') + 'banUser';
     // First, check if the user has the admin rights
     if (await this.hasUserPriv(roomName, userId, target) === false)
-      throw new WsException({ msg: 'banUser: user is not oper!' });
-    await this.chatService.banUser(roomName, target);
-    await this.chatService.quitRoom(roomName, target);
-    this.server.emit('banUser', roomName, target);
-  }
-
-  @SubscribeMessage('unBanUser')
-  async unBanUser(
-    @MessageBody('roomName') roomName: string,
-    @MessageBody('userId') userId: number,
-    @MessageBody('target') target: number,
-  ) {
-    // First, check if the user has the admin rights
-    if (await this.hasUserPriv(roomName, userId, target) === false)
-      throw new WsException({ msg: 'unBanUser: user is not oper!' });
-    await this.chatService.unBanUser(roomName, target);
-    this.server.emit('unBanUser', roomName, target);
+      throw new WsException({ msg: event + ': user doesn\'t have enough privileges!!' });
+    if (off) {
+      await this.chatService.unBanUser(roomName, target);
+      await this.chatService.quitRoom(roomName, target);
+    } else await this.chatService.banUser(roomName, target);
+    this.server.emit(event, roomName, target);
   }
 
   @SubscribeMessage('isUserBanned')
@@ -226,37 +235,9 @@ export class ChatGateway {
   ) {
     // First, check if the user has the admin rights
     if (await this.hasUserPriv(roomName, userId, target) === false)
-      throw new WsException({ msg: 'kickUser: user is not oper!' });
+      throw new WsException({ msg: 'kickUser: user doesn\'t have enough privileges!!' });
     await this.chatService.quitRoom(roomName, target);
     this.server.emit('kickUser', roomName, target);
-  }
-
-  // Give a target user the muted status
-  @SubscribeMessage('muteUser')
-  async muteUser(
-    @MessageBody('roomName') roomName: string,
-    @MessageBody('userId') userId: number,
-    @MessageBody('target') target: number,
-    @MessageBody('mute') mute: boolean,
-  ) {
-    // First, check if the user has the admin rights
-    if (await this.hasUserPriv(roomName, userId, target) === false)
-      throw new WsException({ msg: 'muteUser: user is not oper!' });
-    if (mute === true) {
-      await this.chatService.muteUser(roomName, target);
-      this.server.emit('muteUser', roomName, target);
-    } else {
-      await this.chatService.unMuteUser(roomName, target);
-      this.server.emit('unMuteUser', roomName, target);
-    }
-  }
-
-  @SubscribeMessage('isUserMuted')
-  async isUserMuted(
-    @MessageBody('roomName') roomName: string,
-    @MessageBody('userId') userId: number,
-  ) {
-    return await this.chatService.isUserMuted(roomName, userId);
   }
 
   @SubscribeMessage('saveBlockedUserToDB')

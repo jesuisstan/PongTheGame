@@ -157,7 +157,7 @@ const Chat = () => {
     // Quit current joined room first
     if (user.joinedChatRoom && roomName !== user.joinedChatRoom?.name) {
       await socket.emit('quitRoom', {
-        roomName: user.joinedChatRoom,
+        roomName: user.joinedChatRoom?.name,
         userId: user.id,
       })
     }
