@@ -338,7 +338,7 @@ const Chat = () => {
           )}
           {/* Chatroom create mode form */}
           {chatRoomCreateMode && (
-						<div>
+					<div>
 						<Modal
 							className='black'
 							open={open}
@@ -403,7 +403,7 @@ const Chat = () => {
 									</form>
 							</ModalDialog>
 						</Modal>
-				</div>
+				  </div>
 				)}
         </Box>
         <Box component="main" id="chatRoom">

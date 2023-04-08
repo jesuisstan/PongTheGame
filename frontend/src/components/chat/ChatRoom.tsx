@@ -1,13 +1,12 @@
 import { SetStateAction, useContext, useEffect, useState } from 'react';
 import { WebSocketContext, socket } from '../../contexts/WebsocketContext';
 import {
-	Send, Delete, ArrowBackIosNew, Settings,PersonAddAlt, Password,
-	ExitToApp, Mail, Clear, PanTool, PersonAdd, VolumeUp, VolumeOff, Room, Block, HighlightOff, AdminPanelSettings, DeveloperMode
+	Delete, ArrowBackIosNew, Settings, PersonAddAlt, Password,
+	ExitToApp, Clear, PersonAdd, VolumeUp, VolumeOff, Room, Block, HighlightOff, AdminPanelSettings, DeveloperMode, Save
 	} from '@mui/icons-material';
 import {
 	Box, Button, Divider, FormControl, Grid, IconButton, Stack,
-	Menu, MenuItem,TextField, Typography, CircularProgress,
-	AvatarGroup, FormGroup, FormControlLabel, Switch, Popper
+	Menu, MenuItem,TextField, Typography, CircularProgress, Modal
 			} from '@mui/material';
 
 // personal components
@@ -18,8 +17,11 @@ import AvatarBadge from './utils/AvatarBadge';
 
 // personal css
 import './Chat.css';
+import * as MUI from '../UI/MUIstyles';
 import { User } from '../../types/User';
 import MemberList from './utils/MemberList';
+import { ModalClose, ModalDialog } from '@mui/joy';
+import { LoadingButton } from '@mui/lab';
 
 /*************************************************************
  * Chat room
@@ -403,8 +405,15 @@ const ChatRoom = (props: any) => {
 
 	const handleClose = () => {
 		setAnchorEl(null);
-		// onReturnClick();
 	};
+
+	const [openChangePwd, setOpenChangePwd] = useState(false);
+  const handleClickOpenChangePwd = () => {
+    setOpenChangePwd(true);
+  };
+  const handleCloseChangePwd = () => {
+    setOpenChangePwd(false);
+  };
 
 	const handleChangePwd = async(deletePwd: boolean) => {
 		await socket.emit('changePassword', {
@@ -455,14 +464,62 @@ const ChatRoom = (props: any) => {
 							open={Boolean(anchorEl)}
 							onClose={handleClose}
 							className='black' >
-							<MenuItem onClick={() => handleChangePwd(false)} title="Change Password">
-								<Password sx={{ color: 'black' }} />
-								<span> Change pwd</span>
-							</MenuItem>
-							<MenuItem onClick={() => handleChangePwd(true)} title="Delete Password">
-								<Delete sx={{ color: 'black' }} />
-								<span> Delete pwd</span>
-							</MenuItem>
+							{/* { chatRoom.owner === user.id && chatRoom.modes.indexOf('p') !== -1
+						?	<> */}
+								<MenuItem onClick={handleClickOpenChangePwd} title="Change Password">
+									<Password sx={{ color: 'black' }}/>
+									<span> Change pwd</span>
+								</MenuItem>
+								<div>
+									<Modal
+										className='black'
+										open={openChangePwd}
+										onClose={handleCloseChangePwd}>
+										<ModalDialog
+											aria-labelledby="modal-modal-title"
+											sx={MUI.modalDialog}>
+											<ModalClose onClick={handleCloseChangePwd}/>
+											<Typography
+												id="modal-modal-title"
+												component="h2"
+												className='modal-title'>
+												Change password
+											</Typography>
+											<form onSubmit={handleCloseChangePwd}>
+												<Stack spacing={2}>
+													<Stack spacing={1}>
+													<Typography component="h3" sx={{ color: 'rgb(37, 120, 204)' }}>
+														New password
+													</Typography>
+													<TextField
+														autoFocus
+														required
+														helperText="Password must be at least 4 characters long"
+														label="new password"
+														type="password"
+														inputProps={{ minLength: 4 }}
+														onChange={(e) => setNewPassword(e.target.value)}
+														/>
+													</Stack>
+													<LoadingButton
+														type="submit"
+														onClick={handleCloseChangePwd}
+														startIcon={<Save />}
+														variant='contained'
+														color='inherit'>
+														SAVE
+													</LoadingButton>
+												</Stack>
+											</form>
+										</ModalDialog>
+									</Modal>
+								</div>
+								<MenuItem onClick={() => handleChangePwd(true)} title="Delete Password">
+									<Delete sx={{ color: 'black' }} />
+									<span> Delete pwd</span>
+								</MenuItem>
+							{/* </>
+							: <></>} */}
 							<MenuItem onClick={onReturnClick} title="Leave Room">
 								<ExitToApp className='black' />
 								<span> Leave room</span>
@@ -497,7 +554,7 @@ const ChatRoom = (props: any) => {
 							// Is msg author mute or blocked ?
 							// if yes, display nothing
 							// if no, display message
-							// !isMuted && !isBlocked ? <></> :
+							// !isMuted | !isBlocked ? <></>:
 								<div className="msgRowL">
 									<AvatarBadge
 										nickname={msg.author.nickname}
