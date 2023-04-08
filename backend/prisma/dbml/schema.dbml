@@ -105,6 +105,7 @@ Table Message {
   author User [not null]
   authorId Int [not null]
   data String [not null]
+  timestamp DateTime [not null]
   ChatRoom ChatRoom [not null]
   chatRoomName String [not null]
 }

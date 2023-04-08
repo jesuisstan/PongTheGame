@@ -66,7 +66,6 @@ export class ChatGateway {
     if (user2)
     {
       const roomName = '#' + user2.nickname + '/' + user1.nickname;
-      console.log('roomNammmme ' + roomName)
       const privRoom = await this.chatService.getChatRoomByName(roomName);
       if (privRoom)
         throw new WsException({

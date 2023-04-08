@@ -38,7 +38,7 @@ const ChatRoom = (props: any) => {
 	const [bannedMembers, setBannedMembers] = useState<User[]>(props.room.bannedMembers)
 	// Array including all message objects (author + msg) excluding
 	// messages from blocked users/users who blocked the user
-	const [messages, setMessages] = useState<Message[]>(props.room.messages)
+	const [messages, setMessages] = useState<Message[]>([])
 	// Display typing state of the user
 	const [typingDisplay, setTypingDisplay] = useState<string>('')
 	// Message input field value

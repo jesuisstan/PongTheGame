@@ -148,6 +148,7 @@ model Message {
   author       User      @relation("MessageAuthor", fields: [authorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   authorId     Int
   data         String
+  timestamp    DateTime
   ChatRoom     ChatRoom @relation(fields: [chatRoomName], references: [name], onDelete: Cascade, onUpdate: Cascade)
   chatRoomName String
 }

@@ -3,6 +3,7 @@ import { User } from '@prisma/client';
 export class Message {
   author: User;
   data: string;
+  timestamp: Date;
 }
 
 export class ChatRoom {

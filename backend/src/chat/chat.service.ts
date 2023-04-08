@@ -71,6 +71,7 @@ export class ChatService {
         data: {
           authorId: msg.author.id,
           data: msg.data,
+          timestamp: msg.timestamp,
           chatRoomName: roomName
         }
       })
