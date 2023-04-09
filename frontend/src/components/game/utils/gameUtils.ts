@@ -14,45 +14,6 @@ export const makeRectangleShape = (
   canvasContext.fillRect(cX, cY, width, height);
 };
 
-export const makeCircleShape = (
-  canvasContext: CanvasRenderingContext2D,
-  cX: number,
-  cY: number,
-  radius: number,
-  color: string
-) => {
-  canvasContext.fillStyle = color;
-  canvasContext.beginPath();
-  canvasContext.arc(cX, cY, radius, 90, Math.PI / 2, true);
-  canvasContext.fill();
-};
-
- export const printGoal = (
-   canvasContext: CanvasRenderingContext2D,
-   canvasWidth: number,
-   canvasHeight: number
- ) => {
-   canvasContext.font = '50px Verdana';
-   canvasContext.fillStyle = colorPong.PONG_WHITE;
-   canvasContext.beginPath();
-   canvasContext.fillText('G', canvasWidth / 2 - 18, canvasHeight / 4 - 60);
-   canvasContext.fillText(
-     'O',
-     canvasWidth / 2 - 18,
-     (canvasHeight / 4) * 2 - 60
-   );
-   canvasContext.fillText(
-     'A',
-     canvasWidth / 2 - 18,
-     (canvasHeight / 4) * 3 - 60
-   );
-   canvasContext.fillText(
-     'L',
-     canvasWidth / 2 - 18,
-     (canvasHeight / 4) * 4 - 60
-   );
- };
-
 const drawRect = (
   canvasContext: CanvasRenderingContext2D,
   color: string,

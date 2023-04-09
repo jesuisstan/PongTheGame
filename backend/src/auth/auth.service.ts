@@ -16,7 +16,7 @@ export class AuthService {
     const token = await this.jwt.signAsync(
       { id: id },
       {
-        expiresIn: '2s',
+        expiresIn: '15h',
         secret: secret,
       },
     );
