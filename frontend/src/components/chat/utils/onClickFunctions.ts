@@ -4,32 +4,35 @@ import { Socket } from 'socket.io-client';
   // When clicking on the 'block' button to block a user
   export const onBlockClick = async(socket: Socket, user: User, target: number
     ) => {
-	if (user.id !== target) {
-		// Check if target is not already blocked
-		for (let i=0; i < user.blockedUsers.length; ++i)
-			if (user.blockedUsers[i] === target) return
-		user.blockedUsers.push(target)
-		await socket.emit('saveBlockedUserToDB', {
-			user: user,
-			blockedUsers: user.blockedUsers
-		})
-		console.log("You've blocked " + target + "!")
-	}
+    if (user.id !== target) {
+      // Check if target is not already blocked
+      for (let i=0; i < user.blockedUsers.length; ++i)
+        if (user.blockedUsers[i] === target) return
+      user.blockedUsers.push(target)
+      await socket.emit('saveBlockedUserToDB', {
+        user: user,
+        blockedUsers: user.blockedUsers
+      })
+      console.log("You've blocked " + target + "!")
+    }
   }
 
   // When clicking on the 'block' button to unblock a user
   export const onUnBlockClick = async(socket: Socket, user: User, target: number
     ) => {
-    for (var i=0; i < user.blockedUsers.length; ++i) {
-      if (user.blockedUsers[i] === target)
-      {
-        user.blockedUsers.splice(i, 1)
-        await socket.emit('saveBlockedUserToDB', {
-          user: user,
-          blockedUsers: user.blockedUsers
-        })
-        return;
+    if (user.id !== target) {
+      for (var i=0; i < user.blockedUsers.length; ++i) {
+        if (user.blockedUsers[i] === target)
+        {
+          user.blockedUsers.splice(i, 1)
+          await socket.emit('saveBlockedUserToDB', {
+            user: user,
+            blockedUsers: user.blockedUsers
+          })
+          return;
+        }
       }
+		  console.log("You've unblocked " + target + "!")
     }
   }
 
