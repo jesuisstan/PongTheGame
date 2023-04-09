@@ -50,7 +50,7 @@ const WarningModal = ({
     }
   }, [open]);
 
-  const progress = (TIME - remainingSeconds + 1) / TIME - 1;
+  const progress = (TIME - remainingSeconds) / TIME;
 
   const setDefault = () => {
     setLoad(false);
@@ -88,10 +88,10 @@ const WarningModal = ({
             <Typography>Auto redirect to login page in:</Typography>
             <CircularProgress
               variant="determinate"
-              value={progress * 100}
+              value={progress * 100 + 100}
               sx={{ color: color.PONG_PINK, marginTop: '10px' }}
             />
-            <Typography>{remainingSeconds - 1} sec.</Typography>
+            <Typography>{remainingSeconds} sec.</Typography>
             <div
               style={{
                 display: 'flex',

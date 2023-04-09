@@ -50,6 +50,7 @@ body.swal2-shown > [aria-hidden='true'] {
   transition: 0.1s filter;
 }
 
+
 .baseCard {
   width: 100%;
   height: 100%;

@@ -10,7 +10,7 @@ const Pong = (props: GameProps) => {
   const { setGameStatus } = useContext(GameStatusContext);
   const socket = useContext(WebSocketContext);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [winScore, setwinScore] = useState<number>(5);
+  const [winScore, setWinScore] = useState<number>(5);
   const [canvasSize, setCanvasSize] = useState({ width: 800, height: 600 });
   const [players, setPlayers] = useState<CurrentGamePlayer[]>(
     props.spectator || !props.players ? [] : [...props.players]
@@ -51,7 +51,7 @@ const Pong = (props: GameProps) => {
           score: args.player2.score
         }
       ]);
-      setwinScore(args.gameInfos.winScore);
+      setWinScore(args.gameInfos.winScore);
       setCanvasSize({
         ...canvasSize,
         width: args.gameInfos.originalWidth,
@@ -62,11 +62,11 @@ const Pong = (props: GameProps) => {
   };
 
   useEffect(() => {
-
     const intervalId = setInterval(() => {
       const playPong = () => {
         socket.on('match_game_state', (args) => {
           expandTheGame(args);
+
           window.addEventListener('keydown', onKeyPressRef.current);
           window.addEventListener('keyup', onKeyReleaseRef.current);
 
@@ -83,7 +83,6 @@ const Pong = (props: GameProps) => {
       const spectatePong = () => {
         socket.on('match_spectate_state', (args) => {
           expandTheGame(args);
-          console.log(args.status);
           if (args.status === 'ended' || args.status === 'aborted') {
             setGameStatus(GameStatus.ENDED);
           }

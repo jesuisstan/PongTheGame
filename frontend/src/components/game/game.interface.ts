@@ -61,7 +61,7 @@ export enum GameStatus {
 
 export interface PlayerData {
   name: string;
-  profile_picture: string;
+  avatar: string;
 }
 
 export interface CurrentGamePlayer {

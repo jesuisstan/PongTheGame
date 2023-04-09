@@ -46,7 +46,7 @@ const CountdownModal = (props: CountdownProps) => {
     return () => clearInterval(intervalId);
   }, [remainingSeconds]);
 
-  const progress = (props.seconds - remainingSeconds + 1) / (props.seconds );
+  const progress = (props.seconds - remainingSeconds) / props.seconds;
 
   return (
     <div>
@@ -62,7 +62,7 @@ const CountdownModal = (props: CountdownProps) => {
               value={progress * 100 + 100}
               sx={{ color: color.PONG_PINK, marginTop: '10px' }}
             />
-            <Typography>{remainingSeconds - 1} sec.</Typography>
+            <Typography>{remainingSeconds} sec.</Typography>
             <Typography
               sx={{
                 textAlign: 'left',
