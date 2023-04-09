@@ -5,10 +5,9 @@ import { Achievement } from '../../../types/Achievement';
 import backendAPI from '../../../api/axios-instance';
 import errorAlert from '../../UI/errorAlert';
 import Typography from '@mui/joy/Typography';
-import IconButton from '@mui/material/IconButton';
-import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import * as color from '../../UI/colorsPong';
 import styles from '../styles/PlayerCard.module.css';
+import NotePong from '../../UI/NotePong';
 
 const AchievementsBlock = ({
   player,
@@ -68,22 +67,8 @@ const AchievementsBlock = ({
         ))}
       </div>
       <div>
-        <IconButton
-          color="primary"
-          title={'Show all possible achievements'}
-          onClick={() => setOpen(true)}
-        >
-          <HelpOutlineIcon
-            fontSize="large"
-            sx={{
-              color: 'black',
-              '&:hover': {
-                color: color.PONG_PINK
-              }
-            }}
-          />
-        </IconButton>
         <AchievementsListModal open={open} setOpen={setOpen} />
+        <NotePong setOpen={setOpen} />
       </div>
     </div>
   );

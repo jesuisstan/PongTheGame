@@ -63,30 +63,25 @@ const CountdownModal = (props: CountdownProps) => {
               sx={{ color: color.PONG_PINK, marginTop: '10px' }}
             />
             <Typography>{remainingSeconds} sec.</Typography>
-            <Typography
-              sx={{
-                textAlign: 'left',
-                fontSize: '14px',
-                wordWrap: 'break-word',
-
-                '& > * + *': {
-                  display: 'block',
-                  marginTop: '10px'
-                }
-              }}
-            >
-              <Typography>
-                * Use <KeyboardArrowUpIcon sx={{ color: color.PONG_PINK }} />{' '}
-                and <KeyboardArrowDownIcon sx={{ color: color.PONG_PINK }} />{' '}
-                keys to move the paddle.
-              </Typography>
-              <br />
-              <Typography>
-                ** If your leave the game page during the match, you receive
-                technical lose.
-              </Typography>
-            </Typography>
           </Stack>
+          <Typography
+            sx={{
+              textAlign: 'left',
+              fontSize: '14px',
+              wordWrap: 'break-word'
+            }}
+          >
+            <Typography>
+              * Use <KeyboardArrowUpIcon sx={{ color: color.PONG_PINK }} /> and{' '}
+              <KeyboardArrowDownIcon sx={{ color: color.PONG_PINK }} /> keys to
+              move the paddle.
+            </Typography>
+            <br />
+            <Typography>
+              ** If your leave the game page during the match, you receive
+              technical lose.
+            </Typography>
+          </Typography>
         </ModalDialog>
       </Modal>
     </div>
