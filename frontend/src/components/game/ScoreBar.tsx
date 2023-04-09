@@ -17,12 +17,10 @@ const ScoreBar = ({
   ]);
 
   useEffect(() => {
-    if (players[0].score !== prevScores[0]) {
-      console.log(players![0].infos.name + 'scored');
-      goalAlert();
-    }
-    if (players[1].score !== prevScores[1]) {
-      console.log(players![1].infos.name + 'scored');
+    if (
+      players[0].score !== prevScores[0] ||
+      players[1].score !== prevScores[1]
+    ) {
       goalAlert();
     }
     setPrevScores([players[0].score, players[1].score]);
