@@ -19,14 +19,16 @@ import PersonOffIcon from '@mui/icons-material/PersonOff';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import * as color from '../UI/colorsPong';
 import styles from './styles/PlayerCard.module.css';
+import { onBlockClick, onUnBlockClick } from '../chat/utils/onClickFunctions';
 
 const InfoBlock = ({ player }: { player: PlayerProfile }) => {
   const navigate = useNavigate();
   const socket = useContext(WebSocketContext);
   const { setGameStatus } = useContext(GameStatusContext);
   const { user } = useContext(UserContext);
-  const [isFriendOfUser, setIsFriendOfUser] = useState(false);
+  const [isFriendOfUser, setIsFriendOfUser] = useState<boolean>(false);
   const [openInvitationModal, setOpenInvitationModal] = useState(false);
+  const [isBlocked, setIsBlocked] = useState<boolean>(false);
 
   useEffect(() => {
     if (user.nickname !== player.nickname) {
@@ -48,6 +50,16 @@ const InfoBlock = ({ player }: { player: PlayerProfile }) => {
       );
     }
   }, [player.nickname, user.nickname]);
+
+  const handleBlock = async () => {
+    if (isBlocked) {
+      await onUnBlockClick(socket, user, player.id)
+      setIsBlocked(false);
+    } else {
+      onBlockClick(socket, user, player.id)
+      setIsBlocked(true);
+    }
+  }
 
   const handleFriend = () => {
     if (isFriendOfUser) {
@@ -137,6 +149,14 @@ const InfoBlock = ({ player }: { player: PlayerProfile }) => {
             onClick={() => sendSpectate(player.id)}
             startIcon={<VisibilityIcon />}
             disabled={player.status === 'PLAYING' ? false : true}
+          />
+          <ButtonPong
+            text={isBlocked ? 'Unblock' : 'Block'}
+            title={
+              isBlocked ? 'Unblock this player' : 'Block this player'
+            }
+            onClick={() => handleBlock()}
+            startIcon={isBlocked ? <PersonAddIcon /> : <PersonOffIcon />}
           />
         </div>
       )}
