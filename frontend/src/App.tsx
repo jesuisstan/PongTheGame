@@ -34,7 +34,7 @@ const App = () => {
     totpSecret: null,
     username: '',
     blockedUsers: [],
-    joinedChatRoom: undefined,
+    joinedChatRoom: undefined
   });
 
   const [gameStatus, setGameStatus] = useState('lobby');
@@ -68,9 +68,9 @@ const App = () => {
     setOpenInvitation(true);
   });
 
-  socket.on("match_spec_change_state", (args)=> {
-    setGameStatus('lobby')
-  })
+  socket.on('match_spec_change_state', (args) => {
+    setGameStatus('lobby');
+  });
 
   socket.on('error_socket', (args) => {
     console.log(args.message); // TODO Check how to do that

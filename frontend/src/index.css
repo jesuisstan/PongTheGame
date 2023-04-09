@@ -7,11 +7,6 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, 'Roboto', 'Helvetica', 'Arial',
     sans-serif;
   color: whitesmoke;
-  background: linear-gradient(
-      to bottom right,
-      black,
-      rgb(253, 80, 135),
-      black
-    )
+  background: linear-gradient(to bottom right, black, rgb(253, 80, 135), black)
     fixed;
 }

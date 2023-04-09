@@ -1,4 +1,4 @@
-import * as color from '../UI/colorsPong'
+import * as color from '../UI/colorsPong';
 
 export const modalDialog = {
   width: 'auto',
@@ -7,7 +7,7 @@ export const modalDialog = {
   border: '0px solid #000',
   bgcolor: color.PONG_WHITE,
   borderRadius: '4px',
-  paddingBottom: '30px',
+  paddingBottom: '30px'
 };
 
 export const modalHeader = {
@@ -48,7 +48,7 @@ export const warningBoxStyle = {
   minWidth: '200px',
   alignItems: 'center',
   justifyContent: 'center',
-  paddingTop: "11px"
+  paddingTop: '11px'
 };
 
 export const burgerItem = {
@@ -57,6 +57,6 @@ export const burgerItem = {
   letterSpacing: '0.02857em',
   ':hover': {
     transform: 'scale(1.2)',
-    color: color.PONG_PINK,
+    color: color.PONG_PINK
   }
 };
