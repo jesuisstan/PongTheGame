@@ -3,30 +3,17 @@ import {
       } from 'react';
 import * as React from 'react';
 import {
-  Box,
-  List,
-  ListItem,
-  TextField,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  ListItemIcon,
-  ListItemText,
-  ListItemButton,
-  CssBaseline,
-  ListItemSecondaryAction
+	Box, List, ListItem, TextField, Button, Dialog, DialogActions,
+	DialogContent, DialogContentText,	DialogTitle, ListItemIcon,
+	ListItemText, ListItemButton, CssBaseline, ListItemSecondaryAction, Modal, Typography, Stack
 } from '@mui/material';
 import {
-  TagRounded,
-  LockRounded,
-  ArrowForwardIos,
-  AddCircleOutline,
-  LockOpenRounded,
-  Person2Rounded
+	TagRounded, LockRounded, ArrowForwardIos, AddCircleOutline,
+	LockOpenRounded, Person2Rounded
 } from '@mui/icons-material';
+
+import { ModalClose, ModalDialog } from '@mui/joy';
+import { LoadingButton } from '@mui/lab';
 
 // personal components
 import { UserContext } from '../../contexts/UserContext';
@@ -36,6 +23,7 @@ import PleaseLogin from '../pages/PleaseLogin';
 import { ChatRoomType, MemberType } from '../../types/chat';
 // personal css
 import './Chat.css';
+import * as MUI from '../UI/MUIstyles';
 
 /*************************************************************
  * Chat entrance
@@ -141,7 +129,9 @@ const Chat = () => {
           bannedUsers: [],
         },
         user1: user,
-        user2: '',
+        avatar: user.avatar,
+        user2Id: undefined,
+        user2Nick: undefined,
       });
     setNewChatRoomName('');
     setChatRoomCreateMode(false);
@@ -157,7 +147,7 @@ const Chat = () => {
     // Quit current joined room first
     if (user.joinedChatRoom && roomName !== user.joinedChatRoom?.name) {
       await socket.emit('quitRoom', {
-        roomName: user.joinedChatRoom,
+        roomName: user.joinedChatRoom?.name,
         userId: user.id,
       })
     }
@@ -177,7 +167,7 @@ const Chat = () => {
   const joinRoom = async (roomName: string) => {
     await socket.emit(
       'joinRoom',
-      { roomName: roomName, userId: user.id },
+      { roomName: roomName, user: user, avatar: user.avatar },
       (response: ChatRoomType) => {
         user.joinedChatRoom = response;
         setClickedRoomToJoin('');
@@ -261,36 +251,66 @@ const Chat = () => {
                       room.modes.indexOf('p') !== -1 && (
                         // If 'password protected' mode is found, launch the password dialog
                         // if the room is already joined, don't display the password dialog
-                        <>
-                          <Dialog
-                          open={openP}
-                            onClose={handleClosePass}
-                            onSubmit={onPasswordSubmit}
-                          >
-                            <DialogTitle>Enter password</DialogTitle>
-                            <DialogContent>
-                              <DialogContentText>
-                                Please enter the password to join this channel
-                              </DialogContentText>
-                              <TextField
-                                autoFocus
-                                margin="dense"
-                                id="password"
-                                label="Password"
-                                type="password"
-                                fullWidth
-                                value={inputPassword}
-                                onChange={(e) =>
-                                  setInputPassword(e.target.value)
-                                }
-                              />
-                            </DialogContent>
-                            <DialogActions>
-                              <Button onClick={handleClosePass}>Cancel</Button>
-                              <Button onClick={onPasswordSubmit}>Join</Button>
-                            </DialogActions>
-                          </Dialog>
-                        </>
+												<div>
+													<Modal
+														className='black'
+														open={openP}
+														onClose={handleClosePass}>
+														<ModalDialog
+															aria-labelledby="basic-modal-dialog-title"
+															sx={MUI.modalDialog}>
+															<ModalClose onClick={handleClosePass}/>
+															<Typography 
+										            id="basic-modal-dialog-title"
+																component="h2"
+																className="modal-title">
+																Enter password
+																</Typography>
+																<form onSubmit={onPasswordSubmit}>
+																	<Stack spacing={2}>
+																		<Typography component="h3" sx={{ color: 'rgb(37, 120, 204)' }}>
+																			Type the Room password
+																		</Typography>
+																		<Stack spacing={1}>
+																			<Typography>
+																				Please enter the password to join this channel
+																			</Typography>
+																			<div>
+																			</div>
+																		</Stack>
+																		<TextField
+																			autoFocus
+																			required
+																			type="password"
+																			inputRef={(input) => {
+																				if (input != null) input.focus();
+																			}}
+																			value={inputPassword}
+																			inputProps={{
+																				minLength: 6,
+																				maxLength: 6
+																			}}
+																			placeholder="Password"
+																			// helperText={error} // error message
+																			// error={!!error} // set to true to change the border/helperText color to red
+																			onChange={(e) =>
+																				setInputPassword(e.target.value)
+																			}
+																		/>
+																		<LoadingButton
+																			type="submit"
+																			onClick={onPasswordSubmit}
+																			startIcon={<LockOpenRounded />}
+																			variant="contained"
+																			color="inherit"
+																		>
+																			SEND
+																		</LoadingButton>
+																	</Stack>
+																</form>
+														</ModalDialog>
+													</Modal>
+												</div>
                       )}
                     <ListItemButton onClick={() => onClickJoinRoom(room.name, room.modes)}>
                       <ListItemText
@@ -321,47 +341,73 @@ const Chat = () => {
           )}
           {/* Chatroom create mode form */}
           {chatRoomCreateMode && (
-            <Dialog
-              open={open}
-              onClose={handleClose}
-              onSubmit={onChatRoomCreateModeSubmit}
-            >
-              <DialogTitle>Create room</DialogTitle>
-              <DialogContent>
-                <DialogContentText>
-                  Your are free to add a password or not to this chatroom.
-                </DialogContentText>
-                <TextField
-                  autoFocus
-                  required={true}
-                  helperText="Limit 20 characters"
-                  inputProps={{ inputMode: 'text', maxLength: 20 }}
-                  margin="dense"
-                  id="name"
-                  label="Chatroom name"
-                  type="name"
-                  value={newChatRoomName}
-                  onChange={(e) => onValueChange('name', e.target.value)}
-                  fullWidth
-                  variant="standard"
-                />
-                <TextField
-                  margin="dense"
-                  id="password"
-                  label="Room password"
-                  type="password"
-                  value={chatRoomPassword}
-                  onChange={(e) => onValueChange('password', e.target.value)}
-                  fullWidth
-                  variant="standard"
-                />
-              </DialogContent>
-              <DialogActions>
-                <Button onClick={handleClose}>Cancel</Button>
-                <Button onClick={onChatRoomCreateModeSubmit}>Create</Button>
-              </DialogActions>
-            </Dialog>
-          )}
+					<div>
+						<Modal
+							className='black'
+							open={open}
+							onSubmit={onChatRoomCreateModeSubmit}
+							onClose={handleClose}>
+							<ModalDialog
+								aria-labelledby="basic-modal-dialog-title"
+								sx={MUI.modalDialog}>
+								<ModalClose onClick={handleClose}/>
+								<Typography
+									id="basic-modal-dialog-title"
+									component="h2"
+									className="modal-title">
+									Create room
+									</Typography>
+									<form onSubmit={onPasswordSubmit}>
+										<Stack spacing={2}>
+											<Stack spacing={1}>
+											<Typography component="h3" sx={{ color: 'rgb(37, 120, 204)' }}>
+												Type the Room name
+											</Typography>
+											<TextField
+												autoFocus
+												required={true}
+												helperText="Limit 20 characters"
+												inputProps={{ inputMode: 'text', maxLength: 20 }}
+												
+												id="name"
+												type="name"
+												value={newChatRoomName}
+												// helperText={error} // error message
+												// error={!!error} // set to true to change the border/helperText color to red
+												onChange={(e) => onValueChange('name', e.target.value)}
+											/>
+											</Stack>
+											<Stack spacing={1}>
+												<Typography component="h3" sx={{ color: 'rgb(37, 120, 204)' }}>
+												
+												</Typography>
+												<Typography>
+												Your are free to add a password or not.
+												</Typography>
+												<TextField
+												type="password"
+												value={chatRoomPassword}
+												placeholder="Password"
+												// helperText={error} // error message
+												// error={!!error} // set to true to change the border/helperText color to red
+												onChange={(e) => onValueChange('password', e.target.value)}
+											/>
+											</Stack>
+											<LoadingButton
+												type="submit"
+												onClick={onChatRoomCreateModeSubmit}
+												startIcon={<LockOpenRounded />}
+												variant="contained"
+												color="inherit"
+											>
+												CREATE
+											</LoadingButton>
+										</Stack>
+									</form>
+							</ModalDialog>
+						</Modal>
+				  </div>
+				)}
         </Box>
         <Box component="main" id="chatRoom">
           {user.joinedChatRoom &&

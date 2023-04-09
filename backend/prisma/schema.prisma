@@ -156,7 +156,9 @@ model Message {
 model Member {
   memberId     Int
   member       User      @relation("ChatRoomMember", fields: [memberId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  nickName     String
   isOnline     Boolean
+  avatar       String
   modes        String
   ChatRoom     ChatRoom @relation(fields: [chatRoomName], references: [name], onDelete: Cascade, onUpdate: Cascade)
   chatRoomName String
