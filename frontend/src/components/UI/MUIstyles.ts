@@ -1,4 +1,3 @@
-import { Padding } from '@mui/icons-material';
 import * as color from '../UI/colorsPong'
 
 export const modalDialog = {
@@ -50,4 +49,14 @@ export const warningBoxStyle = {
   alignItems: 'center',
   justifyContent: 'center',
   paddingTop: "11px"
+};
+
+export const burgerItem = {
+  transition: 'transform 0.5s ease-in-out',
+  textTransform: 'uppercase',
+  letterSpacing: '0.02857em',
+  ':hover': {
+    transform: 'scale(1.2)',
+    color: color.PONG_PINK,
+  }
 };
