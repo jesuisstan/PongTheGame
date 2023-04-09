@@ -54,7 +54,7 @@ export class Auth42Controller {
 
     res.cookie('access_token', token, {
       maxAge: convertTime({
-        days: 30,
+        hours: 15,
       }),
     });
 

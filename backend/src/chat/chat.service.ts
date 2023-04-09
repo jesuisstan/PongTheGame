@@ -8,7 +8,6 @@ import { User } from '@prisma/client';
 
 @Injectable()
 export class ChatService {
-
   constructor(private readonly prisma: PrismaService) {}
 
   async identify(
@@ -52,11 +51,14 @@ export class ChatService {
     const room: ChatRoomDto | null = await this.getChatRoomByName(roomName);
     if (room) {
       await this.prisma.member.update({
-            where: { memberId_chatRoomName: {
-              memberId: userId, chatRoomName: roomName }
-            },
-            data: { isOnline: false }
-      })
+        where: {
+          memberId_chatRoomName: {
+            memberId: userId,
+            chatRoomName: roomName,
+          },
+        },
+        data: { isOnline: false },
+      });
     } else throw new WsException({ msg: 'quitRoom: unknown room name!' });
   }
 
@@ -81,11 +83,10 @@ export class ChatService {
           authorId: msg.author.id,
           data: msg.data,
           timestamp: msg.timestamp,
-          chatRoomName: roomName
-        }
-      })
-    }
-    else throw new WsException({ msg: 'createMessage: unknown room name!' });
+          chatRoomName: roomName,
+        },
+      });
+    } else throw new WsException({ msg: 'createMessage: unknown room name!' });
   }
 
   async generateHash(password: string): Promise<string> {
@@ -117,10 +118,10 @@ export class ChatService {
           userLimit: room.userLimit,
           members: {},
           messages: {},
-          bannedUsers: {}
-        }
-      })
-      console.log('created room: '+ Object.entries(r));
+          bannedUsers: {},
+        },
+      });
+      console.log('created room: ' + Object.entries(r));
       // If it is a private conversation
       if (user2Id) {
         user.avatar && await this.identify(room.name, user, '', user.avatar, false);
@@ -171,36 +172,37 @@ export class ChatService {
       // If a new password was given
       const oldModes = await this.prisma.chatRoom.findUnique({
         where: { name: roomName },
-        select: { modes: true }
-      })
+        select: { modes: true },
+      });
       if (oldModes) {
-      if (newPassword && newPassword !== '') {
-        // If the room wasn't in 'password protected' mode,
-        // it gets it
-        newPassword = await this.generateHash(newPassword);
-        if (oldModes.modes.search('p') === -1)  {
+        if (newPassword && newPassword !== '') {
+          // If the room wasn't in 'password protected' mode,
+          // it gets it
+          newPassword = await this.generateHash(newPassword);
+          if (oldModes.modes.search('p') === -1) {
+            await this.prisma.chatRoom.update({
+              where: { name: roomName },
+              data: {
+                modes: oldModes.modes + 'p',
+                password: newPassword,
+              },
+            });
+          }
+        } // No given password means we remove the password
+        else {
           await this.prisma.chatRoom.update({
             where: { name: roomName },
-            data: {
-              modes: oldModes.modes + 'p',
-              password: newPassword
-            }
-          })
-        }        
-      } // No given password means we remove the password
-      else {
-        await this.prisma.chatRoom.update({
-          where: { name: roomName },
-          data: { password: '' }
-        }) // and we remove the 'password protected' mode
-        if (oldModes.modes.search('p') !== -1) {
-          var modes = oldModes.modes.replace(/p/g, '');
-          await this.prisma.chatRoom.update({
-            where: { name: roomName },
-            data: { modes: modes }
-          })
+            data: { password: '' },
+          }); // and we remove the 'password protected' mode
+          if (oldModes.modes.search('p') !== -1) {
+            const modes = oldModes.modes.replace(/p/g, '');
+            await this.prisma.chatRoom.update({
+              where: { name: roomName },
+              data: { modes: modes },
+            });
+          }
         }
-      }}
+      }
     } else throw new WsException({ msg: 'changePassword: unknown room name!' });
   }
 
@@ -210,17 +212,17 @@ export class ChatService {
       // If target is the owner, we stop here: cannot do anything against owners
       if (target === room.owner) return false;
       // Look for the user asking for privilege
-      for (let i=0; i < room.members.length; ++i) {
-          if (room.members[i].memberId === userId) {
-            // If user is neither owner or admin, we stop here
-            if (userId !== room.owner && room.members[i].modes.search('a') === -1)
-              return false
-            // Otherwise, there is no reason not to give privilege
-            return true;
-          }
+      for (let i = 0; i < room.members.length; ++i) {
+        if (room.members[i].memberId === userId) {
+          // If user is neither owner or admin, we stop here
+          if (userId !== room.owner && room.members[i].modes.search('a') === -1)
+            return false;
+          // Otherwise, there is no reason not to give privilege
+          return true;
+        }
       }
       throw new WsException({
-        msg: 'hasUserPriv: unknown member in [' + roomName + ']!'
+        msg: 'hasUserPriv: unknown member in [' + roomName + ']!',
       });
     }
     throw new WsException({ msg: 'hasUserPriv: unknown room name!' });
@@ -260,8 +262,7 @@ export class ChatService {
       var modes: string = this.modifyModes(room.members, userId, 'a', false)
       // Save the new modes
       await this.updateUserModes(roomName, userId, modes);
-    }
-    else throw new WsException({ msg: 'makeAdmin: unknown room name!' });
+    } else throw new WsException({ msg: 'makeAdmin: unknown room name!' });
   }
 
   async banUser(roomName: string, userId: number): Promise<void> {
@@ -270,28 +271,28 @@ export class ChatService {
       if (userId) {
         // user.id is loaded inside bannedUsers
         // If not already banned, push the new user into it
-        if (await this.isUserBanned(roomName, userId) === false) {
+        if ((await this.isUserBanned(roomName, userId)) === false) {
           await this.prisma.chatRoom.update({
             where: { name: roomName },
-            data: { bannedUsers: { connect: { id: userId } }}
-          })
-        } else throw new WsException({ msg: 'unBanUser: user is already banned!' })
+            data: { bannedUsers: { connect: { id: userId } } },
+          });
+        } else
+          throw new WsException({ msg: 'unBanUser: user is already banned!' });
       }
-    }
-    else throw new WsException({ msg: 'banUser: unknown room name!' });
+    } else throw new WsException({ msg: 'banUser: unknown room name!' });
   }
 
   async unBanUser(roomName: string, userId: number): Promise<void> {
     const room: ChatRoomDto | null = await this.getChatRoomByName(roomName);
     if (room) {
       if (userId) {
-        if (await this.isUserBanned(roomName, userId) === true) {
+        if ((await this.isUserBanned(roomName, userId)) === true) {
           // If banned, delete the user from the list
           await this.prisma.chatRoom.update({
             where: { name: roomName },
-            data: { bannedUsers: { disconnect: { id: userId } }}
-          })
-        } else throw new WsException({ msg: 'unBanUser: user is not banned!' })
+            data: { bannedUsers: { disconnect: { id: userId } } },
+          });
+        } else throw new WsException({ msg: 'unBanUser: user is not banned!' });
       }
     } else throw new WsException({ msg: 'unBanUser: unknown room name!' });
   }
@@ -299,20 +300,21 @@ export class ChatService {
   async isUserBanned(roomName: string, userId: number): Promise<boolean> {
     const room: ChatRoomDto | null = await this.getChatRoomByName(roomName);
     if (room) {
-      for (let i=0; i < room.bannedUsers.length; ++i)
-        if (room.bannedUsers[i].id === userId)
-          return true;
+      for (let i = 0; i < room.bannedUsers.length; ++i)
+        if (room.bannedUsers[i].id === userId) return true;
       return false;
-    }
-    else throw new WsException({ msg: 'isUserBanned: unknown room name!' });
+    } else throw new WsException({ msg: 'isUserBanned: unknown room name!' });
   }
 
   async isUserMuted(roomName: string, userId: number): Promise<boolean> {
     const room: ChatRoomDto | null = await this.getChatRoomByName(roomName);
     if (room) {
       // Look for mute mode ('m') in user's modes
-      for (var i=0; i < room.members.length; ++i)
-        if (room.members[i].memberId === userId && room.members[i].modes.search('m') !== -1)
+      for (let i = 0; i < room.members.length; ++i)
+        if (
+          room.members[i].memberId === userId &&
+          room.members[i].modes.search('m') !== -1
+        )
           return true;
       return false;
     }
@@ -325,7 +327,6 @@ export class ChatService {
       // Compare bcrypted stored pwd from the database to the user's given password
       // bcrypt will hash the given pwd then compared it to the stored hashed pwd
       return await bcrypt.compare(password, room.password);
-    } else
-      throw new WsException({ msg: 'checkPassword: unknown room name!' });
+    } else throw new WsException({ msg: 'checkPassword: unknown room name!' });
   }
 }

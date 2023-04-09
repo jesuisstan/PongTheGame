@@ -18,6 +18,7 @@ import * as MUI from './MUIstyles';
 import * as color from './colorsPong';
 
 const URL_LOGOUT = `${process.env.REACT_APP_URL_BACKEND}/auth/logout`;
+const TIME: number = 10;
 
 const WarningModal = ({
   open,
@@ -28,35 +29,35 @@ const WarningModal = ({
 }) => {
   const { user } = useContext(UserContext);
   const [load, setLoad] = useState(false);
-  const [remainingSeconds, setRemainingSeconds] = useState<number>(10);
+  const [remainingSeconds, setRemainingSeconds] = useState<number>(TIME);
 
   useEffect(() => {
-    const intervalId = setInterval(() => {
-      setRemainingSeconds((prevRemainingSeconds) => prevRemainingSeconds - 1);
-    }, 1000);
+    if (open) {
+      const intervalId = setInterval(() => {
+        setRemainingSeconds((prevRemainingSeconds) => prevRemainingSeconds - 1);
+      }, 1000);
 
-    if (remainingSeconds === 1) {
+      if (remainingSeconds <= 0) {
+        clearInterval(intervalId);
+      }
+
+      setTimeout(() => {
+        logout();
+        setDefault();
+      }, 10000);
+
+      return () => clearInterval(intervalId);
     }
-    if (remainingSeconds === 0) {
-      clearInterval(intervalId);
-    }
+  }, [open]);
 
-    return () => clearInterval(intervalId);
-  }, [remainingSeconds]);
-
-  const progress = (10 - remainingSeconds) / (10 - 1);
+  const progress = (TIME - remainingSeconds + 1) / TIME - 1;
 
   const setDefault = () => {
     setLoad(false);
+    setOpen(false);
   };
 
-  ////todo ON when backend is ready
-  //setTimeout(() => {
-  //  logout();
-  //}, 10000);
-
   const logout = () => {
-    console.log('forced logout!');
     if (user.provider) {
       window.location.href = URL_LOGOUT;
     }
@@ -70,8 +71,8 @@ const WarningModal = ({
         open={open}
         onClose={(event, reason) => {
           if (event && reason === 'closeClick') {
-            //logout(); //todo ON on release
-            setOpen(false);
+            logout();
+            setDefault();
           }
         }}
       >

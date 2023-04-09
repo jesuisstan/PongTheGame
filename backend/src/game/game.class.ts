@@ -242,6 +242,7 @@ export class Game {
       ) {
         this.status = Status.ENDED;
         this._send_state_to_players(timeInSeconds);
+        this._send_state_to_spectators(timeInSeconds);
       }
     }
     if (this.status === Status.ABORTED) {
@@ -279,6 +280,7 @@ export class Game {
     this._set_players_status('ONLINE');
     const res = this._result_string(winner, loser, reason);
     this.websockets.send(this.player1.socket, 'match_result', res);
+    this.websockets.sendToAll(this.spectator_sockets, 'match_result', res);
     if (this.type != TypeMode.TRAINING) {
       this.websockets.send(this.player2?.socket, 'match_result', res);
       profile_winner = winner.profile?.user;

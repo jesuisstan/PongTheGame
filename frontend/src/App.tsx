@@ -68,10 +68,13 @@ const App = () => {
     setOpenInvitation(true);
   });
 
+  socket.on("match_spec_change_state", (args)=> {
+    setGameStatus('lobby')
+  })
+
   socket.on('error_socket', (args) => {
-    //alert(args.message); // TODO Check how to do that
+    console.log(args.message); // TODO Check how to do that
     setOpenWarning(true);
-    console.log(args);
   });
 
   return (
@@ -87,7 +90,7 @@ const App = () => {
                   setOpen={setOpenInvitation}
                   invitation={invitation}
                 />
-                <WarningModal open={openWarning} setOpen={setOpenWarning} />
+                {<WarningModal open={openWarning} setOpen={setOpenWarning} />}
                 {gameStatus === GameStatus.ENDED && (
                   <VictoryModal
                     open={!openVictoryModal}

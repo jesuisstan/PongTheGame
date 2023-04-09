@@ -35,15 +35,13 @@ export class ChatGateway {
     if (msg) {
       if (
         msg.author.id &&
-        await this.chatService.isUserMuted(roomName, msg.author.id) === false
+        (await this.chatService.isUserMuted(roomName, msg.author.id)) === false
       )
-      await this.chatService.createMessage(roomName, msg);
+        await this.chatService.createMessage(roomName, msg);
       console.log('message emitted: ' + Object.entries(msg));
       // Broadcast received message to all users
       await this.server.emit('createMessage');
-    }
-    else
-      throw new WsException({ msg: 'createMessage: message is empty!', });
+    } else throw new WsException({ msg: 'createMessage: message is empty!' });
   }
 
   @SubscribeMessage('createChatRoom')
@@ -159,8 +157,11 @@ export class ChatGateway {
     @MessageBody('newPassword') newPassword: string,
   ): Promise<void> {
     // First, check the current password
-    if (newPassword && newPassword !== '' &&
-      await this.checkPassword(roomName, currentPassword) === false)
+    if (
+      newPassword &&
+      newPassword !== '' &&
+      (await this.checkPassword(roomName, currentPassword)) === false
+    )
       throw new WsException({ msg: 'changePassword: wrong password!' });
     await this.chatService.changePassword(roomName, newPassword);
     const isDeleted = newPassword && newPassword !== '' ? false : true;
@@ -239,8 +240,8 @@ export class ChatGateway {
   ): Promise<void> {
     const { id } = user;
     await this.prisma.user.update({
-      data: {blockedUsers},
-      where: {id},
+      data: { blockedUsers },
+      where: { id },
     });
   }
 }
