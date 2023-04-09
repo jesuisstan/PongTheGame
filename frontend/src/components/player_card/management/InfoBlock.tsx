@@ -12,12 +12,12 @@ import {
 import InvitationSendModal from '../../game/invitation/InvitationSendModal';
 import ButtonPong from '../../UI/ButtonPong';
 import BadgePong from '../../UI/BadgePong';
+import InfoNoteModal from './InfoNoteModal';
+import NotePong from '../../UI/NotePong';
 import backendAPI from '../../../api/axios-instance';
 import errorAlert from '../../UI/errorAlert';
 import Typography from '@mui/joy/Typography';
 import Avatar from '@mui/material/Avatar';
-import IconButton from '@mui/material/IconButton';
-import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
@@ -27,7 +27,6 @@ import VoiceOverOffIcon from '@mui/icons-material/VoiceOverOff';
 import RecordVoiceOverIcon from '@mui/icons-material/RecordVoiceOver';
 import * as color from '../../UI/colorsPong';
 import styles from '../styles/PlayerCard.module.css';
-import InfoNoteModal from './InfoNoteModal';
 
 const InfoBlock = ({ player }: { player: PlayerProfile }) => {
   const navigate = useNavigate();
@@ -167,26 +166,12 @@ const InfoBlock = ({ player }: { player: PlayerProfile }) => {
             startIcon={<VisibilityIcon />}
             disabled={player.status === 'PLAYING' ? false : true}
           />
+          <div>
+            <InfoNoteModal open={open} setOpen={setOpen} player={player} />
+            <NotePong setOpen={setOpen} />
+          </div>
         </div>
       )}
-      <div>
-        <InfoNoteModal open={open} setOpen={setOpen} player={player} />
-        <IconButton
-          color="primary"
-          title={'Note'}
-          onClick={() => setOpen(true)}
-        >
-          <HelpOutlineIcon
-            fontSize="large"
-            sx={{
-              color: 'black',
-              '&:hover': {
-                color: color.PONG_PINK
-              }
-            }}
-          />
-        </IconButton>
-      </div>
       <ButtonPong
         text="Back"
         onClick={() => navigate(-1)}

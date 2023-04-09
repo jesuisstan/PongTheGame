@@ -10,7 +10,7 @@ import Avatar from '@mui/material/Avatar';
 import * as MUI from '../../UI/MUIstyles';
 import * as color from '../../UI/colorsPong';
 
-const FriendsNoteModal = ({
+const InfoNoteModal = ({
   open,
   setOpen,
   player
@@ -36,7 +36,7 @@ const FriendsNoteModal = ({
               gap: '10px'
             }}
           >
-            <Typography>Friends status:</Typography>
+            <Typography>Available actions:</Typography>
             <div
               style={{
                 display: 'flex',
@@ -44,52 +44,26 @@ const FriendsNoteModal = ({
                 gap: '21px'
               }}
             >
-              <div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  gap: '21px'
-                }}
-              >
-                <div>
-                  <BadgePong player={player} color={'green'} pulse={true}>
-                    <Avatar></Avatar>
-                  </BadgePong>
-                </div>
-                <Typography sx={{ marginTop: '8px' }}>- online</Typography>
-              </div>
-              <div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  gap: '21px'
-                }}
-              >
-                <div>
-                  <BadgePong
-                    player={player}
-                    color={color.PONG_BLUE}
-                    pulse={true}
-                  >
-                    <Avatar></Avatar>
-                  </BadgePong>
-                </div>
-                <Typography sx={{ marginTop: '8px' }}>- playing</Typography>
-              </div>
-              <div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  gap: '21px'
-                }}
-              >
-                <div>
-                  <BadgePong player={player} color={'red'} pulse={false}>
-                    <Avatar></Avatar>
-                  </BadgePong>
-                </div>
-                <Typography sx={{ marginTop: '8px' }}>- offline</Typography>
-              </div>
+              <Typography>
+                <Typography sx={{ fontWeight: 'Bold' }}>
+                  Follow / Unfollow
+                </Typography>
+                : to conveniently monitor the status of this player.
+              </Typography>
+              <Typography>
+                <Typography sx={{ fontWeight: 'Bold' }}>
+                  Block / Unblock
+                </Typography>
+                : to avoid unnecessary messages or invitations from this player.
+              </Typography>
+              <Typography>
+                <Typography sx={{ fontWeight: 'Bold' }}>Invite*</Typography>: to
+                create customized game and invite this player to join it.
+              </Typography>
+              <Typography>
+                <Typography sx={{ fontWeight: 'Bold' }}>Watch**</Typography>: to
+                spectate current game of this player.
+              </Typography>
             </div>
           </div>
           <Typography
@@ -100,11 +74,9 @@ const FriendsNoteModal = ({
               wordWrap: 'break-word'
             }}
           >
-            <Typography>* Friends' status refreshes automatically.</Typography>
+            <Typography>* Required player's status - ONLINE.</Typography>
             <br />
-            <Typography>
-              ** To refrash Friends list use <RefreshIcon /> button.
-            </Typography>
+            <Typography>** Required player's status - PLAYING.</Typography>
           </Typography>
         </ModalDialog>
       </Modal>
@@ -112,4 +84,4 @@ const FriendsNoteModal = ({
   );
 };
 
-export default FriendsNoteModal;
+export default InfoNoteModal;
