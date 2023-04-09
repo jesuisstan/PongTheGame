@@ -1,4 +1,3 @@
-import { useContext } from 'react';
 import { MemberType } from "../../../types/chat";
 import { User } from "../../../types/User";
 

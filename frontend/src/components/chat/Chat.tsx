@@ -64,7 +64,7 @@ const Chat = () => {
   const [isPasswordRight, setIsPasswordRight] = useState<boolean>(false);
   const [clickedRoomToJoin, setClickedRoomToJoin] = useState<string>('');
 
-  const findAllChatRooms = async() => {
+  const findAllChatRooms = async () => {
     await socket.emit('findAllChatRooms', {}, (response: ChatRoomType[]) => {
       setChatRooms(response);
     });
@@ -114,7 +114,7 @@ const Chat = () => {
     handleClickOpen();
   };
 
-  const onChatRoomCreateModeSubmit = async(e: any) => {
+  const onChatRoomCreateModeSubmit = async (e: any) => {
     e.preventDefault();
     if (newChatRoomName)
       await socket.emit('createChatRoom', {
@@ -143,7 +143,7 @@ const Chat = () => {
     if (type === 'password') setChatRoomPassword(value);
   };
   // When clicking on a room name to join it
-  const onClickJoinRoom = async(roomName: string, modes: string) => {
+  const onClickJoinRoom = async (roomName: string, modes: string) => {
     // Quit current joined room first
     if (user.joinedChatRoom && roomName !== user.joinedChatRoom?.name) {
       await socket.emit('quitRoom', {
@@ -164,7 +164,7 @@ const Chat = () => {
     }
   };
   // Join a chatroom if no password has been set
-  const joinRoom = async (roomName: string) => {
+  const joinRoom = async  (roomName: string) => {
     await socket.emit(
       'joinRoom',
       { roomName: roomName, user: user, avatar: user.avatar },
@@ -174,7 +174,7 @@ const Chat = () => {
     });
   };
   // Check if the password is right
-  const onPasswordSubmit = async() => {
+  const onPasswordSubmit = async () => {
     if (clickedRoomToJoin) {
       await socket.emit(
         'checkPassword',
