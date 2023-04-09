@@ -12,7 +12,7 @@ export class ChatService {
   constructor(private readonly prisma: PrismaService) {}
 
   async identify(
-    roomName: string, userId: number, modes: string, online: boolean
+    roomName: string, userId: number, modes: string, avatar: string, online: boolean
     ): Promise<void> {
     // Check if room exists
     const room: ChatRoomDto | null = await this.getChatRoomByName(roomName);
@@ -40,6 +40,7 @@ export class ChatService {
               memberId: userId,
               isOnline: online,
               modes: modes,
+              avatar: avatar,
               chatRoomName: roomName
         }
       })
@@ -99,7 +100,8 @@ export class ChatService {
 
   // Create a new chat room object and push it to the database
   // the creator will get admin privileges
-  async createChatRoom(room: ChatRoomDto, userId: number, user2Id: number
+  async createChatRoom(
+    room: ChatRoomDto, userId: number, avatar: string, user2Id: number
     ): Promise<void> {
     if (room) {
       // Hash the password before saving it
@@ -120,12 +122,12 @@ export class ChatService {
       console.log('created room: '+ Object.entries(r));
       // If it is a private conversation
       if (user2Id) {
-        this.identify(room.name, userId, '', false);
-        this.identify(room.name, user2Id, '', false);
+        this.identify(room.name, userId, '', '', false);
+        this.identify(room.name, user2Id, '', '', false);
         return;
       }
       // Identify creator as the owner
-      this.identify(room.name, userId, 'o', false);
+      this.identify(room.name, userId, 'o', avatar, false);
     } else
       throw new WsException({
         msg: "createChatRoom: 'room' argument is missing!",

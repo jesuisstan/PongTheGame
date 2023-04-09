@@ -1,24 +1,28 @@
-import { SetStateAction, useContext, useEffect, useState } from 'react';
-import { WebSocketContext, socket } from '../../contexts/WebsocketContext';
+import { useContext, useEffect, useState } from 'react';
+import { WebSocketContext } from '../../contexts/WebsocketContext';
 import {
-	Send, Delete, ArrowBackIosNew, Settings,PersonAddAlt, Password,
-	ExitToApp, Mail, Clear, PanTool, PersonAdd, VolumeUp, VolumeOff, Room, Block, HighlightOff, AdminPanelSettings, DeveloperMode
+	Delete, ArrowBackIosNew, Settings, PersonAddAlt, Password,
+	ExitToApp, Clear, PersonAdd, VolumeUp, VolumeOff, Room, Block, HighlightOff, AdminPanelSettings, DeveloperMode, Save
 	} from '@mui/icons-material';
 import {
 	Box, Button, Divider, FormControl, Grid, IconButton, Stack,
-	Menu, MenuItem,TextField, Typography, CircularProgress,
-	AvatarGroup, FormGroup, FormControlLabel, Switch, Popper
+	Menu, MenuItem,TextField, Typography, CircularProgress, Modal
 			} from '@mui/material';
 
 // personal components
 import { UserContext } from '../../contexts/UserContext';
-import { MemberType, Message } from "../../types/chat";
+import { ChatRoomType, MemberType, Message } from "../../types/chat";
 import timeFromNow from './utils/timeFromNow';
 import AvatarBadge from './utils/AvatarBadge';
 
 // personal css
 import './Chat.css';
+import * as MUI from '../UI/MUIstyles';
 import { User } from '../../types/User';
+import MemberList from './utils/MemberList';
+import { ModalClose, ModalDialog } from '@mui/joy';
+import { LoadingButton } from '@mui/lab';
+import * as statusUtils from './utils/statusFunctions';
 
 /*************************************************************
  * Chat room
@@ -26,7 +30,12 @@ import { User } from '../../types/User';
  * Represents each created chat room 
 **************************************************************/
 
-const ChatRoom = (props: any) => {
+interface ChatRoomProps {
+	cleanRoomLoginData: () => void;
+	room: ChatRoomType;
+}
+
+const ChatRoom = (props: ChatRoomProps) => {
 	/*************************************************************
 	 * States
 	**************************************************************/
@@ -35,7 +44,7 @@ const ChatRoom = (props: any) => {
 	// Array including all members
 	const [members, setMembers] = useState<MemberType[]>(props.room.members)
 	// Array including all the banned users from the room
-	const [bannedMembers, setBannedMembers] = useState<User[]>(props.room.bannedMembers)
+	const [bannedMembers, setBannedMembers] = useState<User[]>(props.room.bannedUsers)
 	// Array including all message objects (author + msg) excluding
 	// messages from blocked users/users who blocked the user
 	const [messages, setMessages] = useState<Message[]>([])
@@ -188,59 +197,6 @@ const ChatRoom = (props: any) => {
   }, [])
 
 
-	/*************************************************************
-	* Status getters
-	**************************************************************/
-
-	const isMuted = (userId: number): boolean => {
-		for (let i=0; i < members.length; ++i)
-			if (members[i].memberId === userId && members[i].modes.indexOf('m') !== -1)
-				return true;
-		return false;
-	}
-	
-	const checkIfBanned = (userId: number): boolean => {
-		for (const bannedUser in bannedMembers)
-			if (bannedMembers[bannedUser].id === userId)
-				return true;
-		return false;
-	}
-
-	const isUserBlocked = (userId: number): boolean => {
-		for (const blockedUser in user.blockedUsers)
-			if (user.blockedUsers[userId])
-				return true;
-		return false;
-	}
-
-	const checkIfOwner = (userId: number): boolean => {
-		return props.room.owner === userId ? true : false;
-	}
-
-	const checkIfAdmin = (userId: number): boolean => {
-		for (const member in members)
-			if (members[member].modes.indexOf('a') !== -1)
-				return true;
-		return false;
-	}
-
-	const checkPrivileges = (target: number): boolean => {
-		// If target is the owner, we stop here: cannot do anything against owners
-		if (target === props.room.owner) return false;
-		// Look for the user asking for privilege
-		for (let i=0; i < members.length; ++i) {
-			if (members[i].memberId === user.id) {
-			// If user is neither owner or admin, we stop here
-			if (user.id !== props.room.owner && members[i].modes.indexOf('a') !== -1)
-				return false
-			// Otherwise, there is no reason not to give privilege
-			return true;
-			}
-		}
-		return false;
-	}
-
-
   	/*************************************************************
 	* Events
 	**************************************************************/
@@ -294,103 +250,6 @@ const ChatRoom = (props: any) => {
     props.cleanRoomLoginData()
   }
 
-  // const checkIfBlocked = (target: number) => {
-  //   for (const blockedUser in user.blockedUsers)
-  //     if (target === user.blockedUsers[blockedUser])
-  //       return true
-  //   return false
-  // }
-
-  // When clicking on the 'block' button to block a user
-  const onBlockClick = async(target: number) => {
-	if (user.id !== target) {
-		// Check if target is not already blocked
-		for (let i=0; i < user.blockedUsers.length; ++i)
-			if (user.blockedUsers[i] === target) return
-		user.blockedUsers.push(target)
-		await socket.emit('saveBlockedUserToDB', {
-			user: user,
-			blockedUsers: user.blockedUsers
-		})
-		console.log("You've blocked " + target + "!")
-	}
-  }
-
-  // When clicking on the 'unblock' button to unblock a user
-  const onUnBlockClick = async(target: number) => {
-    for (var i=0; i < user.blockedUsers.length; ++i)
-      if (user.blockedUsers[i] === target)
-      {
-        user.blockedUsers.splice(i, 1)
-		user.blockedUsers.push(target)
-		await socket.emit('saveBlockedUserToDB', {
-			user: user,
-			blockedUsers: user.blockedUsers
-		})
-        break;
-      }
-  }
-
-  // When clicking on the 'ban' button to ban/unban a user
-  const onBanClick = (target: number, off: boolean) => {
-	socket.emit('banUser', {
-		roomName: props.room.name,
-		userId: user.id,
-		target: target,
-		off: off,
-	})
-  }
-
-  // When clicking on the 'kick' button to kick a user
-  const onKickClick = async(target: number) => {
-    await socket.emit('kickUser', {
-      roomName: props.room.name,
-      userId: user.id,
-      target: target
-    })
-  }
-
-  // When clicking on the 'oper' button to make a user oper
-  const onMakeAdminClick = (target: number, off: boolean) => {
-    socket.emit('toggleMemberMode', {
-		roomName: props.room.name,
-		userId: user.id,
-		target: target,
-		mode: 'admin',
-		off: off,
-	})
-  }
-
-  // When clicking on the 'mute' button to mute/unmute a user
-  const onMuteClick = (target: number, off: boolean) => {
-    socket.emit('toggleMemberMode', {
-      roomName: props.room.name,
-      userId: user.id,
-      target: target,
-	  mode: 'mute',
-      off: off,
-    })
-  }
-
-  // When clicking on the 'message' button to send a private
-  // message to the user
-  const onPrivMessageClick = (user2: User) => {
-    socket.emit('createChatRoom', {
-      room: {
-        name: '#' + user.nickname + '/' + user2.nickname, /* TODO change to nick */
-		owner: user.id,
-		modes: '',
-        password: '',
-        userLimit: 2,
-        members: {},
-        messages: [],
-		bannedUsers: [],
-	},
-	user1: user,
-	user2: user2,
-    });
-  }
-
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 	const [anchorAvatar, setAnchorAvatar] = useState<null | HTMLElement>(null);
 
@@ -400,8 +259,15 @@ const ChatRoom = (props: any) => {
 
 	const handleClose = () => {
 		setAnchorEl(null);
-		// onReturnClick();
 	};
+
+	const [openChangePwd, setOpenChangePwd] = useState(false);
+  const handleClickOpenChangePwd = () => {
+    setOpenChangePwd(true);
+  };
+  const handleCloseChangePwd = () => {
+    setOpenChangePwd(false);
+  };
 
 	const handleChangePwd = async(deletePwd: boolean) => {
 		await socket.emit('changePassword', {
@@ -411,7 +277,7 @@ const ChatRoom = (props: any) => {
 		});
 	};
 
-	const handleAClick = (event: any, userId: number) => {
+	const handleAClick = (event: any) => {
 		setAnchorAvatar(event.currentTarget);
 	};
 
@@ -427,13 +293,15 @@ const ChatRoom = (props: any) => {
 	return (
 		<div id="chatBox">
 			<div>
-					<Box className='black' id="chatTitle">
-						<IconButton style={{ paddingRight: -1 }} onClick={onReturnClick}>
-							<ArrowBackIosNew
-								className='black'
-								aria-label="return"/>
-						</IconButton>        
-						<Typography sx={{ minWidth: 100 }}>Lets chat here ! {props.room.name}</Typography>
+				<Box className='black' id="chatTitle">
+					<IconButton style={{ paddingRight: -1 }} onClick={onReturnClick}>
+						<ArrowBackIosNew
+							className='black'
+							aria-label="return"/>
+					</IconButton>        
+					<Typography sx={{ minWidth: 100 }}>Lets chat here ! {props.room.name}</Typography>
+					<div style={{ display: 'flex', flexDirection: 'row'}}>
+						<MemberList members={members} bannedUsers={bannedMembers} />
 						<IconButton
 							title="Room settings"
 							onClick={handleClick}
@@ -450,136 +318,117 @@ const ChatRoom = (props: any) => {
 							open={Boolean(anchorEl)}
 							onClose={handleClose}
 							className='black' >
-							<MenuItem onClick={() => handleChangePwd(false)} title="Change Password">
-								<Password sx={{ color: 'black' }} />
-							</MenuItem>
-							<MenuItem onClick={() => handleChangePwd(true)} title="Delete Password">
-								<Delete sx={{ color: 'black' }} />
-							</MenuItem>
+							{/* { chatRoom.owner === user.id && chatRoom.modes.indexOf('p') !== -1
+						?	<> */}
+								<MenuItem onClick={handleClickOpenChangePwd} title="Change Password">
+									<Password sx={{ color: 'black' }}/>
+									<span> Change pwd</span>
+								</MenuItem>
+								<div>
+									<Modal
+										className='black'
+										open={openChangePwd}
+										onClose={handleCloseChangePwd}>
+										<ModalDialog
+											aria-labelledby="modal-modal-title"
+											sx={MUI.modalDialog}>
+											<ModalClose onClick={handleCloseChangePwd}/>
+											<Typography
+												id="modal-modal-title"
+												component="h2"
+												className='modal-title'>
+												Change password
+											</Typography>
+											<form onSubmit={handleCloseChangePwd}>
+												<Stack spacing={2}>
+													<Stack spacing={1}>
+													<Typography component="h3" sx={{ color: 'rgb(37, 120, 204)' }}>
+														New password
+													</Typography>
+													<TextField
+														autoFocus
+														required
+														helperText="Password must be at least 4 characters long"
+														label="new password"
+														type="password"
+														inputProps={{ minLength: 4 }}
+														onChange={(e) => setNewPassword(e.target.value)}
+														/>
+													</Stack>
+													<LoadingButton
+														type="submit"
+														onClick={handleCloseChangePwd}
+														startIcon={<Save />}
+														variant='contained'
+														color='inherit'>
+														SAVE
+													</LoadingButton>
+												</Stack>
+											</form>
+										</ModalDialog>
+									</Modal>
+								</div>
+								<MenuItem onClick={() => handleChangePwd(true)} title="Delete Password">
+									<Delete sx={{ color: 'black' }} />
+									<span> Delete pwd</span>
+								</MenuItem>
+							{/* </>
+							: <></>} */}
 							<MenuItem onClick={onReturnClick} title="Leave Room">
 								<ExitToApp className='black' />
+								<span> Leave room</span>
 							</MenuItem>
 							<MenuItem onClick={handleClose}>
 								<Clear className='black'/>
-								<span>close</span>
+								<span>Close</span>
 							</MenuItem>
 						</Menu>
-					</Box>
-					<Divider />
-					<Grid container spacing={3}>
-						<Grid sx={{display: 'flex',	flexGrow: '1'}}></Grid>
-						<Grid
-							item
-							id="chat-window"
-							xs={12} >
-					{ messages.length === 0 
-						? <div className='black'>No Message</div>
-						: <Stack className='message-area'> {
-							messages.map((msg, index) => (
-								<div key={index}>
-							{ user.id === msg.author.id
-								?	<div className="msgRowR">
-										<div className='msgRight msgBubble'>
-											<p className="msgText">{msg.data}</p>
-											<div className="msgTime">{timeFromNow(msg.timestamp)}</div>
-										</div>
+					</div>
+				</Box>
+				<Divider />
+				<Grid container spacing={3}>
+					<Grid sx={{display: 'flex',	flexGrow: '1'}}></Grid>
+					<Grid
+						item
+						id="chat-window"
+						xs={12} >
+				{ messages.length === 0 
+					? <div className='black'>No Message</div>
+					: <Stack className='message-area'> {
+						messages.map((msg, index) => (
+							<div key={index}>
+						{ user.id === msg.author.id
+							?	<div className="msgRowR">
+									<div className='msgRight msgBubble'>
+										<p className="msgText">{msg.data}</p>
+										<div className="msgTime">{timeFromNow(msg.timestamp)}</div>
 									</div>
-								: 
+								</div>
+							: 
 								// Is msg author mute or blocked ?
 								// if yes, display nothing
 								// if no, display message
 								// !isMuted && !isBlocked ? <></> :
-									<div className="msgRowL">
-{/*// -------------- Avatar Badge -------------- */}
-										<Button
-											aria-controls="basic-menu"
-											aria-haspopup="true"
-											aria-expanded={Boolean(anchorAvatar)}
-											onClick={e => handleAClick(e, msg.author.id)}>
-											<AvatarBadge
-												nickname={msg.author.nickname}
-												online={true}/* catch isOnline*/
-												// playing={}/* catch isPlaying*/
-												admin={checkIfAdmin(msg.author.id)}/* catch isAdmin*/
-												oper={checkIfOwner(msg.author.id)}
-												avatar={msg.author.avatar}
-												look={true}/>
-										</Button>
-										{user.nickname !== msg.author.nickname
-										?	<Menu
-												anchorEl={anchorAvatar}
-												open={Boolean(anchorAvatar)}
-												onClose={handleAClose}
-												className='black column-barre' >
-												<MenuItem
-													aria-label="back" 
-													className='column-barre'>{/* catch usrProfil (profil/nickname)*/}
-													<IconButton >
-													<PersonAdd className='black'/>
-													<span>add friend</span>
-												</IconButton>
-												<IconButton
-													onClick={() => onPrivMessageClick(msg.author) } >{/* catch makePrivateMsg*/}
-													<Mail className='black'/>
-													<span>private msg</span>
-												</IconButton>
-												<IconButton
-													onClick={isUserBlocked(msg.author.id) ?
-														() => onUnBlockClick(msg.author.id)
-														: () => onBlockClick(msg.author.id)
-													} >
-													<PanTool className={'black'}/>{/* catch isBlock*/}
-													<span>block</span>
-												</IconButton>
-	
-												{checkPrivileges(msg.author.id) ?
-												<>
-												<IconButton
-													onClick={isMuted(msg.author.id)
-													? () => onMuteClick(msg.author.id, true)
-													: () => onMuteClick(msg.author.id, false)}>
-													{isMuted(msg.author.id) ? <VolumeOff className='black'/> : <VolumeUp className='black'/>}{/* catch isMute*/}
-													<span>mute</span>
-												</IconButton>
-													<IconButton
-														onClick={() => onKickClick(msg.author.id)} >
-														<Block className='black'/>
-														<span>kick</span>
-													</IconButton>
-													<IconButton
-														onClick={checkIfBanned(msg.author.id) ?
-															() => onBanClick(msg.author.id, true)
-															: () => onBanClick(msg.author.id, false)}>
-														<HighlightOff className='black'/>
-														<span>ban</span>
-													</IconButton>
-													<IconButton
-														onClick={checkIfAdmin(msg.author.id) ?
-															() => onMakeAdminClick(msg.author.id, true)
-															: () => onMakeAdminClick(msg.author.id, false)}>
-														<DeveloperMode className="black"/>
-														<span>admin</span>
-													</IconButton>
-														</> : <></> }
-													<IconButton
-														onClick={handleAClose}>
-														<Clear className='black'/>
-														<span>close</span>
-													</IconButton>
-												</MenuItem>
-											</Menu>
-											: <></>}
-														<div>
-											<div className="msgLeft msgBubble">
-												<p className="msgText">{msg.data}</p>
-												<div className="msgTime">{timeFromNow(msg.timestamp)}</div>
-											</div>
+								<div className="msgRowL">
+									<AvatarBadge
+										nickname={msg.author.nickname}
+										status={user.status}/* catch isOnline*/
+										admin={statusUtils.checkIfAdmin(members, msg.author.id)}
+										oper={statusUtils.checkIfOwner(props.room.owner, msg.author.id)}
+										avatar={msg.author.avatar}
+										look={true}/>
+									<div>
+										<div className="msgLeft msgBubble">
+											<p className="msgText">{msg.data}</p>
+											<div className="msgTime">{timeFromNow(msg.timestamp)}</div>
 										</div>
-									</div>}
+									</div>
 								</div>
-								))}	
-							</Stack>
-					}
+							}
+							</div>
+							))}	
+						</Stack>
+				}
 						<Grid item xs={10} className="chat-room-text">
 						<div className='typingButton'>
 						{	typingDisplay && <div className='black'><CircularProgress color="inherit" />{typingDisplay}</div> }
@@ -599,12 +448,11 @@ const ChatRoom = (props: any) => {
 								/>
 							</FormControl>
 						</Grid>
-
-						</Grid>
-						<Grid sx={{display: 'flex',	flexGrow: '1'}}></Grid>
 					</Grid>
-		</div>
-	</div> );
+					<Grid sx={{display: 'flex',	flexGrow: '1'}}></Grid>
+				</Grid>
+			</div>
+		</div> );
 };
 
 export default ChatRoom;

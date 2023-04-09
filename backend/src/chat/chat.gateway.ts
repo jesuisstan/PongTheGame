@@ -50,6 +50,7 @@ export class ChatGateway {
   async createChatRoom(
     @MessageBody('room') room: ChatRoomDto,
     @MessageBody('user1') user1: User,
+    @MessageBody('avatar') avatar: string,
     @MessageBody('user2') user2: User,
     ): Promise<void> {
     // First, check if the room name already exists
@@ -80,7 +81,7 @@ export class ChatGateway {
     // 2 users, which is basically a chat room with 2 users
     if (user2) room.modes = 'i';
     // Create a chat room and set user as admin
-    await this.chatService.createChatRoom(room, user1.id, user2.id);
+    await this.chatService.createChatRoom(room, user1.id, avatar, user2.id);
     if (!user2) {
       console.log('chatRoom emitted: ' + Object.entries(room));
       // Broadcast newly created room to all users
@@ -114,10 +115,11 @@ export class ChatGateway {
   async joinRoom(
     @MessageBody('roomName') roomName: string,
     @MessageBody('userId') userId: number,
+    @MessageBody('avatar') avatar: string,
   ): Promise<ChatRoomDto | null> {
     if (await this.chatService.isUserBanned(roomName, userId) === true)
       throw new WsException({ msg: 'joinRoom: User is banned.' });
-    await this.chatService.identify(roomName, userId, '', true);
+    await this.chatService.identify(roomName, userId, '', avatar, true);
     this.server.emit('joinRoom', roomName, userId);
     return await this.chatService.getChatRoomByName(roomName);
   }

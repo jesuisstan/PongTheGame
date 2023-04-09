@@ -8,6 +8,7 @@ export type Message = {
 
 export type MemberType = {
 	memberId: number;
+	avatar: string
 	isOnline: boolean;
 	modes: string;
 }
@@ -20,5 +21,5 @@ export type ChatRoomType = {
 	userLimit: number;
 	members: MemberType[];
 	messages: Message[];
-	bannedUsers: number[];
+	bannedUsers: User[];
 }

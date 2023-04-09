@@ -8,6 +8,7 @@ export class Message {
 
 export type Member = {
 	memberId: number;
+  avatar: string
 	isOnline: boolean;
 	modes: string;
 }

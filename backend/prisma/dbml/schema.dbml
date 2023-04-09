@@ -114,6 +114,7 @@ Table Member {
   memberId Int [not null]
   member User [not null]
   isOnline Boolean [not null]
+  avatar String [not null]
   modes String [not null]
   ChatRoom ChatRoom [not null]
   chatRoomName String [not null]

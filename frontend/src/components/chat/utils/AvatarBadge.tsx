@@ -1,9 +1,10 @@
 import React from 'react';
 import { Avatar, Badge } from '@mui/material';
+import * as color  from '../../UI/colorsPong';
 
 interface IMember {
 	nickname: string,
-	online: boolean,
+	status: string,
 	admin: boolean,
 	oper: boolean,
 	avatar: string | undefined,
@@ -12,7 +13,11 @@ interface IMember {
 
 const AvatarBadge = (member: IMember) => {
 
-	const colorO = (member.online) ? "success" : "error";
+	const colorO = member.status === 'PLAYING'
+	? "primary"
+	: member.status === 'ONLINE'
+	? 'success'
+	: 'error';
 	const colorA = (member.admin) ? "info" :( (member.oper) ? "warning" : undefined);
 	const avatar = (member.avatar) ? member.avatar : undefined;
 
