@@ -61,66 +61,73 @@ const UserMenu = (props: UserMenuProps) => {
 						false={null}
 						iconAlt={null}
 						textAlt={null}/>
-					 <IconButton size="small" sx={{ml:2}} onClick={() =>
-						onClickUtils.onPrivMessageClick(
-							socket, user, props.member.memberId, props.member.nickName
-						)}>
-					 	<Mail className='black'/>
-					 	<span>PM</span>
-					 </IconButton>
 
-					 { statusUtils.checkPrivileges(
-							user.joinedChatRoom?.owner, user.id, props.members, props.member.memberId
-						) && user.id !== props.member.memberId ?
-					 <>
-					 <IconButton size="small" sx={{ml:2}} onClick={
-						statusUtils.isMuted(props.members, props.member.memberId)
-						 ? () => onClickUtils.onMuteClick(
-								socket, user.joinedChatRoom?.name, user.id, props.member.memberId, true
-							)
-						 : () => onClickUtils.onMuteClick(
-								socket, user.joinedChatRoom?.name, user.id, props.member.memberId, false
-							)}>
-					 	 {statusUtils.isMuted(props.members, props.member.memberId)
-						 	? <VolumeOff className='black'/> : <VolumeUp className='black'/>}
-					 	<span>Mute</span>
-					 </IconButton>
+					{ // If it is not the user himself
+						user.id !== props.member.memberId &&
+					<>
 					 <IconButton size="small" sx={{ml:2}} onClick={
 						statusUtils.isUserBlocked(user, props.member.memberId)
-					 	?	() => onClickUtils.onUnBlockClick(socket, user, props.member.memberId)
+					 	? () => onClickUtils.onUnBlockClick(socket, user, props.member.memberId)
 					 	: () => onClickUtils.onBlockClick(socket, user, props.member.memberId)}>
 					 	<PanTool className={'black'}/>
 					 	<span>Block</span>
 					 </IconButton>
-					 <IconButton size="small" sx={{ml:2}} onClick={() =>
-					 	onClickUtils.onKickClick(
-							socket, user.joinedChatRoom?.name, user.id, props.member.memberId
-						)} >
-					 	<Block className='black'/>
-					 	<span>Kick</span>
-					 </IconButton>
-					 <IconButton size="small" sx={{ml:2}} onClick={
-						statusUtils.checkIfBanned(props.bannedUsers, props.member.memberId)
-					 	? () => onClickUtils.onBanClick(
-							socket, user.joinedChatRoom?.name, user.id, props.member.memberId, true
-						)
-					 	: () => onClickUtils.onBanClick(
-							socket, user.joinedChatRoom?.name, user.id, props.member.memberId, false
-						)}>
-					 	<HighlightOff className='black'/>
-					 	<span>Ban</span>
-					 </IconButton>
-					 <IconButton size="small" sx={{ml:2}} onClick={
-						statusUtils.checkIfAdmin(props.members, props.member.memberId)
-						? () => onClickUtils.onMakeAdminClick(
-							socket, user.joinedChatRoom?.name, user.id, props.member.memberId, true
-						)
-					 	: () => onClickUtils.onMakeAdminClick(
-							socket, user.joinedChatRoom?.name, user.id, props.member.memberId, false
-						)}>
-					 	<AdminPanelSettings className='black'/>
-					 	<span>Admin</span>
-					 </IconButton>
+
+					{ // If it is not a private conversation
+						user.joinedChatRoom?.userLimit !== 2 &&
+					<>
+						<IconButton size="small" sx={{ml:2}} onClick={() =>
+							onClickUtils.onPrivMessageClick(
+								socket, user, props.member.memberId, props.member.nickName
+							)}>
+							<Mail className='black'/>
+							<span>PM</span>
+						</IconButton>
+						{ statusUtils.checkPrivileges(
+								user.joinedChatRoom?.owner, user.id, props.members, props.member.memberId
+							) && user.id !== props.member.memberId ?
+						<>
+						<IconButton size="small" sx={{ml:2}} onClick={
+							statusUtils.isMuted(props.members, props.member.memberId)
+							? () => onClickUtils.onMuteClick(
+									socket, user.joinedChatRoom?.name, user.id, props.member.memberId, true
+								)
+							: () => onClickUtils.onMuteClick(
+									socket, user.joinedChatRoom?.name, user.id, props.member.memberId, false
+								)}>
+							{statusUtils.isMuted(props.members, props.member.memberId)
+								? <VolumeOff className='black'/> : <VolumeUp className='black'/>}
+							<span>Mute</span>
+						</IconButton>
+						<IconButton size="small" sx={{ml:2}} onClick={() =>
+							onClickUtils.onKickClick(
+								socket, user.joinedChatRoom?.name, user.id, props.member.memberId
+							)} >
+							<Block className='black'/>
+							<span>Kick</span>
+						</IconButton>
+						<IconButton size="small" sx={{ml:2}} onClick={
+							statusUtils.checkIfBanned(props.bannedUsers, props.member.memberId)
+							? () => onClickUtils.onBanClick(
+								socket, user.joinedChatRoom?.name, user.id, props.member.memberId, true
+							)
+							: () => onClickUtils.onBanClick(
+								socket, user.joinedChatRoom?.name, user.id, props.member.memberId, false
+							)}>
+							<HighlightOff className='black'/>
+							<span>Ban</span>
+						</IconButton>
+						<IconButton size="small" sx={{ml:2}} onClick={
+							statusUtils.checkIfAdmin(props.members, props.member.memberId)
+							? () => onClickUtils.onMakeAdminClick(
+								socket, user.joinedChatRoom?.name, user.id, props.member.memberId, true
+							)
+							: () => onClickUtils.onMakeAdminClick(
+								socket, user.joinedChatRoom?.name, user.id, props.member.memberId, false
+							)}>
+							<AdminPanelSettings className='black'/>
+							<span>Admin</span>
+						</IconButton>
 					 </> : <></>
 					 } 
 					<IconPersoButton 
@@ -131,6 +138,8 @@ const UserMenu = (props: UserMenuProps) => {
 						false={null}
 						iconAlt={null}
 						textAlt={null}/>
+				</>}  {/* End of user.joinedChatRoom?.userLimit !== 2 */}
+				</>} {/* End of user.id !== props.member.memberId */}
 				</MenuItem>
 			</Menu>
     </div>

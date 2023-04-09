@@ -17,20 +17,20 @@ import { Socket } from 'socket.io-client';
 	}
   }
 
-  // When clicking on the 'unblock' button to unblock a user
+  // When clicking on the 'block' button to unblock a user
   export const onUnBlockClick = async(socket: Socket, user: User, target: number
     ) => {
-    for (var i=0; i < user.blockedUsers.length; ++i)
+    for (var i=0; i < user.blockedUsers.length; ++i) {
       if (user.blockedUsers[i] === target)
       {
         user.blockedUsers.splice(i, 1)
-		user.blockedUsers.push(target)
-		await socket.emit('saveBlockedUserToDB', {
-			user: user,
-			blockedUsers: user.blockedUsers
-		})
-        break;
+        await socket.emit('saveBlockedUserToDB', {
+          user: user,
+          blockedUsers: user.blockedUsers
+        })
+        return;
       }
+    }
   }
 
   // When clicking on the 'ban' button to ban/unban a user
@@ -38,12 +38,12 @@ import { Socket } from 'socket.io-client';
         socket: Socket, roomName: string | undefined,
         userId: number, target: number, off: boolean
     ) => {
-	await socket.emit('banUser', {
-		roomName: roomName,
-		userId: userId,
-		target: target,
-		off: off,
-	})
+    await socket.emit('banUser', {
+      roomName: roomName,
+      userId: userId,
+      target: target,
+      off: off,
+    })
   }
 
   // When clicking on the 'kick' button to kick a user

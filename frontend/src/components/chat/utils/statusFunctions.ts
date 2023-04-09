@@ -16,9 +16,9 @@ export const checkIfBanned = (bannedMembers: User[], userId: number): boolean =>
     return false;
 }
 
-export const isUserBlocked = (user: User, userId: number): boolean => {
-    for (const blockedUser in user.blockedUsers)
-        if (user.blockedUsers[userId])
+export const isUserBlocked = (user: User, target: number): boolean => {
+    for (var i=0; i < user.blockedUsers.length; ++i)
+        if (user.blockedUsers[i] === target)
             return true;
     return false;
 }
