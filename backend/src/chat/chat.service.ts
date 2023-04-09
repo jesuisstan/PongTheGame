@@ -159,12 +159,20 @@ export class ChatService {
     return await this.prisma.member.findMany({ where: { chatRoomName: roomName } });
   }
 
-    // Return all members from the chatroom
-    async findAllBannedMembers(roomName: string): Promise<User[]> {
-      const room: ChatRoomDto | null = await this.getChatRoomByName(roomName);
-      if (room) return room.bannedUsers;
-      else throw new WsException({ msg: 'findAllBannedMembers: unknown room name!' });
-    }
+  // Return all members from the chatroom
+  async findAllBannedMembers(roomName: string): Promise<User[]> {
+    const room: ChatRoomDto | null = await this.getChatRoomByName(roomName);
+    if (room) return room.bannedUsers;
+    else throw new WsException({ msg: 'findAllBannedMembers: unknown room name!' });
+  }
+
+  async isPasswordProtected(roomName: string) {
+    const room = await this.getChatRoomByName(roomName);
+    if (room) {
+      return room.password && room.password !== '' ? true : false;
+    } else
+      throw new WsException({ msg: 'isPasswordProtected: unknown room name!' });
+  }
 
   async changePassword(roomName: string, newPassword: string): Promise<void> {
     const room: ChatRoomDto | null = await this.getChatRoomByName(roomName);
@@ -179,15 +187,18 @@ export class ChatService {
           // If the room wasn't in 'password protected' mode,
           // it gets it
           newPassword = await this.generateHash(newPassword);
-          if (oldModes.modes.search('p') === -1) {
+          // If 'p' mode already there, we keep the old modes
+          const newModes = oldModes.modes.search('p') !== -1
+            ? oldModes.modes
+            : oldModes.modes + 'p';
             await this.prisma.chatRoom.update({
               where: { name: roomName },
               data: {
-                modes: oldModes.modes + 'p',
+                modes: newModes,
                 password: newPassword,
               },
             });
-          }
+          
         } // No given password means we remove the password
         else {
           await this.prisma.chatRoom.update({

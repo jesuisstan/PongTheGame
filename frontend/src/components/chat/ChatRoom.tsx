@@ -53,6 +53,7 @@ const ChatRoom = (props: ChatRoomProps) => {
 	// Message input field value
 	const [messageText, setMessageText] = useState<string>('')
 	// Modify password
+	const [isPwdProtected, setIsPwdProtected] = useState<boolean>(false);
 	const [oldPassword, setOldPassword] = useState<string>('');
 	const [newPassword, setNewPassword] = useState<string>('');
 	// Checks if the target user is banned from the room
@@ -65,7 +66,7 @@ const ChatRoom = (props: ChatRoomProps) => {
 	* We keep fetching the data to get all the updates
 	**************************************************************/
 
-  	const findAllMembers = async() => {
+  	const findAllMembers = async () => {
 	await socket.emit('findAllMembers', { roomName: props.room.name },
 		(response: MemberType[]) => {
 		setMembers(response)
@@ -73,7 +74,7 @@ const ChatRoom = (props: ChatRoomProps) => {
 	)}
 	findAllMembers();
 
-	const findAllBanned = async() => {
+	const findAllBanned = async () => {
 		await socket.emit('findAllBannedMembers', { roomName: props.room.name },
 		(response: User[]) => {
 			setBannedMembers(response)
@@ -81,12 +82,19 @@ const ChatRoom = (props: ChatRoomProps) => {
 	}
 	findAllBanned();
 
+	const isPasswordProtected = async (roomName: string
+	) => {
+		await socket.emit('isPasswordProtected', { roomName: roomName },
+			(response: boolean) => { setIsPwdProtected(response); })
+	}
+	isPasswordProtected(props.room.name);
+
 	// Get all messages from messages array in chat.service
 	// and fill the messages variable
-	const findAllMessages = async() => {
-	await socket.emit('findAllMessages',
-	{ roomName: props.room.name },
-	(response: Message[]) => {
+	const findAllMessages = async () => {
+		await socket.emit('findAllMessages',
+		{ roomName: props.room.name },
+		(response: Message[]) => {
 		// Array including all the messages, even the ones from
 		// blocked users/users who blocked the user
 		const messagesToFilter = response
@@ -132,7 +140,7 @@ const ChatRoom = (props: ChatRoomProps) => {
     socket.on('changePassword', (roomName: string, isDeleted: boolean) => {
       if (roomName === props.room.name) {
         const status = isDeleted ? 'deleted' : 'modified';
-        console.log('Password from ' + roomName + ' has been ' + isDeleted);
+        console.log('Password from [' + roomName + '] has been ' + status);
       }
     })
     socket.on('joinRoom', (roomName: string, userId: number) => {
@@ -226,7 +234,7 @@ const ChatRoom = (props: ChatRoomProps) => {
 
 	// On submit, send the nickName with the written message from the input field
 	// to the backend, as a createMessage event
-	const onFormSubmit = async(e: any) => {
+	const onFormSubmit = async (e: any) => {
 		e.preventDefault();
 		if (messageText)
 			await socket.emit('createMessage', {
@@ -242,7 +250,7 @@ const ChatRoom = (props: ChatRoomProps) => {
 	};
 
   // When clicking on the 'return' button
-  const onReturnClick = async() => {
+  const onReturnClick = async () => {
     await socket.emit('quitRoom', {
       roomName: props.room.name,
       userId: user.id,
@@ -266,13 +274,14 @@ const ChatRoom = (props: ChatRoomProps) => {
     setOpenChangePwd(true);
   };
   const handleCloseChangePwd = () => {
+	handleChangePwd(false);
     setOpenChangePwd(false);
   };
 
-	const handleChangePwd = async(deletePwd: boolean) => {
+	const handleChangePwd = async (deletePwd: boolean) => {
 		await socket.emit('changePassword', {
 			roomName: props.room.name,
-			currentPassword: oldPassword,
+			// currentPassword: oldPassword,
 			newPassword: deletePwd ? '' : newPassword,
 		});
 	};
@@ -318,8 +327,12 @@ const ChatRoom = (props: ChatRoomProps) => {
 							open={Boolean(anchorEl)}
 							onClose={handleClose}
 							className='black' >
-							{/* { chatRoom.owner === user.id && chatRoom.modes.indexOf('p') !== -1
-						?	<> */}
+
+							{ // Begin of owner/admin space for pwd protected rooms
+								(statusUtils.checkIfAdmin(members, user.id) === true
+									|| statusUtils.checkIfOwner(props.room.owner, user.id))
+									&& isPwdProtected === true
+									&& <>
 								<MenuItem onClick={handleClickOpenChangePwd} title="Change Password">
 									<Password sx={{ color: 'black' }}/>
 									<span> Change pwd</span>
@@ -372,6 +385,9 @@ const ChatRoom = (props: ChatRoomProps) => {
 									<Delete sx={{ color: 'black' }} />
 									<span> Delete pwd</span>
 								</MenuItem>
+								</>
+								// End of owner/admin space
+								}
 							{/* </>
 							: <></>} */}
 							<MenuItem onClick={onReturnClick} title="Leave Room">

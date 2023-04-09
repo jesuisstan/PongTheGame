@@ -142,6 +142,11 @@ export class ChatGateway {
     client.broadcast.emit('typingMessage', roomName, nick, isTyping);
   }
 
+  @SubscribeMessage('isPasswordProtected')
+  async isPasswordProtected(@MessageBody('roomName') roomName: string) {
+    return await this.chatService.isPasswordProtected(roomName);
+  }
+
   @SubscribeMessage('checkPassword')
   async checkPassword(
     @MessageBody('roomName') roomName: string,
@@ -153,16 +158,16 @@ export class ChatGateway {
   @SubscribeMessage('changePassword')
   async changePassword(
     @MessageBody('roomName') roomName: string,
-    @MessageBody('currentPassword') currentPassword: string,
+    // @MessageBody('currentPassword') currentPassword: string,
     @MessageBody('newPassword') newPassword: string,
   ): Promise<void> {
-    // First, check the current password
-    if (
-      newPassword &&
-      newPassword !== '' &&
-      (await this.checkPassword(roomName, currentPassword)) === false
-    )
-      throw new WsException({ msg: 'changePassword: wrong password!' });
+    // // First, check the current password
+    // if (
+    //   newPassword &&
+    //   newPassword !== '' &&
+    //   (await this.checkPassword(roomName, currentPassword)) === false
+    // )
+    //   throw new WsException({ msg: 'changePassword: wrong password!' });
     await this.chatService.changePassword(roomName, newPassword);
     const isDeleted = newPassword && newPassword !== '' ? false : true;
     this.server.emit('changePassword', roomName, isDeleted);
