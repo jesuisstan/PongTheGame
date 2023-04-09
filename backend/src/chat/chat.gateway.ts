@@ -12,6 +12,9 @@ import { ChatRoomDto, MessageDto } from './dto/chat.dto';
 import { Member } from './entities/chat.entity';
 import { User } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { ConfigModule } from '@nestjs/config';
+
+ConfigModule.forRoot();
 
 // Allow requests from the frontend port
 @WebSocketGateway()
@@ -52,7 +55,11 @@ export class ChatGateway {
     @MessageBody('user2Id') user2Id: number | undefined,
     @MessageBody('user2Nick') user2Nick: string | undefined,
     ): Promise<void> {
-    // First, check if the room name already exists
+    // First, check if max chat room limit hasn't been reached
+    if (await this.prisma.chatRoom.count()
+      >= parseInt(process.env.REACT_APP_MAX_CHATROOM_NBR!))
+      throw new WsException({ msg: 'createChatRoom: Max chat room number reached!' });
+    // Then, check if the room name already exists
     const r: ChatRoomDto | null = await this.chatService.getChatRoomByName(room.name);
     if (r) {
       // Throw error if both roooms are in the same category (private/public)
@@ -116,6 +123,13 @@ export class ChatGateway {
     @MessageBody('user') user: User,
     @MessageBody('avatar') avatar: string,
   ): Promise<ChatRoomDto | null> {
+    const memberCount = await this.prisma.member.count({
+    // First, get the current member count and compare it with the max allowed
+      where: {chatRoomName: roomName }
+    });
+    if (memberCount >= parseInt(process.env.REACT_APP_MAX_CHATROOM_MEMBER_NBR!))
+      throw new WsException({ msg: 'joinRoom: Max chat room member number reached!' });
+
     if (await this.chatService.isUserBanned(roomName, user.id) === true)
       throw new WsException({ msg: 'joinRoom: User is banned.' });
     await this.chatService.identify(roomName, user, '', avatar, true);
