@@ -42,6 +42,7 @@
   display: flex;
   flex-direction: column;
   min-width: 200px;
+  min-height: 165px;
   width: 600px;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
   padding: 1rem;
@@ -58,6 +59,7 @@
   display: flex;
   flex-direction: column;
   min-width: 200px;
+  min-height: 165px;
   width: 600px;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
   padding: 1rem;
@@ -74,6 +76,7 @@
   display: flex;
   flex-direction: column;
   min-width: 200px;
+  min-height: 165px;
   width: 600px;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
   padding: 1rem;
@@ -90,6 +93,7 @@
   display: flex;
   flex-direction: column;
   min-width: 200px;
+  min-height: 165px;
   width: 600px;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
   padding: 1rem;
@@ -106,6 +110,7 @@
   display: flex;
   flex-direction: column;
   min-width: 200px;
+  min-height: 165px;
   width: 600px;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
   padding: 1rem;
@@ -115,11 +120,27 @@
   transition: transform 0.3s ease-out;
 }
 
+.special {
+  background:whitesmoke;
+  display: flex;
+  flex-direction: column;
+  min-width: 200px;
+  min-height: 165px;
+  width: 600px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  padding: 1rem;
+  border-radius: 4px;
+  color: black;
+  text-align: center;
+  transition: transform 0.3s ease-out;
+}
+
 .benjamin:hover,
 .barbara:hover,
 .daisuke:hover,
 .stan:hover,
-.florian:hover {
+.florian:hover, 
+.special:hover {
   transform: scale(1.02);
 }
 
