@@ -27,46 +27,31 @@ export const makeCircleShape = (
   canvasContext.fill();
 };
 
-// export const printGoal = (
-//   canvasContext: CanvasRenderingContext2D,
-//   canvasWidth: number,
-//   canvasHeight: number
-// ) => {
-//   canvasContext.font = '100px Verdana';
-//   canvasContext.fillStyle = colorPong.PONG_WHITE;
-//   canvasContext.beginPath();
-//   canvasContext.fillText('G', canvasWidth / 2 - 35, canvasHeight / 4 - 42);
-//   canvasContext.fillText(
-//     'O',
-//     canvasWidth / 2 - 35,
-//     (canvasHeight / 4) * 2 - 42
-//   );
-//   canvasContext.fillText(
-//     'A',
-//     canvasWidth / 2 - 35,
-//     (canvasHeight / 4) * 3 - 42
-//   );
-//   canvasContext.fillText(
-//     'L',
-//     canvasWidth / 2 - 35,
-//     (canvasHeight / 4) * 4 - 42
-//   );
-// };
-
-// export const printPause = (
-//   canvasContext: CanvasRenderingContext2D,
-//   canvasWidth: number,
-//   canvasHeight: number
-// ) => {
-//   canvasContext.font = '100px Verdana';
-//   canvasContext.fillStyle = 'whitesmoke';
-//   canvasContext.beginPath();
-//   canvasContext.fillText('P', canvasWidth / 6 - 35, canvasHeight / 2);
-//   canvasContext.fillText('A', (canvasWidth / 6) * 2 - 35, canvasHeight / 2);
-//   canvasContext.fillText('U', (canvasWidth / 6) * 3 - 35, canvasHeight / 2);
-//   canvasContext.fillText('S', (canvasWidth / 6) * 4 - 35, canvasHeight / 2);
-//   canvasContext.fillText('E', (canvasWidth / 6) * 5 - 35, canvasHeight / 2);
-// };
+ export const printGoal = (
+   canvasContext: CanvasRenderingContext2D,
+   canvasWidth: number,
+   canvasHeight: number
+ ) => {
+   canvasContext.font = '50px Verdana';
+   canvasContext.fillStyle = colorPong.PONG_WHITE;
+   canvasContext.beginPath();
+   canvasContext.fillText('G', canvasWidth / 2 - 18, canvasHeight / 4 - 60);
+   canvasContext.fillText(
+     'O',
+     canvasWidth / 2 - 18,
+     (canvasHeight / 4) * 2 - 60
+   );
+   canvasContext.fillText(
+     'A',
+     canvasWidth / 2 - 18,
+     (canvasHeight / 4) * 3 - 60
+   );
+   canvasContext.fillText(
+     'L',
+     canvasWidth / 2 - 18,
+     (canvasHeight / 4) * 4 - 60
+   );
+ };
 
 const drawRect = (
   canvasContext: CanvasRenderingContext2D,

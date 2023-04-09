@@ -2,7 +2,7 @@ import { useRef, useEffect, useContext, useState } from 'react';
 import { GameStatusContext } from '../../contexts/GameStatusContext';
 import { WebSocketContext } from '../../contexts/WebsocketContext';
 import { CurrentGamePlayer, GameProps, GameStatus } from './game.interface';
-import { drawState } from './utils/gameUtils';
+import { drawState, printGoal } from './utils/gameUtils';
 import ScoreBar from './ScoreBar';
 import styles from './styles/Game.module.css';
 
@@ -62,11 +62,25 @@ const Pong = (props: GameProps) => {
   };
 
   useEffect(() => {
-
     const intervalId = setInterval(() => {
+      let prevScore: number = 0;
+      let canvasContext: CanvasRenderingContext2D | null;
+
       const playPong = () => {
         socket.on('match_game_state', (args) => {
           expandTheGame(args);
+
+          if (
+            canvasRef?.current != null &&
+            prevScore !== args.player1.score + args.player2.score
+          ) {
+            canvasContext = canvasRef.current.getContext('2d');
+            if (canvasContext != null) {
+              printGoal(canvasContext, canvasSize.width, canvasSize.height);
+            }
+          }
+          prevScore = args.player1.score + args.player2.score;
+
           window.addEventListener('keydown', onKeyPressRef.current);
           window.addEventListener('keyup', onKeyReleaseRef.current);
 
@@ -83,7 +97,18 @@ const Pong = (props: GameProps) => {
       const spectatePong = () => {
         socket.on('match_spectate_state', (args) => {
           expandTheGame(args);
-          console.log(args.status);
+
+          if (
+            canvasRef?.current != null &&
+            prevScore !== args.player1.score + args.player2.score
+          ) {
+            canvasContext = canvasRef.current.getContext('2d');
+            if (canvasContext != null) {
+              printGoal(canvasContext, canvasSize.width, canvasSize.height);
+            }
+          }
+          prevScore = args.player1.score + args.player2.score;
+
           if (args.status === 'ended' || args.status === 'aborted') {
             setGameStatus(GameStatus.ENDED);
           }

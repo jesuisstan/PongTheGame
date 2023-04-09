@@ -25,7 +25,7 @@ const Home = () => {
               href="https://en.wikipedia.org/wiki/Pong"
               target="_blank"
               rel="noreferrer"
-              title="Proceed to Google Play"
+              title="Proceed to Original Pong wiki"
             >
               Pong (1972)
             </a>
@@ -100,31 +100,11 @@ const Home = () => {
                   style={{
                     display: 'flex',
                     flexDirection: 'row',
-                    gap: '21px',
+                    gap: '42px',
                     justifyContent: 'center',
                     alignItems: 'center'
                   }}
                 >
-                  <Avatar
-                    variant="square"
-                    alt=""
-                    src={require('../../assets/atari.png')}
-                    sx={avatarStyle}
-                    title="Proceed to Atari wiki"
-                    onClick={() => {
-                      window.open('https://en.wikipedia.org/wiki/Atari,_Inc.');
-                    }}
-                  />
-                  <Avatar
-                    variant="square"
-                    alt=""
-                    src={require('../../assets/allan.jpg')}
-                    sx={avatarStyle}
-                    title="Proceed to original Pong creator wiki"
-                    onClick={() => {
-                      window.open('https://en.wikipedia.org/wiki/Allan_Alcorn');
-                    }}
-                  />
                   <Avatar
                     variant="square"
                     alt=""
@@ -133,6 +113,26 @@ const Home = () => {
                     title="Proceed to École 42"
                     onClick={() => {
                       window.open('https://42.fr/en/homepage/');
+                    }}
+                  />
+                  <Avatar
+                    variant="square"
+                    alt=""
+                    src={require('../../assets/allan.jpg')}
+                    sx={avatarStyle}
+                    title="Proceed to Original Pong creator wiki"
+                    onClick={() => {
+                      window.open('https://en.wikipedia.org/wiki/Allan_Alcorn');
+                    }}
+                  />
+                  <Avatar
+                    variant="square"
+                    alt=""
+                    src={require('../../assets/atari.png')}
+                    sx={avatarStyle}
+                    title="Proceed to Atari wiki"
+                    onClick={() => {
+                      window.open('https://en.wikipedia.org/wiki/Atari,_Inc.');
                     }}
                   />
                 </div>
