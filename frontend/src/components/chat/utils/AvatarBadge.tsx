@@ -14,11 +14,15 @@ interface IMember {
 const AvatarBadge = (member: IMember) => {
 
 	const colorO = member.status === 'PLAYING'
-	? "primary"
+	? "info"
 	: member.status === 'ONLINE'
 	? 'success'
 	: 'error';
-	const colorA = (member.admin) ? "info" :( (member.oper) ? "warning" : undefined);
+	const colorA = (member.oper)
+	? "warning"
+	:( (member.admin)
+	? "secondary"
+	: "default");
 	const avatar = (member.avatar) ? member.avatar : undefined;
 
 	return ( <>

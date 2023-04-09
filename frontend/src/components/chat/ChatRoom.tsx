@@ -23,6 +23,7 @@ import MemberList from './utils/MemberList';
 import { ModalClose, ModalDialog } from '@mui/joy';
 import { LoadingButton } from '@mui/lab';
 import * as statusUtils from './utils/statusFunctions';
+import SettingMenu from './utils/SettingMenu';
 
 /*************************************************************
  * Chat room
@@ -52,13 +53,6 @@ const ChatRoom = (props: ChatRoomProps) => {
 	const [typingDisplay, setTypingDisplay] = useState<string>('')
 	// Message input field value
 	const [messageText, setMessageText] = useState<string>('')
-	// Modify password
-	const [isPwdProtected, setIsPwdProtected] = useState<boolean>(false);
-	const [oldPassword, setOldPassword] = useState<string>('');
-	const [newPassword, setNewPassword] = useState<string>('');
-	// Checks if the target user is banned from the room
-	const [isBanned, setIsBanned] = useState<Boolean>(false)
-
 
 	/*************************************************************
 	* State getters
@@ -81,13 +75,6 @@ const ChatRoom = (props: ChatRoomProps) => {
 		})
 	}
 	findAllBanned();
-
-	const isPasswordProtected = async (roomName: string
-	) => {
-		await socket.emit('isPasswordProtected', { roomName: roomName },
-			(response: boolean) => { setIsPwdProtected(response); })
-	}
-	isPasswordProtected(props.room.name);
 
 	// Get all messages from messages array in chat.service
 	// and fill the messages variable
@@ -259,43 +246,7 @@ const ChatRoom = (props: ChatRoomProps) => {
   }
 
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-	const [anchorAvatar, setAnchorAvatar] = useState<null | HTMLElement>(null);
 
-	const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-		setAnchorEl(event.currentTarget);
-	};
-
-	const handleClose = () => {
-		setAnchorEl(null);
-	};
-
-	const [openChangePwd, setOpenChangePwd] = useState(false);
-  const handleClickOpenChangePwd = () => {
-    setOpenChangePwd(true);
-  };
-  const handleCloseChangePwd = () => {
-	handleChangePwd(false);
-    setOpenChangePwd(false);
-  };
-
-	const handleChangePwd = async (deletePwd: boolean) => {
-		await socket.emit('changePassword', {
-			roomName: props.room.name,
-			// currentPassword: oldPassword,
-			newPassword: deletePwd ? '' : newPassword,
-		});
-	};
-
-	const handleAClick = (event: any) => {
-		setAnchorAvatar(event.currentTarget);
-	};
-
-	const handleAClose = () => {
-		setAnchorAvatar(null);
-	};
-
-
-	
 	/*************************************************************
 	 * Render HTML response
 	**************************************************************/
@@ -311,150 +262,7 @@ const ChatRoom = (props: ChatRoomProps) => {
 					<Typography sx={{ minWidth: 100 }}>Lets chat here ! {props.room.name}</Typography>
 					<div style={{ display: 'flex', flexDirection: 'row'}}>
 						<MemberList members={members} bannedUsers={bannedMembers} />
-						<IconButton
-							title="Room settings"
-							onClick={handleClick}
-							size="small"
-							sx={{ ml: 2 }}
-							aria-controls={Boolean(anchorEl) ? 'basic-menu' : undefined}
-							aria-haspopup="true"
-							aria-expanded={Boolean(anchorEl) ? 'true' : undefined}>
-							<Settings className='black' />
-						</IconButton>
-						<Menu
-							id="basic-menu"
-							anchorEl={anchorEl}
-							open={Boolean(anchorEl)}
-							onClose={handleClose}
-							className='black' >
-
-
-							{ // Begin of owner space for non protected rooms
-								(statusUtils.checkIfOwner(props.room.owner, user.id))
-									&& isPwdProtected === false
-									&& <>
-								<MenuItem onClick={handleClickOpenChangePwd} title="Set Password">
-									<Password sx={{ color: 'black' }}/>
-									<span> Set password</span>
-								</MenuItem>
-								<div>
-									<Modal
-										className='black'
-										open={openChangePwd}
-										onClose={handleCloseChangePwd}>
-										<ModalDialog
-											aria-labelledby="modal-modal-title"
-											sx={MUI.modalDialog}>
-											<ModalClose onClick={handleCloseChangePwd}/>
-											<Typography
-												id="modal-modal-title"
-												component="h2"
-												className='modal-title'>
-												Change password
-											</Typography>
-											<form onSubmit={handleCloseChangePwd}>
-												<Stack spacing={2}>
-													<Stack spacing={1}>
-													<Typography component="h3" sx={{ color: 'rgb(37, 120, 204)' }}>
-														New password
-													</Typography>
-													<TextField
-														autoFocus
-														required
-														helperText="Password must be at least 4 characters long"
-														label="new password"
-														type="password"
-														inputProps={{ minLength: 4 }}
-														onChange={(e) => setNewPassword(e.target.value)}
-														/>
-													</Stack>
-													<LoadingButton
-														type="submit"
-														onClick={handleCloseChangePwd}
-														startIcon={<Save />}
-														variant='contained'
-														color='inherit'>
-														SAVE
-													</LoadingButton>
-												</Stack>
-											</form>
-										</ModalDialog>
-									</Modal>
-								</div>
-									</>
-								// End of owner space for non protected rooms
-							}
-
-							{ // Begin of owner space for pwd protected rooms
-								(statusUtils.checkIfOwner(props.room.owner, user.id))
-									&& isPwdProtected === true
-									&& <>
-								<MenuItem onClick={handleClickOpenChangePwd} title="Change Password">
-									<Password sx={{ color: 'black' }}/>
-									<span> Change pwd</span>
-								</MenuItem>
-								<div>
-									<Modal
-										className='black'
-										open={openChangePwd}
-										onClose={handleCloseChangePwd}>
-										<ModalDialog
-											aria-labelledby="modal-modal-title"
-											sx={MUI.modalDialog}>
-											<ModalClose onClick={handleCloseChangePwd}/>
-											<Typography
-												id="modal-modal-title"
-												component="h2"
-												className='modal-title'>
-												Change password
-											</Typography>
-											<form onSubmit={handleCloseChangePwd}>
-												<Stack spacing={2}>
-													<Stack spacing={1}>
-													<Typography component="h3" sx={{ color: 'rgb(37, 120, 204)' }}>
-														New password
-													</Typography>
-													<TextField
-														autoFocus
-														required
-														helperText="Password must be at least 4 characters long"
-														label="new password"
-														type="password"
-														inputProps={{ minLength: 4 }}
-														onChange={(e) => setNewPassword(e.target.value)}
-														/>
-													</Stack>
-													<LoadingButton
-														type="submit"
-														onClick={handleCloseChangePwd}
-														startIcon={<Save />}
-														variant='contained'
-														color='inherit'>
-														SAVE
-													</LoadingButton>
-												</Stack>
-											</form>
-										</ModalDialog>
-									</Modal>
-								</div>
-								<MenuItem onClick={() => handleChangePwd(true)} title="Delete Password">
-									<Delete sx={{ color: 'black' }} />
-									<span> Delete pwd</span>
-								</MenuItem>
-								</>
-								// End of owner space
-								}
-							{/* </>
-							: <></>} */}
-							<MenuItem onClick={onReturnClick} title="Leave Room">
-								<ExitToApp className='black' />
-								<span> Leave room</span>
-							</MenuItem>
-							<MenuItem onClick={handleClose}>
-								<Clear className='black'/>
-								<span>Close</span>
-							</MenuItem>
-						</Menu>
+						<SettingMenu roomName={props.room.name} owner={props.room.owner} onReturn={onReturnClick}/>
 					</div>
 				</Box>
 				<Divider />

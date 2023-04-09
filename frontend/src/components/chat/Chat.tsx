@@ -236,7 +236,6 @@ const Chat = () => {
                   (room: ChatRoomType, index) => (
                   // Check if this isn't a private conversation of other users
                   isAuthorizedPrivRoom(room.modes, room.members) &&
-                  <>
                   <ListItem key={index} disablePadding>
                     <ListItemIcon sx={{ color: 'white' }}>
                       {
@@ -251,7 +250,6 @@ const Chat = () => {
                       room.modes.indexOf('p') !== -1 && (
                         // If 'password protected' mode is found, launch the password dialog
                         // if the room is already joined, don't display the password dialog
-												<div>
 													<Modal
 														className='black'
 														open={openP}
@@ -310,7 +308,6 @@ const Chat = () => {
 																</form>
 														</ModalDialog>
 													</Modal>
-												</div>
                       )}
                     <ListItemButton onClick={() => onClickJoinRoom(room.name, room.modes)}>
                       <ListItemText
@@ -327,7 +324,6 @@ const Chat = () => {
                       </ListItemIcon>
                     </ListItemButton>
                   </ListItem>
-                  </>
                 ))}
               </List>
             </Box>
