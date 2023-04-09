@@ -113,6 +113,7 @@ Table Message {
 Table Member {
   memberId Int [not null]
   member User [not null]
+  nickName String [not null]
   isOnline Boolean [not null]
   avatar String [not null]
   modes String [not null]

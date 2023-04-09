@@ -130,7 +130,8 @@ const Chat = () => {
         },
         user1: user,
         avatar: user.avatar,
-        user2: '',
+        user2Id: undefined,
+        user2Nick: undefined,
       });
     setNewChatRoomName('');
     setChatRoomCreateMode(false);
@@ -166,7 +167,7 @@ const Chat = () => {
   const joinRoom = async (roomName: string) => {
     await socket.emit(
       'joinRoom',
-      { roomName: roomName, userId: user.id, avatar: user.avatar },
+      { roomName: roomName, user: user, avatar: user.avatar },
       (response: ChatRoomType) => {
         user.joinedChatRoom = response;
         setClickedRoomToJoin('');

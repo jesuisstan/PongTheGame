@@ -40,12 +40,12 @@ const UserMenu = (props: UserMenuProps) => {
 				?*/ handleAClick 
 				/* : () => {} */ }>
 			  <AvatarBadge
-				  nickname={"member.member.nickName"}
+				  nickname={props.member.nickName}
 				  status={props.member.isOnline ? "ONLINE" : "OFFLINE"}
 				  admin={statusUtils.checkIfAdmin(props.members, props.member.memberId)}
 				  oper={statusUtils.checkIfOwner(user.joinedChatRoom?.owner, props.member.memberId)}
 				  avatar={props.member.avatar}
-				  look={true}/><span style={{ color: 'black' }}>{props.member.modes}</span>
+				  look={true}/><span style={{ color: 'black' }}>{props.member.nickName}</span>
 			</Button>
       <Menu
 				anchorEl={anchorAvatar}
@@ -62,7 +62,9 @@ const UserMenu = (props: UserMenuProps) => {
 						iconAlt={null}
 						textAlt={null}/>
 					 <IconButton size="small" sx={{ml:2}} onClick={() =>
-						onClickUtils.onPrivMessageClick(socket, user, user)}>
+						onClickUtils.onPrivMessageClick(
+							socket, user, props.member.memberId, props.member.nickName
+						)}>
 					 	<Mail className='black'/>
 					 	<span>PM</span>
 					 </IconButton>

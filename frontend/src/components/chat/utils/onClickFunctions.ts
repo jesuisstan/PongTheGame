@@ -86,20 +86,21 @@ import { Socket } from 'socket.io-client';
   // When clicking on the 'message' button to send a private
   // message to the user
   export const onPrivMessageClick = async(
-    socket: Socket, user: User, user2: User) => {
+    socket: Socket, user: User, user2Id: number, user2Nick: string) => {
     await socket.emit('createChatRoom', {
       room: {
-        name: '#' + user.nickname + '/' + user2.nickname,
-		owner: user.id,
-		modes: '',
+        name: '#' + user.nickname + '/' + user2Nick,
+        owner: user.id,
+        modes: '',
         password: '',
         userLimit: 2,
         members: {},
         messages: [],
 		bannedUsers: [],
 	},
-	user1: user,
-	avatar: user.avatar,
-	user2: user2,
+    user1: user,
+    avatar: user.avatar,
+    user2Id: user2Id,
+    user2Nick: user2Nick,
     });
   }

@@ -51,13 +51,14 @@ export class ChatGateway {
     @MessageBody('room') room: ChatRoomDto,
     @MessageBody('user1') user1: User,
     @MessageBody('avatar') avatar: string,
-    @MessageBody('user2') user2: User,
+    @MessageBody('user2Id') user2Id: number | undefined,
+    @MessageBody('user2Nick') user2Nick: string | undefined,
     ): Promise<void> {
     // First, check if the room name already exists
     const r: ChatRoomDto | null = await this.chatService.getChatRoomByName(room.name);
     if (r) {
       // Throw error if both roooms are in the same category (private/public)
-      if (((r.modes.search('i') !== -1) && (user2)) ||
+      if (((r.modes.search('i') !== -1) && (user2Id)) ||
         ((r.modes.search('i') === -1) && (room.modes.search('i') === -1)))
         throw new WsException({
           msg: 'createChatRoom: room name is already taken!',
@@ -65,24 +66,24 @@ export class ChatGateway {
     }
     // In case of a private room, the name of the room is in the form:
     // #user1user2 => avoid creating doubles in the form #user2user1
-    if (user2)
+    if (user2Id)
     {
-      const roomName: string = '#' + user2.nickname + '/' + user1.nickname;
+      const roomName: string = '#' + user2Nick + '/' + user1.nickname;
       const privRoom: ChatRoomDto | null = 
         await this.chatService.getChatRoomByName(roomName);
       if (privRoom)
         throw new WsException({
           msg: 'createChatRoom: room name is already taken!',
         });
-  }
+    }
     // Set 'password protected' mode
     if (room.password) room.modes = 'p';
     // Set 'private' mode. This is a conversation between
     // 2 users, which is basically a chat room with 2 users
-    if (user2) room.modes = 'i';
+    if (user2Id) room.modes = 'i';
     // Create a chat room and set user as admin
-    await this.chatService.createChatRoom(room, user1.id, avatar, user2.id);
-    if (!user2) {
+    await this.chatService.createChatRoom(room, user1, avatar, user2Id);
+    if (!user2Id) {
       console.log('chatRoom emitted: ' + Object.entries(room));
       // Broadcast newly created room to all users
       this.server.emit('createChatRoom', room.name);
@@ -114,13 +115,13 @@ export class ChatGateway {
   @SubscribeMessage('joinRoom')
   async joinRoom(
     @MessageBody('roomName') roomName: string,
-    @MessageBody('userId') userId: number,
+    @MessageBody('user') user: User,
     @MessageBody('avatar') avatar: string,
   ): Promise<ChatRoomDto | null> {
-    if (await this.chatService.isUserBanned(roomName, userId) === true)
+    if (await this.chatService.isUserBanned(roomName, user.id) === true)
       throw new WsException({ msg: 'joinRoom: User is banned.' });
-    await this.chatService.identify(roomName, userId, '', avatar, true);
-    this.server.emit('joinRoom', roomName, userId);
+    await this.chatService.identify(roomName, user, '', avatar, true);
+    this.server.emit('joinRoom', roomName, user.id);
     return await this.chatService.getChatRoomByName(roomName);
   }
 

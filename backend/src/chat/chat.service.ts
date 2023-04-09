@@ -12,7 +12,7 @@ export class ChatService {
   constructor(private readonly prisma: PrismaService) {}
 
   async identify(
-    roomName: string, userId: number, modes: string, avatar: string, online: boolean
+    roomName: string, user: User, modes: string, avatar: string, online: boolean
     ): Promise<void> {
     // Check if room exists
     const room: ChatRoomDto | null = await this.getChatRoomByName(roomName);
@@ -21,7 +21,7 @@ export class ChatService {
     var found = false;
     var foundModes = "";
     for (let i=0; i < room.members.length; ++i) {
-      if (userId === room.members[i].memberId) {
+      if (user.id === room.members[i].memberId) {
         found = true;
         foundModes = room.members[i].modes;
         if (room.members[i].isOnline === online) return;
@@ -30,14 +30,15 @@ export class ChatService {
     if (found)
       await this.prisma.member.update({
         where: { memberId_chatRoomName: {
-          memberId: userId, chatRoomName: roomName 
+          memberId: user.id, chatRoomName: roomName 
         }},
         data: { isOnline: online, modes: foundModes + modes }
       })
     else {
       await this.prisma.member.create({
         data: {
-              memberId: userId,
+              memberId: user.id,
+              nickName: user.nickname ? user.nickname : '',
               isOnline: online,
               modes: modes,
               avatar: avatar,
@@ -101,7 +102,7 @@ export class ChatService {
   // Create a new chat room object and push it to the database
   // the creator will get admin privileges
   async createChatRoom(
-    room: ChatRoomDto, userId: number, avatar: string, user2Id: number
+    room: ChatRoomDto, user: User, avatar: string, user2Id: number | undefined
     ): Promise<void> {
     if (room) {
       // Hash the password before saving it
@@ -110,7 +111,7 @@ export class ChatService {
       const r = await this.prisma.chatRoom.create({
         data: {
           name: room.name,
-          owner: userId,
+          owner: user.id,
           modes: room.modes,
           password: hash,
           userLimit: room.userLimit,
@@ -122,12 +123,16 @@ export class ChatService {
       console.log('created room: '+ Object.entries(r));
       // If it is a private conversation
       if (user2Id) {
-        this.identify(room.name, userId, '', '', false);
-        this.identify(room.name, user2Id, '', '', false);
+        user.avatar && await this.identify(room.name, user, '', user.avatar, false);
+        const user2: User | null = await this.prisma.user.findUnique({
+          where: { id: user2Id }
+        })
+        user2 &&user2.avatar &&
+          await this.identify(room.name, user2, '', user2.avatar, false);
         return;
       }
       // Identify creator as the owner
-      this.identify(room.name, userId, 'o', avatar, false);
+      this.identify(room.name, user, 'o', avatar, false);
     } else
       throw new WsException({
         msg: "createChatRoom: 'room' argument is missing!",
@@ -150,7 +155,7 @@ export class ChatService {
 
   // Return all members from the chatroom
   async findAllMembers(roomName: string): Promise<Member[]> {
-    return this.prisma.member.findMany({ where: { chatRoomName: roomName } });
+    return await this.prisma.member.findMany({ where: { chatRoomName: roomName } });
   }
 
     // Return all members from the chatroom
