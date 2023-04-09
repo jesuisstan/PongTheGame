@@ -10,6 +10,7 @@ import * as statusUtils from "./statusFunctions";
 import * as onClickUtils from "./onClickFunctions";
 import { User } from '../../../types/User';
 import { WebSocketContext } from '../../../contexts/WebsocketContext';
+import { useNavigate } from "react-router-dom";
 
 interface UserMenuProps {
 	bannedUsers: User[];
@@ -19,6 +20,7 @@ interface UserMenuProps {
 
 const UserMenu = (props: UserMenuProps) => {
 	const socket = useContext(WebSocketContext)
+	const navigate = useNavigate();
 	const { user, setUser } = useContext(UserContext)
 	const [anchorAvatar, setAnchorAvatar] = useState<null | HTMLElement>(null);
 
@@ -29,6 +31,11 @@ const UserMenu = (props: UserMenuProps) => {
 	const handleAClose = () => {
 		setAnchorAvatar(null);
 	};
+
+	const handleProfileRedirect = () => {
+		const link = '/players/' + props.member.nickName;
+		navigate(link);
+	}
 
 	return (
     <div>
@@ -55,7 +62,7 @@ const UserMenu = (props: UserMenuProps) => {
 				<MenuItem aria-label="user-menu" className='column'>
 					<IconPersoButton 
 						cond={true} 
-						true={handleAClose} // Path to profil usr
+						true={handleProfileRedirect} // Path to profil usr
 						icon={<PersonAdd className='black'/>}
 						text='Profil'
 						false={null}
