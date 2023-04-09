@@ -62,7 +62,7 @@ const UserMenu = (props: UserMenuProps) => {
 				<MenuItem aria-label="user-menu" className='column'>
 					<IconPersoButton 
 						cond={true} 
-						true={handleProfileRedirect} // Path to profil usr
+						true={handleProfileRedirect}
 						icon={<PersonAdd className='black'/>}
 						text='Profil'
 						false={null}

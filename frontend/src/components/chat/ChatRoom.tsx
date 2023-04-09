@@ -328,9 +328,65 @@ const ChatRoom = (props: ChatRoomProps) => {
 							onClose={handleClose}
 							className='black' >
 
-							{ // Begin of owner/admin space for pwd protected rooms
-								(statusUtils.checkIfAdmin(members, user.id) === true
-									|| statusUtils.checkIfOwner(props.room.owner, user.id))
+
+							{ // Begin of owner space for non protected rooms
+								(statusUtils.checkIfOwner(props.room.owner, user.id))
+									&& isPwdProtected === false
+									&& <>
+								<MenuItem onClick={handleClickOpenChangePwd} title="Set Password">
+									<Password sx={{ color: 'black' }}/>
+									<span> Set password</span>
+								</MenuItem>
+								<div>
+									<Modal
+										className='black'
+										open={openChangePwd}
+										onClose={handleCloseChangePwd}>
+										<ModalDialog
+											aria-labelledby="modal-modal-title"
+											sx={MUI.modalDialog}>
+											<ModalClose onClick={handleCloseChangePwd}/>
+											<Typography
+												id="modal-modal-title"
+												component="h2"
+												className='modal-title'>
+												Change password
+											</Typography>
+											<form onSubmit={handleCloseChangePwd}>
+												<Stack spacing={2}>
+													<Stack spacing={1}>
+													<Typography component="h3" sx={{ color: 'rgb(37, 120, 204)' }}>
+														New password
+													</Typography>
+													<TextField
+														autoFocus
+														required
+														helperText="Password must be at least 4 characters long"
+														label="new password"
+														type="password"
+														inputProps={{ minLength: 4 }}
+														onChange={(e) => setNewPassword(e.target.value)}
+														/>
+													</Stack>
+													<LoadingButton
+														type="submit"
+														onClick={handleCloseChangePwd}
+														startIcon={<Save />}
+														variant='contained'
+														color='inherit'>
+														SAVE
+													</LoadingButton>
+												</Stack>
+											</form>
+										</ModalDialog>
+									</Modal>
+								</div>
+									</>
+								// End of owner space for non protected rooms
+							}
+
+							{ // Begin of owner space for pwd protected rooms
+								(statusUtils.checkIfOwner(props.room.owner, user.id))
 									&& isPwdProtected === true
 									&& <>
 								<MenuItem onClick={handleClickOpenChangePwd} title="Change Password">
@@ -386,7 +442,7 @@ const ChatRoom = (props: ChatRoomProps) => {
 									<span> Delete pwd</span>
 								</MenuItem>
 								</>
-								// End of owner/admin space
+								// End of owner space
 								}
 							{/* </>
 							: <></>} */}
