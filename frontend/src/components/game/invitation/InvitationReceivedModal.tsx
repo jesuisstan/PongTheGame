@@ -4,6 +4,8 @@ import { WebSocketContext } from '../../../contexts/WebsocketContext';
 import { Invitation } from '../../../types/Invitation';
 import { GameStatusContext } from '../../../contexts/GameStatusContext';
 import { GameStatus } from '../game.interface';
+import { isUserBlocked } from '../../chat/utils/statusFunctions';
+import { UserContext } from '../../../contexts/UserContext';
 import Stack from '@mui/material/Stack';
 import Avatar from '@mui/material/Avatar';
 import Modal from '@mui/joy/Modal';
@@ -26,10 +28,21 @@ const InvitationReceivedModal = ({
   invitation: Invitation;
 }) => {
   const navigate = useNavigate();
+  const { user } = useContext(UserContext);
   const { setGameStatus } = useContext(GameStatusContext);
   const socket = useContext(WebSocketContext);
   const [loadingDecline, setLoadingDecline] = useState(false);
   const [loadingPlay, setLoadingPlay] = useState(false);
+
+  const autoDeclineInvitation = () => {
+    if (isUserBlocked(user, null, invitation.from.nickname)) {
+      socket.emit('match_invitation_refused', {
+        nickname: invitation.from.nickname
+      });
+    }
+  };
+
+  autoDeclineInvitation();
 
   const declineInvitation = () => {
     socket.emit('match_invitation_refused', {

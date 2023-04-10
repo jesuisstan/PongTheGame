@@ -9,6 +9,7 @@ import {
   onBlockClick,
   onUnBlockClick
 } from '../../chat/utils/onClickFunctions';
+import { isUserBlocked } from '../../chat/utils/statusFunctions';
 import InvitationSendModal from '../../game/invitation/InvitationSendModal';
 import ButtonPong from '../../UI/ButtonPong';
 import BadgePong from '../../UI/BadgePong';
@@ -58,6 +59,16 @@ const InfoBlock = ({ player }: { player: PlayerProfile }) => {
       );
     }
   }, [player.nickname, user.nickname]);
+
+  useEffect(() => {
+    if (user.nickname !== player.nickname) {
+      if (isUserBlocked(user, player.id)) {
+        setIsBlocked(true);
+      } else {
+        setIsBlocked(false);
+      }
+    }
+  }, [player.nickname, user.nickname, user.blockedUsers]);
 
   const handleBlock = async () => {
     if (isBlocked) {
@@ -157,7 +168,7 @@ const InfoBlock = ({ player }: { player: PlayerProfile }) => {
             title={'Invite to play a game'}
             onClick={() => setOpenInvitationModal(true)}
             startIcon={<SportsEsportsIcon />}
-            disabled={player.status === 'ONLINE' ? false : true}
+            disabled={player.status === 'ONLINE' && !isBlocked ? false : true}
           />
           <ButtonPong
             text={'Watch'}

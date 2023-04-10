@@ -95,8 +95,14 @@ const App = () => {
                   setOpen={setOpenInvitation}
                   invitation={invitation}
                 />
-                <WarningTokenModal open={openWarningToken} setOpen={setOpenWarningToken} />
-                <WarningConnectedModal open={openWarningConnected} setOpen={setOpenWarningConnected} />
+                <WarningTokenModal
+                  open={openWarningToken}
+                  setOpen={setOpenWarningToken}
+                />
+                <WarningConnectedModal
+                  open={openWarningConnected}
+                  setOpen={setOpenWarningConnected}
+                />
                 {gameStatus === GameStatus.ENDED && (
                   <VictoryModal
                     open={!openVictoryModal}

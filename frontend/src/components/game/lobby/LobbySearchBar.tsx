@@ -8,7 +8,6 @@ import FormControl from '@mui/joy/FormControl';
 import SearchIcon from '@mui/icons-material/Search';
 import styles from './Lobby.module.css';
 import * as color from '../../UI/colorsPong';
-import { ClassNames } from '@emotion/react';
 
 const LobbySearchBar = () => {
   const { user } = useContext(UserContext);
