@@ -141,8 +141,8 @@
 
 @media (max-width: 660px) {
   .group {
-    margin-top: -230px;
-    margin-bottom: -220px;
-    transform: scale(0.6);
+    margin-top: -310px;
+    margin-bottom: -300px;
+    transform: scale(0.55);
   }
 }
