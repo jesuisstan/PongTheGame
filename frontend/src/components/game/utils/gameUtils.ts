@@ -1,6 +1,11 @@
-import { GameInfo, GameState, Obstacle, Player, Position } from '../game.interface';
-import * as colorPong from '../../UI/colorsPong'
-
+import {
+  GameInfo,
+  GameState,
+  Obstacle,
+  Player,
+  Position
+} from '../game.interface';
+import * as colorPong from '../../UI/colorsPong';
 
 export const makeRectangleShape = (
   canvasContext: CanvasRenderingContext2D,
@@ -79,17 +84,16 @@ const drawObstacle = (
   canvasContext: CanvasRenderingContext2D,
   color: string,
   gameInfos: GameInfo,
-  obstacle : Obstacle,
+  obstacle: Obstacle
 ) => {
-  if (!gameInfos.obstacleHeight || !gameInfos.obstacleWidth)
-    return ;
+  if (!gameInfos.obstacleHeight || !gameInfos.obstacleWidth) return;
   drawRect(
     canvasContext,
     color,
     obstacle.position.x,
     obstacle.position.y,
     gameInfos.obstacleWidth,
-    gameInfos.obstacleHeight,
+    gameInfos.obstacleHeight
   );
 };
 
@@ -121,9 +125,23 @@ export const drawState = (state: GameState, canvasRef: any) => {
   drawBall(canvasContext, colorPong.PONG_WHITE, state.ball, state.gameInfos);
 
   if (state.obstacle)
-    drawObstacle(canvasContext, colorPong.PONG_BLUE_TRANS, state.gameInfos, state.obstacle);
-  drawPaddle(canvasContext, state.player1, colorPong.PONG_PINK , state.gameInfos);
-  drawPaddle(canvasContext, state.player2, colorPong.PONG_PINK, state.gameInfos);
+    drawObstacle(
+      canvasContext,
+      colorPong.PONG_BLUE_TRANS,
+      state.gameInfos,
+      state.obstacle
+    );
+  drawPaddle(
+    canvasContext,
+    state.player1,
+    colorPong.PONG_PINK,
+    state.gameInfos
+  );
+  drawPaddle(
+    canvasContext,
+    state.player2,
+    colorPong.PONG_PINK,
+    state.gameInfos
+  );
   return canvasContext;
 };
-

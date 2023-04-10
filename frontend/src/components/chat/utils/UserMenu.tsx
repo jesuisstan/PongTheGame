@@ -12,34 +12,34 @@ import * as statusUtils from "./statusFunctions";
 import * as onClickUtils from "./onClickFunctions";
 import { User } from '../../../types/User';
 import { WebSocketContext } from '../../../contexts/WebsocketContext';
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 
 interface UserMenuProps {
-	bannedUsers: User[];
-	member: MemberType;
-	members: MemberType[];
+  bannedUsers: User[];
+  member: MemberType;
+  members: MemberType[];
 }
 
 const UserMenu = (props: UserMenuProps) => {
-	const socket = useContext(WebSocketContext)
-	const navigate = useNavigate();
-	const { user, setUser } = useContext(UserContext)
-	const [anchorAvatar, setAnchorAvatar] = useState<null | HTMLElement>(null);
+  const socket = useContext(WebSocketContext);
+  const navigate = useNavigate();
+  const { user, setUser } = useContext(UserContext);
+  const [anchorAvatar, setAnchorAvatar] = useState<null | HTMLElement>(null);
 
-	const handleAClick = (event: any) => {
-		setAnchorAvatar(event.currentTarget);
-	};
+  const handleAClick = (event: any) => {
+    setAnchorAvatar(event.currentTarget);
+  };
 
-	const handleAClose = () => {
-		setAnchorAvatar(null);
-	};
+  const handleAClose = () => {
+    setAnchorAvatar(null);
+  };
 
-	const handleProfileRedirect = () => {
-		const link = '/players/' + props.member.nickName;
-		navigate(link);
-	}
+  const handleProfileRedirect = () => {
+    const link = '/players/' + props.member.nickName;
+    navigate(link);
+  };
 
-	return (
+  return (
     <div>
       <Button
 				aria-controls={Boolean(anchorAvatar) ? 'basic-menu' : undefined}
@@ -138,9 +138,7 @@ const UserMenu = (props: UserMenuProps) => {
 				</MenuItem>
 			</Menu>
     </div>
-  )
-
+  );
 };
 
 export default UserMenu;
-

@@ -1,17 +1,42 @@
 import { useContext, useEffect, useState } from 'react';
 import { WebSocketContext } from '../../contexts/WebsocketContext';
 import {
-	Delete, ArrowBackIosNew, Settings, PersonAddAlt, Password,
-	ExitToApp, Clear, PersonAdd, VolumeUp, VolumeOff, Room, Block, HighlightOff, AdminPanelSettings, DeveloperMode, Save
-	} from '@mui/icons-material';
+  Delete,
+  ArrowBackIosNew,
+  Settings,
+  PersonAddAlt,
+  Password,
+  ExitToApp,
+  Clear,
+  PersonAdd,
+  VolumeUp,
+  VolumeOff,
+  Room,
+  Block,
+  HighlightOff,
+  AdminPanelSettings,
+  DeveloperMode,
+  Save
+} from '@mui/icons-material';
 import {
-	Box, Button, Divider, FormControl, Grid, IconButton, Stack,
-	Menu, MenuItem,TextField, Typography, CircularProgress, Modal
-			} from '@mui/material';
+  Box,
+  Button,
+  Divider,
+  FormControl,
+  Grid,
+  IconButton,
+  Stack,
+  Menu,
+  MenuItem,
+  TextField,
+  Typography,
+  CircularProgress,
+  Modal
+} from '@mui/material';
 
 // personal components
 import { UserContext } from '../../contexts/UserContext';
-import { ChatRoomType, MemberType, Message } from "../../types/chat";
+import { ChatRoomType, MemberType, Message } from '../../types/chat';
 import timeFromNow from './utils/timeFromNow';
 import AvatarBadge from './utils/AvatarBadge';
 
@@ -32,8 +57,8 @@ import SettingMenu from './utils/SettingMenu';
 **************************************************************/
 
 interface ChatRoomProps {
-	cleanRoomLoginData: () => void;
-	room: ChatRoomType;
+  cleanRoomLoginData: () => void;
+  room: ChatRoomType;
 }
 
 const ChatRoom = (props: ChatRoomProps) => {
@@ -54,27 +79,38 @@ const ChatRoom = (props: ChatRoomProps) => {
 	// Message input field value
 	const [messageText, setMessageText] = useState<string>('')
 
-	/*************************************************************
-	* State getters
-	*
-	* We keep fetching the data to get all the updates
-	**************************************************************/
+  const findAllMembers = async () => {
+    await socket.emit(
+      'findAllMembers',
+      { roomName: props.room.name },
+      (response: MemberType[]) => {
+        setMembers(response);
+      }
+    );
+  };
+  findAllMembers();
 
-  	const findAllMembers = async () => {
-	await socket.emit('findAllMembers', { roomName: props.room.name },
-		(response: MemberType[]) => {
-		setMembers(response)
-		}
-	)}
-	findAllMembers();
+  const findAllBanned = async () => {
+    await socket.emit(
+      'findAllBannedMembers',
+      { roomName: props.room.name },
+      (response: User[]) => {
+        setBannedMembers(response);
+      }
+    );
+  };
+  findAllBanned();
 
-	const findAllBanned = async () => {
-		await socket.emit('findAllBannedMembers', { roomName: props.room.name },
-		(response: User[]) => {
-			setBannedMembers(response)
-		})
-	}
-	findAllBanned();
+  const isPasswordProtected = async (roomName: string) => {
+    await socket.emit(
+      'isPasswordProtected',
+      { roomName: roomName },
+      (response: boolean) => {
+        setIsPwdProtected(response);
+      }
+    );
+  };
+  isPasswordProtected(props.room.name);
 
 	// Get all messages from messages array in chat.service
 	// and fill the messages variable
@@ -118,132 +154,134 @@ const ChatRoom = (props: ChatRoomProps) => {
 	**************************************************************/
   	useEffect(() => {
     // Activate listeners and subscribe to events as the component is mounted
-    socket.on('typingMessage', (
-        roomName: string, nick: string, isTyping: boolean) => {
-      roomName === props.room.name && isTyping ?
-        setTypingDisplay(nick + ' is typing...')
-        : setTypingDisplay('')
-    })
+    socket.on(
+      'typingMessage',
+      (roomName: string, nick: string, isTyping: boolean) => {
+        roomName === props.room.name && isTyping
+          ? setTypingDisplay(nick + ' is typing...')
+          : setTypingDisplay('');
+      }
+    );
     socket.on('changePassword', (roomName: string, isDeleted: boolean) => {
       if (roomName === props.room.name) {
         const status = isDeleted ? 'deleted' : 'modified';
         console.log('Password from [' + roomName + '] has been ' + status);
       }
-    })
+    });
     socket.on('joinRoom', (roomName: string, userId: number) => {
       if (roomName === props.room.name)
-		  console.log('user ID: ' + userId + ' joined chatroom [' + roomName + ']');
+        console.log(
+          'user ID: ' + userId + ' joined chatroom [' + roomName + ']'
+        );
     });
     socket.on('quitRoom', (roomName: string, userId: number) => {
       if (userId === user.id && roomName === props.room.name) {
-		props.cleanRoomLoginData()
-        console.log('user ID: ' + userId + ' quit room [' + roomName + ']')
-	  }
+        props.cleanRoomLoginData();
+        console.log('user ID: ' + userId + ' quit room [' + roomName + ']');
+      }
     });
     socket.on('kickUser', (roomName: string, target: number) => {
       if (roomName === props.room.name)
-        console.log(target + ' has been kicked!')
-      if (target === user.id) props.cleanRoomLoginData()
+        console.log(target + ' has been kicked!');
+      if (target === user.id) props.cleanRoomLoginData();
     });
-	// User has made admin
+    // User has made admin
     socket.on('adminUser', (roomName: string, target: number) => {
-		if (roomName === props.room.name)
-			console.log(target + ' is admin now!')
-	})
-	// User is not admin anymore
-	socket.on('unadminUser', (roomName: string, target: number) => {
-		if (roomName === props.room.name)
-			console.log('user ID: ' + target + ' is not admin anymore now!')
-	})
-      socket.on('banUser', (roomName: string, target: number) => {
+      if (roomName === props.room.name) console.log(target + ' is admin now!');
+    });
+    // User is not admin anymore
+    socket.on('unadminUser', (roomName: string, target: number) => {
       if (roomName === props.room.name)
-        console.log(target + ' has been banned!')
-      if (target === user.id) props.cleanRoomLoginData()
-    })
+        console.log('user ID: ' + target + ' is not admin anymore now!');
+    });
+    socket.on('banUser', (roomName: string, target: number) => {
+      if (roomName === props.room.name)
+        console.log(target + ' has been banned!');
+      if (target === user.id) props.cleanRoomLoginData();
+    });
     socket.on('unbanUser', (roomName: string, target: number) => {
       if (roomName === props.room.name)
-        console.log(target + ' has been unbanned!')
-    })
+        console.log(target + ' has been unbanned!');
+    });
     socket.on('muteUser', (roomName: string, target: number) => {
       if (roomName === props.room.name)
-        console.log(target + ' has been muted!')
-    })
+        console.log(target + ' has been muted!');
+    });
     socket.on('unmuteUser', (roomName: string, target: number) => {
       if (roomName === props.room.name)
-        console.log(target + ' has been unmuted!')
-    })
+        console.log(target + ' has been unmuted!');
+    });
 
     // Clean listeners to unsubscribe all callbacks for these events
     // before the component is unmounted
     return () => {
-		socket.off('createMessage')
-		socket.off('typingMessage')
-		socket.off('changePassword')
-		socket.off('joinRoom')
-		socket.off('quitRoom')
-		socket.off('kickUser')
-		socket.off('adminUser')
-		socket.off('unadminUser')
-		socket.off('banUser')
-		socket.off('unbanUser')
-		socket.off('muteUser')
-		socket.off('unmuteUser')
-    }
-  }, [])
+      socket.off('createMessage');
+      socket.off('typingMessage');
+      socket.off('changePassword');
+      socket.off('joinRoom');
+      socket.off('quitRoom');
+      socket.off('kickUser');
+      socket.off('adminUser');
+      socket.off('unadminUser');
+      socket.off('banUser');
+      socket.off('unbanUser');
+      socket.off('muteUser');
+      socket.off('unmuteUser');
+    };
+  }, []);
 
-
-  	/*************************************************************
-	* Events
-	**************************************************************/
+  /*************************************************************
+   * Events
+   **************************************************************/
 
   // Emit that user is typing, or not typing after timeout
   let timeout;
   const emitTyping = () => {
     socket.emit('typingMessage', {
-      roomName: props.room.name, 
+      roomName: props.room.name,
       nick: user.nickname,
       isTyping: true
     });
     timeout = setTimeout(() => {
       socket.emit('typingMessage', {
         roomName: props.room.name,
-		nick: user.nickname,
+        nick: user.nickname,
         isTyping: false
       });
     }, 2000);
   };
 
-	// Activated whenever the user is typing on the message input field
-	const onTyping = (msg: string) => {
-		emitTyping();
-		setMessageText(msg);
-	};
+  // Activated whenever the user is typing on the message input field
+  const onTyping = (msg: string) => {
+    emitTyping();
+    setMessageText(msg);
+  };
 
-	// On submit, send the nickName with the written message from the input field
-	// to the backend, as a createMessage event
-	const onFormSubmit = async (e: any) => {
-		e.preventDefault();
-		if (messageText)
-			await socket.emit('createMessage', {
-				roomName: props.room.name,
-				message: {
-					author: user,
-					data: messageText,
-					timestamp: new Date()
-				}
-			});
-		// Reset input field value once sent
-		setMessageText('');
-	};
+  // On submit, send the nickName with the written message from the input field
+  // to the backend, as a createMessage event
+  const onFormSubmit = async (e: any) => {
+    e.preventDefault();
+    if (messageText)
+      await socket.emit('createMessage', {
+        roomName: props.room.name,
+        message: {
+          author: user,
+          data: messageText,
+          timestamp: new Date()
+        }
+      });
+    // Reset input field value once sent
+    setMessageText('');
+  };
 
   // When clicking on the 'return' button
   const onReturnClick = async () => {
     await socket.emit('quitRoom', {
       roomName: props.room.name,
-      userId: user.id,
-    })
-    props.cleanRoomLoginData()
-  }
+      userId: user.id
+    });
+    props.cleanRoomLoginData();
+  };
 
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 

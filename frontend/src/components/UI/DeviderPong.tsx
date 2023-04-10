@@ -7,7 +7,7 @@ const DeviderPong = ({ horizontal }: { horizontal?: boolean }) => (
     flexItem
     sx={{
       backgroundColor: color.PONG_WHITE_TRANS,
-      borderWidth: '1px',
+      borderWidth: '1px'
     }}
   />
 );

@@ -6,13 +6,13 @@ import BadgePong from '../../UI/BadgePong';
 import backendAPI from '../../../api/axios-instance';
 import errorAlert from '../../UI/errorAlert';
 import FriendsNoteModal from './FriendsNoteModal';
-import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import Typography from '@mui/joy/Typography';
 import Avatar from '@mui/material/Avatar';
 import IconButton from '@mui/material/IconButton';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import * as color from '../../UI/colorsPong';
 import styles from '../styles/PlayerCard.module.css';
+import NotePong from '../../UI/NotePong';
 
 const FriendsBlock = ({
   player,
@@ -95,21 +95,7 @@ const FriendsBlock = ({
       </div>
       <div>
         <FriendsNoteModal open={open} setOpen={setOpen} player={player} />
-        <IconButton
-          color="primary"
-          title={'Note'}
-          onClick={() => setOpen(true)}
-        >
-          <HelpOutlineIcon
-            fontSize="large"
-            sx={{
-              color: 'black',
-              '&:hover': {
-                color: color.PONG_PINK
-              }
-            }}
-          />
-        </IconButton>
+        <NotePong setOpen={setOpen} />
         <IconButton
           color="primary"
           title={'Refresh the list'}
@@ -120,7 +106,7 @@ const FriendsBlock = ({
             sx={{
               color: 'black',
               '&:hover': {
-                color: color.PONG_PINK
+                color: color.PONG_ORANGE
               }
             }}
           />

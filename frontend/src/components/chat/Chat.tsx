@@ -1,15 +1,32 @@
-import {
-  useContext, useEffect, useState, useRef
-      } from 'react';
+import { useContext, useEffect, useState, useRef } from 'react';
 import * as React from 'react';
 import {
-	Box, List, ListItem, TextField, Button, Dialog, DialogActions,
-	DialogContent, DialogContentText,	DialogTitle, ListItemIcon,
-	ListItemText, ListItemButton, CssBaseline, ListItemSecondaryAction, Modal, Typography, Stack
+  Box,
+  List,
+  ListItem,
+  TextField,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  ListItemIcon,
+  ListItemText,
+  ListItemButton,
+  CssBaseline,
+  ListItemSecondaryAction,
+  Modal,
+  Typography,
+  Stack
 } from '@mui/material';
 import {
-	TagRounded, LockRounded, ArrowForwardIos, AddCircleOutline,
-	LockOpenRounded, Person2Rounded
+  TagRounded,
+  LockRounded,
+  ArrowForwardIos,
+  AddCircleOutline,
+  LockOpenRounded,
+  Person2Rounded
 } from '@mui/icons-material';
 
 import { ModalClose, ModalDialog } from '@mui/joy';
@@ -68,7 +85,7 @@ const Chat = () => {
     await socket.emit('findAllChatRooms', {}, (response: ChatRoomType[]) => {
       setChatRooms(response);
     });
-  }
+  };
   findAllChatRooms();
 
   const [open, setOpen] = React.useState(false);
@@ -126,12 +143,12 @@ const Chat = () => {
           userLimit: 0,
           members: {},
           messages: [],
-          bannedUsers: [],
+          bannedUsers: []
         },
         user1: user,
         avatar: user.avatar,
         user2Id: undefined,
-        user2Nick: undefined,
+        user2Nick: undefined
       });
     setNewChatRoomName('');
     setChatRoomCreateMode(false);
@@ -148,30 +165,31 @@ const Chat = () => {
     if (user.joinedChatRoom && roomName !== user.joinedChatRoom?.name) {
       await socket.emit('quitRoom', {
         roomName: user.joinedChatRoom?.name,
-        userId: user.id,
-      })
+        userId: user.id
+      });
     }
-      // Notify that the user has clicked on a 'join' button
-      // Put this code AFTER the previous quitRoom, since it
-      // cleans clickedRoomToJoin
-      setClickedRoomToJoin(roomName);
-      handleClickOpenP();
+    // Notify that the user has clicked on a 'join' button
+    // Put this code AFTER the previous quitRoom, since it
+    // cleans clickedRoomToJoin
+    setClickedRoomToJoin(roomName);
+    handleClickOpenP();
     // Check if the corresponding chat room is password protected
-    if (modes.indexOf('p') !== -1) setIsPasswordProtected(true)
+    if (modes.indexOf('p') !== -1) setIsPasswordProtected(true);
     else {
-      setIsPasswordProtected(false)
+      setIsPasswordProtected(false);
       joinRoom(roomName);
     }
   };
   // Join a chatroom if no password has been set
-  const joinRoom = async  (roomName: string) => {
+  const joinRoom = async (roomName: string) => {
     await socket.emit(
       'joinRoom',
       { roomName: roomName, user: user, avatar: user.avatar },
       (response: ChatRoomType) => {
         user.joinedChatRoom = response;
         setClickedRoomToJoin('');
-    });
+      }
+    );
   };
   // Check if the password is right
   const onPasswordSubmit = async () => {
@@ -181,13 +199,14 @@ const Chat = () => {
         { roomName: clickedRoomToJoin, password: inputPassword },
         (response: boolean) => {
           if (response === true) {
-            joinRoom(clickedRoomToJoin)
-            setIsPasswordRight(true)
+            joinRoom(clickedRoomToJoin);
+            setIsPasswordRight(true);
           } else setIsPasswordRight(false);
-      });
-    } 
-      setInputPassword('');
-      handleClosePass();
+        }
+      );
+    }
+    setInputPassword('');
+    handleClosePass();
   };
   // Check if user is authorized to see the private chat room
   const isAuthorizedPrivRoom = (mode: string, members: MemberType[]) => {
@@ -205,35 +224,34 @@ const Chat = () => {
     setIsPasswordRight(false);
   };
 
-
   /*************************************************************
    * Render HTML response
-  **************************************************************/
+   **************************************************************/
   return !user.provider ? (
-<PleaseLogin />
+    <PleaseLogin />
   ) : (
-      <Box id="basicCard">
-        <CssBaseline />
-        <Box component="main" id="chatRoomList">
-          {chatRooms.length === 0 ? (
-            <Box>
-              <List>
-                <ListItem>
-                  <ListItemText
-                    primary={
-                      'No channel joined. Click to the + button for create one.'
-                    }
-                    sx={{ color: 'white' }}
-                  />
-                </ListItem>
-              </List>
-            </Box>
-          ) : (
-            <Box>
-              <List>
-                {/* Mapping chatroom array to retrieve all chatrooms with */}
-                {chatRooms.map(
-                  (room: ChatRoomType, index) => (
+    <Box id="basicCard">
+      <CssBaseline />
+      <Box component="main" id="chatRoomList">
+        {chatRooms.length === 0 ? (
+          <Box>
+            <List>
+              <ListItem>
+                <ListItemText
+                  primary={
+                    'No channel joined. Click to the + button for create one.'
+                  }
+                  sx={{ color: 'white' }}
+                />
+              </ListItem>
+            </List>
+          </Box>
+        ) : (
+          <Box>
+            <List>
+              {/* Mapping chatroom array to retrieve all chatrooms with */}
+              {chatRooms.map(
+                (room: ChatRoomType, index) =>
                   // Check if this isn't a private conversation of other users
                   isAuthorizedPrivRoom(room.modes, room.members) &&
                   <ListItem key={index} disablePadding>
