@@ -342,7 +342,7 @@ const Chat = () => {
                       </ListItemIcon>
                     </ListItemButton>
                   </ListItem>
-                ))}
+                )}
               </List>
             </Box>
           )}

@@ -101,17 +101,6 @@ const ChatRoom = (props: ChatRoomProps) => {
   };
   findAllBanned();
 
-  const isPasswordProtected = async (roomName: string) => {
-    await socket.emit(
-      'isPasswordProtected',
-      { roomName: roomName },
-      (response: boolean) => {
-        setIsPwdProtected(response);
-      }
-    );
-  };
-  isPasswordProtected(props.room.name);
-
 	// Get all messages from messages array in chat.service
 	// and fill the messages variable
 	const findAllMessages = async () => {
