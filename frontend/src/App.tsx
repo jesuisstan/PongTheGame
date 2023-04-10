@@ -15,6 +15,7 @@ import VictoryModal from './components/game/VictoryModal';
 import WarningTokenModal from './components/UI/WarningTokenModal';
 import WarningConnectedModal from './components/UI/WarningConnectedModal';
 import './App.css';
+import { isUserBlocked } from './components/chat/utils/statusFunctions';
 
 const App = () => {
   const socket = useContext(WebSocketContext);
@@ -66,8 +67,14 @@ const App = () => {
   }, []);
 
   socket.on('invitation_game', (args) => {
-    setInvitation(args);
-    setOpenInvitation(true);
+    if (isUserBlocked(user, null, args.from.nickname)) {
+      socket.emit('match_invitation_refused', {
+        nickname: args.from.nickname
+      });
+    } else {
+      setInvitation(args);
+      setOpenInvitation(true);
+    }
   });
 
   socket.on('match_spec_change_state', (args) => {
