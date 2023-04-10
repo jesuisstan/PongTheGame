@@ -1,5 +1,5 @@
 #basicCard {
-  width: 100vw;
+  width: 100%;
   min-height: 650px;
   height: 100vh;
   padding-top: 44px;
@@ -10,9 +10,6 @@
 #chatRoomList {
   flex-grow: 1;
   padding: 5px;
-  width: 30vw;
-  min-width: 175px;
-  max-width: 250px;
   height: calc(100vh - 56px);
   min-height: 650px;
   background-color: rgba(0, 0, 0, 0.8);
@@ -21,16 +18,48 @@
 #chatRoom {
   flex-grow: 1;
   padding: 15px;
-  width: 70vw;
-  min-width: calc(100vw - 190px);
-  max-width: calc(100vw - 250px);
   height: calc(100vh - 56px);
   min-height: 650px;
   background-color: rgba(255, 255, 255, 0.8);
   display: flex;
-  /* align-items: center; */
   justify-content: center;
 }
+
+@media (max-width: 450px) {
+  .hidden-smartphone {
+    display: none;
+  }
+  .show-smartphone {
+    display: block;
+    width: 100vw;
+  }
+  #chatRoomList {
+    width: 100vw;
+  }
+  #chatRoom {
+    width: 100vw;
+  }
+}
+
+@media (min-width: 450px) {
+  .hidden-smartphone {
+    display: block;
+  }
+  .show-smartphone {
+    display: block;
+  }
+  #chatRoomList {
+    width: 30vw;
+    min-width: 175px;
+    max-width: 250px;
+  }
+  #chatRoom {
+    width: 70vw;
+    min-width: calc(100vw - 190px);
+    max-width: calc(100vw - 250px);
+  }
+}
+
 
 .column {
   display: flex;

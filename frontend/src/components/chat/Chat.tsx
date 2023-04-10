@@ -232,7 +232,7 @@ const Chat = () => {
   ) : (
     <Box id="basicCard">
       <CssBaseline />
-      <Box component="main" id="chatRoomList">
+      <Box component="main" id="chatRoomList" className={user.joinedChatRoom ? "hidden-smartphone" : "show-smartphone" }>
         {chatRooms.length === 0 ? (
           <Box>
             <List>
@@ -342,7 +342,7 @@ const Chat = () => {
                       </ListItemIcon>
                     </ListItemButton>
                   </ListItem>
-                ))}
+                )}
               </List>
             </Box>
           )}
@@ -423,7 +423,7 @@ const Chat = () => {
 				  </div>
 				)}
         </Box>
-        <Box component="main" id="chatRoom">
+        <Box component="main" id="chatRoom" className={user.joinedChatRoom ? "show-smartphone" : "hidden-smartphone"}>
           {user.joinedChatRoom &&
           ((isPasswordProtected && isPasswordRight) || !isPasswordProtected) ? (
             <ChatRoom cleanRoomLoginData={cleanRoomLoginData} room={user.joinedChatRoom} />
