@@ -118,7 +118,7 @@ const ChatRoom = (props: ChatRoomProps) => {
           let found = false;
           for (const blockedUser in user.blockedUsers) {
             if (
-              messagesToFilter[i].author.id === user.blockedUsers[blockedUser]
+              messagesToFilter[i].author.id === user.blockedUsers[blockedUser].id
             ) {
               messagesToFilter.splice(i, 1);
               found = true;
@@ -129,7 +129,7 @@ const ChatRoom = (props: ChatRoomProps) => {
           if (found === false) {
             for (const blockedUser in messagesToFilter[i].author.blockedUsers) {
               if (
-                user.id === messagesToFilter[i].author.blockedUsers[blockedUser]
+                user.id === messagesToFilter[i].author.blockedUsers[blockedUser].id
               ) {
                 messagesToFilter.splice(i, 1);
                 break;

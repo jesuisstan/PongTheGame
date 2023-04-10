@@ -292,14 +292,15 @@ export class ChatGateway {
           }
         },
       });
+    } else {
+      await this.prisma.user.update({
+        where: { id: userId},
+        data: {
+          blockedUsers: {
+            connect: { id: target }
+          }
+        },
+      });
     }
-    await this.prisma.user.update({
-      where: { id: userId},
-      data: {
-        blockedUsers: {
-          connect: { id: target }
-        }
-      },
-    });
   }
 }

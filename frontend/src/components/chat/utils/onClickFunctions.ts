@@ -7,7 +7,7 @@ import { Socket } from 'socket.io-client';
     if (user.id !== target) {
       // Check if target is not already blocked
       for (let i=0; i < user.blockedUsers.length; ++i)
-        if (user.blockedUsers[i] === target) return
+        if (user.blockedUsers[i].id === target) return
         await socket.emit('updateBlockedUsers', {
           userId: user.id,
           target: target,
@@ -22,7 +22,7 @@ import { Socket } from 'socket.io-client';
     ) => {
     if (user.id !== target) {
       for (var i=0; i < user.blockedUsers.length; ++i) {
-        if (user.blockedUsers[i] === target) {
+        if (user.blockedUsers[i].id === target) {
           await socket.emit('updateBlockedUsers', {
             userId: user.id,
             target: target,
