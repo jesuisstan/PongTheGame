@@ -34,21 +34,22 @@ const InvitationReceivedModal = ({
   const [loadingDecline, setLoadingDecline] = useState(false);
   const [loadingPlay, setLoadingPlay] = useState(false);
 
+  const autoDeclineInvitation = () => {
+    if (isUserBlocked(user, null, invitation.from.nickname)) {
+      socket.emit('match_invitation_refused', {
+        nickname: invitation.from.nickname
+      });
+    }
+  };
+
+  autoDeclineInvitation();
+
   const declineInvitation = () => {
     socket.emit('match_invitation_refused', {
       nickname: invitation.from.nickname
     });
     setOpen(false);
   };
-
-  //// autodeclining is inviter is blocked
-  //const autoDeclineInvitation = () => {
-  //  if (isUserBlocked(user, invitation.from.id)) {
-  //    socket.emit('match_invitation_refused', {
-  //      nickname: invitation.from.nickname
-  //    });
-  //  }
-  //}
 
   const acceptInvitation = () => {
     socket.emit('match_invitation_accept', {
