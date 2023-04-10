@@ -54,27 +54,34 @@ export class ChatGateway {
     @MessageBody('avatar') avatar: string,
     @MessageBody('user2Id') user2Id: number | undefined,
     @MessageBody('user2Nick') user2Nick: string | undefined,
-    ): Promise<void> {
+  ): Promise<void> {
     // First, check if max chat room limit hasn't been reached
-    if (await this.prisma.chatRoom.count()
-      >= parseInt(process.env.REACT_APP_MAX_CHATROOM_NBR!))
-      throw new WsException({ msg: 'createChatRoom: Max chat room number reached!' });
+    if (
+      (await this.prisma.chatRoom.count()) >=
+      parseInt(process.env.REACT_APP_MAX_CHATROOM_NBR!)
+    )
+      throw new WsException({
+        msg: 'createChatRoom: Max chat room number reached!',
+      });
     // Then, check if the room name already exists
-    const r: ChatRoomDto | null = await this.chatService.getChatRoomByName(room.name);
+    const r: ChatRoomDto | null = await this.chatService.getChatRoomByName(
+      room.name,
+    );
     if (r) {
       // Throw error if both roooms are in the same category (private/public)
-      if (((r.modes.search('i') !== -1) && (user2Id)) ||
-        ((r.modes.search('i') === -1) && (room.modes.search('i') === -1)))
+      if (
+        (r.modes.search('i') !== -1 && user2Id) ||
+        (r.modes.search('i') === -1 && room.modes.search('i') === -1)
+      )
         throw new WsException({
           msg: 'createChatRoom: room name is already taken!',
         });
     }
     // In case of a private room, the name of the room is in the form:
     // #user1user2 => avoid creating doubles in the form #user2user1
-    if (user2Id)
-    {
+    if (user2Id) {
       const roomName: string = '#' + user2Nick + '/' + user1.nickname;
-      const privRoom: ChatRoomDto | null = 
+      const privRoom: ChatRoomDto | null =
         await this.chatService.getChatRoomByName(roomName);
       if (privRoom)
         throw new WsException({
@@ -96,8 +103,9 @@ export class ChatGateway {
   }
 
   @SubscribeMessage('findAllMessages')
-  async findAllMessages(@MessageBody('roomName') roomName: string
-  ) : Promise<MessageDto[]> {
+  async findAllMessages(
+    @MessageBody('roomName') roomName: string,
+  ): Promise<MessageDto[]> {
     return await this.chatService.findAllMessages(roomName);
   }
 
@@ -107,13 +115,16 @@ export class ChatGateway {
   }
 
   @SubscribeMessage('findAllMembers')
-  async findAllMembers(@MessageBody('roomName') roomName: string): Promise<Member[]> {
+  async findAllMembers(
+    @MessageBody('roomName') roomName: string,
+  ): Promise<Member[]> {
     return await this.chatService.findAllMembers(roomName);
   }
 
   @SubscribeMessage('findAllBannedMembers')
-  async findAllBannedMembers(@MessageBody('roomName') roomName: string
-  ) : Promise<User[]> {
+  async findAllBannedMembers(
+    @MessageBody('roomName') roomName: string,
+  ): Promise<User[]> {
     return await this.chatService.findAllBannedMembers(roomName);
   }
 
@@ -124,13 +135,15 @@ export class ChatGateway {
     @MessageBody('avatar') avatar: string,
   ): Promise<ChatRoomDto | null> {
     const memberCount = await this.prisma.member.count({
-    // First, get the current member count and compare it with the max allowed
-      where: {chatRoomName: roomName }
+      // First, get the current member count and compare it with the max allowed
+      where: { chatRoomName: roomName },
     });
     if (memberCount >= parseInt(process.env.REACT_APP_MAX_CHATROOM_MEMBER_NBR!))
-      throw new WsException({ msg: 'joinRoom: Max chat room member number reached!' });
+      throw new WsException({
+        msg: 'joinRoom: Max chat room member number reached!',
+      });
 
-    if (await this.chatService.isUserBanned(roomName, user.id) === true)
+    if ((await this.chatService.isUserBanned(roomName, user.id)) === true)
       throw new WsException({ msg: 'joinRoom: User is banned.' });
     await this.chatService.identify(roomName, user, '', avatar, true);
     this.server.emit('joinRoom', roomName, user.id);
@@ -206,13 +219,21 @@ export class ChatGateway {
     @MessageBody('off') off: boolean,
   ): Promise<void> {
     // First, check if the user has the admin rights
-    if (await this.hasUserPriv(roomName, userId, target) === false)
-      throw new WsException({ msg: 'muteUser: user doesn\'t have enough privileges!' });
-    const room: ChatRoomDto | null = await this.chatService.getChatRoomByName(roomName);
+    if ((await this.hasUserPriv(roomName, userId, target)) === false)
+      throw new WsException({
+        msg: "muteUser: user doesn't have enough privileges!",
+      });
+    const room: ChatRoomDto | null = await this.chatService.getChatRoomByName(
+      roomName,
+    );
     if (room) {
       // Send the first character of the mode name; ex: mute => 'm'
-      var modes: string =
-        await this.chatService.modifyModes(room.members, target, mode[0], off);
+      const modes: string = await this.chatService.modifyModes(
+        room.members,
+        target,
+        mode[0],
+        off,
+      );
       // Save the new modes
       await this.chatService.updateUserModes(roomName, target, modes);
       // Create event name, ex: unmuteUser
@@ -220,7 +241,7 @@ export class ChatGateway {
       this.server.emit(event, roomName, target);
     }
   }
-  
+
   @SubscribeMessage('banUser')
   async banUser(
     @MessageBody('roomName') roomName: string,
@@ -230,8 +251,10 @@ export class ChatGateway {
   ): Promise<void> {
     const event: string = (off ? 'un' : '') + 'banUser';
     // First, check if the user has the admin rights
-    if (await this.hasUserPriv(roomName, userId, target) === false)
-      throw new WsException({ msg: event + ': user doesn\'t have enough privileges!!' });
+    if ((await this.hasUserPriv(roomName, userId, target)) === false)
+      throw new WsException({
+        msg: event + ": user doesn't have enough privileges!!",
+      });
     if (off) {
       await this.chatService.unBanUser(roomName, target);
       await this.chatService.quitRoom(roomName, target);
@@ -246,8 +269,10 @@ export class ChatGateway {
     @MessageBody('target') target: number,
   ): Promise<void> {
     // First, check if the user has the admin rights
-    if (await this.hasUserPriv(roomName, userId, target) === false)
-      throw new WsException({ msg: 'kickUser: user doesn\'t have enough privileges!!' });
+    if ((await this.hasUserPriv(roomName, userId, target)) === false)
+      throw new WsException({
+        msg: "kickUser: user doesn't have enough privileges!!",
+      });
     await this.chatService.quitRoom(roomName, target);
     this.server.emit('kickUser', roomName, target);
   }

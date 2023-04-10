@@ -7,12 +7,12 @@ export class Message {
 }
 
 export type Member = {
-	memberId: number;
+  memberId: number;
   nickName: string;
   avatar: string;
-	isOnline: boolean;
-	modes: string;
-}
+  isOnline: boolean;
+  modes: string;
+};
 
 export class ChatRoom {
   name: string;
@@ -20,7 +20,7 @@ export class ChatRoom {
   modes: string;
   password: string;
   userLimit: number;
-	members: Member[];
+  members: Member[];
   messages: Message[];
   bannedUsers: User[];
 }
