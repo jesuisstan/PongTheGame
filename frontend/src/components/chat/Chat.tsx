@@ -232,7 +232,7 @@ const Chat = () => {
   ) : (
     <Box id="basicCard">
       <CssBaseline />
-      <Box component="main" id="chatRoomList" className={user.joinedChatRoom ? "hidden-smartphone" : "show-smartphone" }>
+      <Box component="main" id="chatRoomList" className={user.joinedChatRoom ? "hidden-smartphone" : "show-smartphone"}>
         {chatRooms.length === 0 ? (
           <Box>
             <List>
@@ -344,7 +344,7 @@ const Chat = () => {
                   </ListItem>
                 )}
               </List>
-            </Box>
+          </Box>
           )}
           {/* Button that gets into chatroom create mode */}
           {chatRooms.length <
@@ -448,7 +448,6 @@ const Chat = () => {
             </div>
           )}
         </Box>
-      </div>
     </Box>
   );
 };
