@@ -14,17 +14,17 @@ datasource db {
 }
 
 model User {
-  id           Int     @id @default(autoincrement())
-  nickname     String? @unique
+  id           Int         @id @default(autoincrement())
+  nickname     String?     @unique
   username     String
   avatar       String?
   profileId    String
   provider     String
-  blockedUsers Int[]
-
-  status     StatusUser  @default(ONLINE)
-  totpSecret TotpSecret?
-  role       Role        @default(USER)
+  blockedUsers User[]      @relation("BlockedUsers")
+  blocked      User[]      @relation("BlockedUsers")
+  status       StatusUser  @default(ONLINE)
+  totpSecret   TotpSecret?
+  role         Role        @default(USER)
 
   matchEntries MatchEntry[]
 
@@ -37,7 +37,7 @@ model User {
   Message           Message[]         @relation("MessageAuthor")
   Member            Member[]          @relation("ChatRoomMember")
   ChatRoom          ChatRoom[]
-  
+
   @@unique([profileId, provider])
 }
 
@@ -113,13 +113,13 @@ model Match {
 }
 
 model MatchInvitation {
-  id          Int                  @id @default(autoincrement())
-  createdBy   User                 @relation("InvitationEmit", fields: [createdById], references: [id])
-  createdById Int                  @unique
-  sendToId    Int                  
-  sendTo      User                 @relation("InvitationReceive", fields: [sendToId], references: [id])
+  id          Int             @id @default(autoincrement())
+  createdBy   User            @relation("InvitationEmit", fields: [createdById], references: [id])
+  createdById Int             @unique
+  sendToId    Int
+  sendTo      User            @relation("InvitationReceive", fields: [sendToId], references: [id])
   obstacle    Boolean
-  winScore    Int                  @default(5)
+  winScore    Int             @default(5)
   status      InvitationState @default(Pending)
 }
 
@@ -144,8 +144,8 @@ model Session {
 }
 
 model Message {
-  id           Int       @id @default(autoincrement())
-  author       User      @relation("MessageAuthor", fields: [authorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  id           Int      @id @default(autoincrement())
+  author       User     @relation("MessageAuthor", fields: [authorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   authorId     Int
   data         String
   timestamp    DateTime
@@ -155,7 +155,7 @@ model Message {
 
 model Member {
   memberId     Int
-  member       User      @relation("ChatRoomMember", fields: [memberId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  member       User     @relation("ChatRoomMember", fields: [memberId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   nickName     String
   isOnline     Boolean
   avatar       String

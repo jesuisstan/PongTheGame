@@ -82,41 +82,46 @@ const ChatRoom = (props: ChatRoomProps) => {
   };
   findAllBanned();
 
-	// Get all messages from messages array in chat.service
-	// and fill the messages variable
-	const findAllMessages = async () => {
-		await socket.emit('findAllMessages',
-		{ roomName: props.room.name },
-		(response: Message[]) => {
-		// Array including all the messages, even the ones from
-		// blocked users/users who blocked the user
-		const messagesToFilter = response
-		for (let i = messagesToFilter.length - 1; i >= 0; --i) {
-		// First we filter the recipient's blocked users
-		let found = false;
-		for (const blockedUser in user.blockedUsers) {
-			if (messagesToFilter[i].author.id === user.blockedUsers[blockedUser])
-			{
-			messagesToFilter.splice(i, 1);
-			found = true;
-			break;
-			}
-		}
-		// Then we filter the sender's blocked users
-		if (found === false) {
-			for (const blockedUser in messagesToFilter[i].author.blockedUsers) {
-			if (user.id === messagesToFilter[i].author.blockedUsers[blockedUser])
-			{
-				messagesToFilter.splice(i, 1);
-				break;
-			}
-			}
-		}
-		}
-		const filteredMessages = messagesToFilter
-		setMessages(filteredMessages)
-	})}
-	findAllMessages();
+  // Get all messages from messages array in chat.service
+  // and fill the messages variable
+  const findAllMessages = async () => {
+    await socket.emit(
+      'findAllMessages',
+      { roomName: props.room.name },
+      (response: Message[]) => {
+        // Array including all the messages, even the ones from
+        // blocked users/users who blocked the user
+        const messagesToFilter = response;
+        for (let i = messagesToFilter.length - 1; i >= 0; --i) {
+          // First we filter the recipient's blocked users
+          let found = false;
+          for (const blockedUser in user.blockedUsers) {
+            if (
+              messagesToFilter[i].author.id === user.blockedUsers[blockedUser].id
+            ) {
+              messagesToFilter.splice(i, 1);
+              found = true;
+              break;
+            }
+          }
+          // Then we filter the sender's blocked users
+          if (found === false) {
+            for (const blockedUser in messagesToFilter[i].author.blockedUsers) {
+              if (
+                user.id === messagesToFilter[i].author.blockedUsers[blockedUser].id
+              ) {
+                messagesToFilter.splice(i, 1);
+                break;
+              }
+            }
+          }
+        }
+        const filteredMessages = messagesToFilter;
+        setMessages(filteredMessages);
+      }
+    );
+  };
+  findAllMessages();
 
 
 	/*************************************************************
