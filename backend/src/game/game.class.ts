@@ -145,8 +145,12 @@ export class Game {
       }
     }
     if (this.status == Status.ABORTED) {
-      this.websockets.send(this.player1.socket, "match_abort_during_begin", {});
-      this.websockets.send(this.player2?.socket, "match_abort_during_begin", {});
+      this.websockets.send(this.player1.socket, 'match_abort_during_begin', {});
+      this.websockets.send(
+        this.player2?.socket,
+        'match_abort_during_begin',
+        {},
+      );
       this.end();
       return;
     }

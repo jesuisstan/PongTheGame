@@ -43,7 +43,7 @@ services:
     container_name: backend
     image: node:18.13.0-alpine3.16
     working_dir: /backend
-    command: sh -cx 'apk add --no-cache curl && yarn install && yarn prisma db push && yarn run test && yarn prisma db seed && yarn run prisma_studio && yarn run start:prod'
+    command: sh -cx 'apk add --no-cache curl && yarn install && yarn prisma db push && yarn run test && yarn prisma db seed && yarn run prisma_studio && yarn run start:debug'
     ports:
       - "${BACKEND_PORT}:${BACKEND_PORT}"
       - 5555:5555 # TODO remove is for prisma studio
