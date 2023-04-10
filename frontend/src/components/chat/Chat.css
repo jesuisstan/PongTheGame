@@ -1,17 +1,20 @@
 #basicCard {
-  width: 100vw;
-  min-height: 650px;
-  height: 100vh;
-  padding-top: 44px;
-  max-height: calc(100vh - 56px);
+  width: 100%;
+  height: 100%;
+  margin-top: 44px;
+  margin-bottom: 22px;
+  align-self: center;
   display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 #chatRoomList {
   flex-grow: 1;
   padding: 5px;
   width: 30vw;
-  min-width: 175px;
+  min-width: 100px;
   max-width: 250px;
   height: calc(100vh - 56px);
   min-height: 650px;
