@@ -3,12 +3,8 @@ import { PlayerProfile } from '../../../types/PlayerProfile';
 import Modal from '@mui/joy/Modal';
 import ModalDialog from '@mui/joy/ModalDialog';
 import ModalClose from '@mui/joy/ModalClose';
-import BadgePong from '../../UI/BadgePong';
 import Typography from '@mui/joy/Typography';
-import RefreshIcon from '@mui/icons-material/Refresh';
-import Avatar from '@mui/material/Avatar';
 import * as MUI from '../../UI/MUIstyles';
-import * as color from '../../UI/colorsPong';
 
 const InfoNoteModal = ({
   open,
@@ -74,7 +70,7 @@ const InfoNoteModal = ({
               wordWrap: 'break-word'
             }}
           >
-            <Typography>* Required player's status - ONLINE.</Typography>
+            <Typography>* Required player's status - ONLINE & UNBLOCKED.</Typography>
             <br />
             <Typography>** Required player's status - PLAYING.</Typography>
           </Typography>
