@@ -1,5 +1,5 @@
 import Swal from 'sweetalert2';
-import * as color from '../UI/colorsPong'
+import * as color from '../UI/colorsPong';
 
 const errorAlert = (text: string) => {
   Swal.fire({
@@ -11,7 +11,7 @@ const errorAlert = (text: string) => {
     text: text,
     showCloseButton: true,
     color: color.PONG_WHITE,
-    background: 'black',
+    background: 'black'
   });
 };
 

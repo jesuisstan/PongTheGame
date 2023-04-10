@@ -5,7 +5,7 @@ import { WebSocketContext } from '../../contexts/WebsocketContext';
 import { PlayerProfile } from '../../types/PlayerProfile';
 import PleaseLogin from '../pages/PleaseLogin';
 import NotFound from '../pages/NotFound';
-import InfoBlock from './InfoBlock';
+import InfoBlock from './management/InfoBlock';
 import FriendsBlock from './friends/FriendsBlock';
 import AchievementsBlock from './achievements/AchievementsBlock';
 import MatchHistoryBlock from './match_history/MatchHistoryBlock';

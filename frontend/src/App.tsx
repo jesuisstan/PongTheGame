@@ -12,14 +12,16 @@ import Verify2fa from './components/profile/Verify2fa';
 import InvitationReceivedModal from './components/game/invitation/InvitationReceivedModal';
 import backendAPI from './api/axios-instance';
 import VictoryModal from './components/game/VictoryModal';
-import WarningModal from './components/UI/WarningModal';
+import WarningTokenModal from './components/UI/WarningTokenModal';
+import WarningConnectedModal from './components/UI/WarningConnectedModal';
 import './App.css';
 
 const App = () => {
   const socket = useContext(WebSocketContext);
   const [openVerify2fa, setOpenVerify2fa] = useState(false);
   const [openInvitation, setOpenInvitation] = useState(false);
-  const [openWarning, setOpenWarning] = useState(false);
+  const [openWarningToken, setOpenWarningToken] = useState(false);
+  const [openWarningConnected, setOpenWarningConnected] = useState(false);
   const [gameResult, setGameResult] = useState<GameResult | null>(null);
   const [openVictoryModal, setOpenVictoryModal] = useState(false);
 
@@ -34,7 +36,7 @@ const App = () => {
     totpSecret: null,
     username: '',
     blockedUsers: [],
-    joinedChatRoom: undefined,
+    joinedChatRoom: undefined
   });
 
   const [gameStatus, setGameStatus] = useState('lobby');
@@ -68,13 +70,16 @@ const App = () => {
     setOpenInvitation(true);
   });
 
-  socket.on("match_spec_change_state", (args)=> {
-    setGameStatus('lobby')
-  })
+  socket.on('match_spec_change_state', (args) => {
+    setGameStatus('lobby');
+  });
 
   socket.on('error_socket', (args) => {
-    console.log(args.message); // TODO Check how to do that
-    setOpenWarning(true);
+    if (args.message === 'You are already connected') {
+      setOpenWarningConnected(true);
+    } else {
+      setOpenWarningToken(true);
+    }
   });
 
   return (
@@ -90,7 +95,8 @@ const App = () => {
                   setOpen={setOpenInvitation}
                   invitation={invitation}
                 />
-                {<WarningModal open={openWarning} setOpen={setOpenWarning} />}
+                <WarningTokenModal open={openWarningToken} setOpen={setOpenWarningToken} />
+                <WarningConnectedModal open={openWarningConnected} setOpen={setOpenWarningConnected} />
                 {gameStatus === GameStatus.ENDED && (
                   <VictoryModal
                     open={!openVictoryModal}

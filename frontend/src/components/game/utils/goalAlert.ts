@@ -11,9 +11,9 @@ const goalAlert = () => {
     timer: 300,
     showClass: {
       popup: 'swal2-show',
-      backdrop: 'none',
-    },
-  })
+      backdrop: 'none'
+    }
+  });
 };
 
 export default goalAlert;

@@ -11,15 +11,19 @@ export class ChatService {
   constructor(private readonly prisma: PrismaService) {}
 
   async identify(
-    roomName: string, user: User, modes: string, avatar: string, online: boolean
-    ): Promise<void> {
+    roomName: string,
+    user: User,
+    modes: string,
+    avatar: string,
+    online: boolean,
+  ): Promise<void> {
     // Check if room exists
     const room: ChatRoomDto | null = await this.getChatRoomByName(roomName);
     if (!room) throw new WsException({ msg: 'identify: unknown room name!' });
     // Do nothing if user is already identified
-    var found = false;
-    var foundModes = "";
-    for (let i=0; i < room.members.length; ++i) {
+    let found = false;
+    let foundModes = '';
+    for (let i = 0; i < room.members.length; ++i) {
       if (user.id === room.members[i].memberId) {
         found = true;
         foundModes = room.members[i].modes;
@@ -28,22 +32,25 @@ export class ChatService {
     }
     if (found)
       await this.prisma.member.update({
-        where: { memberId_chatRoomName: {
-          memberId: user.id, chatRoomName: roomName 
-        }},
-        data: { isOnline: online, modes: foundModes + modes }
-      })
+        where: {
+          memberId_chatRoomName: {
+            memberId: user.id,
+            chatRoomName: roomName,
+          },
+        },
+        data: { isOnline: online, modes: foundModes + modes },
+      });
     else {
       await this.prisma.member.create({
         data: {
-              memberId: user.id,
-              nickName: user.nickname ? user.nickname : '',
-              isOnline: online,
-              modes: modes,
-              avatar: avatar,
-              chatRoomName: roomName
-        }
-      })
+          memberId: user.id,
+          nickName: user.nickname ? user.nickname : '',
+          isOnline: online,
+          modes: modes,
+          avatar: avatar,
+          chatRoomName: roomName,
+        },
+      });
     }
   }
 
@@ -68,10 +75,11 @@ export class ChatService {
       include: {
         members: true,
         messages: {
-          include: { author: true }
+          include: { author: true },
         },
-        bannedUsers: true }
-    })
+        bannedUsers: true,
+      },
+    });
   }
 
   // Create a new message object and push it to the messages array
@@ -93,21 +101,27 @@ export class ChatService {
     // We use salt rounds, which is the cost factor (how much time is used to
     // compute the hash => the more elevated, the more difficult is brute-forcing)
     const saltRounds = 10;
-    return await bcrypt .hash(password, saltRounds)
-                        .then((res: string) => res)
-                        .catch((err: any) => {
-                          throw new WsException({ msg: err.message });
-                        })
+    return await bcrypt
+      .hash(password, saltRounds)
+      .then((res: string) => res)
+      .catch((err: any) => {
+        throw new WsException({ msg: err.message });
+      });
   }
 
   // Create a new chat room object and push it to the database
   // the creator will get admin privileges
   async createChatRoom(
-    room: ChatRoomDto, user: User, avatar: string, user2Id: number | undefined
-    ): Promise<void> {
+    room: ChatRoomDto,
+    user: User,
+    avatar: string,
+    user2Id: number | undefined,
+  ): Promise<void> {
     if (room) {
       // Hash the password before saving it
-      const hash: string = room.password ? await this.generateHash(room.password) : ''
+      const hash: string = room.password
+        ? await this.generateHash(room.password)
+        : '';
       // Save room to the database
       const r = await this.prisma.chatRoom.create({
         data: {
@@ -124,12 +138,14 @@ export class ChatService {
       console.log('created room: ' + Object.entries(r));
       // If it is a private conversation
       if (user2Id) {
-        user.avatar && await this.identify(room.name, user, '', user.avatar, false);
+        user.avatar &&
+          (await this.identify(room.name, user, '', user.avatar, false));
         const user2: User | null = await this.prisma.user.findUnique({
-          where: { id: user2Id }
-        })
-        user2 &&user2.avatar &&
-          await this.identify(room.name, user2, '', user2.avatar, false);
+          where: { id: user2Id },
+        });
+        user2 &&
+          user2.avatar &&
+          (await this.identify(room.name, user2, '', user2.avatar, false));
         return;
       }
       // Identify creator as the owner
@@ -143,10 +159,11 @@ export class ChatService {
   // Return all messages from the chatroom
   async findAllMessages(roomName: string): Promise<MessageDto[]> {
     const room: ChatRoomDto | null = await this.getChatRoomByName(roomName);
-    if (room) return await this.prisma.message.findMany({
-      where: { chatRoomName: roomName },
-      select: { author: true, data: true, timestamp: true }
-    });
+    if (room)
+      return await this.prisma.message.findMany({
+        where: { chatRoomName: roomName },
+        select: { author: true, data: true, timestamp: true },
+      });
     throw new WsException({ msg: 'findAllMessages: unknown room name!' });
   }
 
@@ -156,14 +173,19 @@ export class ChatService {
 
   // Return all members from the chatroom
   async findAllMembers(roomName: string): Promise<Member[]> {
-    return await this.prisma.member.findMany({ where: { chatRoomName: roomName } });
+    return await this.prisma.member.findMany({
+      where: { chatRoomName: roomName },
+    });
   }
 
   // Return all members from the chatroom
   async findAllBannedMembers(roomName: string): Promise<User[]> {
     const room: ChatRoomDto | null = await this.getChatRoomByName(roomName);
     if (room) return room.bannedUsers;
-    else throw new WsException({ msg: 'findAllBannedMembers: unknown room name!' });
+    else
+      throw new WsException({
+        msg: 'findAllBannedMembers: unknown room name!',
+      });
   }
 
   async isPasswordProtected(roomName: string) {
@@ -188,17 +210,17 @@ export class ChatService {
           // it gets it
           newPassword = await this.generateHash(newPassword);
           // If 'p' mode already there, we keep the old modes
-          const newModes = oldModes.modes.search('p') !== -1
-            ? oldModes.modes
-            : oldModes.modes + 'p';
-            await this.prisma.chatRoom.update({
-              where: { name: roomName },
-              data: {
-                modes: newModes,
-                password: newPassword,
-              },
-            });
-          
+          const newModes =
+            oldModes.modes.search('p') !== -1
+              ? oldModes.modes
+              : oldModes.modes + 'p';
+          await this.prisma.chatRoom.update({
+            where: { name: roomName },
+            data: {
+              modes: newModes,
+              password: newPassword,
+            },
+          });
         } // No given password means we remove the password
         else {
           await this.prisma.chatRoom.update({
@@ -217,7 +239,11 @@ export class ChatService {
     } else throw new WsException({ msg: 'changePassword: unknown room name!' });
   }
 
-  async hasUserPriv(roomName: string, userId: number, target: number): Promise<boolean> {
+  async hasUserPriv(
+    roomName: string,
+    userId: number,
+    target: number,
+  ): Promise<boolean> {
     const room = await this.getChatRoomByName(roomName);
     if (room) {
       // If target is the owner, we stop here: cannot do anything against owners
@@ -239,38 +265,48 @@ export class ChatService {
     throw new WsException({ msg: 'hasUserPriv: unknown room name!' });
   }
 
-  modifyModes(members: Member[], userId: number, mode: string, del: boolean
-    ): string {
-    var modes: string = '';
-      // Look for mode in user's mode
-      // Add mode if not already there
-      for (var i=0; i < members.length; ++i) {
-        if (members[i].memberId === userId) {
-          modes = members[i].modes;
-          if (!del && members[i].modes.search(mode) === -1)
-            modes += mode;
-          else if (del) {
-            const regex = new RegExp(mode, 'g')
-            modes = modes.replace(regex, '');
-          }
+  modifyModes(
+    members: Member[],
+    userId: number,
+    mode: string,
+    del: boolean,
+  ): string {
+    let modes = '';
+    // Look for mode in user's mode
+    // Add mode if not already there
+    for (let i = 0; i < members.length; ++i) {
+      if (members[i].memberId === userId) {
+        modes = members[i].modes;
+        if (!del && members[i].modes.search(mode) === -1) modes += mode;
+        else if (del) {
+          const regex = new RegExp(mode, 'g');
+          modes = modes.replace(regex, '');
         }
+      }
     }
     return modes;
   }
 
-  async updateUserModes(roomName: string, userId: number, modes: string): Promise<void> {
+  async updateUserModes(
+    roomName: string,
+    userId: number,
+    modes: string,
+  ): Promise<void> {
     await this.prisma.member.update({
-      where: { memberId_chatRoomName: {
-        memberId: userId, chatRoomName: roomName }
+      where: {
+        memberId_chatRoomName: {
+          memberId: userId,
+          chatRoomName: roomName,
+        },
       },
-      data: { modes: modes }
-    })
+      data: { modes: modes },
+    });
   }
 
   async makeAdmin(roomName: string, userId: number): Promise<void> {
     const room: ChatRoomDto | null = await this.getChatRoomByName(roomName);
     if (room) {
-      var modes: string = this.modifyModes(room.members, userId, 'a', false)
+      const modes: string = this.modifyModes(room.members, userId, 'a', false);
       // Save the new modes
       await this.updateUserModes(roomName, userId, modes);
     } else throw new WsException({ msg: 'makeAdmin: unknown room name!' });

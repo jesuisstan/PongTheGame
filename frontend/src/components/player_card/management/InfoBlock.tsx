@@ -1,15 +1,21 @@
 import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { UserContext } from '../../contexts/UserContext';
-import { PlayerProfile } from '../../types/PlayerProfile';
-import { WebSocketContext } from '../../contexts/WebsocketContext';
-import { GameStatusContext } from '../../contexts/GameStatusContext';
-import { GameStatus } from '../game/game.interface';
-import InvitationSendModal from '../game/invitation/InvitationSendModal';
-import ButtonPong from '../UI/ButtonPong';
-import BadgePong from '../UI/BadgePong';
-import backendAPI from '../../api/axios-instance';
-import errorAlert from '../UI/errorAlert';
+import { UserContext } from '../../../contexts/UserContext';
+import { PlayerProfile } from '../../../types/PlayerProfile';
+import { WebSocketContext } from '../../../contexts/WebsocketContext';
+import { GameStatusContext } from '../../../contexts/GameStatusContext';
+import { GameStatus } from '../../game/game.interface';
+import {
+  onBlockClick,
+  onUnBlockClick
+} from '../../chat/utils/onClickFunctions';
+import InvitationSendModal from '../../game/invitation/InvitationSendModal';
+import ButtonPong from '../../UI/ButtonPong';
+import BadgePong from '../../UI/BadgePong';
+import InfoNoteModal from './InfoNoteModal';
+import NotePong from '../../UI/NotePong';
+import backendAPI from '../../../api/axios-instance';
+import errorAlert from '../../UI/errorAlert';
 import Typography from '@mui/joy/Typography';
 import Avatar from '@mui/material/Avatar';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
@@ -17,9 +23,10 @@ import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import PersonOffIcon from '@mui/icons-material/PersonOff';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import * as color from '../UI/colorsPong';
-import styles from './styles/PlayerCard.module.css';
-import { onBlockClick, onUnBlockClick } from '../chat/utils/onClickFunctions';
+import VoiceOverOffIcon from '@mui/icons-material/VoiceOverOff';
+import RecordVoiceOverIcon from '@mui/icons-material/RecordVoiceOver';
+import * as color from '../../UI/colorsPong';
+import styles from '../styles/PlayerCard.module.css';
 
 const InfoBlock = ({ player }: { player: PlayerProfile }) => {
   const navigate = useNavigate();
@@ -29,6 +36,7 @@ const InfoBlock = ({ player }: { player: PlayerProfile }) => {
   const [isFriendOfUser, setIsFriendOfUser] = useState<boolean>(false);
   const [openInvitationModal, setOpenInvitationModal] = useState(false);
   const [isBlocked, setIsBlocked] = useState<boolean>(false);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     if (user.nickname !== player.nickname) {
@@ -53,13 +61,13 @@ const InfoBlock = ({ player }: { player: PlayerProfile }) => {
 
   const handleBlock = async () => {
     if (isBlocked) {
-      await onUnBlockClick(socket, user, player.id)
+      await onUnBlockClick(socket, user, player.id);
       setIsBlocked(false);
     } else {
-      onBlockClick(socket, user, player.id)
+      onBlockClick(socket, user, player.id);
       setIsBlocked(true);
     }
-  }
+  };
 
   const handleFriend = () => {
     if (isFriendOfUser) {
@@ -137,6 +145,14 @@ const InfoBlock = ({ player }: { player: PlayerProfile }) => {
             startIcon={isFriendOfUser ? <PersonOffIcon /> : <PersonAddIcon />}
           />
           <ButtonPong
+            text={isBlocked ? 'Unblock' : 'Block'}
+            title={isBlocked ? 'Unblock this player' : 'Block this player'}
+            onClick={() => handleBlock()}
+            startIcon={
+              isBlocked ? <RecordVoiceOverIcon /> : <VoiceOverOffIcon />
+            }
+          />
+          <ButtonPong
             text={'Invite'}
             title={'Invite to play a game'}
             onClick={() => setOpenInvitationModal(true)}
@@ -150,23 +166,17 @@ const InfoBlock = ({ player }: { player: PlayerProfile }) => {
             startIcon={<VisibilityIcon />}
             disabled={player.status === 'PLAYING' ? false : true}
           />
-          <ButtonPong
-            text={isBlocked ? 'Unblock' : 'Block'}
-            title={
-              isBlocked ? 'Unblock this player' : 'Block this player'
-            }
-            onClick={() => handleBlock()}
-            startIcon={isBlocked ? <PersonAddIcon /> : <PersonOffIcon />}
-          />
+          <div>
+            <InfoNoteModal open={open} setOpen={setOpen} player={player} />
+            <NotePong setOpen={setOpen} />
+          </div>
         </div>
       )}
-      <div style={{ marginTop: '21px' }}>
-        <ButtonPong
-          text="Back"
-          onClick={() => navigate(-1)}
-          startIcon={<ArrowBackIosIcon />}
-        />
-      </div>
+      <ButtonPong
+        text="Back"
+        onClick={() => navigate(-1)}
+        startIcon={<ArrowBackIosIcon />}
+      />
     </div>
   );
 };

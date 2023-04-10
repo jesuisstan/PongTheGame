@@ -1,4 +1,4 @@
-import { ChatRoomType } from "./chat";
+import { ChatRoomType } from './chat';
 
 export type User = {
   avatar: string | undefined;
@@ -9,7 +9,7 @@ export type User = {
   role: string;
   blockedUsers: number[];
   joinedChatRoom: ChatRoomType | undefined;
-  status: string,
+  status: string;
   totpSecret: null | {
     verified: boolean;
   };

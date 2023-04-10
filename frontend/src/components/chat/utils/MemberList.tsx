@@ -1,22 +1,22 @@
 import * as React from 'react';
 import { useContext } from 'react';
-import { MemberType } from "../../../types/chat";
+import { MemberType } from '../../../types/chat';
 import { Box, Drawer, IconButton, List } from '@mui/material';
 import { PeopleAlt } from '@mui/icons-material';
 import UserMenu from './UserMenu';
 import { User } from '../../../types/User';
 
-type Anchor = "right";
+type Anchor = 'right';
 
 interface MemberListProps {
-	bannedUsers: User[];
+  bannedUsers: User[];
   members: MemberType[];
 }
 
 const MemberList = (props: MemberListProps) => {
   const [state, setState] = React.useState({
     right: false
-  });;
+  });
 
   const toggleDrawer =
     (anchor: Anchor, open: boolean) =>
@@ -41,11 +41,13 @@ const MemberList = (props: MemberListProps) => {
     >
       <List>
         {Object.keys(props.members).map((id, index) => (
-				<div key={ index } >
-          <UserMenu
-            member={props.members[id as any]} bannedUsers={props.bannedUsers} members={props.members}
-          />
-        </div>
+          <div key={index}>
+            <UserMenu
+              member={props.members[id as any]}
+              bannedUsers={props.bannedUsers}
+              members={props.members}
+            />
+          </div>
         ))}
       </List>
     </Box>
@@ -55,7 +57,9 @@ const MemberList = (props: MemberListProps) => {
     <div>
       {(['right'] as const).map((anchor) => (
         <React.Fragment key={anchor}>
-          <IconButton onClick={toggleDrawer(anchor, true)}><PeopleAlt className='black' /></IconButton>
+          <IconButton onClick={toggleDrawer(anchor, true)}>
+            <PeopleAlt className="black" />
+          </IconButton>
           <Drawer
             anchor={anchor}
             open={state[anchor]}
@@ -64,7 +68,7 @@ const MemberList = (props: MemberListProps) => {
             {list(anchor, props.members)}
           </Drawer>
         </React.Fragment>
-      ))} 
+      ))}
     </div>
   );
 };

@@ -23,7 +23,7 @@
   font-size: 40px;
   color: rgb(255, 144, 0);
   padding-left: 60px;
-  margin-top: 300px;
+  padding-top: 250px;
   text-align: left;
   transition: transform 0.5s ease-in-out, padding-left 0.5s ease-in-out;
 }

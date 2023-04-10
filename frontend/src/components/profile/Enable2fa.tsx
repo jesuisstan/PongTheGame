@@ -15,7 +15,7 @@ import SaveIcon from '@mui/icons-material/Save';
 import AdbIcon from '@mui/icons-material/Adb';
 import AppleIcon from '@mui/icons-material/Apple';
 import * as MUI from '../UI/MUIstyles';
-import * as color from '../UI/colorsPong'
+import * as color from '../UI/colorsPong';
 import styles from './styles/Profile.module.css';
 
 const Enable2fa = ({

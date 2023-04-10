@@ -37,8 +37,7 @@
 
 .benjamin {
   background: right/contain content-box border-box no-repeat
-    url('https://avatars.githubusercontent.com/u/14862819?v=4')
-    whitesmoke;
+    url('https://avatars.githubusercontent.com/u/14862819?v=4') whitesmoke;
   display: flex;
   flex-direction: column;
   min-width: 200px;
@@ -54,8 +53,7 @@
 
 .barbara {
   background: left/contain content-box border-box no-repeat
-    url('https://avatars.githubusercontent.com/u/55756205?v=4')
-    whitesmoke;
+    url('https://avatars.githubusercontent.com/u/55756205?v=4') whitesmoke;
   display: flex;
   flex-direction: column;
   min-width: 200px;
@@ -71,8 +69,7 @@
 
 .florian {
   background: right/contain content-box border-box no-repeat
-    url('https://avatars.githubusercontent.com/u/49709897?v=4')
-    whitesmoke;
+    url('https://avatars.githubusercontent.com/u/49709897?v=4') whitesmoke;
   display: flex;
   flex-direction: column;
   min-width: 200px;
@@ -88,8 +85,7 @@
 
 .stan {
   background: left/contain content-box border-box no-repeat
-    url('https://avatars.githubusercontent.com/u/82715902?v=4')
-    whitesmoke;
+    url('https://avatars.githubusercontent.com/u/82715902?v=4') whitesmoke;
   display: flex;
   flex-direction: column;
   min-width: 200px;
@@ -105,8 +101,7 @@
 
 .daisuke {
   background: right/contain content-box border-box no-repeat
-    url('https://avatars.githubusercontent.com/u/65622360?v=4')
-    whitesmoke;
+    url('https://avatars.githubusercontent.com/u/65622360?v=4') whitesmoke;
   display: flex;
   flex-direction: column;
   min-width: 200px;
@@ -121,7 +116,7 @@
 }
 
 .special {
-  background:whitesmoke;
+  background: whitesmoke;
   display: flex;
   flex-direction: column;
   min-width: 200px;
@@ -139,15 +134,15 @@
 .barbara:hover,
 .daisuke:hover,
 .stan:hover,
-.florian:hover, 
+.florian:hover,
 .special:hover {
   transform: scale(1.02);
 }
 
 @media (max-width: 660px) {
   .group {
-    margin-top: -230px;
-    margin-bottom: -220px;
-    transform: scale(0.6);
+    margin-top: -310px;
+    margin-bottom: -300px;
+    transform: scale(0.55);
   }
 }

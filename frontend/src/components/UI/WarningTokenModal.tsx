@@ -20,7 +20,7 @@ import * as color from './colorsPong';
 const URL_LOGOUT = `${process.env.REACT_APP_URL_BACKEND}/auth/logout`;
 const TIME: number = 10;
 
-const WarningModal = ({
+const WarningTokenModal = ({
   open,
   setOpen
 }: {
@@ -118,4 +118,4 @@ const WarningModal = ({
   );
 };
 
-export default WarningModal;
+export default WarningTokenModal;
