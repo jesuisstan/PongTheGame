@@ -135,7 +135,7 @@ export class Game {
       ).id;
     }
 
-    while (this.start_counter > 0) {
+    while (this.start_counter > 0 && this.status == Status.STARTING) {
       await this._wait(1000);
       this.start_counter--;
       this._send_to_players('match_starting', { time: this.start_counter });
@@ -145,6 +145,8 @@ export class Game {
       }
     }
     if (this.status == Status.ABORTED) {
+      this.websockets.send(this.player1.socket, "match_abort_during_begin", {});
+      this.websockets.send(this.player2?.socket, "match_abort_during_begin", {});
       this.end();
       return;
     }

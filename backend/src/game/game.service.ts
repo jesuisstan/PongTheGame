@@ -114,9 +114,9 @@ export class GameService {
     });
     if (!user) return { status: 403, reason: 'User not found' };
     const sockets: any = this.websocket.getSockets([user.id]);
+    if (!sockets[0]) return { status: 400, reason: 'Opponents log out' };
     this.register_quit(socket);
     this.register_quit(sockets[0]);
-    if (!sockets[0]) return { status: 400, reason: 'Opponents log out' };
     this.websocket.send(sockets[0], 'invitation_accepted', '');
     this.websocket.send(sockets[0], 'match_custom_start', '');
     this.websocket.send(socket, 'match_custom_start', '');
@@ -243,6 +243,8 @@ export class GameService {
       };
       this.websocket.send(player1, 'matchmaking', msg);
       this.websocket.send(player2, 'matchmaking', msg);
+      this.register_quit(player1);
+      this.register_quit(player2);
       const game = new Game(
         this.prisma,
         this.websocket,
