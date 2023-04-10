@@ -8,11 +8,11 @@ import { Socket } from 'socket.io-client';
       // Check if target is not already blocked
       for (let i=0; i < user.blockedUsers.length; ++i)
         if (user.blockedUsers[i] === target) return
-      user.blockedUsers.push(target)
-      await socket.emit('saveBlockedUserToDB', {
-        user: user,
-        blockedUsers: user.blockedUsers
-      })
+        await socket.emit('updateBlockedUsers', {
+          userId: user.id,
+          target: target,
+          disconnect: false,
+        })
       console.log("You've blocked " + target + "!")
     }
   }
@@ -22,12 +22,11 @@ import { Socket } from 'socket.io-client';
     ) => {
     if (user.id !== target) {
       for (var i=0; i < user.blockedUsers.length; ++i) {
-        if (user.blockedUsers[i] === target)
-        {
-          user.blockedUsers.splice(i, 1)
-          await socket.emit('saveBlockedUserToDB', {
-            user: user,
-            blockedUsers: user.blockedUsers
+        if (user.blockedUsers[i] === target) {
+          await socket.emit('updateBlockedUsers', {
+            userId: user.id,
+            target: target,
+            disconnect: true,
           })
           return;
         }

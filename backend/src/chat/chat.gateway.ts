@@ -252,15 +252,29 @@ export class ChatGateway {
     this.server.emit('kickUser', roomName, target);
   }
 
-  @SubscribeMessage('saveBlockedUserToDB')
-  async saveBlockedUsersToDB(
-    @MessageBody('user') user: User,
-    @MessageBody('blockedUsers') blockedUsers: number[],
+  @SubscribeMessage('updateBlockedUsers')
+  async updateBlockedUsers(
+    @MessageBody('userId') userId: number,
+    @MessageBody('target') target: number,
+    @MessageBody('disconnect') disconnect: boolean,
   ): Promise<void> {
-    const { id } = user;
+    if (disconnect) {
+      await this.prisma.user.update({
+        where: { id: userId},
+        data: {
+          blockedUsers: {
+            disconnect: { id: target }
+          }
+        },
+      });
+    }
     await this.prisma.user.update({
-      data: { blockedUsers },
-      where: { id },
+      where: { id: userId},
+      data: {
+        blockedUsers: {
+          connect: { id: target }
+        }
+      },
     });
   }
 }
