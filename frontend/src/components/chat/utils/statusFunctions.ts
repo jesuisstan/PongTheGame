@@ -19,7 +19,7 @@ export const checkIfBanned = (
 
 export const isUserBlocked = (user: User, target: number): boolean => {
   for (var i = 0; i < user.blockedUsers.length; ++i)
-    if (user.blockedUsers[i] === target) return true;
+    if (user.blockedUsers[i].id === target) return true;
   return false;
 };
 

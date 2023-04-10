@@ -7,7 +7,7 @@ export type User = {
   profileId: string;
   provider: string;
   role: string;
-  blockedUsers: number[];
+  blockedUsers: User[];
   joinedChatRoom: ChatRoomType | undefined;
   status: string;
   totpSecret: null | {
