@@ -75,15 +75,11 @@ const App = () => {
   });
 
   socket.on('error_socket', (args) => {
-<<<<<<< Updated upstream
     if (args.message === 'You are already connected') {
       setOpenWarningConnected(true);
     } else {
       setOpenWarningToken(true);
     }
-=======
-    setOpenWarning(true);
->>>>>>> Stashed changes
   });
 
   return (
