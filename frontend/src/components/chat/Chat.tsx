@@ -154,7 +154,7 @@ const Chat = () => {
     setChatRoomCreateMode(false);
     setChatRoomPassword('');
   };
-  // Handle value changes of the input fields during new chatroom create mode
+  // Handle value changes of the input fields during new chatroom creatmessagesToFiltere mode
   const onValueChange = (type: string, value: string) => {
     if (type === 'name') setNewChatRoomName(value);
     if (type === 'password') setChatRoomPassword(value);
