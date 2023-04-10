@@ -355,78 +355,91 @@ const Chat = () => {
           )}
           {/* Chatroom create mode form */}
           {chatRoomCreateMode && (
-					<div>
-						<Modal
-							className='black'
-							open={open}
-							onSubmit={onChatRoomCreateModeSubmit}
-							onClose={handleClose}>
-							<ModalDialog
-								aria-labelledby="basic-modal-dialog-title"
-								sx={MUI.modalDialog}>
-								<ModalClose onClick={handleClose}/>
-								<Typography
-									id="basic-modal-dialog-title"
-									component="h2"
-									className="modal-title">
-									Create room
-									</Typography>
-									<form onSubmit={onPasswordSubmit}>
-										<Stack spacing={2}>
-											<Stack spacing={1}>
-											<Typography component="h3" sx={{ color: 'rgb(37, 120, 204)' }}>
-												Type the Room name
-											</Typography>
-											<TextField
-												autoFocus
-												required={true}
-												helperText="Limit 20 characters"
-												inputProps={{ inputMode: 'text', maxLength: 20 }}
-												
-												id="name"
-												type="name"
-												value={newChatRoomName}
-												// helperText={error} // error message
-												// error={!!error} // set to true to change the border/helperText color to red
-												onChange={(e) => onValueChange('name', e.target.value)}
-											/>
-											</Stack>
-											<Stack spacing={1}>
-												<Typography component="h3" sx={{ color: 'rgb(37, 120, 204)' }}>
-												
-												</Typography>
-												<Typography>
-												Your are free to add a password or not.
-												</Typography>
-												<TextField
-												type="password"
-												value={chatRoomPassword}
-												placeholder="Password"
-												// helperText={error} // error message
-												// error={!!error} // set to true to change the border/helperText color to red
-												onChange={(e) => onValueChange('password', e.target.value)}
-											/>
-											</Stack>
-											<LoadingButton
-												type="submit"
-												onClick={onChatRoomCreateModeSubmit}
-												startIcon={<LockOpenRounded />}
-												variant="contained"
-												color="inherit"
-											>
-												CREATE
-											</LoadingButton>
-										</Stack>
-									</form>
-							</ModalDialog>
-						</Modal>
-				  </div>
-				)}
+            <div>
+              <Modal
+                className="black"
+                open={open}
+                onSubmit={onChatRoomCreateModeSubmit}
+                onClose={handleClose}
+              >
+                <ModalDialog
+                  aria-labelledby="basic-modal-dialog-title"
+                  sx={MUI.modalDialog}
+                >
+                  <ModalClose onClick={handleClose} />
+                  <Typography
+                    id="basic-modal-dialog-title"
+                    component="h2"
+                    className="modal-title"
+                  >
+                    Create room
+                  </Typography>
+                  <form onSubmit={onPasswordSubmit}>
+                    <Stack spacing={2}>
+                      <Stack spacing={1}>
+                        <Typography
+                          component="h3"
+                          sx={{ color: 'rgb(37, 120, 204)' }}
+                        >
+                          Type the Room name
+                        </Typography>
+                        <TextField
+                          autoFocus
+                          required={true}
+                          helperText="Limit 20 characters"
+                          inputProps={{ inputMode: 'text', maxLength: 20 }}
+                          id="name"
+                          type="name"
+                          value={newChatRoomName}
+                          // helperText={error} // error message
+                          // error={!!error} // set to true to change the border/helperText color to red
+                          onChange={(e) =>
+                            onValueChange('name', e.target.value)
+                          }
+                        />
+                      </Stack>
+                      <Stack spacing={1}>
+                        <Typography
+                          component="h3"
+                          sx={{ color: 'rgb(37, 120, 204)' }}
+                        ></Typography>
+                        <Typography>
+                          Your are free to add a password or not.
+                        </Typography>
+                        <TextField
+                          type="password"
+                          value={chatRoomPassword}
+                          placeholder="Password"
+                          // helperText={error} // error message
+                          // error={!!error} // set to true to change the border/helperText color to red
+                          onChange={(e) =>
+                            onValueChange('password', e.target.value)
+                          }
+                        />
+                      </Stack>
+                      <LoadingButton
+                        type="submit"
+                        onClick={onChatRoomCreateModeSubmit}
+                        startIcon={<LockOpenRounded />}
+                        variant="contained"
+                        color="inherit"
+                      >
+                        CREATE
+                      </LoadingButton>
+                    </Stack>
+                  </form>
+                </ModalDialog>
+              </Modal>
+            </div>
+          )}
         </Box>
         <Box component="main" id="chatRoom" className={user.joinedChatRoom ? "show-smartphone" : "hidden-smartphone"}>
           {user.joinedChatRoom &&
           ((isPasswordProtected && isPasswordRight) || !isPasswordProtected) ? (
-            <ChatRoom cleanRoomLoginData={cleanRoomLoginData} room={user.joinedChatRoom} />
+            <ChatRoom
+              cleanRoomLoginData={cleanRoomLoginData}
+              room={user.joinedChatRoom}
+            />
           ) : (
             <div className="black">
               <h2>Actually no room joined</h2>
@@ -435,7 +448,9 @@ const Chat = () => {
             </div>
           )}
         </Box>
-      </Box>  );
+      </div>
+    </Box>
+  );
 };
 
 export default Chat;
