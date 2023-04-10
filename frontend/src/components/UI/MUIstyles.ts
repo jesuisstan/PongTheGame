@@ -48,7 +48,8 @@ export const warningBoxStyle = {
   minWidth: '200px',
   alignItems: 'center',
   justifyContent: 'center',
-  paddingTop: '11px'
+  paddingTop: '11px',
+  textAlign: 'center',
 };
 
 export const burgerItem = {
