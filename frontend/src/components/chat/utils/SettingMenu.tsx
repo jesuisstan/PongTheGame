@@ -1,4 +1,4 @@
-import { Button, IconButton, Menu, MenuItem, Modal, Stack, TextField, Typography } from "@mui/material";
+import { Button, Divider, IconButton, Menu, MenuItem, Modal, Stack, TextField, Typography } from "@mui/material";
 import { ChatRoomType, MemberType } from "../../../types/chat";
 import AvatarBadge from "./AvatarBadge";
 import { AdminPanelSettings, Block, Clear, Delete, DeveloperMode, ExitToApp, HighlightOff, Mail, PanTool, Password, PersonAdd, Save, Settings, VolumeOff, VolumeUp } from "@mui/icons-material";
@@ -73,8 +73,11 @@ const SettingMenu = (setting: SettingMenuProps) => {
 				open={Boolean(anchorEl)}
 				onClose={handleClose}
 				className='black ' >
-					<div className="column">
-
+				<div className="column">
+					<Typography variant="h6" className='modal-title'>
+						{setting.roomName.toUpperCase()}
+					</Typography>
+					<Divider/>
 			{ // Begin of owner space for non protected rooms
 				(statusUtils.checkIfOwner(setting.owner, user.id))
 				&& isPwdProtected === false

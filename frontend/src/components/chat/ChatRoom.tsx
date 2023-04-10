@@ -1,22 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
 import { WebSocketContext } from '../../contexts/WebsocketContext';
 import {
-  Delete,
   ArrowBackIosNew,
-  Settings,
-  PersonAddAlt,
-  Password,
-  ExitToApp,
-  Clear,
-  PersonAdd,
-  VolumeUp,
-  VolumeOff,
-  Room,
-  Block,
-  HighlightOff,
-  AdminPanelSettings,
-  DeveloperMode,
-  Save
 } from '@mui/icons-material';
 import {
   Box,
@@ -26,12 +11,9 @@ import {
   Grid,
   IconButton,
   Stack,
-  Menu,
-  MenuItem,
   TextField,
   Typography,
   CircularProgress,
-  Modal
 } from '@mui/material';
 
 // personal components
@@ -42,11 +24,8 @@ import AvatarBadge from './utils/AvatarBadge';
 
 // personal css
 import './Chat.css';
-import * as MUI from '../UI/MUIstyles';
 import { User } from '../../types/User';
 import MemberList from './utils/MemberList';
-import { ModalClose, ModalDialog } from '@mui/joy';
-import { LoadingButton } from '@mui/lab';
 import * as statusUtils from './utils/statusFunctions';
 import SettingMenu from './utils/SettingMenu';
 
@@ -144,10 +123,11 @@ const ChatRoom = (props: ChatRoomProps) => {
   };
   findAllMessages();
 
-  /*************************************************************
-   * Event listeners
-   **************************************************************/
-  useEffect(() => {
+
+	/*************************************************************
+	* Event listeners
+	**************************************************************/
+  	useEffect(() => {
     // Activate listeners and subscribe to events as the component is mounted
     socket.on(
       'typingMessage',
@@ -287,12 +267,10 @@ const ChatRoom = (props: ChatRoomProps) => {
     <div id="chatBox">
       <div>
         <Box className="black" id="chatTitle">
-          <IconButton style={{ paddingRight: -1 }} onClick={onReturnClick}>
+          <IconButton onClick={onReturnClick}>
             <ArrowBackIosNew className="black" aria-label="return" />
           </IconButton>
-          <Typography sx={{ minWidth: 100 }}>
-            Lets chat here ! {props.room.name}
-          </Typography>
+          <Typography className="hidden-smartphone">{props.room.name}</Typography>
           <div style={{ display: 'flex', flexDirection: 'row' }}>
             <MemberList members={members} bannedUsers={bannedMembers} />
             <SettingMenu
@@ -306,86 +284,61 @@ const ChatRoom = (props: ChatRoomProps) => {
         <Grid container spacing={3}>
           <Grid sx={{ display: 'flex', flexGrow: '1' }}></Grid>
           <Grid item id="chat-window" xs={12}>
-            {messages.length === 0 ? (
-              <div className="black">No Message</div>
-            ) : (
-              <Stack className="message-area">
-                {' '}
-                {messages.map((msg, index) => (
-                  <div key={index}>
-                    {user.id === msg.author.id ? (
-                      <div className="msgRowR">
-                        <div className="msgRight msgBubble">
-                          <p className="msgText">{msg.data}</p>
-                          <div className="msgTime">
-                            {timeFromNow(msg.timestamp)}
-                          </div>
-                        </div>
+            {messages.length === 0 
+            ? <div className="black">No Message</div>
+            : <Stack className="message-area">
+              {' '}
+              {messages.map((msg, index) => (
+                <div key={index}>
+                  {user.id === msg.author.id
+                ? <div className="msgRowR">
+                    <div className="msgRight msgBubble">
+                      <p className="msgText">{msg.data}</p>
+                      <div className="msgTime">
+                        {timeFromNow(msg.timestamp)}
                       </div>
-                    ) : (
-                      // Is msg author mute or blocked ?
-                      // if yes, display nothing
-                      // if no, display message
-                      // !isMuted && !isBlocked ? <></> :
-                      <div className="msgRowL">
-                        <AvatarBadge
-                          nickname={msg.author.nickname}
-                          status={user.status} /* catch isOnline*/
-                          admin={statusUtils.checkIfAdmin(
-                            members,
-                            msg.author.id
-                          )}
-                          oper={statusUtils.checkIfOwner(
-                            props.room.owner,
-                            msg.author.id
-                          )}
-                          avatar={msg.author.avatar}
-                          look={true}
-                        />
-                        <div>
-                          <div className="msgLeft msgBubble">
-                            <p className="msgText">{msg.data}</p>
-                            <div className="msgTime">
-                              {timeFromNow(msg.timestamp)}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    )}
+                    </div>
                   </div>
-                ))}
-                <Grid item xs={10} className="chat-room-text">
-                  <div className="typingButton">
-                    {typingDisplay && (
-                      <div className="black">
-                        <CircularProgress color="inherit" />
-                        {typingDisplay}
-                      </div>
-                    )}
-                  </div>
-                  <FormControl fullWidth onSubmit={onFormSubmit}>
-                    <TextField
-                      value={messageText}
-                      label="Type your message here ..."
-                      variant="filled" //outlined, filled, standard
-                      multiline={false}
-                      onChange={(e: any) => onTyping(e.target.value)}
-                      onKeyPress={(ev) => {
-                        if (ev.key === 'Enter') {
-                          onFormSubmit(ev);
-                        }
-                      }}
-                    />
-                  </FormControl>
-                </Grid>
-              </Stack>
-            )}
-          </Grid>
-          <Grid sx={{ display: 'flex', flexGrow: '1' }}></Grid>
-        </Grid>
-      </div>
-    </div>
-  );
+                : <div className="msgRowL">
+								  <AvatarBadge
+								  	nickname={msg.author.nickname}
+								  	status={user.status}/* catch isOnline*/
+								  	admin={statusUtils.checkIfAdmin(members, msg.author.id)}
+								  	oper={statusUtils.checkIfOwner(props.room.owner, msg.author.id)}
+								  	avatar={msg.author.avatar}
+								  	look={false}/>
+								  <div>
+								  	<div className="msgLeft msgBubble">
+								  		<p className="msgText">{msg.data}</p>
+								  		<div className="msgTime">{timeFromNow(msg.timestamp)}</div>
+								  	</div>
+								  </div>
+							  </div>}
+						  </div>))}	
+						</Stack>}
+						<Grid item xs={10} className="chat-room-text">
+              <div className='typingButton hidden-smartphone'>
+                {	typingDisplay && <div className='black'><CircularProgress color="inherit" />{typingDisplay}</div> }
+              </div>
+                <FormControl fullWidth onSubmit={onFormSubmit}>
+                  <TextField
+                    value={messageText}
+                    label="Type your message here ..."
+                    variant="filled" //outlined, filled, standard
+                    multiline={false}
+                    onChange={(e: any) => onTyping(e.target.value)}
+                    onKeyPress={(ev) => {
+                      if (ev.key === 'Enter') {
+                        onFormSubmit(ev);}}}
+                  />
+                </FormControl>
+						</Grid>
+					</Grid>
+					<Grid sx={{display: 'flex',	flexGrow: '1'}}></Grid>
+				</Grid>
+			</div>
+		</div>
+      );
 };
 
 export default ChatRoom;

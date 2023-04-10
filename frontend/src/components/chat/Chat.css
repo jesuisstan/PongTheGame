@@ -1,21 +1,15 @@
 #basicCard {
-  width: 100%;
-  height: 100%;
   margin-top: 44px;
-  margin-bottom: 22px;
+  margin-bottom: 12px;
   align-self: center;
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  flex-direction: row;
+  background-size: cover;
 }
 
 #chatRoomList {
   flex-grow: 1;
   padding: 5px;
-  width: 30vw;
-  min-width: 100px;
-  max-width: 250px;
   height: calc(100vh - 56px);
   min-height: 650px;
   background-color: rgba(0, 0, 0, 0.8);
@@ -24,15 +18,115 @@
 #chatRoom {
   flex-grow: 1;
   padding: 15px;
-  width: 70vw;
-  min-width: calc(100vw - 190px);
-  max-width: calc(100vw - 250px);
   height: calc(100vh - 56px);
   min-height: 650px;
   background-color: rgba(255, 255, 255, 0.8);
   display: flex;
-  /* align-items: center; */
   justify-content: center;
+}
+
+#chatBox {
+  width: 100%;
+  height: auto;
+  min-height: 647px;
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+  justify-content: space-around;
+}
+
+#chat-window {
+  width: 70vw;
+  max-width: 700px;
+  height: 83vh;
+  min-height: 565px;
+  position: relative;
+  margin-top: 35px;
+  margin-left: 20px;
+  background-color: rgba(163, 143, 164, 0.364);
+  border-radius: 20px;
+  display: flex;
+  justify-content: center;
+  flex-grow: 3;
+}
+
+.chat-room-text {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+  position: absolute;
+  bottom: 20px;
+}
+
+.message-area {
+  max-width: 1000px;
+  width: auto;
+  padding: 10px;
+  justify-content: flex-start;
+  display: flex;
+  overflow-y: overlay;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+  flex-grow: 2;
+}
+
+@media (max-width: 550px) {
+  .hidden-smartphone {
+    display: none;
+  }
+  .show-smartphone {
+    display: block;
+  }
+  #chatRoomList {
+    width: 100%;
+  }
+  #chatRoom ,
+  #basicCard {
+    width: 100%;
+    min-width: 100px;
+  }
+  .chat-room-text {
+    width: 100%;
+    right: 5vw;
+  }
+  .message-area {
+    height: 90vh;
+  }
+}
+
+@media (min-width: 550px) {
+  .hidden-smartphone {
+    display: block;
+  }
+  .show-smartphone {
+    display: block;
+  }
+  #chatRoomList {
+    width: 30vw;
+    min-width: 175px;
+    max-width: 250px;
+  }
+  #chatRoom {
+    width: 70vw;
+    min-width: 100px;
+    max-width: calc(100vw - 250px);
+  }
+  #basicCard {
+    width: 100%;
+    min-width: 100px;
+  }
+  .chat-room-text {
+    width: 70vw;
+    max-width: 1100px;
+    right: 5vw;
+  }
+  .typingButton {
+    display: inline-block;
+  }
+  .message-area {
+    height: 70vh;
+  }
 }
 
 .column {
@@ -42,22 +136,12 @@
   justify-content: flex-end;
 }
 
-#chatBox {
-  width: 70vw;
-  height: auto;
-  min-height: 647px;
-  display: flex;
-  flex-direction: column;
-  align-content: center;
-  justify-content: space-around;
-}
-
 #chatTitle {
   display: flex;
   align-items: center;
   text-align: center;
   flex-direction: row;
-  justify-content: space-around;
+  justify-content: space-between;
 }
 
 #send-msg {
@@ -72,47 +156,13 @@
   color: black;
 }
 
-#chat-window {
-  height: 83vh;
-  min-height: 565px;
-  max-width: 700px;
-  position: relative;
-  margin-top: 35px;
-  margin-left: 20px;
-  background-color: rgba(163, 143, 164, 0.364);
-  border-radius: 45px;
-  display: flex;
-  justify-content: flex-end;
-  flex-grow: 3;
-}
-
 #chat-window-messages {
   height: 100%;
   overflow-y: overlay;
   overflow-wrap: break-word;
-}
+  word-wrap: break-word;
+  white-space: pre-wrap;
 
-.chat-room-text {
-  width: 70vw;
-  max-width: 1100px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-around;
-  position: absolute;
-  bottom: 20px;
-  right: 5vw;
-}
-
-.message-area {
-  max-width: 1000px;
-  width: auto;
-  height: 70vh;
-  padding: 10px;
-  justify-content: flex-start;
-  display: flex;
-  overflow-y: overlay;
-  flex-grow: 2;
 }
 
 .limitText {
@@ -141,7 +191,6 @@
   font-size: 10px;
   text-align: center;
   flex-direction: column;
-  display: inline-block;
   transition-duration: 0.4s;
   border-radius: 5px;
 }
@@ -182,7 +231,7 @@
 }
 .msgLeft {
   position: relative;
-  margin-left: 20px;
+  margin-left: 10px;
   margin-bottom: 10px;
   padding: 10px;
   background-color: rgb(237, 100, 146);
@@ -215,7 +264,7 @@
 }
 .msgRight {
   position: relative;
-  margin-right: 20px;
+  margin-right: 10px;
   margin-bottom: 10px;
   padding: 10px;
   background-color: #eed0f1;

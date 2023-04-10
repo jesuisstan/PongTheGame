@@ -232,131 +232,119 @@ const Chat = () => {
   ) : (
     <Box id="basicCard">
       <CssBaseline />
-      <div style={{ display: 'flex', flexDirection: 'row', width: '100%', height: '100%' }}>
-        <Box component="main" id="chatRoomList">
-          {chatRooms.length === 0 ? (
-            <Box>
-              <List>
-                <ListItem>
-                  <ListItemText
-                    primary={
-                      'No channel joined. Click to the + button for create one.'
-                    }
-                    sx={{ color: 'white' }}
-                  />
-                </ListItem>
-              </List>
-            </Box>
-          ) : (
-            <Box>
-              <List>
-                {/* Mapping chatroom array to retrieve all chatrooms with */}
-                {chatRooms.map(
-                  (room: ChatRoomType, index) =>
-                    // Check if this isn't a private conversation of other users
-                    isAuthorizedPrivRoom(room.modes, room.members) && (
-                      <ListItem key={index} disablePadding>
-                        <ListItemIcon sx={{ color: 'white' }}>
-                          {room.modes === 'p' ? (
-                            <LockRounded />
-                          ) : room.modes === 'i' ? (
-                            <Person2Rounded />
-                          ) : (
-                            <TagRounded />
-                          )}
-                        </ListItemIcon>
-                        {clickedRoomToJoin === room.name &&
-                          room.modes.indexOf('p') !== -1 && (
-                            // If 'password protected' mode is found, launch the password dialog
-                            // if the room is already joined, don't display the password dialog
-                            <Modal
-                              className="black"
-                              open={openP}
-                              onClose={handleClosePass}
-                            >
-                              <ModalDialog
-                                aria-labelledby="basic-modal-dialog-title"
-                                sx={MUI.modalDialog}
-                              >
-                                <ModalClose onClick={handleClosePass} />
-                                <Typography
-                                  id="basic-modal-dialog-title"
-                                  component="h2"
-                                  className="modal-title"
-                                >
-                                  Enter password
-                                </Typography>
-                                <form onSubmit={onPasswordSubmit}>
-                                  <Stack spacing={2}>
-                                    <Typography
-                                      component="h3"
-                                      sx={{ color: 'rgb(37, 120, 204)' }}
-                                    >
-                                      Type the Room password
-                                    </Typography>
-                                    <Stack spacing={1}>
-                                      <Typography>
-                                        Please enter the password to join this
-                                        channel
-                                      </Typography>
-                                      <div></div>
-                                    </Stack>
-                                    <TextField
-                                      autoFocus
-                                      required
-                                      type="password"
-                                      inputRef={(input) => {
-                                        if (input != null) input.focus();
-                                      }}
-                                      value={inputPassword}
-                                      inputProps={{
-                                        minLength: 6,
-                                        maxLength: 6
-                                      }}
-                                      placeholder="Password"
-                                      // helperText={error} // error message
-                                      // error={!!error} // set to true to change the border/helperText color to red
-                                      onChange={(e) =>
-                                        setInputPassword(e.target.value)
-                                      }
-                                    />
-                                    <LoadingButton
-                                      type="submit"
-                                      onClick={onPasswordSubmit}
-                                      startIcon={<LockOpenRounded />}
-                                      variant="contained"
-                                      color="inherit"
-                                    >
-                                      SEND
-                                    </LoadingButton>
-                                  </Stack>
-                                </form>
-                              </ModalDialog>
-                            </Modal>
-                          )}
-                        <ListItemButton
-                          onClick={() => onClickJoinRoom(room.name, room.modes)}
-                        >
-                          <ListItemText
-                            tabIndex={-1}
-                            primary={
-                              room.name[0] === '#'
-                                ? room.name.slice(1)
-                                : room.name
-                              // Slicing the '#' character at position 0 which is
-                              // used for private room names
-                            }
-                            className="limitText white"
-                          />
-                          <ListItemIcon sx={{ color: 'white' }}>
-                            <ArrowForwardIos />
-                          </ListItemIcon>
-                        </ListItemButton>
-                      </ListItem>
-                    )
+      <Box component="main" id="chatRoomList" className={user.joinedChatRoom ? "hidden-smartphone" : "show-smartphone"}>
+        {chatRooms.length === 0 ? (
+          <Box>
+            <List>
+              <ListItem>
+                <ListItemText
+                  primary={
+                    'No channel joined. Click to the + button for create one.'
+                  }
+                  sx={{ color: 'white' }}
+                />
+              </ListItem>
+            </List>
+          </Box>
+        ) : (
+          <Box>
+            <List>
+              {/* Mapping chatroom array to retrieve all chatrooms with */}
+              {chatRooms.map(
+                (room: ChatRoomType, index) =>
+                  // Check if this isn't a private conversation of other users
+                  isAuthorizedPrivRoom(room.modes, room.members) &&
+                  <ListItem key={index} disablePadding>
+                    <ListItemIcon sx={{ color: 'white' }}>
+                      {
+                      room.modes === "p" ? (
+                        <LockRounded />
+                      ) : room.modes === "i" ? (
+                        <Person2Rounded />) : (
+                        <TagRounded />
+                      ) }
+                    </ListItemIcon>
+                    {clickedRoomToJoin === room.name &&
+                      room.modes.indexOf('p') !== -1 && (
+                        // If 'password protected' mode is found, launch the password dialog
+                        // if the room is already joined, don't display the password dialog
+													<Modal
+														className='black'
+														open={openP}
+														onClose={handleClosePass}>
+														<ModalDialog
+															aria-labelledby="basic-modal-dialog-title"
+															sx={MUI.modalDialog}>
+															<ModalClose onClick={handleClosePass}/>
+															<Typography 
+										            id="basic-modal-dialog-title"
+																component="h2"
+																className="modal-title">
+																Enter password
+																</Typography>
+																<form onSubmit={onPasswordSubmit}>
+																	<Stack spacing={2}>
+																		<Typography component="h3" sx={{ color: 'rgb(37, 120, 204)' }}>
+																			Type the Room password
+																		</Typography>
+																		<Stack spacing={1}>
+																			<Typography>
+																				Please enter the password to join this channel
+																			</Typography>
+																			<div>
+																			</div>
+																		</Stack>
+																		<TextField
+																			autoFocus
+																			required
+																			type="password"
+																			inputRef={(input) => {
+																				if (input != null) input.focus();
+																			}}
+																			value={inputPassword}
+																			inputProps={{
+																				minLength: 6,
+																				maxLength: 6
+																			}}
+																			placeholder="Password"
+																			// helperText={error} // error message
+																			// error={!!error} // set to true to change the border/helperText color to red
+																			onChange={(e) =>
+																				setInputPassword(e.target.value)
+																			}
+																		/>
+																		<LoadingButton
+																			type="submit"
+																			onClick={onPasswordSubmit}
+																			startIcon={<LockOpenRounded />}
+																			variant="contained"
+																			color="inherit"
+																		>
+																			SEND
+																		</LoadingButton>
+																	</Stack>
+																</form>
+														</ModalDialog>
+													</Modal>
+                      )}
+                    <ListItemButton onClick={() => onClickJoinRoom(room.name, room.modes)}>
+                      <ListItemText
+                        tabIndex={-1}
+                        primary={
+                          room.name[0] === '#' ? room.name.slice(1) : room.name
+                          // Slicing the '#' character at position 0 which is
+                          // used for private room names
+                        }
+                        className="limitText white"
+                        />
+                      <ListItemIcon sx={{ color: 'white' }}>
+                        <ArrowForwardIos />
+                      </ListItemIcon>
+                    </ListItemButton>
+                  </ListItem>
                 )}
               </List>
-            </Box>
+          </Box>
           )}
           {/* Button that gets into chatroom create mode */}
           {chatRooms.length <
@@ -445,7 +433,7 @@ const Chat = () => {
             </div>
           )}
         </Box>
-        <Box component="main" id="chatRoom">
+        <Box component="main" id="chatRoom" className={user.joinedChatRoom ? "show-smartphone" : "hidden-smartphone"}>
           {user.joinedChatRoom &&
           ((isPasswordProtected && isPasswordRight) || !isPasswordProtected) ? (
             <ChatRoom
@@ -460,7 +448,6 @@ const Chat = () => {
             </div>
           )}
         </Box>
-      </div>
     </Box>
   );
 };
