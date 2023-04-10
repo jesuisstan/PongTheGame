@@ -1,5 +1,6 @@
 import { useContext, useState } from 'react';
 import { UserContext } from '../../../contexts/UserContext';
+import { isUserBlocked } from '../../chat/utils/statusFunctions';
 import InvitationSendModal from '../invitation/InvitationSendModal';
 import errorAlert from '../../UI/errorAlert';
 import IconButton from '@mui/material/IconButton';
@@ -21,6 +22,9 @@ const LobbySearchBar = () => {
     if (newValue === user.nickname) {
       setSearchValue('');
       errorAlert(`It's you. Come on! Try again, please`);
+    } else if (isUserBlocked(user, null, newValue)) {
+      setSearchValue('');
+      errorAlert(`Unblock ${newValue} before inviting to your game`);
     } else if (newValue.match(/^[A-Za-z0-9_-]*$/)) {
       setSearchValue(newValue);
       setError('');
