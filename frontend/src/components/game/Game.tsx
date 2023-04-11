@@ -11,6 +11,8 @@ import { GameStatusContext } from '../../contexts/GameStatusContext';
 import { GameResultContext } from '../../contexts/GameResultContext';
 import styles from './styles/Game.module.css';
 
+const COUNTDOWN_SECONDS: number = 5;
+
 const Game = () => {
   const socket = useContext(WebSocketContext);
   const { user } = useContext(UserContext);
@@ -70,7 +72,7 @@ const Game = () => {
           <CountdownModal
             open={!openCount}
             setOpen={setOpenCount}
-            seconds={5}
+            seconds={COUNTDOWN_SECONDS}
           />
         )}
         {gameStatus === GameStatus.PLAYING && (
