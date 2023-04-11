@@ -6,6 +6,7 @@ import {
   WebSocketServer,
   WsException,
 } from '@nestjs/websockets';
+import { Logger } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
 import { ChatService } from './chat.service';
 import { ChatRoomDto, MessageDto } from './dto/chat.dto';
@@ -22,6 +23,7 @@ export class ChatGateway {
   @WebSocketServer()
   server: Server;
   websocket: any;
+  private readonly logger = new Logger(ChatGateway.name);
 
   constructor(
     private readonly prisma: PrismaService,
@@ -54,15 +56,15 @@ export class ChatGateway {
     @MessageBody('avatar') avatar: string,
     @MessageBody('user2Id') user2Id: number | undefined,
     @MessageBody('user2Nick') user2Nick: string | undefined,
-  ): Promise<void> {
+  ): Promise<number> {
     // First, check if max chat room limit hasn't been reached
     if (
       (await this.prisma.chatRoom.count()) >=
       parseInt(process.env.REACT_APP_MAX_CHATROOM_NBR!)
-    )
-      throw new WsException({
-        msg: 'createChatRoom: Max chat room number reached!',
-      });
+    ) {
+      this.logger.verbose('createChatRoom: Max chat room number reached!');
+      return 409;
+    }
     // Then, check if the room name already exists
     const r: ChatRoomDto | null = await this.chatService.getChatRoomByName(
       room.name,
@@ -73,9 +75,8 @@ export class ChatGateway {
         (r.modes.search('i') !== -1 && user2Id) ||
         (r.modes.search('i') === -1 && room.modes.search('i') === -1)
       )
-        throw new WsException({
-          msg: 'createChatRoom: room name is already taken!',
-        });
+        this.logger.verbose('createChatRoom: room name is already taken!');
+      return 412;
     }
     // In case of a private room, the name of the room is in the form:
     // #user1user2 => avoid creating doubles in the form #user2user1
@@ -83,10 +84,10 @@ export class ChatGateway {
       const roomName: string = '#' + user2Nick + '/' + user1.nickname;
       const privRoom: ChatRoomDto | null =
         await this.chatService.getChatRoomByName(roomName);
-      if (privRoom)
-        throw new WsException({
-          msg: 'createChatRoom: room name is already taken!',
-        });
+      if (privRoom) {
+        this.logger.verbose('createChatRoom: room name is already taken!');
+        return 412;
+      }
     }
     // Set 'password protected' mode
     if (room.password) room.modes = 'p';
@@ -100,6 +101,7 @@ export class ChatGateway {
       // Broadcast newly created room to all users
       this.server.emit('createChatRoom', room.name);
     }
+    return 0;
   }
 
   @SubscribeMessage('findAllMessages')

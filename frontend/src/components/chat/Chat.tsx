@@ -1,38 +1,11 @@
 import { useContext, useEffect, useState, useRef } from 'react';
 import * as React from 'react';
-import {
-  Box,
-  List,
-  ListItem,
-  TextField,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  ListItemIcon,
-  ListItemText,
-  ListItemButton,
-  CssBaseline,
-  ListItemSecondaryAction,
-  Modal,
-  Typography,
-  Stack
-} from '@mui/material';
-import {
-  TagRounded,
-  LockRounded,
-  ArrowForwardIos,
-  AddCircleOutline,
-  LockOpenRounded,
-  Person2Rounded
-} from '@mui/icons-material';
-
+import { Box, List, ListItem, TextField, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, ListItemIcon, ListItemText, ListItemButton, CssBaseline, ListItemSecondaryAction, Modal, Typography, Stack } from '@mui/material';
+import { TagRounded, LockRounded, ArrowForwardIos, AddCircleOutline, LockOpenRounded, Person2Rounded, Password } from '@mui/icons-material';
 import { ModalClose, ModalDialog } from '@mui/joy';
 import { LoadingButton } from '@mui/lab';
-
 // personal components
+import errorAlert from '../UI/errorAlert';
 import { UserContext } from '../../contexts/UserContext';
 import { WebSocketContext } from '../../contexts/WebsocketContext';
 import ChatRoom from './ChatRoom';
@@ -95,6 +68,19 @@ const Chat = () => {
   const handleClose = () => {
     setOpen(false);
   };
+  const warningName = () => {
+    setOpen(false);
+    errorAlert('Room name already used');
+  };
+  const warningRoomLimit = () => {
+    setOpen(false);
+    errorAlert('Room limit reached (30 max)');
+  };
+  const warningEmptyName = () => {
+    setOpen(false);
+    errorAlert('Room name cannot be empty');
+  };
+
   const [openP, setOpenPass] = React.useState(false);
   const handleClickOpenP = () => {
     setOpenPass(true);
@@ -102,6 +88,15 @@ const Chat = () => {
   const handleClosePass = () => {
     setOpenPass(false);
   };
+  const warningWrongPass = () => {
+    setOpenPass(false);
+    errorAlert("Password dismatch");
+  };
+  const warningEmptyPass = () => {
+    setOpenPass(false);
+    errorAlert('Password cannot be empty');
+  };
+
 
   /*************************************************************
    * Event listeners
@@ -133,6 +128,7 @@ const Chat = () => {
 
   const onChatRoomCreateModeSubmit = async (e: any) => {
     e.preventDefault();
+    if (newChatRoomName.length == 0) warningEmptyName();
     if (newChatRoomName)
       await socket.emit('createChatRoom', {
         room: {
@@ -149,7 +145,12 @@ const Chat = () => {
         avatar: user.avatar,
         user2Id: undefined,
         user2Nick: undefined
-      });
+      },
+      (response: number) => {
+        if (response === 412) warningName();
+        else if (response === 409) warningRoomLimit();
+      }
+    );
     setNewChatRoomName('');
     setChatRoomCreateMode(false);
     setChatRoomPassword('');
@@ -201,7 +202,12 @@ const Chat = () => {
           if (response === true) {
             joinRoom(clickedRoomToJoin);
             setIsPasswordRight(true);
-          } else setIsPasswordRight(false);
+          }
+          else {
+            if (inputPassword.length == 0) warningEmptyPass();
+            else warningWrongPass();
+            setIsPasswordRight(false);
+          }
         }
       );
     }

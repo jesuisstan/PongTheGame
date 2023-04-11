@@ -65,7 +65,7 @@
   padding: 10px;
   justify-content: flex-start;
   display: flex;
-  overflow-y: overlay;
+  overflow-y: scroll;
   word-wrap: break-word;
   white-space: pre-wrap;
   flex-grow: 2;
@@ -316,4 +316,8 @@
 
 .black {
   color: black;
+}
+
+.gray {
+  color: gray;
 }
