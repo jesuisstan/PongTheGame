@@ -172,6 +172,11 @@ export class GameService {
         },
       });
     if (!invit) return;
+    const inviteUserSocket: Socket[] = this.websocket.getSockets([
+      invit.sendToId,
+    ]);
+    if (!inviteUserSocket[0]) return;
+    this.websocket.send(inviteUserSocket[0], 'match_invitation_canceled', {});
     this._delete_user_invitations(user.id);
   }
 
@@ -195,6 +200,13 @@ export class GameService {
     if (!user) return { status: 404, reason: 'user not found' };
     const socketUserCreate: Socket[] = this.websocket.getSockets([user.id]);
     this.websocket.send(socketUserCreate[0], 'invitation_refused', '');
+    const invit: MatchInvitation | null =
+      await this.prisma.matchInvitation.findUnique({
+        where: {
+          createdById: user.id,
+        },
+      });
+    if (!invit) return;
     this._delete_user_invitations(user.id);
   }
 
