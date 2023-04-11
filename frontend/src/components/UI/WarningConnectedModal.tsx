@@ -2,10 +2,13 @@ import { useState, SetStateAction, Dispatch } from 'react';
 import LoadingButton from '@mui/lab/LoadingButton';
 import Modal from '@mui/joy/Modal';
 import ModalDialog from '@mui/joy/ModalDialog';
+import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
-import Box from '@mui/material/Box';
+import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import * as MUI from './MUIstyles';
+
+const URL_LOGOUT = `${process.env.REACT_APP_URL_BACKEND}/auth/logout`;
 
 const WarningConnectedModal = ({
   open,
@@ -16,9 +19,14 @@ const WarningConnectedModal = ({
 }) => {
   const [load, setLoad] = useState(false);
 
-  const handleClick = (): void => {
+  const handleDaccordClick = (): void => {
     setLoad(true);
     window.location.href = 'https://en.wikipedia.org/wiki/Pong';
+  };
+
+  const handleLogoutClick = (): void => {
+    setLoad(true);
+    window.location.href = URL_LOGOUT;
   };
 
   return (
@@ -31,9 +39,9 @@ const WarningConnectedModal = ({
           <Typography sx={MUI.modalHeader}>Attention!</Typography>
           <Box sx={MUI.warningBoxStyle}>
             <Typography>
-              Gaming session is already running in another tab.
+              Gaming session is already running in another tab or web browser.
               <br />
-              Please close this tab and return to the previously opened one to
+              Please close this page and return to the previously opened one to
               continue.
             </Typography>
             <div
@@ -50,9 +58,34 @@ const WarningConnectedModal = ({
                 loadingPosition="end"
                 variant="contained"
                 color="inherit"
-                onClick={handleClick}
+                onClick={handleDaccordClick}
               >
                 D'Accord
+              </LoadingButton>
+            </div>
+            <Typography>
+              Or just logout to get rid of this notification.
+              <br />
+              (this will end the session in current browser)
+            </Typography>
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+            >
+              <LoadingButton
+                type="submit"
+                loading={load}
+                endIcon={<ExitToAppIcon />}
+                loadingPosition="end"
+                variant="contained"
+                color="inherit"
+                onClick={handleLogoutClick}
+              >
+                Logout
               </LoadingButton>
             </div>
           </Box>

@@ -19,10 +19,7 @@ const LobbySearchBar = () => {
   const handleTextInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = event.target.value;
 
-    if (newValue === user.nickname) {
-      setSearchValue('');
-      errorAlert(`It's you. Come on! Try again, please`);
-    } else if (isUserBlocked(user, null, newValue)) {
+    if (isUserBlocked(user, null, newValue)) {
       setSearchValue('');
       errorAlert(`Unblock ${newValue} before inviting to your game`);
     } else if (newValue.match(/^[A-Za-z0-9_-]*$/)) {
@@ -36,7 +33,9 @@ const LobbySearchBar = () => {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (searchValue && !error) {
+    if (searchValue === user.nickname) {
+      errorAlert('Do you want to invite yourself? So selfish...');
+    } else if (searchValue && !error) {
       setOpen(true);
     }
   };
