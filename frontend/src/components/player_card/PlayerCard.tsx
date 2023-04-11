@@ -6,13 +6,14 @@ import { PlayerProfile } from '../../types/PlayerProfile';
 import PleaseLogin from '../pages/PleaseLogin';
 import NotFound from '../pages/NotFound';
 import InfoBlock from './management/InfoBlock';
-import FriendsBlock from './friends/FriendsBlock';
+import FriendsBlock from './friends_list/FriendsBlock';
 import AchievementsBlock from './achievements/AchievementsBlock';
 import MatchHistoryBlock from './match_history/MatchHistoryBlock';
 import backendAPI from '../../api/axios-instance';
 import errorAlert from '../UI/errorAlert';
 import DeviderPong from '../UI/DeviderPong';
 import styles from './styles/PlayerCard.module.css';
+import BlackListBlock from './black_list/BlackListBlock';
 
 const PlayerCard = () => {
   const socket = useContext(WebSocketContext);
@@ -64,6 +65,10 @@ const PlayerCard = () => {
         <DeviderPong />
         <FriendsBlock player={player} socketEvent={socketEvent} />
         <DeviderPong />
+        {user.nickname === player.nickname && (
+          <BlackListBlock socketEvent={socketEvent} />
+        )}
+        {user.nickname === player.nickname && <DeviderPong />}
         <AchievementsBlock player={player} socketEvent={socketEvent} />
         <DeviderPong />
         <MatchHistoryBlock player={player} socketEvent={socketEvent} />

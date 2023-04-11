@@ -35,12 +35,12 @@
 }
 
 .basicInfoBlock {
+  min-width: 210px;
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
+  align-items: center;
   gap: 21px;
-  min-width: 210px;
 }
 
 .achieveBlock {
@@ -82,7 +82,7 @@
   padding-top: 10px;
 }
 
-@media (width <= 700px) {
+@media (width <= 800px) {
   .playerCard {
     line-height: 1.4;
     flex-direction: column;

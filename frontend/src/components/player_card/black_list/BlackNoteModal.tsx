@@ -1,12 +1,12 @@
 import { SetStateAction, Dispatch } from 'react';
 import Modal from '@mui/joy/Modal';
 import ModalDialog from '@mui/joy/ModalDialog';
+import Box from '@mui/material/Box';
 import ModalClose from '@mui/joy/ModalClose';
 import Typography from '@mui/joy/Typography';
-import Box from '@mui/material/Box';
 import * as MUI from '../../UI/MUIstyles';
 
-const HistoryNoteModal = ({
+const BlackNoteModal = ({
   open,
   setOpen
 }: {
@@ -23,10 +23,10 @@ const HistoryNoteModal = ({
         <Typography sx={MUI.modalHeader}>Note</Typography>
         <Box sx={MUI.warningBoxStyle}>
           <Typography>
-            Match history includes{' '}
-            <span style={{ fontWeight: 'bold' }}>online</span> games played.
+            Black List contains players been blocked by you.
             <br />
-            Training with AI does not come into count.
+            Invitations to play game cannot be neither received from nor sent to
+            blocked players.
           </Typography>
         </Box>
       </ModalDialog>
@@ -34,4 +34,4 @@ const HistoryNoteModal = ({
   );
 };
 
-export default HistoryNoteModal;
+export default BlackNoteModal;

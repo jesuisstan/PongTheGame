@@ -70,7 +70,9 @@ const InfoNoteModal = ({
               wordWrap: 'break-word'
             }}
           >
-            <Typography>* Required player's status - ONLINE & UNBLOCKED.</Typography>
+            <Typography>
+              * Required player's status - ONLINE & UNBLOCKED.
+            </Typography>
             <br />
             <Typography>** Required player's status - PLAYING.</Typography>
           </Typography>

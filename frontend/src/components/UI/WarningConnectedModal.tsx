@@ -28,7 +28,7 @@ const WarningConnectedModal = ({
           aria-labelledby="basic-modal-dialog-title"
           sx={MUI.modalDialog}
         >
-          <Typography sx={MUI.modalHeader}> Attention!</Typography>
+          <Typography sx={MUI.modalHeader}>Attention!</Typography>
           <Box sx={MUI.warningBoxStyle}>
             <Typography>
               Gaming session is already running in another tab.

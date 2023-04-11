@@ -28,12 +28,13 @@ import VoiceOverOffIcon from '@mui/icons-material/VoiceOverOff';
 import RecordVoiceOverIcon from '@mui/icons-material/RecordVoiceOver';
 import * as color from '../../UI/colorsPong';
 import styles from '../styles/PlayerCard.module.css';
+import { AxiosError } from 'axios';
 
 const InfoBlock = ({ player }: { player: PlayerProfile }) => {
   const navigate = useNavigate();
   const socket = useContext(WebSocketContext);
   const { setGameStatus } = useContext(GameStatusContext);
-  const { user } = useContext(UserContext);
+  const { user, setUser } = useContext(UserContext);
   const [isFriendOfUser, setIsFriendOfUser] = useState<boolean>(false);
   const [openInvitationModal, setOpenInvitationModal] = useState(false);
   const [isBlocked, setIsBlocked] = useState<boolean>(false);
@@ -72,12 +73,34 @@ const InfoBlock = ({ player }: { player: PlayerProfile }) => {
 
   const handleBlock = async () => {
     if (isBlocked) {
-      await onUnBlockClick(socket, user, player.id);
+      try {
+        await onUnBlockClick(socket, user, player.id);
+      } catch (error) {
+        const err = error as AxiosError<any>;
+        const message =
+          err.response?.data?.message ?? 'Failed to unblock the player';
+        errorAlert(`${message}! Try again.`);
+      }
       setIsBlocked(false);
     } else {
-      onBlockClick(socket, user, player.id);
+      try {
+        await onBlockClick(socket, user, player.id);
+      } catch (error) {
+        const err = error as AxiosError<any>;
+        const message =
+          err.response?.data?.message ?? 'Failed to block the player';
+        errorAlert(`${message}! Try again.`);
+      }
       setIsBlocked(true);
     }
+    backendAPI.get('/auth/getuser').then(
+      (response) => {
+        setUser(response.data);
+      },
+      (error) => {
+        errorAlert('Failed to fetch your profile data from server');
+      }
+    );
   };
 
   const handleFriend = () => {
