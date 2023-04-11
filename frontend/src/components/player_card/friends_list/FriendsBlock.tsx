@@ -9,7 +9,7 @@ import FriendsNoteModal from './FriendsNoteModal';
 import Typography from '@mui/joy/Typography';
 import Avatar from '@mui/material/Avatar';
 import IconButton from '@mui/material/IconButton';
-import RefreshIcon from '@mui/icons-material/Refresh';
+import LoopIcon from '@mui/icons-material/Loop';
 import * as color from '../../UI/colorsPong';
 import styles from '../styles/PlayerCard.module.css';
 import NotePong from '../../UI/NotePong';
@@ -101,7 +101,7 @@ const FriendsBlock = ({
           title={'Refresh the list'}
           onClick={() => fetchFriendsList()}
         >
-          <RefreshIcon
+          <LoopIcon
             fontSize="large"
             sx={{
               color: 'black',
