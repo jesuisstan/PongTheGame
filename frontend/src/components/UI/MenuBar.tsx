@@ -1,6 +1,7 @@
 import { useState, useContext } from 'react';
 import { NavigateOptions, NavLink, useNavigate } from 'react-router-dom';
 import { UserContext } from '../../contexts/UserContext';
+import BadgePong from './BadgePong';
 import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
@@ -58,7 +59,10 @@ const MenuBar = () => {
             <Tooltip title="Open profile menu">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                 <MoreVertIcon style={{ fill: color.PONG_WHITE }} />
-                <Avatar alt="" src={user.avatar} />
+                <BadgePong player={user}>
+                  <Avatar alt="" src={user.avatar} />
+                </BadgePong>
+
                 <div className={styles.nickname}>{user.nickname}</div>
               </IconButton>
             </Tooltip>
