@@ -285,7 +285,7 @@ export class ChatGateway {
   ): Promise<void> {
     if (disconnect) {
       await this.prisma.user.update({
-        where: { id: userId},
+        where: { id: userId },
         data: {
           blockedUsers: {
             disconnect: { id: target }
@@ -294,7 +294,7 @@ export class ChatGateway {
       });
     } else {
       await this.prisma.user.update({
-        where: { id: userId},
+        where: { id: userId },
         data: {
           blockedUsers: {
             connect: { id: target }

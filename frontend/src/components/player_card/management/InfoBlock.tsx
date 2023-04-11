@@ -62,7 +62,7 @@ const InfoBlock = ({ player }: { player: PlayerProfile }) => {
 
   useEffect(() => {
     if (user.nickname !== player.nickname) {
-      if (isUserBlocked(user, player.id)) {
+      if (isUserBlocked(user, player.id, null)) {
         setIsBlocked(true);
       } else {
         setIsBlocked(false);
@@ -75,7 +75,7 @@ const InfoBlock = ({ player }: { player: PlayerProfile }) => {
       await onUnBlockClick(socket, user, player.id);
       setIsBlocked(false);
     } else {
-      onBlockClick(socket, user, player.id);
+      await onBlockClick(socket, user, player.id);
       setIsBlocked(true);
     }
   };

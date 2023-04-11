@@ -1,12 +1,11 @@
-import { Button, IconButton, Menu, MenuItem } from "@mui/material";
+import { Button, Menu, MenuItem } from "@mui/material";
 import { MemberType } from "../../../types/chat";
 import AvatarBadge from "./AvatarBadge";
-import { 	AdminPanelSettings, Block, Clear, HighlightOff, Mail,
+import { 	AdminPanelSettings, Block, HighlightOff, Mail,
 					PanTool, PersonAdd, VolumeOff, VolumeUp
 } from "@mui/icons-material";
-import { useState } from "react";
 import IconPersoButton from "./IconPersoButton";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from 'react';
 import { UserContext } from "../../../contexts/UserContext";
 import * as statusUtils from "./statusFunctions";
 import * as onClickUtils from "./onClickFunctions";
@@ -23,8 +22,9 @@ interface UserMenuProps {
 const UserMenu = (props: UserMenuProps) => {
   const socket = useContext(WebSocketContext);
   const navigate = useNavigate();
-  const { user, setUser } = useContext(UserContext);
+  const { user } = useContext(UserContext);
   const [anchorAvatar, setAnchorAvatar] = useState<null | HTMLElement>(null);
+  const [isBlocked, setIsBlocked] = useState<boolean>(false);
 
   const handleAClick = (event: any) => {
     setAnchorAvatar(event.currentTarget);
@@ -37,6 +37,27 @@ const UserMenu = (props: UserMenuProps) => {
   const handleProfileRedirect = () => {
     const link = '/players/' + props.member.nickName;
     navigate(link);
+  };
+
+  useEffect(() => {
+	console.log('chaaaaangfe')
+    if (user.id !== props.member.memberId) {
+      if (statusUtils.isUserBlocked(user, props.member.memberId, null)) {
+        setIsBlocked(true);
+      } else {
+        setIsBlocked(false);
+      }
+    }
+  }, [user.blockedUsers]);
+
+  const handleBlock = async () => {
+    if (isBlocked) {
+      await onClickUtils.onUnBlockClick(socket, user, props.member.memberId);
+      setIsBlocked(false);
+    } else {
+      await onClickUtils.onBlockClick(socket, user, props.member.memberId);
+      setIsBlocked(true);
+    }
   };
 
   return (
@@ -74,11 +95,11 @@ const UserMenu = (props: UserMenuProps) => {
 						user.id !== props.member.memberId &&
 					<>
 						<IconPersoButton // Block button
-							cond={statusUtils.isUserBlocked(user, props.member.memberId)}
-							true={() => onClickUtils.onUnBlockClick(socket, user, props.member.memberId)}
+							cond={isBlocked}
+							true={() => handleBlock()}
 							icon={<PanTool className='gray'/>}
 							text='Unblock'
-							false={() => onClickUtils.onBlockClick(socket, user, props.member.memberId)}
+							false={() => handleBlock()}
 							iconAlt={<PanTool className='black'/>}
 							textAlt='Block'/>
 					{ // If it is not a private conversation

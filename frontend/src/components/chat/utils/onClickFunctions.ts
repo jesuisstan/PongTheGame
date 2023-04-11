@@ -5,14 +5,16 @@ import { Socket } from 'socket.io-client';
   export const onBlockClick = async(socket: Socket, user: User, target: number
     ) => {
     if (user.id !== target) {
+      console.log('fsfdghjhfdsghjvfdffff: '+target)
+
       // Check if target is not already blocked
       for (let i=0; i < user.blockedUsers.length; ++i)
         if (user.blockedUsers[i].id === target) return
-        await socket.emit('updateBlockedUsers', {
-          userId: user.id,
-          target: target,
-          disconnect: false,
-        })
+      await socket.emit('updateBlockedUsers', {
+        userId: user.id,
+        target: target,
+        disconnect: false,
+      })
       console.log("You've blocked " + target + "!")
     }
   }
@@ -21,17 +23,17 @@ import { Socket } from 'socket.io-client';
   export const onUnBlockClick = async(socket: Socket, user: User, target: number
     ) => {
     if (user.id !== target) {
-      for (var i=0; i < user.blockedUsers.length; ++i) {
+      for (let i=0; i < user.blockedUsers.length; ++i) {
         if (user.blockedUsers[i].id === target) {
           await socket.emit('updateBlockedUsers', {
             userId: user.id,
             target: target,
             disconnect: true,
           })
+		      console.log("You've unblocked " + target + "!")
           return;
         }
       }
-		  console.log("You've unblocked " + target + "!")
     }
   }
 

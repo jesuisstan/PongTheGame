@@ -45,7 +45,7 @@ const ChatRoom = (props: ChatRoomProps) => {
    * States
    **************************************************************/
   const socket = useContext(WebSocketContext);
-  const { user, setUser } = useContext(UserContext);
+  const { user } = useContext(UserContext);
   // Array including all members
   const [members, setMembers] = useState<MemberType[]>(props.room.members);
   // Array including all the banned users from the room
