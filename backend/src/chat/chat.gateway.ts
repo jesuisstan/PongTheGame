@@ -285,20 +285,20 @@ export class ChatGateway {
   ): Promise<void> {
     if (disconnect) {
       await this.prisma.user.update({
-        where: { id: userId},
+        where: { id: userId },
         data: {
           blockedUsers: {
-            disconnect: { id: target }
-          }
+            disconnect: { id: target },
+          },
         },
       });
     } else {
       await this.prisma.user.update({
-        where: { id: userId},
+        where: { id: userId },
         data: {
           blockedUsers: {
-            connect: { id: target }
-          }
+            connect: { id: target },
+          },
         },
       });
     }

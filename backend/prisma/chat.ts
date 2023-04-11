@@ -1,5 +1,5 @@
-import {Prisma} from '@prisma/client';
-import {prisma} from './seed';
+import { Prisma } from '@prisma/client';
+import { prisma } from './seed';
 
 export async function insert_General() {
   console.log('Creation chan General');
@@ -14,7 +14,7 @@ export async function insert_General() {
     name: 'VIP',
     owner: 1,
     modes: 'p',
-    password: "TopSecret",
+    password: 'TopSecret',
     userLimit: 0,
   };
   await prisma.chatRoom.create({
