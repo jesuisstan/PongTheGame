@@ -239,7 +239,7 @@ const Chat = () => {
               <ListItem>
                 <ListItemText
                   primary={
-                    'No channel joined. Click to the + button for create one.'
+                    'No channel joined.'
                   }
                   sx={{ color: 'white' }}
                 />
@@ -285,7 +285,7 @@ const Chat = () => {
 																<form onSubmit={onPasswordSubmit}>
 																	<Stack spacing={2}>
 																		<Typography component="h3" sx={{ color: 'rgb(37, 120, 204)' }}>
-																			Type the Room password
+																			This room is password protected
 																		</Typography>
 																		<Stack spacing={1}>
 																			<Typography>
@@ -303,8 +303,7 @@ const Chat = () => {
 																			}}
 																			value={inputPassword}
 																			inputProps={{
-																				minLength: 6,
-																				maxLength: 6
+																				minLength: 1
 																			}}
 																			placeholder="Password"
 																			// helperText={error} // error message
@@ -349,9 +348,12 @@ const Chat = () => {
           {/* Button that gets into chatroom create mode */}
           {chatRooms.length <
             parseInt(process.env.REACT_APP_MAX_CHATROOM_NBR!) && (
+          <div className="white column"><br/>
+              Click to + for create new room <br/><br/>
             <Button onClick={onNewClick} sx={{ color: 'white' }}>
               <AddCircleOutline />
             </Button>
+          </div>
           )}
           {/* Chatroom create mode form */}
           {chatRoomCreateMode && (
