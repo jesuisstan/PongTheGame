@@ -11,9 +11,9 @@ import Avatar from '@mui/material/Avatar';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import * as MUI from '../UI/MUIstyles';
 import * as color from '../UI/colorsPong';
-import styles from './styles/VictoryModal.module.css';
+import styles from './styles/ResultsModal.module.css';
 
-const VictoryModal = ({
+const ResultsModal = ({
   open,
   setOpen,
   gameResult
@@ -62,14 +62,14 @@ const VictoryModal = ({
                 />
                 {'\n'}
                 {gameResult?.loser.name} left the game {'\n'}
-                and receives technical lose
+                and suffers a technical defeat.
               </Typography>
             )}
             <Typography
               sx={{ color: 'black', textAlign: 'center', marginTop: '10px' }}
             >
               {gameResult?.winner.name ? gameResult?.winner.name : 'AI'} wins
-              the round
+              the match
             </Typography>
             <div className={styles.scoreBlock}>
               <Avatar
@@ -117,4 +117,4 @@ const VictoryModal = ({
   );
 };
 
-export default VictoryModal;
+export default ResultsModal;

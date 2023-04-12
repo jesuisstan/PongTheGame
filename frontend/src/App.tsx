@@ -12,7 +12,7 @@ import AppRoutes from './AppRoutes';
 import Verify2fa from './components/profile/Verify2fa';
 import InvitationReceivedModal from './components/game/invitation/InvitationReceivedModal';
 import backendAPI from './api/axios-instance';
-import VictoryModal from './components/game/VictoryModal';
+import ResultsModal from './components/game/ResultsModal';
 import WarningTokenModal from './components/UI/WarningTokenModal';
 import WarningConnectedModal from './components/UI/WarningConnectedModal';
 import './App.css';
@@ -24,7 +24,7 @@ const App = () => {
   const [openWarningToken, setOpenWarningToken] = useState(false);
   const [openWarningConnected, setOpenWarningConnected] = useState(false);
   const [gameResult, setGameResult] = useState<GameResult | null>(null);
-  const [openVictoryModal, setOpenVictoryModal] = useState(false);
+  const [openResultsModal, setOpenResultsModal] = useState(false);
 
   const [user, setUser] = useState<User>({
     avatar: undefined,
@@ -113,9 +113,9 @@ const App = () => {
                   setOpen={setOpenWarningConnected}
                 />
                 {gameStatus === GameStatus.ENDED && (
-                  <VictoryModal
-                    open={!openVictoryModal}
-                    setOpen={setOpenVictoryModal}
+                  <ResultsModal
+                    open={!openResultsModal}
+                    setOpen={setOpenResultsModal}
                     gameResult={gameResult}
                   />
                 )}
