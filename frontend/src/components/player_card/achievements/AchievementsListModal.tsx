@@ -7,7 +7,6 @@ import ModalDialog from '@mui/joy/ModalDialog';
 import ModalClose from '@mui/joy/ModalClose';
 import Typography from '@mui/joy/Typography';
 import * as MUI from '../../UI/MUIstyles';
-import * as color from '../../UI/colorsPong';
 
 const AchievementsListModal = ({
   open,

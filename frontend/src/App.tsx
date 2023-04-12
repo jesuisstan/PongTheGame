@@ -89,7 +89,7 @@ const App = () => {
         setOpenWarningToken(true);
       }
     });
-  }, [user]);
+  }, [user, socket]);
 
   return (
     <WebSocketContext.Provider value={socket}>

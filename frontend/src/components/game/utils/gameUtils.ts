@@ -40,7 +40,7 @@ const drawNet = (
   canvasWidth: number,
   canvasHeight: number
 ) => {
-  new Array(canvasHeight).fill(0).map((c, i) => {
+  new Array(canvasHeight).fill(0).forEach((c, i) => {
     if (i % 40 === 0) {
       makeRectangleShape(
         canvasContext,

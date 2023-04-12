@@ -66,7 +66,7 @@ const Profile = () => {
         }
       );
     }
-  }, [user.nickname]);
+  }, [user]);
 
   return !user.nickname && user.provider ? (
     <EditNickname open={true} setOpen={setModalNicknameOpen} />
