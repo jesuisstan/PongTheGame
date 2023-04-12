@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { SetStateAction, Dispatch, useContext, useEffect } from 'react';
+import { SetStateAction, Dispatch, useContext } from 'react';
 import { GameStatus, GameResult } from './game.interface';
 import { GameStatusContext } from '../../contexts/GameStatusContext';
 import Modal from '@mui/joy/Modal';

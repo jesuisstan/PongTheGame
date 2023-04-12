@@ -95,7 +95,7 @@ const Pong = (props: GameProps) => {
     return () => {
       clearInterval(intervalId);
     };
-  }, [players, socket]);
+  }, [players]);
 
   return (
     <div className={styles.canvasBlock}>
