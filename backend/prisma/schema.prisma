@@ -21,7 +21,7 @@ model User {
   profileId    String
   provider     String
   blockedUsers User[]      @relation("BlockedUsers")
-  blocked      User[]      @relation("BlockedUsers")
+  blockedBy    User[]      @relation("BlockedUsers")
   status       StatusUser  @default(ONLINE)
   totpSecret   TotpSecret?
   role         Role        @default(USER)

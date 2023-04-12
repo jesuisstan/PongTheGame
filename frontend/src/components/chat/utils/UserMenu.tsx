@@ -21,8 +21,8 @@ interface UserMenuProps {
 
 const UserMenu = (props: UserMenuProps) => {
   const socket = useContext(WebSocketContext);
+  const { user, setUser } = useContext(UserContext);
   const navigate = useNavigate();
-  const { user } = useContext(UserContext);
   const [anchorAvatar, setAnchorAvatar] = useState<null | HTMLElement>(null);
   const [isBlocked, setIsBlocked] = useState<boolean>(false);
 
@@ -40,7 +40,6 @@ const UserMenu = (props: UserMenuProps) => {
   };
 
   useEffect(() => {
-	console.log('chaaaaangfe')
     if (user.id !== props.member.memberId) {
       if (statusUtils.isUserBlocked(user, props.member.memberId, null)) {
         setIsBlocked(true);
@@ -50,14 +49,60 @@ const UserMenu = (props: UserMenuProps) => {
     }
   }, [user.blockedUsers]);
 
-  const handleBlock = async () => {
-    if (isBlocked) {
-      await onClickUtils.onUnBlockClick(socket, user, props.member.memberId);
-      setIsBlocked(false);
-    } else {
-      await onClickUtils.onBlockClick(socket, user, props.member.memberId);
-      setIsBlocked(true);
+
+  // When clicking on the 'block' button to block a user
+  const onBlockClick = (target: number) => {
+    if (user.id !== target) {
+      // Check if target is not already blocked
+      try {
+        for (let i=0; i < user.blockedUsers.length; ++i)
+          if (user.blockedUsers[i].id === target) return;
+          socket.emit('updateBlockedUsers', {
+          userId: user.id,
+          target: target,
+          disconnect: false,
+          }, (res: User) => {
+				res.joinedChatRoom = user.joinedChatRoom;
+				setUser(res)
+			})
+		console.log('UserId: ' + target + 'has been blocked!');
+		return;
+      } catch (err) { console.log ('ERROR: ' + err);}
     }
+  }
+
+  // When clicking on the 'block' button to unblock a user
+  const onUnBlockClick = (target: number)=> {
+    if (user.id !== target) {
+
+      try {
+        for (let i=0; i < user.blockedUsers.length; ++i) {
+          if (user.blockedUsers[i].id === target) {
+            socket.emit('updateBlockedUsers', {
+              userId: user.id,
+              target: target,
+              disconnect: true,
+            }, (res: User) => {
+					res.joinedChatRoom = user.joinedChatRoom; 
+					setUser(res);
+				});
+			console.log('UserId: ' + target + 'has been unblocked!');
+			return;
+          }
+        }
+      }catch (err) { console.log('ERROR: ' + err); }
+    }
+  }
+
+  const handleBlock = async() => {
+    if (isBlocked) {
+		onUnBlockClick(props.member.memberId)
+		setIsBlocked(false);
+    } else {
+		onBlockClick(props.member.memberId)
+		setIsBlocked(true);
+	}
+
   };
 
   return (

@@ -282,7 +282,7 @@ export class ChatGateway {
     @MessageBody('userId') userId: number,
     @MessageBody('target') target: number,
     @MessageBody('disconnect') disconnect: boolean,
-  ): Promise<void> {
+  ): Promise<User | null> {
     if (disconnect) {
       await this.prisma.user.update({
         where: { id: userId },
@@ -302,5 +302,8 @@ export class ChatGateway {
         },
       });
     }
+    return await this.prisma.user.findUnique({
+      where: { id: userId },
+      include: { blockedUsers: true }})
   }
 }
