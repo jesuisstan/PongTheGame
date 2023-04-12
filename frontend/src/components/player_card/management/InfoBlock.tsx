@@ -24,11 +24,7 @@ import VoiceOverOffIcon from '@mui/icons-material/VoiceOverOff';
 import RecordVoiceOverIcon from '@mui/icons-material/RecordVoiceOver';
 import * as color from '../../UI/colorsPong';
 import styles from '../styles/PlayerCard.module.css';
-<<<<<<< HEAD
 import { User } from '../../../types/User';
-=======
-import { AxiosError } from 'axios';
->>>>>>> upstream/master
 
 const InfoBlock = ({ player }: { player: PlayerProfile }) => {
   const navigate = useNavigate();
@@ -47,7 +43,7 @@ const InfoBlock = ({ player }: { player: PlayerProfile }) => {
           let userFriendsList: PlayerProfile[] = response.data.friends;
           let isFriend = userFriendsList.find(
             (friend) => friend.nickname === player.nickname
-          );
+          );  
           if (isFriend) {
             setIsFriendOfUser(true);
           } else {
@@ -116,43 +112,12 @@ const InfoBlock = ({ player }: { player: PlayerProfile }) => {
 
   const handleBlock = () => {
     if (isBlocked) {
-<<<<<<< HEAD
 		onUnBlockClick(player.id)
 		setIsBlocked(false);
     } else {
 		onBlockClick(player.id)
 		setIsBlocked(true);
 	}
-=======
-      try {
-        await onUnBlockClick(socket, user, player.id);
-      } catch (error) {
-        const err = error as AxiosError<any>;
-        const message =
-          err.response?.data?.message ?? 'Failed to unblock the player';
-        errorAlert(`${message}! Try again.`);
-      }
-      setIsBlocked(false);
-    } else {
-      try {
-        await onBlockClick(socket, user, player.id);
-      } catch (error) {
-        const err = error as AxiosError<any>;
-        const message =
-          err.response?.data?.message ?? 'Failed to block the player';
-        errorAlert(`${message}! Try again.`);
-      }
-      setIsBlocked(true);
-    }
-    backendAPI.get('/auth/getuser').then(
-      (response) => {
-        setUser(response.data);
-      },
-      (error) => {
-        errorAlert('Failed to fetch your profile data from server');
-      }
-    );
->>>>>>> upstream/master
   };
 
   const handleFriend = () => {
