@@ -63,21 +63,21 @@ const InvitationSendModal = ({
           nickname: invitee
         },
         (response: any) => {
-          if (response.status === 400) {
-            if (response.reason === 'Invitation already send') {
-              reject((response.error = 'Invitation is already sent'));
-            } else {
-              reject((response.error = `${invitee} is occupied`));
-            }
-          } else if (response.status === 403) {
+          if (response.status === 200) {
+            resolve(response);
+            setInvitationSent(true);
+          } else if (response.status === 400) {
+            reject((response.error = `${invitee} is occupied`));
+          } else if (response.status === 404) {
             reject(
               (response.error = `Player with nickname "${invitee}" was not found`)
             );
-          } else if (response.status !== 200) {
-            reject((response.error = 'Something went wrong'));
+          } else if (response.status === 429) {
+            reject((response.error = 'Invitation is already sent'));
+          } else if (response.status === 406) {
+            reject((response.error = `${invitee} has blocked you`));
           } else {
-            resolve(response);
-            setInvitationSent(true);
+            reject((response.error = 'Something went wrong'));
           }
         }
       );

@@ -65,13 +65,13 @@
   padding: 10px;
   justify-content: flex-start;
   display: flex;
-  overflow-y: overlay;
+  overflow-y: scroll;
   word-wrap: break-word;
   white-space: pre-wrap;
   flex-grow: 2;
 }
 
-@media (max-width: 550px) {
+@media (max-width: 680px) {
   .hidden-smartphone {
     display: none;
   }
@@ -85,17 +85,18 @@
   #basicCard {
     width: 100%;
     min-width: 100px;
+    
   }
   .chat-room-text {
     width: 100%;
     right: 5vw;
   }
   .message-area {
-    height: 90vh;
+    height: 85%;
   }
 }
 
-@media (min-width: 550px) {
+@media (min-width: 680px) {
   .hidden-smartphone {
     display: block;
   }
@@ -316,4 +317,17 @@
 
 .black {
   color: black;
+}
+
+.gray {
+  color: gray;
+}
+
+.link {
+  color: #000000;
+  text-decoration: underline;
+}
+.link:hover {
+  color: #5e5d5e;
+  text-decoration: none;
 }

@@ -1,38 +1,11 @@
 import { useContext, useEffect, useState, useRef } from 'react';
 import * as React from 'react';
-import {
-  Box,
-  List,
-  ListItem,
-  TextField,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  ListItemIcon,
-  ListItemText,
-  ListItemButton,
-  CssBaseline,
-  ListItemSecondaryAction,
-  Modal,
-  Typography,
-  Stack
-} from '@mui/material';
-import {
-  TagRounded,
-  LockRounded,
-  ArrowForwardIos,
-  AddCircleOutline,
-  LockOpenRounded,
-  Person2Rounded
-} from '@mui/icons-material';
-
+import { Box, List, ListItem, TextField, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, ListItemIcon, ListItemText, ListItemButton, CssBaseline, ListItemSecondaryAction, Modal, Typography, Stack } from '@mui/material';
+import { TagRounded, LockRounded, ArrowForwardIos, AddCircleOutline, LockOpenRounded, Person2Rounded, Password } from '@mui/icons-material';
 import { ModalClose, ModalDialog } from '@mui/joy';
 import { LoadingButton } from '@mui/lab';
-
 // personal components
+import errorAlert from '../UI/errorAlert';
 import { UserContext } from '../../contexts/UserContext';
 import { WebSocketContext } from '../../contexts/WebsocketContext';
 import ChatRoom from './ChatRoom';
@@ -95,6 +68,19 @@ const Chat = () => {
   const handleClose = () => {
     setOpen(false);
   };
+  const warningName = () => {
+    setOpen(false);
+    errorAlert('Room name already used');
+  };
+  const warningRoomLimit = () => {
+    setOpen(false);
+    errorAlert('Room limit reached (30 max)');
+  };
+  const warningEmptyName = () => {
+    setOpen(false);
+    errorAlert('Room name cannot be empty');
+  };
+
   const [openP, setOpenPass] = React.useState(false);
   const handleClickOpenP = () => {
     setOpenPass(true);
@@ -102,6 +88,15 @@ const Chat = () => {
   const handleClosePass = () => {
     setOpenPass(false);
   };
+  const warningWrongPass = () => {
+    setOpenPass(false);
+    errorAlert("Password dismatch");
+  };
+  const warningEmptyPass = () => {
+    setOpenPass(false);
+    errorAlert('Password cannot be empty');
+  };
+
 
   /*************************************************************
    * Event listeners
@@ -133,6 +128,7 @@ const Chat = () => {
 
   const onChatRoomCreateModeSubmit = async (e: any) => {
     e.preventDefault();
+    if (newChatRoomName.length == 0) warningEmptyName();
     if (newChatRoomName)
       await socket.emit('createChatRoom', {
         room: {
@@ -149,7 +145,12 @@ const Chat = () => {
         avatar: user.avatar,
         user2Id: undefined,
         user2Nick: undefined
-      });
+      },
+      (response: number) => {
+        if (response === 412) warningName();
+        else if (response === 409) warningRoomLimit();
+      }
+    );
     setNewChatRoomName('');
     setChatRoomCreateMode(false);
     setChatRoomPassword('');
@@ -201,7 +202,12 @@ const Chat = () => {
           if (response === true) {
             joinRoom(clickedRoomToJoin);
             setIsPasswordRight(true);
-          } else setIsPasswordRight(false);
+          }
+          else {
+            if (inputPassword.length == 0) warningEmptyPass();
+            else warningWrongPass();
+            setIsPasswordRight(false);
+          }
         }
       );
     }
@@ -239,7 +245,7 @@ const Chat = () => {
               <ListItem>
                 <ListItemText
                   primary={
-                    'No channel joined. Click to the + button for create one.'
+                    'No channel joined.'
                   }
                   sx={{ color: 'white' }}
                 />
@@ -285,7 +291,7 @@ const Chat = () => {
 																<form onSubmit={onPasswordSubmit}>
 																	<Stack spacing={2}>
 																		<Typography component="h3" sx={{ color: 'rgb(37, 120, 204)' }}>
-																			Type the Room password
+																			This room is password protected
 																		</Typography>
 																		<Stack spacing={1}>
 																			<Typography>
@@ -303,8 +309,7 @@ const Chat = () => {
 																			}}
 																			value={inputPassword}
 																			inputProps={{
-																				minLength: 6,
-																				maxLength: 6
+																				minLength: 1
 																			}}
 																			placeholder="Password"
 																			// helperText={error} // error message
@@ -349,9 +354,12 @@ const Chat = () => {
           {/* Button that gets into chatroom create mode */}
           {chatRooms.length <
             parseInt(process.env.REACT_APP_MAX_CHATROOM_NBR!) && (
+          <div className="white column"><br/>
+              Click to + for create new room <br/><br/>
             <Button onClick={onNewClick} sx={{ color: 'white' }}>
               <AddCircleOutline />
             </Button>
+          </div>
           )}
           {/* Chatroom create mode form */}
           {chatRoomCreateMode && (

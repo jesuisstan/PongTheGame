@@ -35,17 +35,23 @@ export class GameService {
     socket: any,
     payload: any,
   ): Promise<{ status: number; reason: string }> {
-    const user: { id: number; status: StatusUser } | null =
-      await this.prisma.user.findUnique({
-        where: {
-          nickname: payload.nickname,
-        },
-        select: {
-          id: true,
-          status: true,
-        },
-      });
-    if (!user) return { status: 403, reason: 'User not found' };
+    const user: {
+      id: number;
+      status: StatusUser;
+      blockedUsers: User[];
+    } | null = await this.prisma.user.findUnique({
+      where: {
+        nickname: payload.nickname,
+      },
+      select: {
+        id: true,
+        status: true,
+        blockedUsers: true,
+      },
+    });
+    if (!user) return { status: 404, reason: 'User not found' };
+    if (user.blockedUsers.find((user) => user.nickname == socket.user.nickname))
+      return { status: 406, reason: 'User blocked you' };
     if (user.status == 'PLAYING')
       return { status: 400, reason: 'User Already in game' };
     const already_exist = await this.prisma.matchInvitation.findMany({
@@ -54,7 +60,7 @@ export class GameService {
       },
     });
     if (already_exist.length > 0)
-      return { status: 400, reason: 'Invitation already send' };
+      return { status: 429, reason: 'Invitation already send' };
     const invited_socket: Socket[] = this.websocket.getSockets([user.id]);
     if (!invited_socket || !invited_socket[0])
       return { status: 400, reason: 'User offline' };
@@ -172,6 +178,11 @@ export class GameService {
         },
       });
     if (!invit) return;
+    const inviteUserSocket: Socket[] = this.websocket.getSockets([
+      invit.sendToId,
+    ]);
+    if (!inviteUserSocket[0]) return;
+    this.websocket.send(inviteUserSocket[0], 'match_invitation_canceled', {});
     this._delete_user_invitations(user.id);
   }
 
@@ -195,6 +206,13 @@ export class GameService {
     if (!user) return { status: 404, reason: 'user not found' };
     const socketUserCreate: Socket[] = this.websocket.getSockets([user.id]);
     this.websocket.send(socketUserCreate[0], 'invitation_refused', '');
+    const invit: MatchInvitation | null =
+      await this.prisma.matchInvitation.findUnique({
+        where: {
+          createdById: user.id,
+        },
+      });
+    if (!invit) return;
     this._delete_user_invitations(user.id);
   }
 

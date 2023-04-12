@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
-import { Navigate, BrowserRouter } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 import { UserContext } from './contexts/UserContext';
 import { User } from './types/User';
 import { Invitation } from './types/Invitation';
@@ -7,6 +7,7 @@ import { WebSocketContext } from './contexts/WebsocketContext';
 import { GameResultContext } from './contexts/GameResultContext';
 import { GameStatusContext } from './contexts/GameStatusContext';
 import { GameResult, GameStatus } from './components/game/game.interface';
+import { isUserBlocked } from './components/chat/utils/statusFunctions';
 import AppRoutes from './AppRoutes';
 import Verify2fa from './components/profile/Verify2fa';
 import InvitationReceivedModal from './components/game/invitation/InvitationReceivedModal';
@@ -15,7 +16,6 @@ import VictoryModal from './components/game/VictoryModal';
 import WarningTokenModal from './components/UI/WarningTokenModal';
 import WarningConnectedModal from './components/UI/WarningConnectedModal';
 import './App.css';
-import { isUserBlocked } from './components/chat/utils/statusFunctions';
 
 const App = () => {
   const socket = useContext(WebSocketContext);
@@ -66,28 +66,30 @@ const App = () => {
     );
   }, []);
 
-  socket.on('invitation_game', (args) => {
-    if (isUserBlocked(user, null, args.from.nickname)) {
-      socket.emit('match_invitation_refused', {
-        nickname: args.from.nickname
-      });
-    } else {
-      setInvitation(args);
-      setOpenInvitation(true);
-    }
-  });
+  useEffect(() => {
+    socket.on('invitation_game', (args) => {
+      if (isUserBlocked(user, null, args.from.nickname)) {
+        socket.emit('match_invitation_refused', {
+          nickname: args.from.nickname
+        });
+      } else {
+        setInvitation(args);
+        setOpenInvitation(true);
+      }
+    });
 
-  socket.on('match_spec_change_state', (args) => {
-    setGameStatus('lobby');
-  });
+    socket.on('match_spec_change_state', (args) => {
+      setGameStatus('lobby');
+    });
 
-  socket.on('error_socket', (args) => {
-    if (args.message === 'You are already connected') {
-      setOpenWarningConnected(true);
-    } else {
-      setOpenWarningToken(true);
-    }
-  });
+    socket.on('error_socket', (args) => {
+      if (args.message === 'You are already connected') {
+        setOpenWarningConnected(true);
+      } else {
+        setOpenWarningToken(true);
+      }
+    });
+  }, [user]);
 
   return (
     <WebSocketContext.Provider value={socket}>

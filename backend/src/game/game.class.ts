@@ -21,7 +21,7 @@ import {
 export const Default_params = {
   GAME_WIDTH: 800,
   GAME_HEIGHT: 600,
-  PADDLE_MOVE_SPEED: 10,
+  PADDLE_MOVE_SPEED: 15,
   PADDLE_OFFSET: 50,
   PADDLE_BORDER: 2,
   PADDLE_HEIGHT: 600 / 6,
@@ -213,9 +213,9 @@ export class Game {
     );
     if (distanceToBall > distanceThreshold) {
       if (paddle2YCenter < this.game_state.ball.position.y) {
-        this.game_state.player2.paddle.y += 10;
+        this.game_state.player2.paddle.y += Default_params.PADDLE_MOVE_SPEED;
       } else {
-        this.game_state.player2.paddle.y -= 10;
+        this.game_state.player2.paddle.y -= Default_params.PADDLE_MOVE_SPEED;
       }
     }
 
@@ -600,19 +600,19 @@ export class Game {
     if (ball.position.x < ballRadius) {
       this.game_state.player2.score++;
       this._reset_ball(ball);
-      this._reset_both_paddle([
-        this.game_state.player1.paddle,
-        this.game_state.player2.paddle,
-      ]);
+      // this._reset_both_paddle([
+      //   this.game_state.player1.paddle,
+      //   this.game_state.player2.paddle,
+      // ]);
       if (this.obstacle) this._reset_obstacle(this.game_state.obstacle);
     }
     if (ball.position.x > this.game_state.gameInfos.width - ballRadius) {
       this.game_state.player1.score++;
       this._reset_ball(ball);
-      this._reset_both_paddle([
-        this.game_state.player1.paddle,
-        this.game_state.player2.paddle,
-      ]);
+      // this._reset_both_paddle([
+      //   this.game_state.player1.paddle,
+      //   this.game_state.player2.paddle,
+      // ]);
       if (this.obstacle) this._reset_obstacle(this.game_state.obstacle);
     }
     if (ball.position.y < ballRadius) {
@@ -625,17 +625,17 @@ export class Game {
     }
   }
 
-  private _reset_both_paddle(paddle: Position[]) {
-    paddle[0].x = Default_params.PADDLE_OFFSET;
-    paddle[0].y =
-      Default_params.GAME_HEIGHT / 2 - Default_params.PADDLE_HEIGHT / 2;
-    paddle[1].x =
-      Default_params.GAME_WIDTH -
-      Default_params.PADDLE_OFFSET -
-      Default_params.PADDLE_WIDTH;
-    paddle[1].y =
-      Default_params.GAME_HEIGHT / 2 - Default_params.PADDLE_HEIGHT / 2;
-  }
+  // private _reset_both_paddle(paddle: Position[]) {
+  //   paddle[0].x = Default_params.PADDLE_OFFSET;
+  //   paddle[0].y =
+  //     Default_params.GAME_HEIGHT / 2 - Default_params.PADDLE_HEIGHT / 2;
+  //   paddle[1].x =
+  //     Default_params.GAME_WIDTH -
+  //     Default_params.PADDLE_OFFSET -
+  //     Default_params.PADDLE_WIDTH;
+  //   paddle[1].y =
+  //     Default_params.GAME_HEIGHT / 2 - Default_params.PADDLE_HEIGHT / 2;
+  // }
 
   private _reset_obstacle(Obstacle?: Obstacle) {
     if (!Obstacle) return;

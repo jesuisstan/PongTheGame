@@ -14,6 +14,7 @@ import { ModalClose, ModalDialog } from "@mui/joy";
 import { LoadingButton } from "@mui/lab";
 import * as MUI from '../../UI/MUIstyles';
 import "../Chat.css";
+import errorAlert from "../../UI/errorAlert";
 
 interface SettingMenuProps {
   roomName: string;
@@ -29,6 +30,12 @@ const SettingMenu = (setting: SettingMenuProps) => {
   const [openChangePwd, setOpenChangePwd] = useState(false);
 	const [isPwdProtected, setIsPwdProtected] = useState<boolean>(false);
 	const [newPassword, setNewPassword] = useState<string>('');
+	
+	
+	const warningEmptyPass = () => {
+		setOpenChangePwd(false);
+		errorAlert("Password can't be empty");
+	};
 	const isPasswordProtected = async (roomName: string
 	) => {
 		await socket.emit('isPasswordProtected', { roomName: roomName },
@@ -39,14 +46,19 @@ const SettingMenu = (setting: SettingMenuProps) => {
     setOpenChangePwd(true);
   };
   const handleCloseChangePwd = () => {
-		handleChangePwd(false);
+		if (newPassword.length === 0) warningEmptyPass();
+		else {
+			handleChangePwd(false);
+		}
     setOpenChangePwd(false);
+		setAnchorEl(null)
   };
 	const handleChangePwd = async(deletePwd: boolean) => {
 		await socket.emit('changePassword', {
 			roomName: setting.roomName,
 			newPassword: deletePwd ? '' : newPassword,
 		});
+		setAnchorEl(null)
 	};
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
 		setAnchorEl(event.currentTarget);
@@ -78,15 +90,17 @@ const SettingMenu = (setting: SettingMenuProps) => {
 						{setting.roomName.toUpperCase()}
 					</Typography>
 					<Divider/>
-			{ // Begin of owner space for non protected rooms
-				(statusUtils.checkIfOwner(setting.owner, user.id))
-				&& isPwdProtected === false
-				&& <>
+			{ // Begin of owner space for pwd protected rooms
+			(statusUtils.checkIfOwner(setting.owner, user.id))
+			&& <>
 				<IconPersoButton
-				 cond={true}
+				 cond={isPwdProtected}
 				 true={handleClickOpenChangePwd}
 				 icon={<Password className="black"/>}
-				 text="Add pass" />
+				 text="Change Password"
+				 false={handleClickOpenChangePwd}
+				 iconAlt={<Password className="black"/>}
+				 textAlt="Set Pass"/>
 				<Modal
 					className='black'
 					open={openChangePwd}
@@ -99,7 +113,7 @@ const SettingMenu = (setting: SettingMenuProps) => {
 							id="modal-modal-title"
 							component="h2"
 							className='modal-title'>
-							Set password
+							{isPwdProtected === true ? "Change password" : "Set password"}
 						</Typography>
 						<form onSubmit={handleCloseChangePwd}>
 							<Stack spacing={2}>
@@ -110,10 +124,10 @@ const SettingMenu = (setting: SettingMenuProps) => {
 								<TextField
 									autoFocus
 									required={true}
-									helperText="Password must be at least 4 characters long"
-									label="new password"
+									helperText="This field is required"
+									label="New password *"
 									type="password"
-									inputProps={{ minLength: 4 }}
+									inputProps={{ minLength: 1 }}
 									inputRef={(input) => {
 										if (input != null) input.focus();
 									}}
@@ -131,66 +145,13 @@ const SettingMenu = (setting: SettingMenuProps) => {
 							</Stack>
 						</form>
 					</ModalDialog>
-				</Modal></>
-				// End of owner space for non protected rooms
-			}
-
-			{ // Begin of owner space for pwd protected rooms
-			(statusUtils.checkIfOwner(setting.owner, user.id))
-			&& isPwdProtected === true
-			&& <>
-				<IconPersoButton
-				 cond={true}
-				 true={handleClickOpenChangePwd}
-				 icon={<Password className="black"/>}
-				 text="Change Password" />
-				<Modal
-					className='black'
-					open={openChangePwd}
-					onClose={handleCloseChangePwd}>
-					<ModalDialog
-						aria-labelledby="modal-modal-title"
-						sx={MUI.modalDialog}>
-						<ModalClose onClick={handleCloseChangePwd}/>
-						<Typography
-							id="modal-modal-title"
-							component="h2"
-							className='modal-title'>
-							Change password
-						</Typography>
-						<form onSubmit={handleCloseChangePwd}>
-							<Stack spacing={2}>
-								<Stack spacing={1}>
-								<Typography component="h3" sx={{ color: 'rgb(37, 120, 204)' }}>
-									New password
-								</Typography>
-								<TextField
-									autoFocus
-									required
-									helperText="Password must be at least 4 characters long"
-									label="new password"
-									type="password"
-									inputProps={{ minLength: 4 }}
-									onChange={(e) => setNewPassword(e.target.value)}
-									/>
-								</Stack>
-								<LoadingButton
-									type="submit"
-									onClick={handleCloseChangePwd}
-									startIcon={<Save />}
-									variant='contained'
-									color='inherit'>
-									SAVE
-								</LoadingButton>
-							</Stack>
-						</form>
-					</ModalDialog>
 				</Modal>
+				{ isPwdProtected === true ?
 				<IconPersoButton
 					cond={true}
 					true={() => handleChangePwd(true)}
 					icon={<Delete className="black"/>}
-					text="Delete Password" />
+					text="Delete Password" /> : null}
 				</>
 				// End of owner space
 			}
@@ -208,7 +169,6 @@ const SettingMenu = (setting: SettingMenuProps) => {
 			</Menu>
 		</div>
   )
-
 };
 
 export default SettingMenu;

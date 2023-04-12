@@ -17,13 +17,21 @@ export const checkIfBanned = (
   return false;
 };
 
+<<<<<<< HEAD
 export const isUserBlocked = (
     user: User, target?: number | null, nickname?: string | null
     ): boolean => {
   if (user.blockedUsers && target != null) {
+=======
+export const isUserBlocked = (user: User, target?: number | null, nickname?: string | null): boolean => {
+  if (target != null) {
+    // if (user.blockedUsers.find(() => target )) return true;
+>>>>>>> upstream/master
     for (var i = 0; i < user.blockedUsers.length; ++i)
       if (user.blockedUsers[i].id === target) return true;
-  } else if (nickname != null) {
+  }
+  else if (nickname != null) {
+    // if (user.blockedUsers.find(() => nickname )) return true;
     for (var i = 0; i < user.blockedUsers.length; ++i)
       if (user.blockedUsers[i].nickname === nickname) return true;
   }
