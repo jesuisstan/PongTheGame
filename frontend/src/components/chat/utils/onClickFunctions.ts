@@ -5,44 +5,44 @@ import { useContext, useState } from 'react';
 
 var res1: User;
 
-  // When clicking on the 'block' button to block a user
-  export const onBlockClick = (socket: Socket, user: User, target: number
-    ) => {
-    if (user.id !== target) {
-      // Check if target is not already blocked
-      try {
-        for (let i=0; i < user.blockedUsers.length; ++i)
-          if (user.blockedUsers[i].id === target) return undefined;
-          return socket.emit('updateBlockedUsers', {
-          userId: user.id,
-          target: target,
-          disconnect: false,
-          }, (res: User) => { res1 = res })
-      } catch (err) { console.log ('ERROR: ' + err);}
-    }
+  // // When clicking on the 'block' button to block a user
+  // export const onBlockClick = (socket: Socket, user: User, target: number
+  //   ) => {
+  //   if (user.id !== target) {
+  //     // Check if target is not already blocked
+  //     try {
+  //       for (let i=0; i < user.blockedUsers.length; ++i)
+  //         if (user.blockedUsers[i].id === target) return undefined;
+  //         return socket.emit('updateBlockedUsers', {
+  //         userId: user.id,
+  //         target: target,
+  //         disconnect: false,
+  //         }, (res: User) => { res1 = res })
+  //     } catch (err) { console.log ('ERROR: ' + err);}
+  //   }
 
-    return res1;
-  }
+  //   return res1;
+  // }
 
-  // When clicking on the 'block' button to unblock a user
-  export const onUnBlockClick = (socket: Socket, user: User, target: number
-    )=> {
-    if (user.id !== target) {
+  // // When clicking on the 'block' button to unblock a user
+  // export const onUnBlockClick = (socket: Socket, user: User, target: number
+  //   )=> {
+  //   if (user.id !== target) {
 
-      try {
-        for (let i=0; i < user.blockedUsers.length; ++i) {
-          if (user.blockedUsers[i].id === target) {
-            return socket.emit('updateBlockedUsers', {
-              userId: user.id,
-              target: target,
-              disconnect: true,
-            }, (res: User) => { return res; });
-          }
-        }
-      }catch (err) { console.log('ERROR: ' + err); }
-    }
-    return user;
-  }
+  //     try {
+  //       for (let i=0; i < user.blockedUsers.length; ++i) {
+  //         if (user.blockedUsers[i].id === target) {
+  //           return socket.emit('updateBlockedUsers', {
+  //             userId: user.id,
+  //             target: target,
+  //             disconnect: true,
+  //           }, (res: User) => { return res; });
+  //         }
+  //       }
+  //     }catch (err) { console.log('ERROR: ' + err); }
+  //   }
+  //   return user;
+  // }
     
   // When clicking on the 'ban' button to ban/unban a user
   export const onBanClick = async(

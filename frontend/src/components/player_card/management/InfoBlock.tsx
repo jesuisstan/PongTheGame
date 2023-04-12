@@ -5,10 +5,6 @@ import { PlayerProfile } from '../../../types/PlayerProfile';
 import { WebSocketContext } from '../../../contexts/WebsocketContext';
 import { GameStatusContext } from '../../../contexts/GameStatusContext';
 import { GameStatus } from '../../game/game.interface';
-import {
-  onBlockClick,
-  onUnBlockClick
-} from '../../chat/utils/onClickFunctions';
 import { isUserBlocked } from '../../chat/utils/statusFunctions';
 import InvitationSendModal from '../../game/invitation/InvitationSendModal';
 import ButtonPong from '../../UI/ButtonPong';
@@ -28,12 +24,13 @@ import VoiceOverOffIcon from '@mui/icons-material/VoiceOverOff';
 import RecordVoiceOverIcon from '@mui/icons-material/RecordVoiceOver';
 import * as color from '../../UI/colorsPong';
 import styles from '../styles/PlayerCard.module.css';
+import { User } from '../../../types/User';
 
 const InfoBlock = ({ player }: { player: PlayerProfile }) => {
   const navigate = useNavigate();
   const socket = useContext(WebSocketContext);
   const { setGameStatus } = useContext(GameStatusContext);
-  const { user } = useContext(UserContext);
+  const { user, setUser } = useContext(UserContext);
   const [isFriendOfUser, setIsFriendOfUser] = useState<boolean>(false);
   const [openInvitationModal, setOpenInvitationModal] = useState(false);
   const [isBlocked, setIsBlocked] = useState<boolean>(false);
@@ -70,14 +67,57 @@ const InfoBlock = ({ player }: { player: PlayerProfile }) => {
     }
   }, [player.nickname, user.nickname, user.blockedUsers]);
 
-  const handleBlock = async () => {
-    if (isBlocked) {
-      await onUnBlockClick(socket, user, player.id);
-      setIsBlocked(false);
-    } else {
-      await onBlockClick(socket, user, player.id);
-      setIsBlocked(true);
+
+  const onBlockClick = (target: number) => {
+    if (user.id !== target) {
+      // Check if target is not already blocked
+      try {
+        for (let i=0; i < user.blockedUsers.length; ++i)
+          if (user.blockedUsers[i].id === target) return;
+          socket.emit('updateBlockedUsers', {
+          userId: user.id,
+          target: target,
+          disconnect: false,
+          }, (res: User) => {
+				res.joinedChatRoom = user.joinedChatRoom;
+				setUser(res)
+			})
+		console.log('UserId: ' + target + 'has been blocked!');
+		return;
+      } catch (err) { console.log ('ERROR: ' + err);}
     }
+  }
+
+  const onUnBlockClick = (target: number)=> {
+    if (user.id !== target) {
+
+      try {
+        for (let i=0; i < user.blockedUsers.length; ++i) {
+          if (user.blockedUsers[i].id === target) {
+            socket.emit('updateBlockedUsers', {
+              userId: user.id,
+              target: target,
+              disconnect: true,
+            }, (res: User) => {
+					res.joinedChatRoom = user.joinedChatRoom; 
+					setUser(res);
+				});
+			console.log('UserId: ' + target + 'has been unblocked!');
+			return;
+          }
+        }
+      }catch (err) { console.log('ERROR: ' + err); }
+    }
+  }
+
+  const handleBlock = () => {
+    if (isBlocked) {
+		onUnBlockClick(player.id)
+		setIsBlocked(false);
+    } else {
+		onBlockClick(player.id)
+		setIsBlocked(true);
+	}
   };
 
   const handleFriend = () => {

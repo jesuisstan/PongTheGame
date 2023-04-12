@@ -94,7 +94,7 @@ const UserMenu = (props: UserMenuProps) => {
     }
   }
 
-  const handleBlock = async() => {
+  const handleBlock = () => {
     if (isBlocked) {
 		onUnBlockClick(props.member.memberId)
 		setIsBlocked(false);
@@ -102,7 +102,6 @@ const UserMenu = (props: UserMenuProps) => {
 		onBlockClick(props.member.memberId)
 		setIsBlocked(true);
 	}
-
   };
 
   return (
