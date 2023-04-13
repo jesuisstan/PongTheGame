@@ -5,7 +5,7 @@ import Lobby from './lobby/Lobby';
 import Pong from './Pong';
 import QueueModal from './QueueModal';
 import CountdownModal from './CountdownModal';
-import { CurrentGamePlayer, GameStatus, PlayerData } from './game.interface';
+import { CurrentGamePlayer, GameStatus } from './game.interface';
 import { WebSocketContext } from '../../contexts/WebsocketContext';
 import { GameStatusContext } from '../../contexts/GameStatusContext';
 import { GameResultContext } from '../../contexts/GameResultContext';

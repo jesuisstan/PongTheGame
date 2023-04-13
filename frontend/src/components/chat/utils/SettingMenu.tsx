@@ -51,6 +51,7 @@ const SettingMenu = (setting: SettingMenuProps) => {
 			handleChangePwd(false);
 		}
     setOpenChangePwd(false);
+		setNewPassword('');
 		setAnchorEl(null)
   };
 	const handleChangePwd = async(deletePwd: boolean) => {

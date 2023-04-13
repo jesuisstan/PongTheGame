@@ -132,7 +132,7 @@ const ChatRoom = (props: ChatRoomProps) => {
 		socket.on(
 			'typingMessage',
 			(roomName: string, nick: string, isTyping: boolean) => {
-				roomName === props.room.name && isTyping
+				roomName === props.room.name && isTyping && !statusUtils.isUserBlocked(user, undefined, nick)
 					? setTypingDisplay(nick + ' is typing...')
 					: setTypingDisplay('');
 			}

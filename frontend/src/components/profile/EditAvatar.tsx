@@ -19,7 +19,7 @@ const EditAvatar = ({
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
 }) => {
-  const { user, setUser } = useContext(UserContext);
+  const { setUser } = useContext(UserContext);
   const [file, setFile] = useState<File>();
   const [load, setLoad] = useState(false);
   const [buttonText, setButtonText] = useState('Submit');

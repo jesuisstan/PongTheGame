@@ -65,7 +65,7 @@ const InfoBlock = ({ player }: { player: PlayerProfile }) => {
         setIsBlocked(false);
       }
     }
-  }, [player.nickname, user.nickname, user.blockedUsers]);
+  }, [player, user]);
 
 
   const onBlockClick = (target: number) => {
