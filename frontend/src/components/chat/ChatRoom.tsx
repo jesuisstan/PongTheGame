@@ -1,21 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
 import { WebSocketContext } from '../../contexts/WebsocketContext';
-import {
-	ArrowBackIosNew,
-} from '@mui/icons-material';
-import {
-	Box,
-	Button,
-	Divider,
-	FormControl,
-	Grid,
-	IconButton,
-	Stack,
-	TextField,
-	Typography,
-	CircularProgress,
-} from '@mui/material';
-
+import { ArrowBackIosNew } from '@mui/icons-material';
+import { Box, Divider, FormControl, Grid, IconButton, Stack, TextField, Typography, CircularProgress } from '@mui/material';
 // personal components
 import { UserContext } from '../../contexts/UserContext';
 import { ChatRoomType, MemberType, Message } from '../../types/chat';
@@ -210,14 +196,13 @@ const ChatRoom = (props: ChatRoomProps) => {
 	 **************************************************************/
 
 	// Emit that user is typing, or not typing after timeout
-	let timeout;
 	const emitTyping = () => {
 		socket.emit('typingMessage', {
 			roomName: props.room.name,
 			nick: user.nickname,
 			isTyping: true
 		});
-		timeout = setTimeout(() => {
+		setTimeout(() => {
 			socket.emit('typingMessage', {
 				roomName: props.room.name,
 				nick: user.nickname,
@@ -257,8 +242,6 @@ const ChatRoom = (props: ChatRoomProps) => {
 		});
 		props.cleanRoomLoginData();
 	};
-
-	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
 	/*************************************************************
 	 * Render HTML response

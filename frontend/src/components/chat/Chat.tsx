@@ -1,7 +1,7 @@
-import { useContext, useEffect, useState, useRef } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import * as React from 'react';
-import { Box, List, ListItem, TextField, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, ListItemIcon, ListItemText, ListItemButton, CssBaseline, ListItemSecondaryAction, Modal, Typography, Stack } from '@mui/material';
-import { TagRounded, LockRounded, ArrowForwardIos, AddCircleOutline, LockOpenRounded, Person2Rounded, Password } from '@mui/icons-material';
+import { Box, List, ListItem, TextField, Button, ListItemIcon, ListItemText, ListItemButton, CssBaseline, Modal, Typography, Stack } from '@mui/material';
+import { TagRounded, LockRounded, ArrowForwardIos, AddCircleOutline, LockOpenRounded, Person2Rounded } from '@mui/icons-material';
 import { ModalClose, ModalDialog } from '@mui/joy';
 import { LoadingButton } from '@mui/lab';
 // personal components
@@ -22,9 +22,6 @@ import * as MUI from '../UI/MUIstyles';
  * Users can create/join chat rooms.
 **************************************************************/
 
-interface WinProps {
-  window?: () => Window;
-}
 const Chat = () => {
   /*************************************************************
 	 * Chat entrance
@@ -128,7 +125,7 @@ const Chat = () => {
 
   const onChatRoomCreateModeSubmit = async (e: any) => {
     e.preventDefault();
-    if (newChatRoomName.length == 0) warningEmptyName();
+    if (newChatRoomName.length === 0) warningEmptyName();
     if (newChatRoomName)
       await socket.emit('createChatRoom', {
         room: {
@@ -204,7 +201,7 @@ const Chat = () => {
             setIsPasswordRight(true);
           }
           else {
-            if (inputPassword.length == 0) warningEmptyPass();
+            if (inputPassword.length === 0) warningEmptyPass();
             else warningWrongPass();
             setIsPasswordRight(false);
           }
