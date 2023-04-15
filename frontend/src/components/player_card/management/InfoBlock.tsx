@@ -30,7 +30,7 @@ const InfoBlock = ({ player }: { player: PlayerProfile }) => {
   const navigate = useNavigate();
   const socket = useContext(WebSocketContext);
   const { setGameStatus } = useContext(GameStatusContext);
-  const { user, setUser } = useContext(UserContext);git fe
+  const { user, setUser } = useContext(UserContext);
   const [isFriendOfUser, setIsFriendOfUser] = useState<boolean>(false);
   const [openInvitationModal, setOpenInvitationModal] = useState(false);
   const [isBlocked, setIsBlocked] = useState<boolean>(false);

@@ -61,7 +61,7 @@ const ChatRoom = (props: ChatRoomProps) => {
   const [messageText, setMessageText] = useState<string>('');
 
 	const findAllMembers = async () => {
-		await socket.emit(
+		socket.emit(
 			'findAllMembers',
 			{ roomName: props.room.name },
 			(response: MemberType[]) => {
@@ -72,7 +72,7 @@ const ChatRoom = (props: ChatRoomProps) => {
 	findAllMembers();
 
 	const findAllBanned = async () => {
-		await socket.emit(
+		socket.emit(
 			'findAllBannedMembers',
 			{ roomName: props.room.name },
 			(response: User[]) => {
@@ -85,7 +85,7 @@ const ChatRoom = (props: ChatRoomProps) => {
 	// Get all messages from messages array in chat.service
 	// and fill the messages variable
 	const findAllMessages = async () => {
-		await socket.emit(
+		socket.emit(
 			'findAllMessages',
 			{ roomName: props.room.name },
 			(response: Message[]) => {
@@ -237,7 +237,7 @@ const ChatRoom = (props: ChatRoomProps) => {
 	const onFormSubmit = async (e: any) => {
 		e.preventDefault();
 		if (messageText)
-			await socket.emit('createMessage', {
+			socket.emit('createMessage', {
 				roomName: props.room.name,
 				message: {
 					author: user,
@@ -251,7 +251,7 @@ const ChatRoom = (props: ChatRoomProps) => {
 
 	// When clicking on the 'return' button
 	const onReturnClick = async () => {
-		await socket.emit('quitRoom', {
+		socket.emit('quitRoom', {
 			roomName: props.room.name,
 			userId: user.id
 		});
