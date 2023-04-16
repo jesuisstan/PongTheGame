@@ -33,7 +33,7 @@ const SettingMenu = (setting: SettingMenuProps) => {
 	};
 	const isPasswordProtected = async (roomName: string
 	) => {
-		await socket.emit('isPasswordProtected', { roomName: roomName },
+		socket.emit('isPasswordProtected', { roomName: roomName },
 			(response: boolean) => { setIsPwdProtected(response); })
 	}
 	isPasswordProtected(setting.roomName);
@@ -50,7 +50,7 @@ const SettingMenu = (setting: SettingMenuProps) => {
 		setAnchorEl(null)
   };
 	const handleChangePwd = async(deletePwd: boolean) => {
-		await socket.emit('changePassword', {
+		socket.emit('changePassword', {
 			roomName: setting.roomName,
 			newPassword: deletePwd ? '' : newPassword,
 		});

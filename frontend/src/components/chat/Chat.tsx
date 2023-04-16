@@ -52,7 +52,7 @@ const Chat = () => {
   const [clickedRoomToJoin, setClickedRoomToJoin] = useState<string>('');
 
   const findAllChatRooms = async () => {
-    await socket.emit('findAllChatRooms', {}, (response: ChatRoomType[]) => {
+    socket.emit('findAllChatRooms', {}, (response: ChatRoomType[]) => {
       setChatRooms(response);
     });
   };
@@ -127,7 +127,7 @@ const Chat = () => {
     e.preventDefault();
     if (newChatRoomName.length === 0) warningEmptyName();
     if (newChatRoomName)
-      await socket.emit('createChatRoom', {
+      socket.emit('createChatRoom', {
         room: {
           name: newChatRoomName,
           owner: user.id,
@@ -161,7 +161,7 @@ const Chat = () => {
   const onClickJoinRoom = async (roomName: string, modes: string) => {
     // Quit current joined room first
     if (user.joinedChatRoom && roomName !== user.joinedChatRoom?.name) {
-      await socket.emit('quitRoom', {
+      socket.emit('quitRoom', {
         roomName: user.joinedChatRoom?.name,
         userId: user.id
       });
@@ -180,7 +180,7 @@ const Chat = () => {
   };
   // Join a chatroom if no password has been set
   const joinRoom = async (roomName: string) => {
-    await socket.emit(
+    socket.emit(
       'joinRoom',
       { roomName: roomName, user: user, avatar: user.avatar },
       (response: ChatRoomType) => {
@@ -192,7 +192,7 @@ const Chat = () => {
   // Check if the password is right
   const onPasswordSubmit = async () => {
     if (clickedRoomToJoin) {
-      await socket.emit(
+      socket.emit(
         'checkPassword',
         { roomName: clickedRoomToJoin, password: inputPassword },
         (response: boolean) => {

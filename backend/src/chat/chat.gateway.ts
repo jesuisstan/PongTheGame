@@ -45,7 +45,7 @@ export class ChatGateway {
         await this.chatService.createMessage(roomName, msg);
       console.log('message emitted: ' + Object.entries(msg));
       // Broadcast received message to all users
-      await this.server.emit('createMessage');
+      this.server.emit('createMessage');
     } else throw new WsException({ msg: 'createMessage: message is empty!' });
   }
 
@@ -108,26 +108,26 @@ export class ChatGateway {
   async findAllMessages(
     @MessageBody('roomName') roomName: string,
   ): Promise<MessageDto[]> {
-    return await this.chatService.findAllMessages(roomName);
+    return this.chatService.findAllMessages(roomName);
   }
 
   @SubscribeMessage('findAllChatRooms')
   async findAllChatRooms(): Promise<ChatRoomDto[]> {
-    return await this.chatService.findAllChatRooms();
+    return this.chatService.findAllChatRooms();
   }
 
   @SubscribeMessage('findAllMembers')
   async findAllMembers(
     @MessageBody('roomName') roomName: string,
   ): Promise<Member[]> {
-    return await this.chatService.findAllMembers(roomName);
+    return this.chatService.findAllMembers(roomName);
   }
 
   @SubscribeMessage('findAllBannedMembers')
   async findAllBannedMembers(
     @MessageBody('roomName') roomName: string,
   ): Promise<User[]> {
-    return await this.chatService.findAllBannedMembers(roomName);
+    return this.chatService.findAllBannedMembers(roomName);
   }
 
   @SubscribeMessage('joinRoom')
@@ -149,7 +149,7 @@ export class ChatGateway {
       throw new WsException({ msg: 'joinRoom: User is banned.' });
     await this.chatService.identify(roomName, user, '', avatar, true);
     this.server.emit('joinRoom', roomName, user.id);
-    return await this.chatService.getChatRoomByName(roomName);
+    return this.chatService.getChatRoomByName(roomName);
   }
 
   @SubscribeMessage('quitRoom')
@@ -173,7 +173,7 @@ export class ChatGateway {
 
   @SubscribeMessage('isPasswordProtected')
   async isPasswordProtected(@MessageBody('roomName') roomName: string) {
-    return await this.chatService.isPasswordProtected(roomName);
+    return this.chatService.isPasswordProtected(roomName);
   }
 
   @SubscribeMessage('checkPassword')
@@ -181,7 +181,7 @@ export class ChatGateway {
     @MessageBody('roomName') roomName: string,
     @MessageBody('password') password: string,
   ): Promise<boolean> {
-    return await this.chatService.checkPassword(roomName, password);
+    return this.chatService.checkPassword(roomName, password);
   }
 
   @SubscribeMessage('changePassword')
@@ -208,7 +208,7 @@ export class ChatGateway {
     @MessageBody('userId') userId: number,
     @MessageBody('target') target: number,
   ): Promise<boolean> {
-    return await this.chatService.hasUserPriv(roomName, userId, target);
+    return this.chatService.hasUserPriv(roomName, userId, target);
   }
 
   // Toggle member modes inside a chat room
@@ -304,7 +304,7 @@ export class ChatGateway {
         },
       });
     }
-    return await this.prisma.user.findUnique({
+    return this.prisma.user.findUnique({
       where: { id: userId },
       include: { blockedUsers: true }})
   }
