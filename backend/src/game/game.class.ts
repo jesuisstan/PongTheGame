@@ -204,22 +204,31 @@ export class Game {
   }
 
   private _computerAI() {
-    const paddle2YCenter = this.game_state.player2.paddle.y + Default_params.PADDLE_HEIGHT / 2;
+    const paddle2YCenter =
+      this.game_state.player2.paddle.y + Default_params.PADDLE_HEIGHT / 2;
     const distanceThreshold = Default_params.BALL_RADIUS * 2;
-    const distanceToBall = Math.abs(paddle2YCenter - this.game_state.ball.position.y);
-    const speedMultiplier = 1 - distanceToBall / (Default_params.GAME_HEIGHT / 2);
-  
-    const targetY = this.game_state.ball.position.y - Default_params.PADDLE_HEIGHT / 2;
+    const distanceToBall = Math.abs(
+      paddle2YCenter - this.game_state.ball.position.y,
+    );
+    const speedMultiplier =
+      1 - distanceToBall / (Default_params.GAME_HEIGHT / 2);
+
+    const targetY =
+      this.game_state.ball.position.y - Default_params.PADDLE_HEIGHT / 2;
     const dy = targetY - paddle2YCenter;
     const paddleSpeed = dy * speedMultiplier;
-  
+
     this.game_state.player2.paddle.y += paddleSpeed;
-  
+
     // Make sure paddle stays within bounds of the canvas
     if (this.game_state.player2.paddle.y < 0) {
       this.game_state.player2.paddle.y = 0;
-    } else if (this.game_state.player2.paddle.y > Default_params.GAME_HEIGHT - Default_params.PADDLE_HEIGHT) {
-      this.game_state.player2.paddle.y = Default_params.GAME_HEIGHT - Default_params.PADDLE_HEIGHT;
+    } else if (
+      this.game_state.player2.paddle.y >
+      Default_params.GAME_HEIGHT - Default_params.PADDLE_HEIGHT
+    ) {
+      this.game_state.player2.paddle.y =
+        Default_params.GAME_HEIGHT - Default_params.PADDLE_HEIGHT;
     }
   }
 

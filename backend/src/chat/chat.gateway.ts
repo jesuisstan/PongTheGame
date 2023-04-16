@@ -306,6 +306,7 @@ export class ChatGateway {
     }
     return this.prisma.user.findUnique({
       where: { id: userId },
-      include: { blockedUsers: true }})
+      include: { blockedUsers: true },
+    });
   }
 }
