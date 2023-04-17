@@ -3,6 +3,8 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile.prod
+    environment:
+      SERVER_NAME: ${SERVER_NAME:?}
     ports:
       - "${FRONTEND_PORT?:}:3000"
     networks:
