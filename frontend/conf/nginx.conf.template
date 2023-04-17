@@ -1,5 +1,14 @@
 server {
-	server_name pop-os.localdomain;
+	server_name _;
+
+	listen 3000 default_server;
+	listen [::]:3000 default_server;
+
+	return 301 http://${SERVER_NAME}:3000$uri;
+}
+
+server {
+	server_name ${SERVER_NAME};
 
 	listen 3000;
 	listen [::]:3000;
