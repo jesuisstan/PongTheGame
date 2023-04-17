@@ -6,14 +6,23 @@ COPY package.json package-lock.json ./
 
 RUN npm install --production=false
 
-COPY . .
+COPY public ./public
+COPY src ./src
+COPY tsconfig.json ./tsconfig.json
 
 RUN npm run build
 
-FROM nginx:1.23-alpine
+COPY conf/nginx.conf /tmp/nginx-default.conf
 
-RUN apk add --no-cache curl
+FROM nginx:1.24.0-bullseye
 
 WORKDIR /frontend
 
-COPY --from=build /frontend/* ./
+RUN apt-get install curl
+
+COPY --from=build /frontend/build/ /frontend/
+
+# nginx conf stuff
+COPY conf/nginx.conf /tmp/nginx-default.conf
+
+RUN envsubst < /tmp/nginx-default.conf > /etc/nginx/conf.d/default.conf
