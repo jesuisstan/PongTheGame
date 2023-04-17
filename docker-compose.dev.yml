@@ -3,8 +3,6 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile.dev
-    environment:
-      NODE_ENV: development
     ports:
       - "${FRONTEND_PORT:?}:3000"
     volumes:
@@ -21,8 +19,6 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile.dev
-    environment:
-      NODE_ENV: development
     ports:
       - "${BACKEND_PORT?:}:3000"
     volumes:

@@ -1,5 +1,7 @@
 FROM node:18-alpine
 
+ENV NODE_ENV development
+
 WORKDIR /frontend
 
 ENTRYPOINT npm install && npm start

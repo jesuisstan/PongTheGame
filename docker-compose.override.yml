@@ -3,8 +3,6 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile.prod
-    environment:
-      NODE_ENV: production
     ports:
       - "${FRONTEND_PORT?:}:3000"
     networks:
@@ -20,8 +18,6 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile.prod
-    environment:
-      NODE_ENV: production
     ports:
       - "3000"
     networks:
