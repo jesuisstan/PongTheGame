@@ -5,6 +5,7 @@ services:
   frontend:
     container_name: frontend
     environment:
+      FRONTEND_URL: ${FRONTEND_URL}
       REACT_APP_URL_BACKEND: ${BACKEND_URL}
       REACT_APP_MAX_CHATROOM_NBR: ${REACT_APP_MAX_CHATROOM_NBR}
     networks:
@@ -13,12 +14,6 @@ services:
     depends_on:
       backend:
         condition: service_healthy
-    healthcheck:
-      test: curl -fsSL http://localhost:3000/
-      interval: 10s
-      timeout: 50s
-      retries: 40
-      start_period: 2s
 
 # ---------------------------------------------------------------------------- #
 
@@ -41,12 +36,6 @@ services:
       GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID}
       GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
     restart: unless-stopped
-    healthcheck:
-      test: curl -fsSL http://localhost:3000/healthcheck
-      interval: 10s
-      timeout: 50s
-      retries: 40
-      start_period: 2s
 
 # ---------------------------------------------------------------------------- #
 
@@ -74,7 +63,9 @@ services:
 
   controller:
     container_name: health_controller
-    image: hello-world
+    build:
+      context: health_controller
+      dockerfile: Dockerfile
     restart: 'no'
     depends_on:
       database:

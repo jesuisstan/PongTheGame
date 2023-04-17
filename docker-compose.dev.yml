@@ -8,11 +8,19 @@ services:
     volumes:
       - ./frontend:/frontend
       - frontend_node_modules:/frontend/node_modules/
+    healthcheck:
+      test: curl -fsSL http://localhost:3000/
+      interval: 10s
+      timeout: 50s
+      retries: 40
+      start_period: 2s
 
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile.dev
+    environment:
+      NODE_ENV: development
     ports:
       - "${BACKEND_PORT?:}:3000"
     volumes:
@@ -21,6 +29,12 @@ services:
     networks:
       - private
       - public
+    healthcheck:
+      test: curl -fsSL http://localhost:3000/healthcheck
+      interval: 10s
+      timeout: 50s
+      retries: 40
+      start_period: 2s
 
 volumes:
   frontend_node_modules: {}

@@ -3,16 +3,32 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile.prod
+    environment:
+      NODE_ENV: production
     ports:
       - "${FRONTEND_PORT?:}:3000"
     networks:
       - private
+    healthcheck:
+      test: curl -fsSL http://localhost:3000/healthcheck
+      interval: 10s
+      timeout: 50s
+      retries: 40
+      start_period: 2s
 
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile.prod
+    environment:
+      NODE_ENV: production
     ports:
       - "3000"
     networks:
       - private
+    healthcheck:
+      test: curl -fsSL http://localhost:3000/api/healthcheck
+      interval: 10s
+      timeout: 50s
+      retries: 40
+      start_period: 2s
