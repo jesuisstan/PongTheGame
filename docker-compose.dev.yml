@@ -4,7 +4,7 @@ services:
       context: ./frontend
       dockerfile: Dockerfile.dev
     ports:
-      - "${FRONTEND_PORT?:}:3000"
+      - "${FRONTEND_PORT:?}:3000"
     volumes:
       - ./frontend:/frontend
       - frontend_node_modules:/frontend/node_modules/

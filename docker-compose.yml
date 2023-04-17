@@ -5,9 +5,9 @@ services:
   frontend:
     container_name: frontend
     environment:
-      FRONTEND_URL: ${FRONTEND_URL}
-      REACT_APP_URL_BACKEND: ${BACKEND_URL}
-      REACT_APP_MAX_CHATROOM_NBR: ${REACT_APP_MAX_CHATROOM_NBR}
+      FRONTEND_URL: ${FRONTEND_URL:?}
+      REACT_APP_URL_BACKEND: ${BACKEND_URL:?}
+      REACT_APP_MAX_CHATROOM_NBR: ${REACT_APP_MAX_CHATROOM_NBR:?}
     networks:
       - public
     restart: unless-stopped
@@ -26,15 +26,15 @@ services:
       - .env
     environment:
       NEST_DEBUG : null # TODO REMOVE THIS ('true' break compilation on other machines)
-      FRONTEND_URL: ${FRONTEND_URL}
-      BACKEND_URL: ${BACKEND_URL}
-      SESSION_SECRET: ${SESSION_SECRET}
-      JWT_SECRET: ${JWT_SECRET}
-      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database:5432/pong?schema=public
-      INTRA42_CLIENT_ID: ${INTRA42_CLIENT_ID}
-      INTRA42_CLIENT_SECRET: ${INTRA42_CLIENT_SECRET}
-      GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID}
-      GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
+      FRONTEND_URL: ${FRONTEND_URL:?}
+      BACKEND_URL: ${BACKEND_URL:?}
+      SESSION_SECRET: ${SESSION_SECRET:?}
+      JWT_SECRET: ${JWT_SECRET:?}
+      DATABASE_URL: postgresql://${POSTGRES_USER:?}:${POSTGRES_PASSWORD:?}@database:5432/pong?schema=public
+      INTRA42_CLIENT_ID: ${INTRA42_CLIENT_ID:?}
+      INTRA42_CLIENT_SECRET: ${INTRA42_CLIENT_SECRET:?}
+      GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID:?}
+      GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET:?}
     restart: unless-stopped
 
 # ---------------------------------------------------------------------------- #
@@ -53,7 +53,7 @@ services:
       - private
     restart: unless-stopped
     healthcheck:
-      test: pg_isready -U ${POSTGRES_USER}
+      test: pg_isready -U ${POSTGRES_USER:?}
       interval: 10s
       timeout: 2s
       retries: 25
