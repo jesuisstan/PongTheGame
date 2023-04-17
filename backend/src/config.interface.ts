@@ -1,3 +1,5 @@
+export type NodeEnv = 'production' | 'development';
+
 export interface Config {
   INTRA42_CLIENT_ID: string;
   INTRA42_CLIENT_SECRET: string;
@@ -14,4 +16,6 @@ export interface Config {
   SESSION_SECRET: string;
   TOTP_SECRET: string;
   JWT_SECRET: string;
+
+  NODE_ENV: NodeEnv;
 }
