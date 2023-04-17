@@ -11,8 +11,9 @@ import MenuItem from '@mui/material/MenuItem';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import * as color from '../UI/colorsPong';
 import styles from './UI.module.css';
+import { backendUrl } from '../../api/axios-instance';
 
-const URL_LOGOUT = `${process.env.REACT_APP_URL_BACKEND}/auth/logout`;
+const URL_LOGOUT = `${backendUrl}/auth/logout`;
 
 const MenuBar = () => {
   const navigate = useNavigate();

@@ -1,7 +1,8 @@
+import { backendUrl } from '../../api/axios-instance';
 import styles from './styles/Login.module.css';
 
-const URL_AUTH_42 = `${process.env.REACT_APP_URL_BACKEND}/auth/42`;
-const URL_AUTH_GITHUB = `${process.env.REACT_APP_URL_BACKEND}/auth/github`;
+const URL_AUTH_42 = `${backendUrl}/auth/42`;
+const URL_AUTH_GITHUB = `${backendUrl}/auth/github`;
 
 const Login = () => {
   const ecole42Auth = () => {
