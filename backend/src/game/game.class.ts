@@ -21,7 +21,7 @@ import {
 export const Default_params = {
   GAME_WIDTH: 800,
   GAME_HEIGHT: 600,
-  PADDLE_MOVE_SPEED: 10,
+  PADDLE_MOVE_SPEED: 15,
   PADDLE_OFFSET: 50,
   PADDLE_BORDER: 2,
   PADDLE_HEIGHT: 600 / 6,
@@ -60,7 +60,7 @@ export class Game {
     websockets: WebsocketsService,
     achievements: giveAchievementService,
     type: TypeMode,
-    winningScore: number,
+    winScore: number,
     player1: Profile,
     player2?: Profile,
     obstacle?: boolean,
@@ -70,30 +70,17 @@ export class Game {
     this.achievements = achievements;
     this.player1 = player1;
     this.player2 = player2;
-    this.game_state = get_default_game_state(
-      type,
-      winningScore,
-      player1,
-      player2,
-    );
+    this.game_state = get_default_game_state(type, winScore, player1, player2);
     this.type = type;
     this._reset_ball(this.game_state.ball);
     this.obstacle = obstacle;
-    this.game_state.gameInfos.WinScore = winningScore;
+    this.game_state.gameInfos.winScore = winScore;
   }
 
   async start(onEnd: () => void) {
     this.end = onEnd;
-    while (this.start_counter > 0) {
-      await this._wait(1000);
-      this.start_counter--;
-      this._send_to_players('match_starting', { time: this.start_counter });
-    }
-    this._send_to_players('match_starting', { time: this.start_counter });
-    this.status = Status.PLAYING;
-    this._set_players_status('PLAYING');
-    this.game_start_time = new Date();
 
+    this.game_start_time = new Date();
     if (this.type != TypeMode.TRAINING) {
       const tmp_player: (Profile | undefined)[] = [this.player1, this.player2];
       if (!tmp_player[0] || !tmp_player[1]) return;
@@ -118,9 +105,59 @@ export class Game {
           },
         })
       ).id;
+    } else {
+      const AI = await this.prisma.user.findUnique({
+        where: {
+          id: 1,
+        },
+      });
+      if (!AI) return;
+      this.id_game = (
+        await this.prisma.match.create({
+          data: {
+            state: 'Started',
+            startDate: this.game_start_time.toISOString(),
+            endDate: new Date().toISOString(),
+            entries: {
+              create: [
+                {
+                  userId: this.player1.user.id,
+                  score: 0,
+                },
+                {
+                  userId: AI.id,
+                  score: 0,
+                },
+              ],
+            },
+          },
+        })
+      ).id;
     }
-    // else
-    // Type Training mode
+
+    while (this.start_counter > 0 && this.status == Status.STARTING) {
+      await this._wait(1000);
+      this.start_counter--;
+      this._send_to_players('match_starting', { time: this.start_counter });
+      if (this.people_left) {
+        this.status = Status.ABORTED;
+        break;
+      }
+    }
+    if (this.status == Status.ABORTED) {
+      this.websockets.send(this.player1.socket, 'match_abort_during_begin', {});
+      this.websockets.send(
+        this.player2?.socket,
+        'match_abort_during_begin',
+        {},
+      );
+      this.end();
+      return;
+    }
+    this._send_to_players('match_starting', { time: this.start_counter });
+    this.status = Status.PLAYING;
+    this._set_players_status('PLAYING');
+
     this._game();
   }
 
@@ -169,18 +206,19 @@ export class Game {
   private _computerAI() {
     const paddle2YCenter =
       this.game_state.player2.paddle.y + Default_params.PADDLE_HEIGHT / 2;
-    const distanceThreshold = Default_params.BALL_RADIUS * 2; // adjust this to change the paddle's reaction time
-
+    const distanceThreshold = Default_params.BALL_RADIUS * 2;
     const distanceToBall = Math.abs(
       paddle2YCenter - this.game_state.ball.position.y,
     );
-    if (distanceToBall > distanceThreshold) {
-      if (paddle2YCenter < this.game_state.ball.position.y) {
-        this.game_state.player2.paddle.y += 10;
-      } else {
-        this.game_state.player2.paddle.y -= 10;
-      }
-    }
+    const speedMultiplier =
+      1 - distanceToBall / (Default_params.GAME_HEIGHT / 2);
+
+    const targetY =
+      this.game_state.ball.position.y - Default_params.PADDLE_HEIGHT / 2;
+    const dy = targetY - paddle2YCenter;
+    const paddleSpeed = dy * speedMultiplier;
+
+    this.game_state.player2.paddle.y += paddleSpeed;
 
     // Make sure paddle stays within bounds of the canvas
     if (this.game_state.player2.paddle.y < 0) {
@@ -204,13 +242,14 @@ export class Game {
       this._send_state_to_players(timeInSeconds);
       this._send_state_to_spectators(timeInSeconds);
       if (
-        (this.game_state.player1.score == this.game_state.gameInfos.WinScore ||
+        (this.game_state.player1.score == this.game_state.gameInfos.winScore ||
           this.game_state.player2.score ==
-            this.game_state.gameInfos.WinScore) &&
+            this.game_state.gameInfos.winScore) &&
         !this.people_left
       ) {
         this.status = Status.ENDED;
         this._send_state_to_players(timeInSeconds);
+        this._send_state_to_spectators(timeInSeconds);
       }
     }
     if (this.status === Status.ABORTED) {
@@ -243,52 +282,58 @@ export class Game {
     reason: string,
   ) {
     timeInSeconds;
-
+    let profile_winner: User | undefined;
+    let profile_loser: User | undefined;
     this._set_players_status('ONLINE');
     const res = this._result_string(winner, loser, reason);
     this.websockets.send(this.player1.socket, 'match_result', res);
-    if (this.type != TypeMode.TRAINING)
+    this.websockets.sendToAll(this.spectator_sockets, 'match_result', res);
+    if (this.type != TypeMode.TRAINING) {
       this.websockets.send(this.player2?.socket, 'match_result', res);
-    const profile_winner: User | undefined = winner.profile?.user;
-    const profile_loser: User | undefined = loser.profile?.user;
+      profile_winner = winner.profile?.user;
+      profile_loser = loser.profile?.user;
+    } else {
+      const AI: User | null = await this.prisma.user.findUnique({
+        where: {
+          nickname: 'AI',
+        },
+      });
+      if (!AI) return;
+      if (winner.profile?.user == undefined) {
+        profile_winner = AI;
+        profile_loser = loser.profile?.user;
+      } else {
+        profile_loser = AI;
+        profile_winner = loser.profile?.user;
+      }
+    }
     if (!profile_winner || !profile_loser) return;
     await this.prisma.match.update({
       where: { id: this.id_game },
       data: {
         state: 'Finished',
         endDate: new Date().toISOString(),
-        entries: {
-          create: [
-            {
-              userId: profile_winner.id,
-              score: loser.score,
-            },
-            {
-              userId: profile_loser.id,
-              score: winner.score,
-            },
-          ],
+      },
+    });
+    if (this.type != TypeMode.TRAINING) {
+      await this.prisma.stats.update({
+        where: {
+          userId: winner.profile?.user.id,
         },
-      },
-    });
-    await this.prisma.stats.update({
-      where: {
-        userId: winner.profile?.user.id,
-      },
-      data: {
-        nb_win: { increment: 1 },
-        nb_game: { increment: 1 },
-      },
-    });
-
-    await this.prisma.stats.update({
-      where: {
-        userId: loser.profile?.user.id,
-      },
-      data: {
-        nb_game: { increment: 1 },
-      },
-    });
+        data: {
+          nb_win: { increment: 1 },
+          nb_game: { increment: 1 },
+        },
+      });
+      await this.prisma.stats.update({
+        where: {
+          userId: loser.profile?.user.id,
+        },
+        data: {
+          nb_game: { increment: 1 },
+        },
+      });
+    }
     await this.achievements.getAchievement(this.player1.user);
     await this.achievements.getAchievement(this.player2?.user);
   }
@@ -315,20 +360,18 @@ export class Game {
         ? this.game_state.player2
         : this.game_state.player1;
     this.people_left = otherPlayer;
-    this.people_left.score = this.game_state.gameInfos.WinScore;
+    this.people_left.score = this.game_state.gameInfos.winScore;
     leaved.score = 0;
     this.status = Status.ABORTED;
-    if (this.game_start_time) {
-      const now = new Date();
-      const timePlayed = now.getTime() - this.game_start_time.getTime();
-      const timeInSeconds = Math.floor(timePlayed / 1000);
-      this._register_game(
-        otherPlayer,
-        leaved,
-        timeInSeconds,
-        'Player left the game',
-      );
-    }
+    const now = new Date();
+    const timePlayed = now.getTime() - this.game_start_time.getTime();
+    const timeInSeconds = Math.floor(timePlayed / 1000);
+    this._register_game(
+      otherPlayer,
+      leaved,
+      timeInSeconds,
+      'Player left the game',
+    );
     this._set_players_status('ONLINE');
     this.end();
   }
@@ -427,6 +470,7 @@ export class Game {
     paddleHeight: number,
     isPlayer1: boolean,
   ) {
+    let paddleFrontUpCollideZone: any;
     let paddleFrontMiddleCollideZone: any;
     let paddleFrontDownCollideZone: any;
     if (ball.collidable) {
@@ -436,13 +480,13 @@ export class Game {
         width: ballRadius * 2,
         height: ballRadius * 2,
       };
-      const paddleFrontUpCollideZone: any = {
-        x: paddle.x,
-        y: paddle.y,
-        width: 2,
-        height: paddleHeight / 3,
-      };
       if (isPlayer1) {
+        paddleFrontUpCollideZone = {
+          x: paddle.x + Default_params.PADDLE_WIDTH,
+          y: paddle.y,
+          width: 2,
+          height: paddleHeight / 3,
+        };
         paddleFrontMiddleCollideZone = {
           x: paddle.x + Default_params.PADDLE_WIDTH,
           y: paddle.y + paddleHeight / 3,
@@ -456,6 +500,12 @@ export class Game {
           height: paddleHeight / 3,
         };
       } else {
+        paddleFrontUpCollideZone = {
+          x: paddle.x,
+          y: paddle.y,
+          width: 2,
+          height: paddleHeight / 3,
+        };
         paddleFrontMiddleCollideZone = {
           x: paddle.x,
           y: paddle.y + paddleHeight / 3,
@@ -551,19 +601,19 @@ export class Game {
     if (ball.position.x < ballRadius) {
       this.game_state.player2.score++;
       this._reset_ball(ball);
-      this._reset_both_paddle([
-        this.game_state.player1.paddle,
-        this.game_state.player2.paddle,
-      ]);
+      // this._reset_both_paddle([
+      //   this.game_state.player1.paddle,
+      //   this.game_state.player2.paddle,
+      // ]);
       if (this.obstacle) this._reset_obstacle(this.game_state.obstacle);
     }
     if (ball.position.x > this.game_state.gameInfos.width - ballRadius) {
       this.game_state.player1.score++;
       this._reset_ball(ball);
-      this._reset_both_paddle([
-        this.game_state.player1.paddle,
-        this.game_state.player2.paddle,
-      ]);
+      // this._reset_both_paddle([
+      //   this.game_state.player1.paddle,
+      //   this.game_state.player2.paddle,
+      // ]);
       if (this.obstacle) this._reset_obstacle(this.game_state.obstacle);
     }
     if (ball.position.y < ballRadius) {
@@ -576,17 +626,17 @@ export class Game {
     }
   }
 
-  private _reset_both_paddle(paddle: Position[]) {
-    paddle[0].x = Default_params.PADDLE_OFFSET;
-    paddle[0].y =
-      Default_params.GAME_HEIGHT / 2 - Default_params.PADDLE_HEIGHT / 2;
-    paddle[1].x =
-      Default_params.GAME_WIDTH -
-      Default_params.PADDLE_OFFSET -
-      Default_params.PADDLE_WIDTH;
-    paddle[1].y =
-      Default_params.GAME_HEIGHT / 2 - Default_params.PADDLE_HEIGHT / 2;
-  }
+  // private _reset_both_paddle(paddle: Position[]) {
+  //   paddle[0].x = Default_params.PADDLE_OFFSET;
+  //   paddle[0].y =
+  //     Default_params.GAME_HEIGHT / 2 - Default_params.PADDLE_HEIGHT / 2;
+  //   paddle[1].x =
+  //     Default_params.GAME_WIDTH -
+  //     Default_params.PADDLE_OFFSET -
+  //     Default_params.PADDLE_WIDTH;
+  //   paddle[1].y =
+  //     Default_params.GAME_HEIGHT / 2 - Default_params.PADDLE_HEIGHT / 2;
+  // }
 
   private _reset_obstacle(Obstacle?: Obstacle) {
     if (!Obstacle) return;

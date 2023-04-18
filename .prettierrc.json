@@ -2,5 +2,13 @@
   "tabWidth": 2,
   "singleQuote": true,
   "trailingComma": "none",
-  "semi": true
+  "semi": true,
+  "overrides": [
+    {
+      "files": "**/*.ts",
+      "options": {
+        "parser": "typescript"
+      }
+    }
+  ]
 }

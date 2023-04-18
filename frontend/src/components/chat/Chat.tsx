@@ -1,39 +1,19 @@
-import { useContext, useEffect, useState, Fragment, useRef } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import * as React from 'react';
-import {
-  Box,
-  List,
-  ListItem,
-  TextField,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  ListItemIcon,
-  ListItemText,
-  ListItemButton,
-  CssBaseline,
-  ListItemSecondaryAction
-} from '@mui/material';
-import {
-  TagRounded,
-  LockRounded,
-  ArrowForwardIos,
-  AddCircleOutline,
-  LockOpenRounded,
-  Person2Rounded
-} from '@mui/icons-material';
-
+import { Box, List, ListItem, TextField, Button, ListItemIcon, ListItemText, ListItemButton, CssBaseline, Modal, Typography, Stack } from '@mui/material';
+import { TagRounded, LockRounded, ArrowForwardIos, AddCircleOutline, LockOpenRounded, Person2Rounded } from '@mui/icons-material';
+import { ModalClose, ModalDialog } from '@mui/joy';
+import { LoadingButton } from '@mui/lab';
 // personal components
+import errorAlert from '../UI/errorAlert';
 import { UserContext } from '../../contexts/UserContext';
 import { WebSocketContext } from '../../contexts/WebsocketContext';
 import ChatRoom from './ChatRoom';
 import PleaseLogin from '../pages/PleaseLogin';
-import { ChatRoomType } from '../../types/chat';
+import { ChatRoomType, MemberType } from '../../types/chat';
 // personal css
 import './Chat.css';
+import * as MUI from '../UI/MUIstyles';
 
 /*************************************************************
  * Chat entrance
@@ -42,9 +22,6 @@ import './Chat.css';
  * Users can create/join chat rooms.
 **************************************************************/
 
-interface WinProps {
-  window?: () => Window;
-}
 const Chat = () => {
   /*************************************************************
 	 * Chat entrance
@@ -61,8 +38,6 @@ const Chat = () => {
   const { user, setUser } = useContext(UserContext);
   // Array including all chat rooms
   const [chatRooms, setChatRooms] = useState<ChatRoomType[]>([]);
-  // Tells whether the user has joined the chatroom
-  const joinedRoomName = user.joinedChatRoom;
 
   // Create chat room
   const [chatRoomCreateMode, setChatRoomCreateMode] = useState<boolean>(false);
@@ -74,11 +49,14 @@ const Chat = () => {
     useState<boolean>(false);
   const [inputPassword, setInputPassword] = useState<string>('');
   const [isPasswordRight, setIsPasswordRight] = useState<boolean>(false);
-  const [clickedRoomToJoin, setclickedRoomToJoin] = useState<string>('');
+  const [clickedRoomToJoin, setClickedRoomToJoin] = useState<string>('');
 
-  socket.emit('findAllChatRooms', {}, (response: ChatRoomType[]) => {
-    setChatRooms(response);
-  });
+  const findAllChatRooms = async () => {
+    socket.emit('findAllChatRooms', {}, (response: ChatRoomType[]) => {
+      setChatRooms(response);
+    });
+  };
+  findAllChatRooms();
 
   const [open, setOpen] = React.useState(false);
   const handleClickOpen = () => {
@@ -87,6 +65,19 @@ const Chat = () => {
   const handleClose = () => {
     setOpen(false);
   };
+  const warningName = () => {
+    setOpen(false);
+    errorAlert('Room name already used');
+  };
+  const warningRoomLimit = () => {
+    setOpen(false);
+    errorAlert('Room limit reached (30 max)');
+  };
+  const warningEmptyName = () => {
+    setOpen(false);
+    errorAlert('Room name cannot be empty');
+  };
+
   const [openP, setOpenPass] = React.useState(false);
   const handleClickOpenP = () => {
     setOpenPass(true);
@@ -94,6 +85,16 @@ const Chat = () => {
   const handleClosePass = () => {
     setOpenPass(false);
   };
+  const warningWrongPass = () => {
+    setOpenPass(false);
+    errorAlert("Password dismatch");
+  };
+  const warningEmptyPass = () => {
+    setOpenPass(false);
+    errorAlert('Password cannot be empty');
+  };
+
+
   /*************************************************************
    * Event listeners
    **************************************************************/
@@ -103,14 +104,14 @@ const Chat = () => {
     socket.on('createChatRoom', (roomName: string) => {
       console.log('Created new chat room [' + roomName + ']');
     });
-    socket.on('exception', (msg: string) => {
-      console.log('ERROR: ' + msg);
+    socket.on('exception', (res) => {
+      console.log('ERROR: ' + res.msg);
     });
 
     // Clean listeners to unsubscribe all callbacks for these events
     // before the component is unmounted
     return () => {
-      socket.off('connect');
+      // socket.off('connect');
       socket.off('createChatRoom');
       socket.off('exception');
     };
@@ -122,255 +123,328 @@ const Chat = () => {
     handleClickOpen();
   };
 
-  const onChatRoomCreateModeSubmit = (e: any) => {
+  const onChatRoomCreateModeSubmit = async (e: any) => {
     e.preventDefault();
+    if (newChatRoomName.length === 0) warningEmptyName();
     if (newChatRoomName)
       socket.emit('createChatRoom', {
         room: {
           name: newChatRoomName,
+          owner: user.id,
           modes: '',
           password: chatRoomPassword,
           userLimit: 0,
-          users: {},
+          members: {},
           messages: [],
-          bannedUsers: [],
+          bannedUsers: []
         },
-        userId: user.id,
-        user2Id: ''
-      });
+        user1: user,
+        avatar: user.avatar,
+        user2Id: undefined,
+        user2Nick: undefined
+      },
+      (response: number) => {
+        if (response === 412) warningName();
+        else if (response === 409) warningRoomLimit();
+      }
+    );
     setNewChatRoomName('');
     setChatRoomCreateMode(false);
     setChatRoomPassword('');
   };
-  // Handle value changes of the input fields during new chatroom create mode
+  // Handle value changes of the input fields during new chatroom creatmessagesToFiltere mode
   const onValueChange = (type: string, value: string) => {
     if (type === 'name') setNewChatRoomName(value);
     if (type === 'password') setChatRoomPassword(value);
   };
-  const onClickJoinRoom = (roomName: string) => {
+  // When clicking on a room name to join it
+  const onClickJoinRoom = async (roomName: string, modes: string) => {
+    // Quit current joined room first
+    if (user.joinedChatRoom && roomName !== user.joinedChatRoom?.name) {
+      socket.emit('quitRoom', {
+        roomName: user.joinedChatRoom?.name,
+        userId: user.id
+      });
+    }
     // Notify that the user has clicked on a 'join' button
-    setclickedRoomToJoin(roomName);
+    // Put this code AFTER the previous quitRoom, since it
+    // cleans clickedRoomToJoin
+    setClickedRoomToJoin(roomName);
     handleClickOpenP();
     // Check if the corresponding chat room is password protected
-    socket.emit(
-      'isPasswordProtected',
-      { roomName: roomName },
-      (response: boolean) => {
-        setIsPasswordProtected(response);
-      }
-    );
-    isPasswordProtected === false ? joinRoom(roomName) : onPasswordSubmit();
+    if (modes.indexOf('p') !== -1) setIsPasswordProtected(true);
+    else {
+      setIsPasswordProtected(false);
+      joinRoom(roomName);
+    }
   };
   // Join a chatroom if no password has been set
-  const joinRoom = (roomName: string) => {
+  const joinRoom = async (roomName: string) => {
     socket.emit(
       'joinRoom',
-      { roomName: roomName, userId: user.id },
-      (response: string) => {
+      { roomName: roomName, user: user, avatar: user.avatar },
+      (response: ChatRoomType) => {
         user.joinedChatRoom = response;
+        setClickedRoomToJoin('');
       }
     );
   };
   // Check if the password is right
-  const onPasswordSubmit = () => {
-    socket.emit(
-      'checkPassword',
-      { roomName: clickedRoomToJoin, password: inputPassword },
-      (response: boolean) => {
-        response === true
-          ? setIsPasswordRight(true)
-          : setIsPasswordRight(false);
-      }
-    );
-    if (isPasswordRight) joinRoom(clickedRoomToJoin);
+  const onPasswordSubmit = async () => {
+    if (clickedRoomToJoin) {
+      socket.emit(
+        'checkPassword',
+        { roomName: clickedRoomToJoin, password: inputPassword },
+        (response: boolean) => {
+          if (response === true) {
+            joinRoom(clickedRoomToJoin);
+            setIsPasswordRight(true);
+          }
+          else {
+            if (inputPassword.length === 0) warningEmptyPass();
+            else warningWrongPass();
+            setIsPasswordRight(false);
+          }
+        }
+      );
+    }
     setInputPassword('');
+    handleClosePass();
   };
-
-  const getMemberNbr = (room: ChatRoomType) => {
-    let memberNbr = 0;
-    for (const user in room.users)
-      if (room.users[user].isOnline === true) memberNbr += 1;
-    return memberNbr;
-  };
-
-  const isAuthorizedPrivRoom = (mode: string, users: any) => {
+  // Check if user is authorized to see the private chat room
+  const isAuthorizedPrivRoom = (mode: string, members: MemberType[]) => {
     if (mode.indexOf('i') !== -1) {
-      for (const id in users) if (id === String(user.id)) return true;
+      for (const id in members) {
+        if (members[id].memberId === user.id) return true;
+      }
     } else return true;
     return false;
   };
-
+  // Clean all data about the joined room
   const cleanRoomLoginData = () => {
-    user.joinedChatRoom = '';
+    user.joinedChatRoom = undefined;
     setIsPasswordProtected(false);
     setIsPasswordRight(false);
   };
+
   /*************************************************************
    * Render HTML response
    **************************************************************/
-
-  return !user.provider || (user.provider && !user.nickname) ? (
+  return !user.provider ? (
     <PleaseLogin />
   ) : (
-    <Fragment>
-      <Box className="basicCard" sx={{ display: 'flex' }}>
-        <CssBaseline />
-        {/* TODO: move sx style in css file */}
-        <Box component="main" className="chatRoomList">
-          {chatRooms.length === 0 ? (
-            <Box>
-              <List>
-                <ListItem>
-                  <ListItemText
-                    primary={
-                      'No channel joined. Click to the + button for create one.'
-                    }
-                    sx={{ color: 'white' }}
-                  />
-                </ListItem>
-              </List>
-            </Box>
-          ) : (
-            <Box>
-              <List>
-                {/* Mapping chatroom array to retrieve all chatrooms with */}
-                {chatRooms.map(
-                  (room: ChatRoomType, index) =>
-                    // Check if this isn't a private conversation of other users
-                    isAuthorizedPrivRoom(room.modes, room.users) && (
-                      <>
-                        <ListItem key={index} disablePadding>
-                          <ListItemIcon sx={{ color: 'white' }}>
-                            {
-                              // TODO => room.modes.indexOf('i') !== -1 ? to find private room
-                              room.modes === 'p' ? (
-                                <LockRounded />
-                              ) : room.modes === 'i' ? (
-                                <Person2Rounded />
-                              ) : (
-                                <TagRounded />
-                              )
-                            }
-                          </ListItemIcon>
-                          {clickedRoomToJoin === room.name &&
-                            room.modes.indexOf('p') !== -1 && (
-                              <>
-                                <Dialog
-                                  open={openP}
-                                  onClose={handleClosePass}
-                                  onSubmit={onPasswordSubmit}
-                                >
-                                  <DialogTitle>Enter password</DialogTitle>
-                                  <DialogContent>
-                                    <DialogContentText>
-                                      Please enter the password to join this
-                                      channel
-                                    </DialogContentText>
-                                    <TextField
-                                      autoFocus
-                                      margin="dense"
-                                      id="password"
-                                      label="Password"
-                                      type="password"
-                                      fullWidth
-                                      value={inputPassword}
-                                      onChange={(e) =>
-                                        setInputPassword(e.target.value)
-                                      }
-                                    />
-                                  </DialogContent>
-                                  <DialogActions>
-                                    <Button onClick={handleClosePass}>
-                                      Cancel
-                                    </Button>
-                                    <Button onClick={onPasswordSubmit}>
-                                      Join
-                                    </Button>
-                                  </DialogActions>
-                                </Dialog>
-                              </>
-                            )}
-                          <ListItemButton
-                            onClick={() => onClickJoinRoom(room.name)}
-                          >
-                            <ListItemText
-                              tabIndex={-1}
-                              primary={
-                                room.name[0] === '#'
-                                  ? room.name.slice(1)
-                                  : room.name
-                                // Slicing the '#' character at position 0 which is
-                                // used for private room names
-                              }
-                              className="limitText"
-                              sx={{ color: 'white' }}
-                            />
-                            <ListItemIcon sx={{ color: 'white' }}>
-                              <ArrowForwardIos />
-                            </ListItemIcon>
-                          </ListItemButton>
-                        </ListItem>
-                      </>
-                    )
+    <Box id="basicCard">
+      <CssBaseline />
+      <Box component="main" id="chatRoomList" className={user.joinedChatRoom ? "hidden-smartphone" : "show-smartphone"}>
+        {chatRooms.length === 0 ? (
+          <Box>
+            <List>
+              <ListItem>
+                <ListItemText
+                  primary={
+                    'No channel joined.'
+                  }
+                  sx={{ color: 'white' }}
+                />
+              </ListItem>
+            </List>
+          </Box>
+        ) : (
+          <Box>
+            <List>
+              {/* Mapping chatroom array to retrieve all chatrooms with */}
+              {chatRooms.map(
+                (room: ChatRoomType, index) =>
+                  // Check if this isn't a private conversation of other users
+                  isAuthorizedPrivRoom(room.modes, room.members) &&
+                  <ListItem key={index} disablePadding>
+                    <ListItemIcon sx={{ color: 'white' }}>
+                      {
+                      room.modes === "p" ? (
+                        <LockRounded />
+                      ) : room.modes === "i" ? (
+                        <Person2Rounded />) : (
+                        <TagRounded />
+                      ) }
+                    </ListItemIcon>
+                    {clickedRoomToJoin === room.name &&
+                      room.modes.indexOf('p') !== -1 && (
+                        // If 'password protected' mode is found, launch the password dialog
+                        // if the room is already joined, don't display the password dialog
+													<Modal
+														className='black'
+														open={openP}
+														onClose={handleClosePass}>
+														<ModalDialog
+															aria-labelledby="basic-modal-dialog-title"
+															sx={MUI.modalDialog}>
+															<ModalClose onClick={handleClosePass}/>
+															<Typography 
+										            id="basic-modal-dialog-title"
+																component="h2"
+																className="modal-title">
+																Enter password
+																</Typography>
+																<form onSubmit={onPasswordSubmit}>
+																	<Stack spacing={2}>
+																		<Typography component="h3" sx={{ color: 'rgb(37, 120, 204)' }}>
+																			This room is password protected
+																		</Typography>
+																		<Stack spacing={1}>
+																			<Typography>
+																				Please enter the password to join this channel
+																			</Typography>
+																			<div>
+																			</div>
+																		</Stack>
+																		<TextField
+																			autoFocus
+																			required
+																			type="password"
+																			inputRef={(input) => {
+																				if (input != null) input.focus();
+																			}}
+																			value={inputPassword}
+																			inputProps={{
+																				minLength: 1
+																			}}
+																			placeholder="Password"
+																			// helperText={error} // error message
+																			// error={!!error} // set to true to change the border/helperText color to red
+																			onChange={(e) =>
+																				setInputPassword(e.target.value)
+																			}
+																		/>
+																		<LoadingButton
+																			type="submit"
+																			onClick={onPasswordSubmit}
+																			startIcon={<LockOpenRounded />}
+																			variant="contained"
+																			color="inherit"
+																		>
+																			SEND
+																		</LoadingButton>
+																	</Stack>
+																</form>
+														</ModalDialog>
+													</Modal>
+                      )}
+                    <ListItemButton onClick={() => onClickJoinRoom(room.name, room.modes)}>
+                      <ListItemText
+                        tabIndex={-1}
+                        primary={
+                          room.name[0] === '#' ? room.name.slice(1) : room.name
+                          // Slicing the '#' character at position 0 which is
+                          // used for private room names
+                        }
+                        className="limitText white"
+                        />
+                      <ListItemIcon sx={{ color: 'white' }}>
+                        <ArrowForwardIos />
+                      </ListItemIcon>
+                    </ListItemButton>
+                  </ListItem>
                 )}
               </List>
-            </Box>
+          </Box>
           )}
           {/* Button that gets into chatroom create mode */}
           {chatRooms.length <
             parseInt(process.env.REACT_APP_MAX_CHATROOM_NBR!) && (
+          <div className="white column"><br/>
+              Click to + for create new room <br/><br/>
             <Button onClick={onNewClick} sx={{ color: 'white' }}>
               <AddCircleOutline />
             </Button>
+          </div>
           )}
           {/* Chatroom create mode form */}
           {chatRoomCreateMode && (
-            <Dialog
-              open={open}
-              onClose={handleClose}
-              onSubmit={onChatRoomCreateModeSubmit}
-            >
-              <DialogTitle>Create room</DialogTitle>
-              <DialogContent>
-                <DialogContentText>
-                  Your are free to add a password or not to this chatroom.
-                </DialogContentText>
-                <TextField
-                  autoFocus
-                  required={true}
-                  helperText="Limit 20 characters"
-                  inputProps={{ inputMode: 'text', maxLength: 20 }}
-                  margin="dense"
-                  id="name"
-                  label="Chatroom name"
-                  type="name"
-                  value={newChatRoomName}
-                  onChange={(e) => onValueChange('name', e.target.value)}
-                  fullWidth
-                  variant="standard"
-                />
-                <TextField
-                  margin="dense"
-                  id="password"
-                  label="Room password"
-                  type="password"
-                  value={chatRoomPassword}
-                  onChange={(e) => onValueChange('password', e.target.value)}
-                  fullWidth
-                  variant="standard"
-                />
-              </DialogContent>
-              <DialogActions>
-                <Button onClick={handleClose}>Cancel</Button>
-                <Button onClick={onChatRoomCreateModeSubmit}>Create</Button>
-              </DialogActions>
-            </Dialog>
+            <div>
+              <Modal
+                className="black"
+                open={open}
+                onSubmit={onChatRoomCreateModeSubmit}
+                onClose={handleClose}
+              >
+                <ModalDialog
+                  aria-labelledby="basic-modal-dialog-title"
+                  sx={MUI.modalDialog}
+                >
+                  <ModalClose onClick={handleClose} />
+                  <Typography
+                    id="basic-modal-dialog-title"
+                    component="h2"
+                    className="modal-title"
+                  >
+                    Create room
+                  </Typography>
+                  <form onSubmit={onPasswordSubmit}>
+                    <Stack spacing={2}>
+                      <Stack spacing={1}>
+                        <Typography
+                          component="h3"
+                          sx={{ color: 'rgb(37, 120, 204)' }}
+                        >
+                          Type the Room name
+                        </Typography>
+                        <TextField
+                          autoFocus
+                          required={true}
+                          helperText="Limit 20 characters"
+                          inputProps={{ inputMode: 'text', maxLength: 20 }}
+                          id="name"
+                          type="name"
+                          value={newChatRoomName}
+                          // helperText={error} // error message
+                          // error={!!error} // set to true to change the border/helperText color to red
+                          onChange={(e) =>
+                            onValueChange('name', e.target.value)
+                          }
+                        />
+                      </Stack>
+                      <Stack spacing={1}>
+                        <Typography
+                          component="h3"
+                          sx={{ color: 'rgb(37, 120, 204)' }}
+                        ></Typography>
+                        <Typography>
+                          Your are free to add a password or not.
+                        </Typography>
+                        <TextField
+                          type="password"
+                          value={chatRoomPassword}
+                          placeholder="Password"
+                          // helperText={error} // error message
+                          // error={!!error} // set to true to change the border/helperText color to red
+                          onChange={(e) =>
+                            onValueChange('password', e.target.value)
+                          }
+                        />
+                      </Stack>
+                      <LoadingButton
+                        type="submit"
+                        onClick={onChatRoomCreateModeSubmit}
+                        startIcon={<LockOpenRounded />}
+                        variant="contained"
+                        color="inherit"
+                      >
+                        CREATE
+                      </LoadingButton>
+                    </Stack>
+                  </form>
+                </ModalDialog>
+              </Modal>
+            </div>
           )}
         </Box>
-        <Box component="main" className="chatRoom">
-          {joinedRoomName &&
+        <Box component="main" id="chatRoom" className={user.joinedChatRoom ? "show-smartphone" : "hidden-smartphone"}>
+          {user.joinedChatRoom &&
           ((isPasswordProtected && isPasswordRight) || !isPasswordProtected) ? (
-            <ChatRoom cleanRoomLoginData={cleanRoomLoginData} />
+            <ChatRoom
+              cleanRoomLoginData={cleanRoomLoginData}
+              room={user.joinedChatRoom}
+            />
           ) : (
             <div className="black">
               <h2>Actually no room joined</h2>
@@ -379,8 +453,7 @@ const Chat = () => {
             </div>
           )}
         </Box>
-      </Box>
-    </Fragment>
+    </Box>
   );
 };
 

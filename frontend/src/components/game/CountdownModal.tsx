@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { CircularProgress } from '@mui/material';
+import { GameStatus } from './game.interface';
+import { GameStatusContext } from '../../contexts/GameStatusContext';
 import Typography from '@mui/joy/Typography';
-import { Game_player, Game_status } from './game.interface';
 import Modal from '@mui/joy/Modal';
 import ModalDialog from '@mui/joy/ModalDialog';
 import Stack from '@mui/material/Stack';
@@ -12,21 +13,21 @@ import * as color from '../UI/colorsPong';
 
 const modalDialogStyle = {
   width: 'auto',
-  maxWidth: '442px',
+  maxWidth: '320px',
+  minWidth: '300px',
   border: '0px solid #000',
-  bgcolor: '#f5f5f5ee',
+  bgcolor: color.PONG_WHITE,
   borderRadius: '4px'
 };
 
 interface CountdownProps {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  players: Game_player[];
-  setGameState: (gameState: Game_status) => void;
   seconds: number;
 }
 
 const CountdownModal = (props: CountdownProps) => {
+  const { setGameStatus } = useContext(GameStatusContext);
   const [remainingSeconds, setRemainingSeconds] = useState<number>(
     props.seconds
   );
@@ -36,10 +37,8 @@ const CountdownModal = (props: CountdownProps) => {
       setRemainingSeconds((prevRemainingSeconds) => prevRemainingSeconds - 1);
     }, 1000);
 
-    if (remainingSeconds === 1) {
-    }
-    if (remainingSeconds === 0) {
-      props.setGameState(Game_status.PLAYING);
+    if (remainingSeconds <= 0) {
+      setGameStatus(GameStatus.PLAYING);
       props.setOpen(false);
       clearInterval(intervalId);
     }
@@ -47,7 +46,7 @@ const CountdownModal = (props: CountdownProps) => {
     return () => clearInterval(intervalId);
   }, [remainingSeconds]);
 
-  const progress = (props.seconds - remainingSeconds) / (props.seconds - 1);
+  const progress = (props.seconds - remainingSeconds) / props.seconds;
 
   return (
     <div>
@@ -60,22 +59,29 @@ const CountdownModal = (props: CountdownProps) => {
           <Stack spacing={2} alignItems="center" justifyContent="center">
             <CircularProgress
               variant="determinate"
-              value={progress * 100}
+              value={progress * 100 + 100}
               sx={{ color: color.PONG_PINK, marginTop: '10px' }}
             />
-            <Typography>{remainingSeconds - 1} sec.</Typography>
-            <Typography
-              textAlign="center"
-              sx={{
-                whiteSpace: 'pre'
-              }}
-            >
-              Use <KeyboardArrowUpIcon sx={{ color: color.PONG_PINK }} /> and{' '}
-              <KeyboardArrowDownIcon sx={{ color: color.PONG_PINK }} /> keys{' '}
-              {'\n'}
-              to move the paddle
-            </Typography>
+            <Typography>{remainingSeconds} sec.</Typography>
           </Stack>
+          <Typography
+            sx={{
+              textAlign: 'left',
+              fontSize: '14px',
+              wordWrap: 'break-word'
+            }}
+          >
+            <Typography>
+              * Use <KeyboardArrowUpIcon sx={{ color: color.PONG_PINK }} /> and{' '}
+              <KeyboardArrowDownIcon sx={{ color: color.PONG_PINK }} /> keys to
+              move the paddle.
+            </Typography>
+            <br />
+            <Typography>
+              ** If your leave the game page during the match, you receive
+              technical lose.
+            </Typography>
+          </Typography>
         </ModalDialog>
       </Modal>
     </div>

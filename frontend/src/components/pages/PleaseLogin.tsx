@@ -6,7 +6,8 @@ import EditNickname from '../profile/EditNickname';
 import ButtonPong from '../UI/ButtonPong';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
-import styles from './Pages.module.css';
+import DeviderPong from '../UI/DeviderPong';
+import styles from './styles/Pages.module.css';
 
 const PleaseLogin = () => {
   const navigate = useNavigate();
@@ -36,9 +37,7 @@ const PleaseLogin = () => {
     <div className={styles.centeredCard}>
       <div className={styles.wrapper}>
         <div className={styles.left}>Please login to continue</div>
-        <div className={styles.center}>
-          <div className={styles.line} />
-        </div>
+        <DeviderPong />
         <div className={styles.right}>
           <ButtonPong
             text="Back"

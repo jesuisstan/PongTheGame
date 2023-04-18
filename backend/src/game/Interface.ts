@@ -55,7 +55,7 @@ export interface GameInfos {
   paddleHeight: number;
   paddleWidth: number;
   ballRadius: number;
-  WinScore: number;
+  winScore: number;
   obstacleHeight?: number;
   obstacleWidth?: number;
 }

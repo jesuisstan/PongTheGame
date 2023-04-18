@@ -7,18 +7,21 @@
 }
 
 .wrapper {
-  width: 450px;
-  height: 250px;
+  width: 440px;
+  height: auto;
+  min-height: 225px;
   box-shadow: 0px 5px 33px -21px whitesmoke;
   display: flex;
+  flex-direction: row;
   align-items: center;
   border-radius: 4px;
   background-color: rgba(0, 0, 0, 0.35);
+  padding: 10px;
 }
 
 .loginButtonEcole {
   width: 112px;
-  height: 13px;
+  height: 14px;
   display: flex;
   align-items: center;
   cursor: pointer;
@@ -35,15 +38,15 @@
 }
 
 .loginButtonEcole:hover {
+  transition-duration: 0.5s;
   background-color: rgb(253, 80, 135);
   color: black;
-  transform: scale(1.04);
   font-weight: bold;
 }
 
 .loginButtonGithub {
   width: 112px;
-  height: 13px;
+  height: 14px;
   display: flex;
   align-items: center;
   cursor: pointer;
@@ -60,8 +63,8 @@
 }
 
 .loginButtonGithub:hover {
+  transition-duration: 0.5s;
   background-color: rgb(253, 80, 135);
-  transform: scale(1.04);
   color: black;
   font-weight: bold;
 }
@@ -69,9 +72,9 @@
 .left {
   display: flex;
   flex-direction: row;
-  flex: 1;
   justify-content: center;
-  padding: 10px 10px;
+  flex: 1;
+  padding: 10px;
   color: whitesmoke;
   font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
   font-weight: 500;
@@ -84,35 +87,22 @@
 .right {
   display: flex;
   flex-direction: column;
+  justify-content: center;
   flex: 1;
-  padding: 10px 10px;
+  padding: 10px;
   align-items: center;
   gap: 21px;
 }
 
-.center {
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-}
-
-.line {
-  width: 1px;
-  height: 75%;
-  background-color: whitesmoke;
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  margin: auto;
-  z-index: -1;
+@media (width <= 400px) {
+  .wrapper {
+    flex-direction: column;
+    width: auto;
+  }
 }
 
 .icon {
   width: 21px;
   height: 21px;
-  margin-right: 20px;
+  padding-right: 20px;
 }

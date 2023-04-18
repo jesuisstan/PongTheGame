@@ -1,21 +1,20 @@
 import { Dispatch, SetStateAction, useContext, useState } from 'react';
-import { UserContext } from '../../../contexts/UserContext';
-import { User } from '../../../types/User';
+import { useNavigate } from 'react-router-dom';
 import { WebSocketContext } from '../../../contexts/WebsocketContext';
 import { Invitation } from '../../../types/Invitation';
-import errorAlert from '../../UI/errorAlert';
+import { GameStatusContext } from '../../../contexts/GameStatusContext';
+import { GameStatus } from '../game.interface';
+import Stack from '@mui/material/Stack';
+import Avatar from '@mui/material/Avatar';
 import Modal from '@mui/joy/Modal';
 import ModalClose from '@mui/joy/ModalClose';
 import ModalDialog from '@mui/joy/ModalDialog';
-import Stack from '@mui/material/Stack';
 import Typography from '@mui/joy/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
-import Avatar from '@mui/material/Avatar';
 import * as MUI from '../../UI/MUIstyles';
-import * as color from '../../UI/colorsPong';
-import styles from './styles/PlayerCard.module.css';
+import errorAlert from '../../UI/errorAlert';
 
 const InvitationReceivedModal = ({
   open,
@@ -26,34 +25,40 @@ const InvitationReceivedModal = ({
   setOpen: Dispatch<SetStateAction<boolean>>;
   invitation: Invitation;
 }) => {
-  const { user, setUser } = useContext(UserContext);
+  const navigate = useNavigate();
+  const { setGameStatus } = useContext(GameStatusContext);
   const socket = useContext(WebSocketContext);
   const [loadingDecline, setLoadingDecline] = useState(false);
   const [loadingPlay, setLoadingPlay] = useState(false);
 
   const declineInvitation = () => {
-    console.log('declined');
-    socket.emit('match_invitation_refuse', {
+    socket.emit('match_invitation_refused', {
       nickname: invitation.from.nickname
     });
     setOpen(false);
   };
 
   const acceptInvitation = () => {
-    console.log('accepted');
-
     socket.emit('match_invitation_accept', {
-      winscore: invitation.gameInfo.winscore,
+      winScore: invitation.gameInfo.winScore,
       obstacle: invitation.gameInfo.obstacle,
       nickname: invitation.from.nickname
     });
     setOpen(false);
+    navigate('/game');
+    setGameStatus(GameStatus.BEGIN_GAME);
   };
 
   const setDefault = () => {
     setLoadingDecline(false);
     setLoadingPlay(false);
   };
+
+  socket.on('match_invitation_canceled', () => {
+    setDefault();
+    setOpen(false);
+    errorAlert('Invitation was cancelled');
+  });
 
   return (
     <div>
@@ -125,7 +130,7 @@ const InvitationReceivedModal = ({
                   whiteSpace: 'pre'
                 }}
               >
-                win score - [ {invitation.gameInfo.winscore} ]{'\n'}moving
+                win score - [ {invitation.gameInfo.winScore} ]{'\n'}moving
                 obstacle - [ {invitation.gameInfo.obstacle ? 'on' : 'off'} ]
               </Typography>
             </div>
@@ -163,6 +168,7 @@ const InvitationReceivedModal = ({
                   loadingPosition="start"
                   sx={{ minWidth: '120px' }}
                   onClick={() => acceptInvitation()}
+                  disabled={!invitation.from.nickname ? true : false}
                 >
                   Play
                 </LoadingButton>

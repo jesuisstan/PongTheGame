@@ -2,23 +2,24 @@ import { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { UserContext } from '../../contexts/UserContext';
 import { WebSocketContext } from '../../contexts/WebsocketContext';
-import { Player } from '../../types/Player';
+import { PlayerProfile } from '../../types/PlayerProfile';
 import PleaseLogin from '../pages/PleaseLogin';
 import NotFound from '../pages/NotFound';
-import InfoBlock from './InfoBlock';
-import FriendsBlock from './friends/FriendsBlock';
+import InfoBlock from './management/InfoBlock';
+import FriendsBlock from './friends_list/FriendsBlock';
 import AchievementsBlock from './achievements/AchievementsBlock';
 import MatchHistoryBlock from './match_history/MatchHistoryBlock';
 import backendAPI from '../../api/axios-instance';
 import errorAlert from '../UI/errorAlert';
-import Divider from '@mui/material/Divider';
+import DeviderPong from '../UI/DeviderPong';
 import styles from './styles/PlayerCard.module.css';
+import BlackListBlock from './black_list/BlackListBlock';
 
 const PlayerCard = () => {
   const socket = useContext(WebSocketContext);
   const [socketEvent, setSocketEvent] = useState(0);
   const { user } = useContext(UserContext);
-  const [player, setPlayer] = useState<Player>({
+  const [player, setPlayer] = useState<PlayerProfile>({
     avatar: undefined,
     id: -1,
     nickname: '',
@@ -61,23 +62,15 @@ const PlayerCard = () => {
       </div>
       <div className={styles.playerCard}>
         <InfoBlock player={player} />
-        <Divider
-          orientation="vertical"
-          flexItem
-          sx={{ backgroundColor: 'rgba(245, 245, 245, 0.3)' }}
-        />
+        <DeviderPong />
         <FriendsBlock player={player} socketEvent={socketEvent} />
-        <Divider
-          orientation="vertical"
-          flexItem
-          sx={{ backgroundColor: 'rgba(245, 245, 245, 0.3)' }}
-        />
+        <DeviderPong />
+        {user.nickname === player.nickname && (
+          <BlackListBlock socketEvent={socketEvent} />
+        )}
+        {user.nickname === player.nickname && <DeviderPong />}
         <AchievementsBlock player={player} socketEvent={socketEvent} />
-        <Divider
-          orientation="vertical"
-          flexItem
-          sx={{ backgroundColor: 'rgba(245, 245, 245, 0.3)' }}
-        />
+        <DeviderPong />
         <MatchHistoryBlock player={player} socketEvent={socketEvent} />
       </div>
     </div>

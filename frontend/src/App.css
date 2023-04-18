@@ -18,6 +18,7 @@ a {
 }
 
 a:hover {
+  transition-duration: 0.5s;
   color: rgb(253, 80, 135);
 }
 

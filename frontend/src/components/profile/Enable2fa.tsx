@@ -15,7 +15,7 @@ import SaveIcon from '@mui/icons-material/Save';
 import AdbIcon from '@mui/icons-material/Adb';
 import AppleIcon from '@mui/icons-material/Apple';
 import * as MUI from '../UI/MUIstyles';
-import * as color from '../UI/colorsPong'
+import * as color from '../UI/colorsPong';
 import styles from './styles/Profile.module.css';
 
 const Enable2fa = ({
@@ -25,7 +25,7 @@ const Enable2fa = ({
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
 }) => {
-  const { user, setUser } = useContext(UserContext);
+  const { setUser } = useContext(UserContext);
   const [loadSubmit, setLoadSubmit] = useState(false);
   const [loadCreateQr, setLoadCreateQr] = useState(false);
   const [buttonText, setButtonText] = useState('Submit');

@@ -1,14 +1,14 @@
 import { SetStateAction, Dispatch } from 'react';
+import { PlayerProfile } from '../../../types/PlayerProfile';
 import Modal from '@mui/joy/Modal';
 import ModalDialog from '@mui/joy/ModalDialog';
 import ModalClose from '@mui/joy/ModalClose';
-import { Player } from '../../../types/Player';
+import BadgePong from '../../UI/BadgePong';
 import Typography from '@mui/joy/Typography';
 import RefreshIcon from '@mui/icons-material/Refresh';
+import Avatar from '@mui/material/Avatar';
 import * as MUI from '../../UI/MUIstyles';
 import * as color from '../../UI/colorsPong';
-import BadgePong from '../../UI/BadgePong';
-import Avatar from '@mui/material/Avatar';
 
 const FriendsNoteModal = ({
   open,
@@ -17,7 +17,7 @@ const FriendsNoteModal = ({
 }: {
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
-  player: Player;
+  player: PlayerProfile;
 }) => {
   return (
     <div>
@@ -97,11 +97,14 @@ const FriendsNoteModal = ({
               textAlign: 'left',
               fontSize: '14px',
               paddingTop: '15px',
-              whiteSpace: 'pre'
+              wordWrap: 'break-word'
             }}
           >
-            * Friends status refreshes automatically.{'\n'}
-            ** To refrash Friends list use <RefreshIcon /> button.
+            <Typography>* Friends' status refreshes automatically.</Typography>
+            <br />
+            <Typography>
+              ** To refrash Friends list use <RefreshIcon /> button.
+            </Typography>
           </Typography>
         </ModalDialog>
       </Modal>

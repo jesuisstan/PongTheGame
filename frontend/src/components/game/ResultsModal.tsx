@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
-import { SetStateAction, Dispatch } from 'react';
-import { Game_status, Game_result } from './game.interface';
+import { SetStateAction, Dispatch, useContext } from 'react';
+import { GameStatus, GameResult } from './game.interface';
+import { GameStatusContext } from '../../contexts/GameStatusContext';
 import Modal from '@mui/joy/Modal';
 import ModalDialog from '@mui/joy/ModalDialog';
 import ModalClose from '@mui/joy/ModalClose';
@@ -10,20 +11,20 @@ import Avatar from '@mui/material/Avatar';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import * as MUI from '../UI/MUIstyles';
 import * as color from '../UI/colorsPong';
-import styles from './styles/VictoryModal.module.css';
+import styles from './styles/ResultsModal.module.css';
 
-const VictoryModal = ({
+const ResultsModal = ({
   open,
   setOpen,
-  setGameState,
   gameResult
 }: {
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
-  setGameState: React.Dispatch<React.SetStateAction<Game_status>>;
-  gameResult: Game_result | null;
+  gameResult: GameResult | null;
 }) => {
   const navigate = useNavigate();
+  const { setGameStatus } = useContext(GameStatusContext);
+
   return (
     <div>
       <Modal
@@ -34,7 +35,7 @@ const VictoryModal = ({
             event &&
             (reason === 'closeClick' || reason === 'escapeKeyDown')
           ) {
-            setGameState(Game_status.LOBBY);
+            setGameStatus(GameStatus.LOBBY);
             setOpen(false);
           }
         }}
@@ -61,16 +62,14 @@ const VictoryModal = ({
                 />
                 {'\n'}
                 {gameResult?.loser.name} left the game {'\n'}
-                and receives technical lose
+                and suffers a technical defeat.
               </Typography>
             )}
             <Typography
               sx={{ color: 'black', textAlign: 'center', marginTop: '10px' }}
             >
-              {gameResult?.winner.name
-                ? gameResult?.winner.name
-                : 'Artificial Intelligence'}{' '}
-              wins the round
+              {gameResult?.winner.name ? gameResult?.winner.name : 'AI'} wins
+              the match
             </Typography>
             <div className={styles.scoreBlock}>
               <Avatar
@@ -86,6 +85,7 @@ const VictoryModal = ({
                 title={gameResult?.winner.name}
                 onClick={() => {
                   if (gameResult?.winner?.name) {
+                    setOpen(false);
                     navigate(`/players/${gameResult.winner.name}`);
                   }
                 }}
@@ -104,6 +104,7 @@ const VictoryModal = ({
                 title={gameResult?.loser.name}
                 onClick={() => {
                   if (gameResult?.loser?.name) {
+                    setOpen(false);
                     navigate(`/players/${gameResult.loser.name}`);
                   }
                 }}
@@ -116,4 +117,4 @@ const VictoryModal = ({
   );
 };
 
-export default VictoryModal;
+export default ResultsModal;

@@ -35,17 +35,23 @@ export class GameService {
     socket: any,
     payload: any,
   ): Promise<{ status: number; reason: string }> {
-    const user: { id: number; status: StatusUser } | null =
-      await this.prisma.user.findUnique({
-        where: {
-          nickname: payload.nickname,
-        },
-        select: {
-          id: true,
-          status: true,
-        },
-      });
-    if (!user) return { status: 403, reason: 'User not found' };
+    const user: {
+      id: number;
+      status: StatusUser;
+      blockedUsers: User[];
+    } | null = await this.prisma.user.findUnique({
+      where: {
+        nickname: payload.nickname,
+      },
+      select: {
+        id: true,
+        status: true,
+        blockedUsers: true,
+      },
+    });
+    if (!user) return { status: 404, reason: 'User not found' };
+    if (user.blockedUsers.find((user) => user.nickname == socket.user.nickname))
+      return { status: 406, reason: 'User blocked you' };
     if (user.status == 'PLAYING')
       return { status: 400, reason: 'User Already in game' };
     const already_exist = await this.prisma.matchInvitation.findMany({
@@ -54,7 +60,7 @@ export class GameService {
       },
     });
     if (already_exist.length > 0)
-      return { status: 400, reason: 'Invitation already send' };
+      return { status: 429, reason: 'Invitation already send' };
     const invited_socket: Socket[] = this.websocket.getSockets([user.id]);
     if (!invited_socket || !invited_socket[0])
       return { status: 400, reason: 'User offline' };
@@ -62,7 +68,7 @@ export class GameService {
       data: {
         createdById: socket.user.id,
         sendToId: user.id,
-        winscore: payload.winscore,
+        winScore: payload.winScore,
         obstacle: payload.obstacle,
       },
     });
@@ -80,7 +86,7 @@ export class GameService {
       select: {
         createdBy: true,
         obstacle: true,
-        winscore: true,
+        winScore: true,
       },
     });
     for (let i = 0; i < allInvit.length; i++) {
@@ -91,7 +97,7 @@ export class GameService {
             avatar: allInvit[i].createdBy.avatar,
           },
         },
-        { obstacle: allInvit[i].obstacle, winscore: allInvit[i].winscore },
+        { obstacle: allInvit[i].obstacle, winScore: allInvit[i].winScore },
       );
       this.websocket.send(socket, 'invitation_game', res);
     }
@@ -115,13 +121,18 @@ export class GameService {
     if (!user) return { status: 403, reason: 'User not found' };
     const sockets: any = this.websocket.getSockets([user.id]);
     if (!sockets[0]) return { status: 400, reason: 'Opponents log out' };
+    this.register_quit(socket);
+    this.register_quit(sockets[0]);
+    this.websocket.send(sockets[0], 'invitation_accepted', '');
+    this.websocket.send(sockets[0], 'match_custom_start', '');
+    this.websocket.send(socket, 'match_custom_start', '');
     this._delete_user_invitations(user.id);
     const game = new Game(
       this.prisma,
       this.websocket,
       this.achievement,
       type,
-      payload.winscore,
+      payload.winScore,
       { socket: sockets[0], user: sockets[0].user },
       { socket: socket, user: socket.user },
       payload.obstacle,
@@ -146,12 +157,15 @@ export class GameService {
       },
     });
     if (!userId) return { status: 403, reason: 'User not found' };
+    const inviteUserSocket: Socket[] = this.websocket.getSockets([userId.id]);
+    if (!inviteUserSocket[0]) return { status: 400, reason: 'User disconnect' };
     const invit = await this.prisma.matchInvitation.findUnique({
       where: {
-        createdById: userId.id,
+        createdById: socket.user.id,
       },
     });
     if (!invit) return { status: 404, reason: 'Invitation not found' };
+    this.websocket.send(inviteUserSocket[0], 'match_invitation_canceled', {});
     this._delete_user_invitations(socket.user.id);
     return { status: 200, reason: 'Success' };
   }
@@ -164,6 +178,11 @@ export class GameService {
         },
       });
     if (!invit) return;
+    const inviteUserSocket: Socket[] = this.websocket.getSockets([
+      invit.sendToId,
+    ]);
+    if (!inviteUserSocket[0]) return;
+    this.websocket.send(inviteUserSocket[0], 'match_invitation_canceled', {});
     this._delete_user_invitations(user.id);
   }
 
@@ -185,31 +204,39 @@ export class GameService {
       },
     });
     if (!user) return { status: 404, reason: 'user not found' };
-    const socketUserCreate = this.websocket.getSockets([user.id]);
-    this.websocket.send(socketUserCreate, 'invitation_refuse', ''); // TODO talk with Stan
+    const socketUserCreate: Socket[] = this.websocket.getSockets([user.id]);
+    this.websocket.send(socketUserCreate[0], 'invitation_refused', '');
+    const invit: MatchInvitation | null =
+      await this.prisma.matchInvitation.findUnique({
+        where: {
+          createdById: user.id,
+        },
+      });
+    if (!invit) return;
     this._delete_user_invitations(user.id);
   }
 
-  async create_training_game(player: any) {
+  async create_training_game(socket: any) {
     const msg = {
       action: 'match',
       player1: {
-        name: player.nickname,
-        avatar: player.user.avatar,
+        name: socket.nickname,
+        avatar: socket.user.avatar,
       },
       player2: {
         name: 'AI',
         avatar: '',
       },
     };
-    this.websocket.send(player, 'matchmaking', msg);
+    this.register_quit(socket);
+    this.websocket.send(socket, 'matchmaking', msg);
     const game = new Game(
       this.prisma,
       this.websocket,
       this.achievement,
       TypeMode.TRAINING,
       5,
-      { socket: player, user: player.user },
+      { socket: socket, user: socket.user },
     );
     this.games.push(game);
     game.start(() => {
@@ -234,6 +261,8 @@ export class GameService {
       };
       this.websocket.send(player1, 'matchmaking', msg);
       this.websocket.send(player2, 'matchmaking', msg);
+      this.register_quit(player1);
+      this.register_quit(player2);
       const game = new Game(
         this.prisma,
         this.websocket,

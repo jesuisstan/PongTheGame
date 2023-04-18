@@ -35,15 +35,23 @@
 }
 
 .basicInfoBlock {
+  min-width: 210px;
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
+  align-items: center;
   gap: 21px;
-  min-width: 210px;
 }
 
 .achieveBlock {
+  min-width: 210px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 21px;
+}
+
+.historyBlock {
   min-width: 210px;
   display: flex;
   flex-direction: column;
@@ -72,4 +80,14 @@
   justify-content: center;
   padding-bottom: 10px;
   padding-top: 10px;
+}
+
+@media (width <= 800px) {
+  .playerCard {
+    line-height: 1.4;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 42px;
+  }
 }

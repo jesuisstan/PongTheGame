@@ -32,6 +32,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
       this.match.deleteMany(),
       this.user.deleteMany(),
       this.matchEntry.deleteMany(),
+      this.chatRoom.deleteMany(),
       this.session.deleteMany(),
     ]);
   }

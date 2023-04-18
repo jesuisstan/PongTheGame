@@ -1,0 +1,38 @@
+.basicHome {
+  width: 100%;
+  height: 100vh;
+  align-self: center;
+  display: flex;
+  flex-direction: column;
+  justify-content:space-between;
+  overflow: auto;
+  background-image: url('../../../assets/homePage.jpg');
+  background-size: cover;
+  white-space: nowrap;
+}
+
+.welcome {
+  font-size: 60px;
+  color: rgb(253, 80, 135);
+  padding-left: 270px;
+  margin-top: 60px;
+  text-align: left;
+  transition: transform 0.5s ease-in-out, padding-left 0.5s ease-in-out;
+}
+
+.why {
+  font-size: 40px;
+  color: rgb(255, 144, 0);
+  padding-left: 60px;
+  padding-bottom: 84px;
+  text-align: left;
+  transition: transform 0.5s ease-in-out, padding-left 0.5s ease-in-out;
+}
+
+@media (max-width: 700px) {
+  .welcome,
+  .why {
+    transform: scale(0.6);
+    padding-left: 0px;
+  }
+}

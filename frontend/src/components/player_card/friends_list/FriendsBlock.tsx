@@ -1,28 +1,28 @@
 import { useContext, useEffect, useState } from 'react';
 import { UserContext } from '../../../contexts/UserContext';
-import { Player } from '../../../types/Player';
+import { PlayerProfile } from '../../../types/PlayerProfile';
 import SearchBar from './SearchBar';
 import BadgePong from '../../UI/BadgePong';
 import backendAPI from '../../../api/axios-instance';
 import errorAlert from '../../UI/errorAlert';
 import FriendsNoteModal from './FriendsNoteModal';
-import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import Typography from '@mui/joy/Typography';
 import Avatar from '@mui/material/Avatar';
 import IconButton from '@mui/material/IconButton';
-import RefreshIcon from '@mui/icons-material/Refresh';
+import LoopIcon from '@mui/icons-material/Loop';
 import * as color from '../../UI/colorsPong';
 import styles from '../styles/PlayerCard.module.css';
+import NotePong from '../../UI/NotePong';
 
 const FriendsBlock = ({
   player,
   socketEvent
 }: {
-  player: Player;
+  player: PlayerProfile;
   socketEvent: number;
 }) => {
   const { user } = useContext(UserContext);
-  const [friendsList, setFriendsList] = useState<Player[]>([]);
+  const [friendsList, setFriendsList] = useState<PlayerProfile[]>([]);
   const [open, setOpen] = useState(false);
 
   const fetchFriendsList = () => {
@@ -95,32 +95,18 @@ const FriendsBlock = ({
       </div>
       <div>
         <FriendsNoteModal open={open} setOpen={setOpen} player={player} />
-        <IconButton
-          color="primary"
-          title={'Note'}
-          onClick={() => setOpen(true)}
-        >
-          <HelpOutlineIcon
-            fontSize="large"
-            sx={{
-              color: 'black',
-              '&:hover': {
-                color: color.PONG_PINK
-              }
-            }}
-          />
-        </IconButton>
+        <NotePong setOpen={setOpen} />
         <IconButton
           color="primary"
           title={'Refresh the list'}
           onClick={() => fetchFriendsList()}
         >
-          <RefreshIcon
+          <LoopIcon
             fontSize="large"
             sx={{
               color: 'black',
               '&:hover': {
-                color: color.PONG_PINK
+                color: color.PONG_ORANGE
               }
             }}
           />

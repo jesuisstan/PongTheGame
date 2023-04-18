@@ -1,10 +1,9 @@
 import { Dispatch, SetStateAction, useContext, useState } from 'react';
-import { UserContext } from '../../../contexts/UserContext';
-import { User } from '../../../types/User';
-import { Player } from '../../../types/Player';
+import { useNavigate } from 'react-router-dom';
+import { GameStatusContext } from '../../../contexts/GameStatusContext';
+import { GameStatus } from '../game.interface';
 import { WebSocketContext } from '../../../contexts/WebsocketContext';
 import SliderPong from './SliderPong';
-import backendAPI from '../../../api/axios-instance';
 import errorAlert from '../../UI/errorAlert';
 import Modal from '@mui/joy/Modal';
 import ModalClose from '@mui/joy/ModalClose';
@@ -13,36 +12,42 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/joy/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
 import SwitchPong from './SwitchPong';
-import FormControl from '@mui/material/FormControl';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import SendIcon from '@mui/icons-material/Send';
-import PlaylistAddCheckIcon from '@mui/icons-material/PlaylistAddCheck';
-import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import * as MUI from '../../UI/MUIstyles';
 import * as color from '../../UI/colorsPong';
-import styles from './styles/PlayerCard.module.css';
 
 const DEFAULT_WIN_SCORE = 5;
 
 const InvitationSendModal = ({
   open,
   setOpen,
-  player
+  invitee
 }: {
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
-  player: Player;
+  invitee: string;
 }) => {
-  const { user, setUser } = useContext(UserContext);
+  const navigate = useNavigate();
+  const { setGameStatus } = useContext(GameStatusContext);
   const socket = useContext(WebSocketContext);
   const [obstacleEnabled, setObstacleEnabled] = useState(false);
   const [winScore, setWinScore] = useState(DEFAULT_WIN_SCORE);
   const [disabledOptions, setDisabledOptions] = useState(false);
   const [disabledButton, setDisabledButton] = useState(false);
-  const [buttonInviteText, setButtonInviteText] = useState('Invite');
-  const [buttonPlayText, setButtonPlayText] = useState('Play');
-  const [loadingInvite, setLoadingInvite] = useState(false);
-  const [loadingPlay, setLoadingPlay] = useState(false);
+  const [buttonText, setButtonText] = useState('Invite');
+  const [loading, setLoading] = useState(false);
+  const [invitationSent, setInvitationSent] = useState(false);
+
+  const setDefault = () => {
+    setObstacleEnabled(false);
+    setWinScore(DEFAULT_WIN_SCORE);
+    setDisabledOptions(false);
+    setDisabledButton(false);
+    setButtonText('Invite');
+    setLoading(false);
+  };
 
   const toggleObstacle = () => {
     setObstacleEnabled((prev) => !prev);
@@ -53,60 +58,42 @@ const InvitationSendModal = ({
       socket.emit(
         'match_send_invitation',
         {
-          winscore: winScore,
+          winScore: winScore,
           obstacle: obstacleEnabled,
-          nickname: player.nickname
+          nickname: invitee
         },
         (response: any) => {
-          console.log(response); //todo
-          if (response.status === 400) {
-            if (response.reason === 'Invitation already send') {
-              reject((response.error = 'Invitation is already sent'));
-            } else {
-              reject((response.error = `${player.nickname} is occupied`));
-            }
-          } else if (response.status === 403) {
-            reject(
-              (response.error = `User with nickname "${player.nickname}" is not found`)
-            );
-          } else if (response.status !== 200) {
-            reject((response.error = 'Something went wrong'));
-          } else {
+          if (response.status === 200) {
             resolve(response);
+            setInvitationSent(true);
+          } else if (response.status === 400) {
+            reject((response.error = `${invitee} is occupied`));
+          } else if (response.status === 404) {
+            reject(
+              (response.error = `Player with nickname "${invitee}" was not found`)
+            );
+          } else if (response.status === 429) {
+            reject((response.error = 'Invitation is already sent'));
+          } else if (response.status === 406) {
+            reject((response.error = `${invitee} has blocked you`));
+          } else {
+            reject((response.error = 'Something went wrong'));
           }
         }
       );
     });
   };
 
-  //todo no need anymore?
-  //socket.on('match_invitation_error', (args) => {
-  //  // If a error occurs
-  //  // If a error occurs
-  //  console.log('socket match_invitation_error ON');
-  //  console.log(args);
-  //});
-
-  const setDefault = () => {
-    setDisabledOptions(false);
-    setObstacleEnabled(false);
-    setButtonInviteText('Invite');
-    setLoadingInvite(false);
-    setButtonPlayText('Play');
-    setLoadingPlay(false);
-  };
-
   const handleSubmit = async (event: any) => {
     event.preventDefault();
     setDisabledOptions(true);
-    setLoadingInvite(true);
+    setLoading(true);
     await sendInvitation()
       .then((data) => {
-        setLoadingInvite(false);
-        setButtonInviteText('Sent');
+        setLoading(false);
+        setButtonText('Awaiting');
         setDisabledButton(true);
-        setButtonPlayText('Awaiting');
-        setLoadingPlay(true);
+        setLoading(true);
       })
       .catch((error) => {
         setDefault();
@@ -116,16 +103,25 @@ const InvitationSendModal = ({
   };
 
   const cancelInvitation = () => {
-    socket.emit('match_invitation_abort', {
-      nickname: player.nickname
-    });
+    if (invitationSent) {
+      socket.emit('match_invitation_cancel', {
+        nickname: invitee
+      });
+    }
   };
 
-  //todo a socket_event kind of 'invitation_accepted' to proceed to game
   socket.on('invitation_accepted', (args) => {
-    setLoadingPlay(false);
-    // proceed to game //todo
+    setButtonText('Accepted');
+    setLoading(false);
     setOpen(false);
+    navigate('/game');
+    setGameStatus(GameStatus.BEGIN_GAME);
+  });
+
+  socket.on('invitation_refused', (args) => {
+    setOpen(false);
+    setDefault();
+    errorAlert(`${invitee} refused your invitation`);
   });
 
   return (
@@ -210,6 +206,7 @@ const InvitationSendModal = ({
                   />
                 </div>
               </div>
+
               <div>
                 <Typography
                   component="h3"
@@ -220,64 +217,44 @@ const InvitationSendModal = ({
                     color: color.PONG_BLUE
                   }}
                 >
-                  Send invitation and proceed to game:
+                  Send invitation and wait for response:
                 </Typography>
                 <div
                   style={{
                     display: 'flex',
-                    flexDirection: 'row',
-                    gap: '21px',
                     alignItems: 'center',
                     justifyContent: 'center'
                   }}
                 >
-                  <div>
-                    <LoadingButton
-                      type="submit"
-                      title={`Invite ${player.nickname} to play game`}
-                      loading={loadingInvite}
-                      endIcon={
-                        buttonInviteText === 'Sent' ? (
-                          <PlaylistAddCheckIcon />
-                        ) : (
-                          <SendIcon />
-                        )
-                      }
-                      variant="contained"
-                      color="inherit"
-                      loadingPosition="end"
-                      disabled={disabledButton}
-                      sx={{ minWidth: '130px' }}
-                    >
-                      {buttonInviteText}
-                    </LoadingButton>
-                  </div>
-                  <div>
-                    <LoadingButton
-                      type="submit"
-                      title="Proceed to game"
-                      loading={loadingPlay}
-                      endIcon={<SportsEsportsIcon />}
-                      variant="contained"
-                      color="inherit"
-                      loadingPosition="end"
-                      disabled={!disabledButton}
-                      sx={{ minWidth: '130px' }}
-                    >
-                      {buttonPlayText}
-                    </LoadingButton>
-                  </div>
+                  <LoadingButton
+                    type="submit"
+                    title={`Invite ${invitee} to play game`}
+                    loading={loading}
+                    loadingPosition="end"
+                    endIcon={
+                      buttonText === 'Accepted' ? (
+                        <CheckCircleOutlineIcon />
+                      ) : (
+                        <SendIcon />
+                      )
+                    }
+                    variant="contained"
+                    color="inherit"
+                    disabled={disabledButton}
+                    sx={{ minWidth: '130px' }}
+                  >
+                    {buttonText}
+                  </LoadingButton>
                 </div>
-                <Typography
-                  sx={{
-                    textAlign: 'left',
-                    fontSize: '14px',
-                    paddingTop: '15px'
-                  }}
-                >
-                  * closing this popup will cancel the invitation
-                </Typography>
               </div>
+              <Typography
+                sx={{
+                  textAlign: 'left',
+                  fontSize: '14px'
+                }}
+              >
+                * closing this popup will cancel the invitation
+              </Typography>
             </Stack>
           </form>
         </ModalDialog>

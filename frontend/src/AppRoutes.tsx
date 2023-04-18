@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect } from 'react';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { WebSocketContext } from './contexts/WebsocketContext';
 import { UserContext } from './contexts/UserContext';
@@ -21,10 +21,12 @@ const AppRoutes = () => {
 
   useEffect(() => {
     if (user.provider && user.nickname) {
-      if (location.pathname !== '/game') 
+      if (location.pathname !== '/game') {
         socket.emit('match_leave', { nickname: user.nickname });
+        socket.emit('match_spectate_leave');
+      }
     }
-  }, [location, socket]);
+  }, [location, socket, user]);
 
   return (
     <Routes>

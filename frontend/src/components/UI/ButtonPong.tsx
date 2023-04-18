@@ -21,14 +21,14 @@ const ButtonPong = ({
   return (
     <Button
       sx={{
-        minWidth: '121px',
+        minWidth: '130px',
         color: !inversedColors ? color.PONG_WHITE : 'black',
         backgroundColor: !inversedColors ? 'black' : color.PONG_PINK,
-        fontWeight: !inversedColors ? '' : 'Bold',
+        fontWeight: 'Bold',
         ':hover': {
+          transitionDuration: '0.5s',
           backgroundColor: !inversedColors ? color.PONG_PINK : 'black',
           color: !inversedColors ? 'black' : color.PONG_WHITE,
-          fontWeight: 'Bold',
           border: inversedColors ? `0.5px solid ${color.PONG_PINK}` : 'black'
         }
       }}

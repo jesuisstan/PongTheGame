@@ -9,7 +9,8 @@ Table User {
   avatar String
   profileId String [not null]
   provider String [not null]
-  blockedUsers Int[] [not null]
+  blockedUsers User [not null]
+  blockedBy User [not null]
   status StatusUser [not null, default: 'ONLINE']
   totpSecret TotpSecret
   role Role [not null, default: 'USER']
@@ -20,6 +21,9 @@ Table User {
   achievement UserAchivement [not null]
   invitationEmit MatchInvitation [not null]
   invitationReceive MatchInvitation [not null]
+  Message Message [not null]
+  Member Member [not null]
+  ChatRoom ChatRoom [not null]
 
   indexes {
     (profileId, provider) [unique]
@@ -86,7 +90,7 @@ Table MatchInvitation {
   sendToId Int [not null]
   sendTo User [not null]
   obstacle Boolean [not null]
-  winscore Int [not null, default: 5]
+  winScore Int [not null, default: 5]
   status InvitationState [not null, default: 'Pending']
 }
 
@@ -95,6 +99,42 @@ Table Session {
   sid String [unique, not null]
   data String [not null]
   expiresAt DateTime [not null]
+}
+
+Table Message {
+  id Int [pk, increment]
+  author User [not null]
+  authorId Int [not null]
+  data String [not null]
+  timestamp DateTime [not null]
+  ChatRoom ChatRoom [not null]
+  chatRoomName String [not null]
+}
+
+Table Member {
+  memberId Int [not null]
+  member User [not null]
+  nickName String [not null]
+  isOnline Boolean [not null]
+  avatar String [not null]
+  modes String [not null]
+  ChatRoom ChatRoom [not null]
+  chatRoomName String [not null]
+
+  indexes {
+    (memberId, chatRoomName) [pk]
+  }
+}
+
+Table ChatRoom {
+  name String [pk]
+  owner Int [not null]
+  modes String [not null]
+  password String [not null]
+  userLimit Int [not null]
+  members Member [not null]
+  messages Message [not null]
+  bannedUsers User [not null]
 }
 
 Enum StatusUser {
@@ -135,3 +175,11 @@ Ref: MatchEntry.matchId > Match.id [delete: Cascade]
 Ref: MatchInvitation.createdById > User.id
 
 Ref: MatchInvitation.sendToId > User.id
+
+Ref: Message.authorId > User.id [delete: Cascade]
+
+Ref: Message.chatRoomName > ChatRoom.name [delete: Cascade]
+
+Ref: Member.memberId > User.id [delete: Cascade]
+
+Ref: Member.chatRoomName > ChatRoom.name [delete: Cascade]

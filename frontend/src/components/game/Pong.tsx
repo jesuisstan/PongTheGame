@@ -1,21 +1,20 @@
 import { useRef, useEffect, useContext, useState } from 'react';
+import { GameStatusContext } from '../../contexts/GameStatusContext';
 import { WebSocketContext } from '../../contexts/WebsocketContext';
-import { Player_game, Props_game, Game_status } from './game.interface';
+import { CurrentGamePlayer, GameProps, GameStatus } from './game.interface';
 import { drawState } from './utils/gameUtils';
 import ScoreBar from './ScoreBar';
 import styles from './styles/Game.module.css';
 
-const CANVAS_HEIGHT = 600;
-const CANVAS_WIDTH = 800;
-
-const Pong = (props: Props_game) => {
+const Pong = (props: GameProps) => {
+  const { setGameStatus } = useContext(GameStatusContext);
   const socket = useContext(WebSocketContext);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [players, set_players] = useState<Player_game[]>(
+  const [winScore, setWinScore] = useState<number>(5);
+  const [canvasSize, setCanvasSize] = useState({ width: 800, height: 600 });
+  const [players, setPlayers] = useState<CurrentGamePlayer[]>(
     props.spectator || !props.players ? [] : [...props.players]
   );
-
-  const state_ref = useRef(false);
 
   const onKeyRelease = (event: KeyboardEvent) => {
     keyHandler(event, 'release');
@@ -38,83 +37,66 @@ const Pong = (props: Props_game) => {
     }
   };
 
-  const playPong = () => {
-    socket.on('match_game_state', (args) => {
-      if (players.length === 0) {
-        set_players([
-          {
-            ...players[0],
-            infos: args.player1.infos,
-            score: args.player1.score,
-          },
-          {
-            ...players[1],
-            infos: args.player2.infos,
-            score: args.player2.score,
-          }
-        ]);
-      }
-      window.addEventListener('keydown', onKeyPressRef.current);
-      window.addEventListener('keyup', onKeyReleaseRef.current);
-
-      drawState(args, canvasRef);
-      if (args.status === 'ended' || args.status === 'aborted') {
-        props.setGameState(Game_status.ENDED);
-        window.removeEventListener('keydown', onKeyPressRef.current);
-        window.removeEventListener('keyup', onKeyReleaseRef.current);
-      }
-    });
-
-    socket.on('match_spectate_state', (args) => {
-      console.log(args);
-      if (players.length === 0) {
-        set_players([
-          {
-            ...players[0],
-            infos: args.player1.infos,
-            score: args.player1.score,
-          },
-          {
-            ...players[1],
-            infos: args.player2.infos,
-            score: args.player2.score,
-          }
-        ]);
-      }
-      drawState(args, canvasRef);
-      if (args.status === 'ended' || args.status === 'aborted') {
-        props.setGameState(Game_status.ENDED);
-      }
-    });
-  };
-
-  const checkGameAborted = () => {
-    socket.on('game_aborted', (args) => {
-      props.setGameState(Game_status.ENDED);
-    });
+  const expandTheGame = (args: any) => {
+    if (players.length === 0) {
+      setPlayers([
+        {
+          ...players[0],
+          infos: args.player1.infos,
+          score: args.player1.score
+        },
+        {
+          ...players[1],
+          infos: args.player2.infos,
+          score: args.player2.score
+        }
+      ]);
+      setWinScore(args.gameInfos.winScore);
+      setCanvasSize({
+        ...canvasSize,
+        width: args.gameInfos.originalWidth,
+        height: args.gameInfos.originalHeight
+      });
+    }
+    drawState(args, canvasRef);
   };
 
   useEffect(() => {
-    if (!state_ref.current) {
-      state_ref.current = true;
-      if (props.spectator) {
-        return () => {
-          socket.emit('match_spectate_leave', {});
-        };
-      }
+    const intervalId = setInterval(() => {
+      const playPong = () => {
+        socket.on('match_game_state', (args) => {
+          expandTheGame(args);
 
-      const intervalId = setInterval(() => {
-        playPong();
-        checkGameAborted();
-      }, 1000 / 30);
+          window.addEventListener('keydown', onKeyPressRef.current);
+          window.addEventListener('keyup', onKeyReleaseRef.current);
 
-      return () => {
-        clearInterval(intervalId);
+          if (args.status === 'ended' || args.status === 'aborted') {
+            setGameStatus(GameStatus.ENDED);
+            window.removeEventListener('keydown', onKeyPressRef.current);
+            window.removeEventListener('keyup', onKeyReleaseRef.current);
+          }
+        });
       };
-    }
+
+      playPong();
+
+      const spectatePong = () => {
+        socket.on('match_spectate_state', (args) => {
+          expandTheGame(args);
+          if (args.status === 'ended' || args.status === 'aborted') {
+            setGameStatus(GameStatus.ENDED);
+          }
+        });
+      };
+
+      spectatePong();
+    }, 1000 / 30);
+
+    return () => {
+      clearInterval(intervalId);
+    };
   }, [players]);
 
-  let winScore = 5; // todo temp value. Request from server
   return (
     <div className={styles.canvasBlock}>
       {players.length > 0 && (
@@ -124,8 +106,8 @@ const Pong = (props: Props_game) => {
         className={styles.canvas}
         id="test"
         ref={canvasRef}
-        width={CANVAS_WIDTH}
-        height={CANVAS_HEIGHT}
+        width={canvasSize.width}
+        height={canvasSize.height}
       />
     </div>
   );

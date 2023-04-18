@@ -1,4 +1,5 @@
 import { backendUrl } from '../../api/axios-instance';
+import DeviderPong from '../UI/DeviderPong';
 import styles from './styles/Login.module.css';
 
 const URL_AUTH_42 = `${backendUrl}/auth/42`;
@@ -17,9 +18,7 @@ const Login = () => {
     <div className={styles.loginCard}>
       <div className={styles.wrapper}>
         <div className={styles.left}>Choose your Login Method</div>
-        <div className={styles.center}>
-          <div className={styles.line} />
-        </div>
+        <DeviderPong />
         <div className={styles.right}>
           <div className={styles.loginButtonGithub} onClick={githubAuth}>
             <img

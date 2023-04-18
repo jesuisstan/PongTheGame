@@ -1,19 +1,19 @@
 import { useEffect, useState } from 'react';
-import { Player } from '../../../types/Player';
+import { PlayerProfile } from '../../../types/PlayerProfile';
 import { MatchHistory } from '../../../types/MatchHistory';
 import HistoryNoteModal from './HistoryNoteModal';
 import backendAPI from '../../../api/axios-instance';
 import errorAlert from '../../UI/errorAlert';
 import Typography from '@mui/joy/Typography';
-import IconButton from '@mui/material/IconButton';
-import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import * as color from '../../UI/colorsPong';
+import styles from '../styles/PlayerCard.module.css';
+import NotePong from '../../UI/NotePong';
 
 const MatchHistoryBlock = ({
   player,
   socketEvent
 }: {
-  player: Player;
+  player: PlayerProfile;
   socketEvent: number;
 }) => {
   const [matchHistory, setMatchHistory] = useState<MatchHistory>({
@@ -37,17 +37,10 @@ const MatchHistoryBlock = ({
         errorAlert(`Failed to get player's match history`);
       }
     );
-  }, [socketEvent]);
+  }, [socketEvent, player.nickname]);
 
   return (
-    <div
-      style={{
-        minWidth: '210px',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '21px'
-      }}
-    >
+    <div className={styles.historyBlock}>
       <Typography
         textColor={color.PONG_ORANGE}
         level="body3"
@@ -76,21 +69,7 @@ const MatchHistoryBlock = ({
         </Typography>
       </div>
       <div>
-        <IconButton
-          color="primary"
-          title={'Note'}
-          onClick={() => setOpen(true)}
-        >
-          <HelpOutlineIcon
-            fontSize="large"
-            sx={{
-              color: 'black',
-              '&:hover': {
-                color: color.PONG_PINK
-              }
-            }}
-          />
-        </IconButton>
+        <NotePong setOpen={setOpen} />
         <HistoryNoteModal open={open} setOpen={setOpen} />
       </div>
     </div>

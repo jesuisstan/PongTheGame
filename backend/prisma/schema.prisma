@@ -14,17 +14,17 @@ datasource db {
 }
 
 model User {
-  id           Int     @id @default(autoincrement())
-  nickname     String? @unique
+  id           Int         @id @default(autoincrement())
+  nickname     String?     @unique
   username     String
   avatar       String?
   profileId    String
   provider     String
-  blockedUsers Int[]
-
-  status     StatusUser  @default(ONLINE)
-  totpSecret TotpSecret?
-  role       Role        @default(USER)
+  blockedUsers User[]      @relation("BlockedUsers")
+  blockedBy    User[]      @relation("BlockedUsers")
+  status       StatusUser  @default(ONLINE)
+  totpSecret   TotpSecret?
+  role         Role        @default(USER)
 
   matchEntries MatchEntry[]
 
@@ -34,6 +34,9 @@ model User {
   achievement       UserAchivement[]
   invitationEmit    MatchInvitation[] @relation("InvitationEmit")
   invitationReceive MatchInvitation[] @relation("InvitationReceive")
+  Message           Message[]         @relation("MessageAuthor")
+  Member            Member[]          @relation("ChatRoomMember")
+  ChatRoom          ChatRoom[]
 
   @@unique([profileId, provider])
 }
@@ -116,7 +119,7 @@ model MatchInvitation {
   sendToId    Int
   sendTo      User            @relation("InvitationReceive", fields: [sendToId], references: [id])
   obstacle    Boolean
-  winscore    Int             @default(5)
+  winScore    Int             @default(5)
   status      InvitationState @default(Pending)
 }
 
@@ -138,4 +141,38 @@ model Session {
   sid       String   @unique
   data      String
   expiresAt DateTime
+}
+
+model Message {
+  id           Int      @id @default(autoincrement())
+  author       User     @relation("MessageAuthor", fields: [authorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  authorId     Int
+  data         String
+  timestamp    DateTime
+  ChatRoom     ChatRoom @relation(fields: [chatRoomName], references: [name], onDelete: Cascade, onUpdate: Cascade)
+  chatRoomName String
+}
+
+model Member {
+  memberId     Int
+  member       User     @relation("ChatRoomMember", fields: [memberId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  nickName     String
+  isOnline     Boolean
+  avatar       String
+  modes        String
+  ChatRoom     ChatRoom @relation(fields: [chatRoomName], references: [name], onDelete: Cascade, onUpdate: Cascade)
+  chatRoomName String
+
+  @@id([memberId, chatRoomName])
+}
+
+model ChatRoom {
+  name        String    @id
+  owner       Int
+  modes       String
+  password    String
+  userLimit   Int
+  members     Member[]
+  messages    Message[]
+  bannedUsers User[]
 }

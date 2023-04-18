@@ -4,7 +4,8 @@ import BarLoader from 'react-spinners/BarLoader';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ButtonPong from '../UI/ButtonPong';
-import styles from './Pages.module.css';
+import DeviderPong from '../UI/DeviderPong';
+import styles from './styles/Pages.module.css';
 
 const NotFound = () => {
   const navigate = useNavigate();
@@ -30,9 +31,7 @@ const NotFound = () => {
     <div className={styles.centeredCard}>
       <div className={styles.wrapper}>
         <div className={styles.left}>Not found</div>
-        <div className={styles.center}>
-          <div className={styles.line} />
-        </div>
+        <DeviderPong />
         <div className={styles.right}>
           <ButtonPong
             text="Back"
