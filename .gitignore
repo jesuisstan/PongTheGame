@@ -1,5 +1,6 @@
 /.env
-/.env.prod
+/.env.production
+/.env.development
 /private
 /database
 /ft_transcendence_env
