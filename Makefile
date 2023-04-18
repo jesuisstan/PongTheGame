@@ -5,9 +5,11 @@ COMPOSE := docker compose -f docker-compose.yml -f docker-compose.dev.yml
 all up:
 	$(COMPOSE) up -d --build
 
-# `make logs c=backend` for backend logs only
-build down logs ps:
+build down ps:
 	$(COMPOSE) $@ $(c)
+
+logs:
+	$(COMPOSE) logs $(c) --follow
 
 # healthcheck logs
 # pipe to jq for pretty printing and colors
