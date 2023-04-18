@@ -30,3 +30,7 @@ services:
       timeout: 50s
       retries: 40
       start_period: 2s
+
+  database:
+    ports:
+      - "5432"
