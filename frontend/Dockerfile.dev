@@ -4,4 +4,6 @@ ENV NODE_ENV development
 
 WORKDIR /frontend
 
+RUN apk add --no-cache curl
+
 ENTRYPOINT npm install && npm start
