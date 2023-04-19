@@ -191,7 +191,6 @@ export function convert_state_to_sendable(
         paddleWidth: state.gameInfos.paddleWidth,
         paddleHeight: state.gameInfos.paddleHeight,
         ballRadius: state.gameInfos.ballRadius,
-        time: Default_params.GAME_TIME - timeInSeconds,
         winScore: state.gameInfos.winScore,
       },
       player1: {
