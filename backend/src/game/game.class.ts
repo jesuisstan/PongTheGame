@@ -22,19 +22,19 @@ export const Default_params = {
   GAME_WIDTH: 800,
   GAME_HEIGHT: 600,
   PADDLE_MOVE_SPEED: 15,
-  PADDLE_OFFSET: 0,
-  PADDLE_BORDER: 2,
+  PADDLE_OFFSET: 20,
+  PADDLE_BORDER: 1,
   PADDLE_HEIGHT: 600 / 6,
   PADDLE_WIDTH: 20,
   BALL_RADIUS: 10,
   BALL_DEFAULT_SPEED: 10,
-  BALL_SPEED_INCREASE: 1,
+  BALL_SPEED_INCREASE: 0.6,
   BALL_MAX_SPEED: 25,
   BALL_PERTURBATOR: 0.2,
   DEFAULT_PADDLE_POSITION: 600 / 2 - 300 / 6 / 2,
   OBSTACLE_HEIGHT: 150,
-  OBSTACLE_WIDTH: 20,
-  OBSTACLE_SPEED: 5,
+  OBSTACLE_WIDTH: 10,
+  OBSTACLE_SPEED: 8,
 };
 
 export class Game {
@@ -205,7 +205,6 @@ export class Game {
   private _computerAI() {
     const paddle2YCenter =
       this.game_state.player2.paddle.y + Default_params.PADDLE_HEIGHT / 2;
-    const distanceThreshold = Default_params.BALL_RADIUS * 2;
     const distanceToBall = Math.abs(
       paddle2YCenter - this.game_state.ball.position.y,
     );
@@ -416,10 +415,8 @@ export class Game {
     ball.direction.y /= norm;
     const ballRadius: number = this.game_state.gameInfos.ballRadius;
     //ball.position.x += ball.direction.x * ball.velocity;
-    //ball.position.y += ball.direction.y * ball.velocity;
-
     ball.position.x += Math.round((ball.direction.x * 10) / 10) * 10;
-    ball.position.y += Math.round((ball.direction.y * ball.velocity) / 5) * 5;
+    ball.position.y += ball.direction.y * ball.velocity;
     this._check_ball_collide_wall(ball, ballRadius);
     this._check_ball_collide_paddle(
       ball,
@@ -479,235 +476,94 @@ export class Game {
       const ballColide: any = {
         x: ball.position.x - ballRadius,
         y: ball.position.y - ballRadius,
-        width: ballRadius * 2,
-        height: ballRadius * 2,
+        width: ballRadius,
+        height: ballRadius,
       };
       if (isPlayer1) {
         paddleFrontUpCollideZone = {
           x: paddle.x + Default_params.PADDLE_WIDTH,
           y: paddle.y,
-          width: 2,
+          width: ballRadius,
           height: paddleHeight / 3,
         };
         paddleFrontMiddleCollideZone = {
           x: paddle.x + Default_params.PADDLE_WIDTH,
           y: paddle.y + paddleHeight / 3,
-          width: 2,
+          width: ballRadius,
           height: paddleHeight / 3,
         };
         paddleFrontDownCollideZone = {
           x: paddle.x + Default_params.PADDLE_WIDTH,
           y: paddle.y + (paddleHeight / 3) * 2,
-          width: 2,
+          width: ballRadius,
           height: paddleHeight / 3,
         };
       } else {
         paddleFrontUpCollideZone = {
-          x: paddle.x,
+          x: paddle.x - 2 * ballRadius,
           y: paddle.y,
-          width: 2,
+          width: ballRadius,
           height: paddleHeight / 3,
         };
         paddleFrontMiddleCollideZone = {
-          x: paddle.x,
+          x: paddle.x - 2 * ballRadius,
           y: paddle.y + paddleHeight / 3,
-          width: 2,
+          width: ballRadius,
           height: paddleHeight / 3,
         };
         paddleFrontDownCollideZone = {
-          x: paddle.x,
+          x: paddle.x - 2 * ballRadius,
           y: paddle.y + (paddleHeight / 3) * 2,
-          width: 2,
+          width: ballRadius,
           height: paddleHeight / 3,
         };
       }
 
       const paddleTopCollideZone: any = {
         x: paddle.x,
-        y: paddle.y - 2,
+        y: paddle.y - ballRadius,
         width: paddleWidth,
-        height: 2,
+        height: ballRadius,
       };
       const paddleBottomCollideZone: any = {
         x: paddle.x,
-        y: paddle.y + paddleHeight + 2,
+        y: paddle.y + paddleHeight + ballRadius,
         width: paddleWidth,
-        height: 2,
+        height: ballRadius,
       };
       let res = false;
-      //if (this._check_colide(ballColide, paddleFrontUpCollideZone)) {
-      //  ball.direction.x *= -1;
-      //  ball.direction.y -= Default_params.BALL_PERTURBATOR;
-      //  ball.velocity += Default_params.BALL_SPEED_INCREASE;
-      //  this._disable_collision(ball);
-      //  res = true;
-      //} else if (this._check_colide(ballColide, paddleFrontMiddleCollideZone)) {
-      //  ball.direction.x *= -1;
-      //  ball.velocity += Default_params.BALL_SPEED_INCREASE;
-      //  this._disable_collision(ball);
-      //  res = true;
-      //} else if (this._check_colide(ballColide, paddleFrontDownCollideZone)) {
-      //  ball.direction.x *= -1;
-      //  ball.direction.y += Default_params.BALL_PERTURBATOR;
-      //  ball.velocity += Default_params.BALL_SPEED_INCREASE;
-      //  this._disable_collision(ball);
-      //  res = true;
-      //} else if (this._check_colide(ballColide, paddleTopCollideZone)) {
-      //  ball.direction.x *= -1;
-      //  ball.direction.y *= -1;
-      //  this._disable_collision(ball);
-      //  res = true;
-      //} else if (this._check_colide(ballColide, paddleBottomCollideZone)) {
-      //  ball.direction.x *= -1;
-      //  ball.direction.y *= -1;
-      //  this._disable_collision(ball);
-      //  res = true;
-      //}
-      //if (ball.velocity > Default_params.BALL_MAX_SPEED) {
-      //  ball.velocity = Default_params.BALL_MAX_SPEED;
-      //}
-      //return res;
 
-      // Bounce the ball from the left paddle --->
-      if (
-        ball.position.x ===
-          this.game_state.gameInfos.paddleWidth + ballRadius &&
-        ball.position.y >= this.game_state.player1.paddle.y - ballRadius &&
-        ball.position.y <=
-          this.game_state.player1.paddle.y +
-            this.game_state.gameInfos.paddleHeight +
-            ballRadius
-      ) {
-        ball.direction.x = -ball.direction.x;
-        let deltaY = Math.ceil(
-          ball.position.y -
-            (this.game_state.player1.paddle.y +
-              this.game_state.gameInfos.paddleHeight / 2),
-        );
-        if (deltaY < 0) {
-          ball.direction.y -= Default_params.BALL_PERTURBATOR - deltaY * 0.01;
-        } else if (deltaY > 0) {
-          ball.direction.y += Default_params.BALL_PERTURBATOR + deltaY * 0.01;
-        } else {
-          ball.direction.y = -ball.direction.y;
-        }
+      if (this._check_colide(ballColide, paddleFrontUpCollideZone)) {
+        ball.direction.x *= -1;
+        ball.direction.y -= Default_params.BALL_PERTURBATOR;
         ball.velocity += Default_params.BALL_SPEED_INCREASE;
         this._disable_collision(ball);
         res = true;
-      }
-      if (
-        ball.position.x <= this.game_state.gameInfos.paddleWidth &&
-        (ball.position.y >= this.game_state.player1.paddle.y - ballRadius ||
-          ball.position.y <=
-            this.game_state.player1.paddle.y +
-              this.game_state.gameInfos.paddleHeight +
-              ballRadius)
-      ) {
-        ball.direction.y = -ball.direction.y;
-        this._disable_collision(ball);
-        res = true;
-      }
-      // Bounce the ball from the right paddle --->
-      if (
-        ball.position.x ===
-          Default_params.GAME_WIDTH -
-            this.game_state.gameInfos.paddleWidth -
-            ballRadius &&
-        ball.position.y >= this.game_state.player2.paddle.y - ballRadius &&
-        ball.position.y <=
-          this.game_state.player2.paddle.y +
-            this.game_state.gameInfos.paddleHeight +
-            ballRadius
-      ) {
-        ball.direction.x = -ball.direction.x;
-        let deltaY = Math.ceil(
-          ball.position.y -
-            (this.game_state.player2.paddle.y +
-              this.game_state.gameInfos.paddleHeight / 2),
-        );
-        if (deltaY < 0) {
-          ball.direction.y += Default_params.BALL_PERTURBATOR + deltaY * 0.01;
-        } else if (deltaY > 0) {
-          ball.direction.y -= Default_params.BALL_PERTURBATOR - deltaY * 0.01;
-        } else {
-          ball.direction.y = -ball.direction.y;
-        }
+      } else if (this._check_colide(ballColide, paddleFrontMiddleCollideZone)) {
+        ball.direction.x *= -1;
         ball.velocity += Default_params.BALL_SPEED_INCREASE;
         this._disable_collision(ball);
         res = true;
-      }
-      if (
-        ball.position.x >=
-          Default_params.GAME_WIDTH - this.game_state.gameInfos.paddleWidth &&
-        (ball.position.y >= this.game_state.player2.paddle.y - ballRadius ||
-          ball.position.y <=
-            this.game_state.player2.paddle.y +
-              this.game_state.gameInfos.paddleHeight +
-              ballRadius)
-      ) {
-        ball.direction.y = -ball.direction.y;
+      } else if (this._check_colide(ballColide, paddleFrontDownCollideZone)) {
+        ball.direction.x *= -1;
+        ball.direction.y += Default_params.BALL_PERTURBATOR;
+        ball.velocity += Default_params.BALL_SPEED_INCREASE;
+        this._disable_collision(ball);
+        res = true;
+      } else if (this._check_colide(ballColide, paddleTopCollideZone)) {
+        ball.direction.x *= -1;
+        ball.direction.y *= -1;
+        this._disable_collision(ball);
+        res = true;
+      } else if (this._check_colide(ballColide, paddleBottomCollideZone)) {
+        ball.direction.x *= -1;
+        ball.direction.y *= -1;
         this._disable_collision(ball);
         res = true;
       }
-
-      // Bounce the ball from the obstacle --->
-      if (this.obstacle) {
-        if (
-          ((ball.direction.x > 0 &&
-            ball.position.x ===
-              this.game_state.obstacle!.position.x - ballRadius) ||
-            (ball.direction.x < 0 &&
-              ball.position.x ===
-                this.game_state.obstacle!.position.x +
-                  ballRadius +
-                  Default_params.OBSTACLE_WIDTH)) &&
-          ball.position.y >=
-            this.game_state.obstacle!.position.y - ballRadius &&
-          ball.position.y <=
-            this.game_state.obstacle!.position.y +
-              Default_params.OBSTACLE_HEIGHT +
-              ballRadius
-        ) {
-          ball.direction.x = -ball.direction.x;
-          //let deltaY = Math.ceil(
-          //  ball.position.y -
-          //    (this.game_state.obstacle!.position.y +
-          //      Default_params.OBSTACLE_HEIGHT / 2),
-          //);
-          //if (deltaY < 0) {
-          //  ball.direction.y += Default_params.BALL_PERTURBATOR + deltaY * 0.01;
-          //} else if (deltaY > 0) {
-          //  ball.direction.y -= Default_params.BALL_PERTURBATOR - deltaY * 0.01;
-          //} else {
-          //  ball.direction.y = -ball.direction.y;
-          //}
-          //this._disable_collision(ball);
-          res = true;
-        }
-        if (
-          ball.position.x ===
-            this.game_state.obstacle!.position.x - ballRadius &&
-          ball.position.x ===
-            this.game_state.obstacle!.position.x +
-              Default_params.OBSTACLE_WIDTH +
-              ballRadius &&
-          (ball.position.y >=
-            this.game_state.obstacle!.position.y - ballRadius ||
-            ball.position.y <=
-              this.game_state.obstacle!.position.y +
-                Default_params.OBSTACLE_HEIGHT +
-                ballRadius)
-        ) {
-          ball.direction.y = -ball.direction.y;
-          this._disable_collision(ball);
-          res = true;
-        }
-      }
-
       if (ball.velocity > Default_params.BALL_MAX_SPEED) {
         ball.velocity = Default_params.BALL_MAX_SPEED;
       }
-
       return res;
     }
   }
@@ -745,11 +601,19 @@ export class Game {
     if (ball.position.x < ballRadius) {
       this.game_state.player2.score++;
       this._reset_ball(ball);
+      // this._reset_both_paddle([
+      //   this.game_state.player1.paddle,
+      //   this.game_state.player2.paddle,
+      // ]);
       if (this.obstacle) this._reset_obstacle(this.game_state.obstacle);
     }
     if (ball.position.x > this.game_state.gameInfos.width - ballRadius) {
       this.game_state.player1.score++;
       this._reset_ball(ball);
+      // this._reset_both_paddle([
+      //   this.game_state.player1.paddle,
+      //   this.game_state.player2.paddle,
+      // ]);
       if (this.obstacle) this._reset_obstacle(this.game_state.obstacle);
     }
     if (ball.position.y < ballRadius) {
@@ -761,6 +625,18 @@ export class Game {
       ball.direction.y *= -1;
     }
   }
+
+  // private _reset_both_paddle(paddle: Position[]) {
+  //   paddle[0].x = Default_params.PADDLE_OFFSET;
+  //   paddle[0].y =
+  //     Default_params.GAME_HEIGHT / 2 - Default_params.PADDLE_HEIGHT / 2;
+  //   paddle[1].x =
+  //     Default_params.GAME_WIDTH -
+  //     Default_params.PADDLE_OFFSET -
+  //     Default_params.PADDLE_WIDTH;
+  //   paddle[1].y =
+  //     Default_params.GAME_HEIGHT / 2 - Default_params.PADDLE_HEIGHT / 2;
+  // }
 
   private _reset_obstacle(Obstacle?: Obstacle) {
     if (!Obstacle) return;
@@ -841,7 +717,6 @@ export class Game {
   }
 
   private _reset_ball(ball: Ball) {
-    ball.velocity = Default_params.BALL_DEFAULT_SPEED;
     ball.position.x = this.game_state.gameInfos.width / 2;
     ball.position.y = this.game_state.gameInfos.height / 2;
     ball.direction.y =
@@ -849,5 +724,6 @@ export class Game {
     ball.direction.x =
       Math.sqrt(1 - ball.direction.y * ball.direction.y) *
       (Math.random() < 0.5 ? -1 : 1);
+    ball.velocity = Default_params.BALL_DEFAULT_SPEED;
   }
 }
