@@ -30,14 +30,9 @@ const ResultsModal = ({
       <Modal
         sx={{ color: 'black' }}
         open={open}
-        onClose={(event, reason) => {
-          if (
-            event &&
-            (reason === 'closeClick' || reason === 'escapeKeyDown')
-          ) {
-            setGameStatus(GameStatus.LOBBY);
-            setOpen(false);
-          }
+        onClose={() => {
+          setGameStatus(GameStatus.LOBBY);
+          setOpen(false);
         }}
       >
         <ModalDialog
