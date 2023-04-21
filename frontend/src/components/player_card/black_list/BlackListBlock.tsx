@@ -1,4 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../../contexts/UserContext';
 import { User } from '../../../types/User';
 import BadgePong from '../../UI/BadgePong';
@@ -13,11 +14,8 @@ import LoopIcon from '@mui/icons-material/Loop';
 import * as color from '../../UI/colorsPong';
 import styles from '../styles/PlayerCard.module.css';
 
-const BlackListBlock = ({
-  socketEvent
-}: {
-  socketEvent: number;
-}) => {
+const BlackListBlock = ({ socketEvent }: { socketEvent: number }) => {
+  const navigate = useNavigate();
   const { user, setUser } = useContext(UserContext);
   const [open, setOpen] = useState(false);
 
@@ -56,32 +54,30 @@ const BlackListBlock = ({
         >
           {user.blockedUsers.length ? (
             user.blockedUsers.map((item) => (
-              <a
+              <div
                 key={item.id}
-                href={`/players/${item.nickname}`}
-                rel="noreferrer"
+                className={styles.friendLine}
+                onClick={() => navigate(`/players/${item.nickname}`)}
               >
-                <div className={styles.friendLine}>
-                  <BadgePong player={item}>
-                    <Avatar
-                      alt=""
-                      src={item.avatar}
-                      variant="circular"
-                      sx={{
-                        width: 35,
-                        height: 35,
-                        ':hover': {
-                          cursor: 'pointer'
-                        }
-                      }}
-                      title={item.username}
-                    />
-                  </BadgePong>
-                  <Typography key={item.id} title={item.username}>
-                    {item.nickname}
-                  </Typography>
-                </div>
-              </a>
+                <BadgePong player={item}>
+                  <Avatar
+                    alt=""
+                    src={item.avatar}
+                    variant="circular"
+                    sx={{
+                      width: 35,
+                      height: 35,
+                      ':hover': {
+                        cursor: 'pointer'
+                      }
+                    }}
+                    title={item.username}
+                  />
+                </BadgePong>
+                <Typography key={item.id} title={item.username}>
+                  {item.nickname}
+                </Typography>
+              </div>
             ))
           ) : (
             <Typography>List is empty</Typography>
