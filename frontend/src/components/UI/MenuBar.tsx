@@ -126,8 +126,13 @@ const MenuBar = () => {
           />
         </div>
       </nav>
-      <Drawer anchor="left" open={drawerOpen} onClose={handleDrawerToggle}>
-        <List sx={{ color: 'black' }}>
+      <Drawer
+        PaperProps={{ style: { backgroundColor: 'rgba(0, 0, 0, 0.8)' } }}
+        anchor="left"
+        open={drawerOpen}
+        onClose={handleDrawerToggle}
+      >
+        <List sx={{ color: color.PONG_WHITE }}>
           <ListItem onClick={() => navigate('/')}>
             <ListItemText primary="Home" sx={MUI.burgerItem} />
           </ListItem>
