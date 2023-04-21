@@ -69,7 +69,7 @@ export class FriendsController {
     this.friendsService.addFriendsByNickname(user, addFriendDto.nickname);
   }
 
-  @Patch('remove:nickname')
+  @Patch('remove/:nickname')
   @ApiOperation({
     summary: 'Remove friends',
     parameters: [{ name: 'nickname', in: 'query' }],

@@ -413,14 +413,14 @@ export class Game {
     if (norm === 0) return;
     ball.direction.x /= norm;
     ball.direction.y /= norm;
-    const ballRadius: number = this.game_state.gameInfos.ballRadius;
     //ball.position.x += ball.direction.x * ball.velocity;
     ball.position.x += Math.round((ball.direction.x * 10) / 10) * 10;
     ball.position.y += ball.direction.y * ball.velocity;
-    this._check_ball_collide_wall(ball, ballRadius);
+    // console.log(paddl)
+    
+    this._check_ball_collide_wall(ball);
     this._check_ball_collide_paddle(
       ball,
-      ballRadius,
       {
         x: this.game_state.player1.paddle.x,
         y: this.game_state.player1.paddle.y,
@@ -431,7 +431,6 @@ export class Game {
     );
     this._check_ball_collide_paddle(
       ball,
-      ballRadius,
       this.game_state.player2.paddle,
       this.game_state.gameInfos.paddleWidth,
       this.game_state.gameInfos.paddleHeight,
@@ -441,7 +440,6 @@ export class Game {
       if (!this.game_state.obstacle) return;
       this._check_ball_collide_paddle(
         ball,
-        ballRadius,
         this.game_state.obstacle.position,
         Default_params.OBSTACLE_WIDTH,
         Default_params.OBSTACLE_HEIGHT,
@@ -463,7 +461,6 @@ export class Game {
 
   private _check_ball_collide_paddle(
     ball: Ball,
-    ballRadius: number,
     paddle: Position,
     paddleWidth: number,
     paddleHeight: number,
@@ -472,67 +469,92 @@ export class Game {
     let paddleFrontUpCollideZone: any;
     let paddleFrontMiddleCollideZone: any;
     let paddleFrontDownCollideZone: any;
+    let paddleTopCollideZone: any;
+    let paddleBottomCollideZone : any;
     if (ball.collidable) {
       const ballColide: any = {
-        x: ball.position.x - ballRadius,
-        y: ball.position.y - ballRadius,
-        width: ballRadius,
-        height: ballRadius,
+        x: ball.position.x - Default_params.BALL_RADIUS,
+        y: ball.position.y - Default_params.BALL_RADIUS,
+        width: Default_params.BALL_RADIUS,
+        height: Default_params.BALL_RADIUS,
       };
       if (isPlayer1) {
         paddleFrontUpCollideZone = {
           x: paddle.x + Default_params.PADDLE_WIDTH,
           y: paddle.y,
-          width: ballRadius,
+          width: Default_params.BALL_RADIUS,
           height: paddleHeight / 3,
         };
         paddleFrontMiddleCollideZone = {
           x: paddle.x + Default_params.PADDLE_WIDTH,
           y: paddle.y + paddleHeight / 3,
-          width: ballRadius,
+          width: Default_params.BALL_RADIUS,
           height: paddleHeight / 3,
         };
         paddleFrontDownCollideZone = {
           x: paddle.x + Default_params.PADDLE_WIDTH,
           y: paddle.y + (paddleHeight / 3) * 2,
-          width: ballRadius,
+          width: Default_params.BALL_RADIUS,
           height: paddleHeight / 3,
+        };
+        paddleBottomCollideZone = {
+          x: paddle.x + Default_params.PADDLE_WIDTH,
+          y: paddle.y + paddleHeight,
+          width: paddleWidth,
+          height: Default_params.BALL_RADIUS,
+        };
+        paddleTopCollideZone = {
+          x: paddle.x + Default_params.PADDLE_WIDTH,
+          y: paddle.y,//- Default_params.BALL_RADIUS,
+          width: paddleWidth,
+          height: Default_params.BALL_RADIUS,
         };
       } else {
         paddleFrontUpCollideZone = {
-          x: paddle.x - 2 * ballRadius,
+          x: paddle.x - 2 * Default_params.BALL_RADIUS,
           y: paddle.y,
-          width: ballRadius,
+          width: Default_params.BALL_RADIUS,
           height: paddleHeight / 3,
         };
         paddleFrontMiddleCollideZone = {
-          x: paddle.x - 2 * ballRadius,
+          x: paddle.x - 2 * Default_params.BALL_RADIUS,
           y: paddle.y + paddleHeight / 3,
-          width: ballRadius,
+          width: Default_params.BALL_RADIUS,
           height: paddleHeight / 3,
         };
         paddleFrontDownCollideZone = {
-          x: paddle.x - 2 * ballRadius,
+          x: paddle.x - 2 * Default_params.BALL_RADIUS,
           y: paddle.y + (paddleHeight / 3) * 2,
-          width: ballRadius,
+          width: Default_params.BALL_RADIUS,
           height: paddleHeight / 3,
         };
+        paddleBottomCollideZone = {
+          x: paddle.x,
+          y: paddle.y + paddleHeight,
+          width: paddleWidth,
+          height: Default_params.BALL_RADIUS,
+        };
+        paddleTopCollideZone = {
+          x: paddle.x,
+          y: paddle.y,//- Default_params.BALL_RADIUS,
+          width: paddleWidth,
+          height: Default_params.BALL_RADIUS,
+        };
       }
-
-      const paddleTopCollideZone: any = {
-        x: paddle.x,
-        y: paddle.y - ballRadius,
-        width: paddleWidth,
-        height: ballRadius,
-      };
-      const paddleBottomCollideZone: any = {
-        x: paddle.x,
-        y: paddle.y + paddleHeight + ballRadius,
-        width: paddleWidth,
-        height: ballRadius,
-      };
+      // const paddleBottomCollideZone : any = {
+      //   x: paddle.x,
+      //   y: paddle.y + paddleHeight,
+      //   width: paddleWidth,
+      //   height: Default_params.BALL_RADIUS,
+      // };
+      // const paddleTopCollideZone : any = {
+      //   x: paddle.x,
+      //   y: paddle.y,//- Default_params.BALL_RADIUS,
+      //   width: paddleWidth,
+      //   height: Default_params.BALL_RADIUS,
+      // };
       let res = false;
-
+      debugger;
       if (this._check_colide(ballColide, paddleFrontUpCollideZone)) {
         ball.direction.x *= -1;
         ball.direction.y -= Default_params.BALL_PERTURBATOR;
@@ -561,6 +583,7 @@ export class Game {
         this._disable_collision(ball);
         res = true;
       }
+      console.log("x " + ballColide.x + " y " + ballColide.y + " width " + ballColide.width + " height " + ballColide.height);
       if (ball.velocity > Default_params.BALL_MAX_SPEED) {
         ball.velocity = Default_params.BALL_MAX_SPEED;
       }
@@ -597,8 +620,8 @@ export class Game {
     );
   }
 
-  private _check_ball_collide_wall(ball: Ball, ballRadius: number) {
-    if (ball.position.x < ballRadius) {
+  private _check_ball_collide_wall(ball: Ball) {
+    if (ball.position.x < Default_params.BALL_RADIUS) {
       this.game_state.player2.score++;
       this._reset_ball(ball);
       // this._reset_both_paddle([
@@ -607,7 +630,7 @@ export class Game {
       // ]);
       if (this.obstacle) this._reset_obstacle(this.game_state.obstacle);
     }
-    if (ball.position.x > this.game_state.gameInfos.width - ballRadius) {
+    if (ball.position.x > this.game_state.gameInfos.width - Default_params.BALL_RADIUS) {
       this.game_state.player1.score++;
       this._reset_ball(ball);
       // this._reset_both_paddle([
@@ -616,12 +639,12 @@ export class Game {
       // ]);
       if (this.obstacle) this._reset_obstacle(this.game_state.obstacle);
     }
-    if (ball.position.y < ballRadius) {
-      ball.position.y = ballRadius;
+    if (ball.position.y < Default_params.BALL_RADIUS) {
+      ball.position.y = Default_params.BALL_RADIUS;
       ball.direction.y *= -1;
     }
-    if (ball.position.y > this.game_state.gameInfos.height - ballRadius) {
-      ball.position.y = this.game_state.gameInfos.height - ballRadius;
+    if (ball.position.y > this.game_state.gameInfos.height - Default_params.BALL_RADIUS) {
+      ball.position.y = this.game_state.gameInfos.height - Default_params.BALL_RADIUS;
       ball.direction.y *= -1;
     }
   }
