@@ -1,14 +1,10 @@
-import { Button, Divider, IconButton, Menu, MenuItem, Modal, Stack, TextField, Typography } from "@mui/material";
-import { ChatRoomType, MemberType } from "../../../types/chat";
-import AvatarBadge from "./AvatarBadge";
-import { AdminPanelSettings, Block, Clear, Delete, DeveloperMode, ExitToApp, HighlightOff, Mail, PanTool, Password, PersonAdd, Save, Settings, VolumeOff, VolumeUp } from "@mui/icons-material";
+import { Divider, IconButton, Menu, Modal, Stack, TextField, Typography } from "@mui/material";
+import { Clear, Delete, ExitToApp, Password, Save, Settings } from "@mui/icons-material";
 import { useState } from "react";
 import IconPersoButton from "./IconPersoButton";
 import { useContext } from "react";
 import { UserContext } from "../../../contexts/UserContext";
 import * as statusUtils from "./statusFunctions";
-import * as onClickUtils from "./onClickFunctions";
-import { User } from '../../../types/User';
 import { WebSocketContext } from '../../../contexts/WebsocketContext';
 import { ModalClose, ModalDialog } from "@mui/joy";
 import { LoadingButton } from "@mui/lab";
@@ -30,7 +26,6 @@ const SettingMenu = (setting: SettingMenuProps) => {
   const [openChangePwd, setOpenChangePwd] = useState(false);
 	const [isPwdProtected, setIsPwdProtected] = useState<boolean>(false);
 	const [newPassword, setNewPassword] = useState<string>('');
-	
 	
 	const warningEmptyPass = () => {
 		setOpenChangePwd(false);

@@ -1,6 +1,5 @@
 import React from 'react';
 import { Avatar, Badge } from '@mui/material';
-import * as color from '../../UI/colorsPong';
 
 interface IMember {
   nickname: string;

@@ -1,7 +1,13 @@
 import { Prisma } from '@prisma/client';
 import { prisma } from './seed';
+import * as bcrypt from 'bcrypt';
 
 export async function insert_General() {
+  const generateHash = (password: string) => {
+    const salt = bcrypt.genSaltSync(10);
+    return bcrypt.hashSync(password, salt);
+  };
+
   console.log('Creation chan General');
   const General: Prisma.ChatRoomCreateInput = {
     name: 'General',
@@ -14,7 +20,7 @@ export async function insert_General() {
     name: 'VIP',
     owner: 1,
     modes: 'p',
-    password: 'TopSecret',
+    password: generateHash('TopSecret'),
     userLimit: 0,
   };
   await prisma.chatRoom.create({

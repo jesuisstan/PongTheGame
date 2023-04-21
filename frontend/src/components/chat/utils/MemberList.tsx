@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useContext } from 'react';
 import { MemberType } from '../../../types/chat';
 import { Box, Drawer, IconButton, List } from '@mui/material';
 import { PeopleAlt } from '@mui/icons-material';

@@ -71,7 +71,7 @@ const Home = () => {
               style={styles.stan}
               firstName="Stanislav"
               lastName="Krivtsoff"
-              description="I will solve this ⚡"
+              description="Sitôt dit, sitôt fait ⚡"
               intraNickname="acaren"
               role="Frontend: the entire frontend except for the Chat page"
               github="https://github.com/jesuisstan"

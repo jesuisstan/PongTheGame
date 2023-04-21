@@ -1,9 +1,9 @@
 import { User } from '../../../types/User'
 import { Socket } from 'socket.io-client';
-import { UserContext } from '../../../contexts/UserContext';
-import { useContext, useState } from 'react';
+// import { UserContext } from '../../../contexts/UserContext';
+// import { useContext, useState } from 'react';
 
-var res1: User;
+// var res1: User;
 
   // // When clicking on the 'block' button to block a user
   // export const onBlockClick = (socket: Socket, user: User, target: number

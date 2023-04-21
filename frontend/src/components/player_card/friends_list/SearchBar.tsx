@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import IconButton from '@mui/material/IconButton';
 import TextField from '@mui/material/TextField';
 import FormControl from '@mui/joy/FormControl';
@@ -7,6 +8,7 @@ import styles from '../styles/PlayerCard.module.css';
 import * as color from '../../UI/colorsPong';
 
 const SearchBar = () => {
+  const navigate = useNavigate();
   const [searchValue, setSearchValue] = useState('');
   const [error, setError] = useState('');
 
@@ -25,7 +27,7 @@ const SearchBar = () => {
     event.preventDefault();
 
     if (searchValue !== '') {
-      window.location.href = `/players/${searchValue}`;
+      navigate(`/players/${searchValue}`);
     }
   };
 
