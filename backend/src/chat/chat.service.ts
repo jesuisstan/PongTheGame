@@ -376,4 +376,30 @@ export class ChatService {
       return await bcrypt.compare(password, room.password);
     } else throw new WsException({ msg: 'checkPassword: unknown room name!' });
   }
+
+  async updateBlockedUsers(userId: number, target: number, disconnect: boolean)
+    : Promise<User | null> {
+    if (disconnect) {
+      await this.prisma.user.update({
+        where: { id: userId },
+        data: {
+          blockedUsers: {
+            disconnect: { id: target },
+          },
+        },
+      });
+    } else {
+      await this.prisma.user.update({
+        where: { id: userId },
+        data: {
+          blockedUsers: {
+            connect: { id: target },
+          },
+        },
+      });
+    }
+    return this.prisma.user.findUnique({
+      where: { id: userId },
+      include: { blockedUsers: true }})
+  }
 }

@@ -280,32 +280,11 @@ export class ChatGateway {
   }
 
   @SubscribeMessage('updateBlockedUsers')
-  async updateBlockedUsers(
+  updateBlockedUsers(
     @MessageBody('userId') userId: number,
     @MessageBody('target') target: number,
     @MessageBody('disconnect') disconnect: boolean,
   ): Promise<User | null> {
-    if (disconnect) {
-      await this.prisma.user.update({
-        where: { id: userId },
-        data: {
-          blockedUsers: {
-            disconnect: { id: target },
-          },
-        },
-      });
-    } else {
-      await this.prisma.user.update({
-        where: { id: userId },
-        data: {
-          blockedUsers: {
-            connect: { id: target },
-          },
-        },
-      });
-    }
-    return this.prisma.user.findUnique({
-      where: { id: userId },
-      include: { blockedUsers: true }})
+    return this.chatService.updateBlockedUsers(userId, target, disconnect);
   }
 }
