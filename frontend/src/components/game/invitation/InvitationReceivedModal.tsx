@@ -103,12 +103,6 @@ const InvitationReceivedModal = ({
                     }
                   }}
                   title={invitation.from.nickname}
-                  onClick={() =>
-                    window.open(
-                      `/players/${invitation.from.nickname}`,
-                      '_blank'
-                    )
-                  }
                 />
                 Player {invitation.from.nickname}
               </div>

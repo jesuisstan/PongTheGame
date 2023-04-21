@@ -63,7 +63,7 @@ const PlayerCard = () => {
       <div className={styles.playerCard}>
         <InfoBlock player={player} />
         <DeviderPong />
-        <FriendsBlock player={player} socketEvent={socketEvent} />
+        <FriendsBlock socketEvent={socketEvent} />
         <DeviderPong />
         {user.nickname === player.nickname && (
           <BlackListBlock socketEvent={socketEvent} />
