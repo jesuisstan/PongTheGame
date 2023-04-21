@@ -15,6 +15,8 @@ import backendAPI from './api/axios-instance';
 import ResultsModal from './components/game/ResultsModal';
 import WarningTokenModal from './components/UI/WarningTokenModal';
 import WarningConnectedModal from './components/UI/WarningConnectedModal';
+import WarningLoginModal from './components/UI/WarningLoginModal';
+import errorAlert from './components/UI/errorAlert';
 import './App.css';
 
 const App = () => {
@@ -25,6 +27,7 @@ const App = () => {
   const [openWarningConnected, setOpenWarningConnected] = useState(false);
   const [gameResult, setGameResult] = useState<GameResult | null>(null);
   const [openResultsModal, setOpenResultsModal] = useState(false);
+  const [openWarningLogin, setOpenWarningLogin] = useState(false);
 
   const [user, setUser] = useState<User>({
     avatar: undefined,
@@ -61,6 +64,10 @@ const App = () => {
       (error) => {
         if (error.response?.status === 400) {
           setOpenVerify2fa(true);
+        } else if (error.response?.status === 401) {
+          setOpenWarningLogin(true);
+        } else {
+          errorAlert('Something went wrong while logging in');
         }
       }
     );
@@ -98,6 +105,10 @@ const App = () => {
           <UserContext.Provider value={{ user, setUser }}>
             <GameStatusContext.Provider value={{ gameStatus, setGameStatus }}>
               <GameResultContext.Provider value={{ gameResult, setGameResult }}>
+                <WarningLoginModal
+                  open={openWarningLogin}
+                  setOpen={setOpenWarningLogin}
+                />
                 <Verify2fa open={openVerify2fa} setOpen={setOpenVerify2fa} />
                 <InvitationReceivedModal
                   open={openInvitation}
