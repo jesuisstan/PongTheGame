@@ -47,7 +47,7 @@ services:
     ports:
       - "${BACKEND_PORT}:${BACKEND_PORT}"
       - 5555:5555 # TODO remove is for prisma studio
-      - 9229: # MEMO REMOVE
+      - 9229:9229 # MEMO REMOVE
     env_file:
       - .env
     environment:
