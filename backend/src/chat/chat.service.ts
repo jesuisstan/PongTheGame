@@ -162,7 +162,10 @@ export class ChatService {
     if (room)
       return await this.prisma.message.findMany({
         where: { chatRoomName: roomName },
-        select: { author: true, data: true, timestamp: true },
+        select: {
+          author: { blockedUsers: true, blockedBy: true },
+          data: true, timestamp: true
+        },
       });
     throw new WsException({ msg: 'findAllMessages: unknown room name!' });
   }

@@ -90,12 +90,10 @@ const ChatRoom = (props: ChatRoomProps) => {
 							break;
 						}
 					}
-					// Then we filter the sender's blocked users
+					// Then we filter message by checking is the user is blocked by the author
 					if (found === false) {
-						for (const blockedUser in messagesToFilter[i].author.blockedUsers) {
-							if (
-								user.id === messagesToFilter[i].author.blockedUsers[blockedUser].id
-							) {
+						for (const usr in user.blockedBy) {
+							if (user.blockedBy[usr].id === messagesToFilter[i].author.id) {
 								messagesToFilter.splice(i, 1);
 								break;
 							}

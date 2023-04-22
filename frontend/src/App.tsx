@@ -40,6 +40,7 @@ const App = () => {
     totpSecret: null,
     username: '',
     blockedUsers: [],
+    blockedBy: [],
     joinedChatRoom: undefined
   });
 

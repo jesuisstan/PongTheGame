@@ -11,6 +11,7 @@ const USER_SELECT = {
   nickname: true,
   username: true,
   blockedUsers: true,
+  blockedBy: true,
   role: true,
   status: true,
 };
