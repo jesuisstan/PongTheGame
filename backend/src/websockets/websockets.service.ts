@@ -110,6 +110,7 @@ export class WebsocketsService {
   }
 
   send(client: any, event: string, data: any) {
+    if (!client) return;
     client.emit(event, data);
   }
 
