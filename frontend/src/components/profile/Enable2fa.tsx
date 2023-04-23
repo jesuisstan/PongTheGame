@@ -118,8 +118,11 @@ const Enable2fa = ({
           </Typography>
           <form onSubmit={handleSubmit}>
             <Stack spacing={2}>
-              <Typography component="h3" sx={{ color: color.PONG_BLUE }}>
-                Configuring Google Authenticator
+              <Typography
+                component="h3"
+                sx={{ color: color.PONG_BLUE, textAlign: 'center' }}
+              >
+                Configuring Google Authenticator:
               </Typography>
               <Stack spacing={1}>
                 <Typography>
@@ -167,55 +170,63 @@ const Enable2fa = ({
                 </Typography>
               </Stack>
               <div>
-                <Typography component="h3" sx={{ color: color.PONG_BLUE }}>
-                  Scan QR Code
+                <Typography component="h3" sx={{ color: color.PONG_BLUE, textAlign: 'center' }}>
+                  Scan QR Code:
                 </Typography>
                 <div className={styles.QRbox}>
                   {!qrCodeUrl ? (
-                    <LoadingButton
-                      disabled={qrCodeUrl ? true : false}
-                      variant="contained"
-                      color="inherit"
-                      loading={loadCreateQr}
-                      onClick={showQRcode}
-                    >
-                      Show QR Code
-                    </LoadingButton>
+                    <div style={MUI.loadButtonBlock}>
+                      <LoadingButton
+                        disabled={qrCodeUrl ? true : false}
+                        variant="contained"
+                        color="inherit"
+                        loading={loadCreateQr}
+                        onClick={showQRcode}
+                        sx={{ minWidth: 142 }}
+                      >
+                        Show QR Code
+                      </LoadingButton>
+                    </div>
                   ) : (
                     <img className={styles.QRimage} src={qrCodeUrl} alt="" />
                   )}
                 </div>
               </div>
               <div>
-                <Typography component="h3" sx={{ color: color.PONG_BLUE }}>
-                  Verify Code
+                <Typography component="h3" sx={{ color: color.PONG_BLUE, textAlign: 'center' }}>
+                  Verify Code:
                 </Typography>
               </div>
-              <TextField
-                autoFocus
-                required
-                inputRef={(input) => {
-                  if (input != null) input.focus();
-                }}
-                value={text}
-                inputProps={{
-                  minLength: 6,
-                  maxLength: 6
-                }}
-                placeholder="Authentication Code"
-                helperText={error} // error message
-                error={!!error} // set to true to change the border/helperText color to red
-                onChange={handleTextInput}
-              />
-              <LoadingButton
-                type="submit"
-                loading={loadSubmit}
-                startIcon={<SaveIcon />}
-                variant="contained"
-                color="inherit"
-              >
-                {buttonText}
-              </LoadingButton>
+              <div style={MUI.loadButtonBlock}>
+                <TextField
+                  autoFocus
+                  required
+                  inputRef={(input) => {
+                    if (input != null) input.focus();
+                  }}
+                  value={text}
+                  inputProps={{
+                    minLength: 6,
+                    maxLength: 6
+                  }}
+                  placeholder="Authentication Code"
+                  helperText={error} // error message
+                  error={!!error} // set to true to change the border/helperText color to red
+                  onChange={handleTextInput}
+                />
+              </div>
+              <div style={MUI.loadButtonBlock}>
+                <LoadingButton
+                  type="submit"
+                  loading={loadSubmit}
+                  startIcon={<SaveIcon />}
+                  variant="contained"
+                  color="inherit"
+                  sx={{ minWidth: 142 }}
+                >
+                  {buttonText}
+                </LoadingButton>
+              </div>
             </Stack>
           </form>
         </ModalDialog>

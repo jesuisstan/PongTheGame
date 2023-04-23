@@ -13,6 +13,7 @@ import ModalDialog from '@mui/joy/ModalDialog';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/joy/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
+import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import SaveIcon from '@mui/icons-material/Save';
 import * as MUI from '../UI/MUIstyles';
@@ -98,37 +99,50 @@ const Verify2fa = ({
           <Typography
             id="basic-modal-dialog-title"
             component="h2"
-            sx={{ color: 'black' }}
+            sx={MUI.modalHeader}
           >
             Verifying 2FA Code
           </Typography>
           <form onSubmit={handleSubmit}>
             <Stack spacing={2}>
-              <FormControl>
-                <FormLabel sx={{ color: 'black' }}>6 digits:</FormLabel>
-                <TextField
-                  autoFocus
-                  required
-                  value={text}
-                  inputProps={{
-                    minLength: 6,
-                    maxLength: 6
-                  }}
-                  helperText={error} // error message
-                  error={!!error} // set to true to change the border/helperText color to red
-                  onChange={handleTextInput}
-                />
-              </FormControl>
-              <LoadingButton
-                type="submit"
-                loading={load}
-                startIcon={<SaveIcon />}
-                variant="contained"
-                color="inherit"
-                disabled={!buttonClickable}
-              >
-                {buttonText}
-              </LoadingButton>
+              <div style={MUI.loadButtonBlock}>
+                <FormControl>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}
+                  >
+                    <FormLabel sx={{ color: 'black' }}>6 digits:</FormLabel>
+                  </Box>
+                  <TextField
+                    autoFocus
+                    required
+                    value={text}
+                    inputProps={{
+                      minLength: 6,
+                      maxLength: 6
+                    }}
+                    helperText={error} // error message
+                    error={!!error} // set to true to change the border/helperText color to red
+                    onChange={handleTextInput}
+                  />
+                </FormControl>
+              </div>
+              <div style={MUI.loadButtonBlock}>
+                <LoadingButton
+                  type="submit"
+                  loading={load}
+                  startIcon={<SaveIcon />}
+                  variant="contained"
+                  color="inherit"
+                  disabled={!buttonClickable}
+                  sx={{ minWidth: 142 }}
+                >
+                  {buttonText}
+                </LoadingButton>
+              </div>
             </Stack>
           </form>
         </ModalDialog>
