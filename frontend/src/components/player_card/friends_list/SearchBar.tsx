@@ -1,5 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import backendAPI from '../../../api/axios-instance';
+import errorAlert from '../../UI/errorAlert';
+import { AxiosError } from 'axios';
 import IconButton from '@mui/material/IconButton';
 import TextField from '@mui/material/TextField';
 import FormControl from '@mui/joy/FormControl';
@@ -23,11 +26,21 @@ const SearchBar = () => {
     }
   };
 
-  const searchPlayer = (event: React.FormEvent<HTMLFormElement>) => {
+  const searchPlayer = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (searchValue !== '') {
-      navigate(`/players/${searchValue}`);
+      try {
+        const response = await backendAPI.get(`/user/${searchValue}`);
+        navigate(`/players/${searchValue}`);
+      } catch (error) {
+        const err = error as AxiosError<any>;
+        if (err.response?.status === 404) {
+          errorAlert('Player with such a nickname was not found');
+        } else {
+          errorAlert('Something went wrong');
+        }
+      }
     }
   };
 
