@@ -135,7 +135,7 @@ export class Game {
     }
 
     while (this.start_counter > 0 && this.status == Status.STARTING) {
-    this._set_players_status('PREPARING');
+      this._set_players_status('PREPARING');
       await this._wait(1000);
       this.start_counter--;
       this._send_to_players('match_starting', { time: this.start_counter });

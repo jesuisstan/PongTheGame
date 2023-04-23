@@ -54,6 +54,8 @@ export class GameService {
       return { status: 406, reason: 'User blocked you' };
     if (user.status == 'PLAYING')
       return { status: 400, reason: 'User Already in game' };
+    if (user.status == 'PREPARING')
+      return { status: 400, reason: 'User is preparing to play' };
     const already_exist = await this.prisma.matchInvitation.findMany({
       where: {
         createdById: socket.user.id,

@@ -74,7 +74,9 @@ const FriendsNoteModal = ({
                     <Avatar></Avatar>
                   </BadgePong>
                 </div>
-                <Typography sx={{ marginTop: '8px' }}>- preparing to play</Typography>
+                <Typography sx={{ marginTop: '8px' }}>
+                  - preparing to play
+                </Typography>
               </div>
               <div
                 style={{
