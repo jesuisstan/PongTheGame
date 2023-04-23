@@ -532,14 +532,14 @@ export class Game {
           height: paddleHeight / 3,
         };
         paddleBottomCollideZone = {
-          x: paddle.x,
+          x: paddle.x - 2 * Default_params.BALL_RADIUS,
           y: paddle.y + paddleHeight,
           width: paddleWidth,
           height: Default_params.BALL_RADIUS,
         };
         paddleTopCollideZone = {
-          x: paddle.x,
-          y: paddle.y,//- Default_params.BALL_RADIUS,
+          x: paddle.x - 2 * Default_params.BALL_RADIUS,
+          y: paddle.y,
           width: paddleWidth,
           height: Default_params.BALL_RADIUS,
         };
@@ -594,6 +594,7 @@ export class Game {
       } else if (this._check_colide(ballColide, paddleBottomCollideZone, true)) {
         if (paddle.x == 760){
           console.log("hit bottom");
+          console.log(paddleFrontDownCollideZone);
           console.log(ballColide);
           console.log(paddleBottomCollideZone)
         }
