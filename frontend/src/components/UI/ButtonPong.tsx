@@ -25,11 +25,14 @@ const ButtonPong = ({
         color: !inversedColors ? color.PONG_WHITE : 'black',
         backgroundColor: !inversedColors ? 'black' : color.PONG_PINK,
         fontWeight: 'Bold',
+        border: '0.5px solid transparent',
         ':hover': {
           transitionDuration: '0.5s',
           backgroundColor: !inversedColors ? color.PONG_PINK : 'black',
           color: !inversedColors ? 'black' : color.PONG_WHITE,
-          border: inversedColors ? `0.5px solid ${color.PONG_PINK}` : 'black'
+          border: inversedColors
+            ? `0.5px solid ${color.PONG_PINK}`
+            : '0.5px solid transparent'
         }
       }}
       title={title}

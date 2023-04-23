@@ -135,6 +135,7 @@ export class Game {
     }
 
     while (this.start_counter > 0 && this.status == Status.STARTING) {
+    this._set_players_status('PREPARING');
       await this._wait(1000);
       this.start_counter--;
       this._send_to_players('match_starting', { time: this.start_counter });
@@ -668,7 +669,7 @@ export class Game {
     }
   }
 
-  async _set_players_status(status: 'ONLINE' | 'PLAYING') {
+  async _set_players_status(status: 'ONLINE' | 'PLAYING' | 'PREPARING') {
     await this.prisma.user.updateMany({
       where: {
         OR: [{ id: this.player1.user.id }, { id: this.player2?.user.id }],

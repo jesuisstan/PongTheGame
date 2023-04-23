@@ -68,6 +68,24 @@ const FriendsNoteModal = ({
                 <div>
                   <BadgePong
                     player={player}
+                    color={color.PONG_ORANGE}
+                    pulse={true}
+                  >
+                    <Avatar></Avatar>
+                  </BadgePong>
+                </div>
+                <Typography sx={{ marginTop: '8px' }}>- preparing to play</Typography>
+              </div>
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  gap: '21px'
+                }}
+              >
+                <div>
+                  <BadgePong
+                    player={player}
                     color={color.PONG_BLUE}
                     pulse={true}
                   >
