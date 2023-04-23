@@ -45,7 +45,9 @@ const WarningLoginModal = ({
             <Typography>
               You are not authorised yet.
               <br />
-              Please login to get access to chat and game pages.
+              That's why You can browse only Home and Info pages.
+              <br />
+              Please login to get access to Chat and Game pages.
             </Typography>
             <div
               style={{

@@ -7,10 +7,10 @@ import styles from './styles/About.module.css';
 const avatarStyle = {
   width: 121,
   height: 121,
+  transition: 'transform 0.3s ease-out',
   ':hover': {
     cursor: 'pointer',
-    transform: 'scale(1.04)',
-    transition: 'transform 0.3s ease-out'
+    transform: 'scale(1.03)',
   }
 };
 
