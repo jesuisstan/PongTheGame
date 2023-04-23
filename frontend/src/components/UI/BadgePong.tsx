@@ -15,6 +15,8 @@ const BadgePong = ({ color, pulse, player, children }: PongBadgeProps) => {
     ? color
     : player.status === 'PLAYING'
     ? colorPong.PONG_BLUE
+    : player.status === 'PREPARING'
+    ? colorPong.PONG_ORANGE
     : player.status === 'ONLINE'
     ? 'green'
     : 'red';

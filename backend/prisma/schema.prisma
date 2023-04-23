@@ -54,6 +54,7 @@ model Stats {
 enum StatusUser {
   ONLINE
   OFFLINE
+  PREPARING
   PLAYING
 }
 

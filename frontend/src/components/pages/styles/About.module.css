@@ -137,7 +137,7 @@
 .florian:hover,
 .special:hover {
   background-color: rgba(245, 245, 245, 0.8);
-  transition: background-color 0.5s ease-out; /* add this line */
+  transition: background-color 0.5s ease-out;
 }
 
 @media (max-width: 660px) {
