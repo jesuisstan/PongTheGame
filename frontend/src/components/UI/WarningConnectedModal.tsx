@@ -44,13 +44,7 @@ const WarningConnectedModal = ({
               Please close this page and return to the previously opened one to
               continue.
             </Typography>
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}
-            >
+            <div style={MUI.loadButtonBlock}>
               <LoadingButton
                 type="submit"
                 loading={load}
@@ -59,6 +53,7 @@ const WarningConnectedModal = ({
                 variant="contained"
                 color="inherit"
                 onClick={handleDaccordClick}
+                sx={{ minWidth: 142 }}
               >
                 D'Accord
               </LoadingButton>
@@ -68,14 +63,7 @@ const WarningConnectedModal = ({
               <br />
               (this will end the session in current browser)
             </Typography>
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}
-            >
+            <div style={MUI.loadButtonBlock}>
               <LoadingButton
                 type="submit"
                 loading={load}
@@ -84,6 +72,7 @@ const WarningConnectedModal = ({
                 variant="contained"
                 color="inherit"
                 onClick={handleLogoutClick}
+                sx={{ minWidth: 142 }}
               >
                 Logout
               </LoadingButton>

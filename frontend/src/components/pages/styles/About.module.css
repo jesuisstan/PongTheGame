@@ -48,7 +48,7 @@
   color: black;
   text-align: left;
   border-radius: 4px;
-  transition: transform 0.3s ease-out, background-color 0.3s ease-out;
+  transition: transform 0.5s ease-out, background-color 0.5s ease-out;
 }
 
 .barbara {
@@ -64,7 +64,7 @@
   text-align: right;
   color: black;
   border-radius: 4px;
-  transition: transform 0.3s ease-out, background-color 0.3s ease-out;
+  transition: transform 0.5s ease-out, background-color 0.5s ease-out;
 }
 
 .florian {
@@ -80,7 +80,7 @@
   text-align: left;
   border-radius: 4px;
   color: black;
-  transition: transform 0.3s ease-out, background-color 0.3s ease-out;
+  transition: transform 0.5s ease-out, background-color 0.5s ease-out;
 }
 
 .stan {
@@ -96,7 +96,7 @@
   border-radius: 4px;
   text-align: right;
   color: black;
-  transition: transform 0.3s ease-out, background-color 0.3s ease-out;
+  transition: transform 0.5s ease-out, background-color 0.5s ease-out;
 }
 
 .daisuke {
@@ -112,7 +112,7 @@
   border-radius: 4px;
   color: black;
   text-align: left;
-  transition: transform 0.3s ease-out, background-color 0.3s ease-out;
+  transition: transform 0.5s ease-out, background-color 0.5s ease-out;
 }
 
 .special {
@@ -127,7 +127,7 @@
   border-radius: 4px;
   color: black;
   text-align: center;
-  transition: transform 0.3s ease-out, background-color 0.3s ease-out;
+  transition: transform 0.5s ease-out, background-color 0.5s ease-out;
 }
 
 .benjamin:hover,
@@ -137,7 +137,7 @@
 .florian:hover,
 .special:hover {
   background-color: rgba(245, 245, 245, 0.8);
-  transition: background-color 0.5s ease-out;
+  transition: background-color 0.3s ease-out;
 }
 
 @media (max-width: 660px) {
