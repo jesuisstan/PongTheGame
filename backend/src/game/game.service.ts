@@ -101,7 +101,6 @@ export class GameService {
   }
 
   async send_all_invitation(socket: any) {
-    // MEMO send_all_invitation / change for send_invitation
     if (!socket) return;
     const allInvit = await this.prisma.matchInvitation.findMany({
       where: {
@@ -124,6 +123,16 @@ export class GameService {
         { obstacle: allInvit[i].obstacle, winScore: allInvit[i].winScore },
       );
       this.websocket.send(socket, 'invitation_game', res);
+      await this.prisma.user.updateMany({
+        where: {
+          id: socket[0].user.id,
+        },
+        data: { status: 'PREPARING' },
+      });
+      this.websocket.broadcast('user_status', {
+        nickname: socket[0].user.nickname,
+        status: 'PREPARING',
+      });
     }
   }
 
@@ -195,7 +204,7 @@ export class GameService {
     return { status: 200, reason: 'Success' };
   }
 
-  async delete_invitation(user: User) {
+  async delete_invitation(socket: any, user: User) {
     const invit: MatchInvitation | null =
       await this.prisma.matchInvitation.findUnique({
         where: {
@@ -208,6 +217,7 @@ export class GameService {
     ]);
     if (!inviteUserSocket[0]) return;
     this.websocket.send(inviteUserSocket[0], 'match_invitation_canceled', {});
+    this._set_players_status([inviteUserSocket[0], socket], 'ONLINE');
     this._delete_user_invitations(user.id);
   }
 
