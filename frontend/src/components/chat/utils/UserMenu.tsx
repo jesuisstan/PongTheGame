@@ -170,7 +170,7 @@ const UserMenu = (props: UserMenuProps) => {
             cond={true}
             true={handleProfileRedirect}
             icon={<PersonAdd className="black" />}
-            text="Profil"
+            text="Profile"
             false={null}
             iconAlt={null}
             textAlt={null}
