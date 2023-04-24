@@ -8,6 +8,7 @@ import ModalClose from '@mui/joy/ModalClose';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/joy/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
+import Box from '@mui/material/Box';
 import SaveIcon from '@mui/icons-material/Save';
 import backendAPI from '../../api/axios-instance';
 import * as MUI from '../UI/MUIstyles';
@@ -80,9 +81,17 @@ const EditAvatar = ({
           <Typography sx={MUI.modalHeader}>Modifying avatar</Typography>
           <form style={{ marginTop: '10px' }} onSubmit={handleSubmit}>
             <Stack spacing={2}>
-              <FormLabel sx={{ color: 'black' }}>
-                Maximum file size is 2 Mb
-              </FormLabel>
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+              >
+                <FormLabel sx={{ color: 'black' }}>
+                  Maximum file size is 2 Mb
+                </FormLabel>
+              </Box>
               <input
                 required
                 type="file"
@@ -91,15 +100,18 @@ const EditAvatar = ({
                 accept="image/*,.png,.jpg,.gif,.web"
                 onChange={handleInput}
               />
-              <LoadingButton
-                type="submit"
-                loading={load}
-                startIcon={<SaveIcon />}
-                variant="contained"
-                color="inherit"
-              >
-                {buttonText}
-              </LoadingButton>
+              <div style={MUI.loadButtonBlock}>
+                <LoadingButton
+                  type="submit"
+                  loading={load}
+                  startIcon={<SaveIcon />}
+                  variant="contained"
+                  color="inherit"
+                  sx={{ minWidth: 142 }}
+                >
+                  {buttonText}
+                </LoadingButton>
+              </div>
             </Stack>
           </form>
         </ModalDialog>

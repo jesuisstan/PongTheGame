@@ -53,7 +53,7 @@ export const warningBoxStyle = {
 };
 
 export const burgerItem = {
-  transition: 'transform 0.5s ease-in-out',
+  transition: 'transform 0.5s ease-in-out, color 0.5s ease-out',
   textTransform: 'uppercase',
   letterSpacing: '0.02857em',
   ':hover': {
@@ -61,3 +61,9 @@ export const burgerItem = {
     color: color.PONG_PINK
   }
 };
+
+export const loadButtonBlock = {
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center'
+}

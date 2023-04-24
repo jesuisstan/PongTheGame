@@ -21,7 +21,7 @@ const ButtonPong = ({
   return (
     <Button
       sx={{
-        minWidth: '130px',
+        minWidth: '132px',
         color: !inversedColors ? color.PONG_WHITE : 'black',
         backgroundColor: !inversedColors ? 'black' : color.PONG_PINK,
         fontWeight: 'Bold',

@@ -85,10 +85,9 @@ const InfoBlock = ({ player }: { player: PlayerProfile }) => {
             setUser(res);
           }
         );
-        console.log('UserId: ' + target + 'has been blocked!');
         return;
       } catch (err) {
-        console.log('ERROR: ' + err);
+        errorAlert('Could not block this player. Try again');
       }
     }
   };
@@ -110,12 +109,11 @@ const InfoBlock = ({ player }: { player: PlayerProfile }) => {
                 setUser(res);
               }
             );
-            console.log('UserId: ' + target + 'has been unblocked!');
             return;
           }
         }
       } catch (err) {
-        console.log('ERROR: ' + err);
+        errorAlert('Could not unblock this player. Try again');
       }
     }
   };
