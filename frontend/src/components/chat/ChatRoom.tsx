@@ -121,88 +121,138 @@ const ChatRoom = (props: ChatRoomProps) => {
   };
   findAllMessages();
 
-  /*************************************************************
-   * Event listeners
-   **************************************************************/
-  useEffect(() => {
-    // Activate listeners and subscribe to events as the component is mounted
     socket.on(
-      'typingMessage',
-      (roomName: string, nick: string, isTyping: boolean) => {
-        roomName === props.room.name &&
-        isTyping &&
-        !statusUtils.isUserBlocked(user, undefined, nick)
-          ? setTypingDisplay(nick + ' is typing...')
-          : setTypingDisplay('');
-      }
-    );
+    'typingMessage',
+    (roomName: string, nick: string, isTyping: boolean) => {
+      roomName === props.room.name &&
+      isTyping &&
+      !statusUtils.isUserBlocked(user, undefined, nick)
+        ? setTypingDisplay(nick + ' is typing...')
+        : setTypingDisplay('');
+    });
     socket.on('changePassword', (roomName: string, isDeleted: boolean) => {
       if (roomName === props.room.name) {
         const status = isDeleted ? 'deleted' : 'modified';
-        console.log('Password from [' + roomName + '] has been ' + status);
+        // console.log('Password from [' + roomName + '] has been ' + status);
       }
     });
     socket.on('joinRoom', (roomName: string, userId: number) => {
-      if (roomName === props.room.name)
-        console.log(
-          'user ID: ' + userId + ' joined chatroom [' + roomName + ']'
-        );
+      // if (roomName === props.room.name) console.log('user ID: ' + userId + ' joined chatroom [' + roomName + ']');
     });
     socket.on('quitRoom', (roomName: string, userId: number) => {
       if (userId === user.id && roomName === props.room.name) {
         props.cleanRoomLoginData();
-        console.log('user ID: ' + userId + ' quit room [' + roomName + ']');
+        // console.log('user ID: ' + userId + ' quit room [' + roomName + ']');
       }
     });
     socket.on('kickUser', (roomName: string, target: number) => {
-      if (roomName === props.room.name)
-        console.log(target + ' has been kicked!');
+      // if (roomName === props.room.name) console.log(target + ' has been kicked!');
       if (target === user.id) props.cleanRoomLoginData();
     });
     // User has made admin
     socket.on('adminUser', (roomName: string, target: number) => {
-      if (roomName === props.room.name) console.log(target + ' is admin now!');
+      // if (roomName === props.room.name) console.log(target + ' is admin now!');
     });
     // User is not admin anymore
     socket.on('unadminUser', (roomName: string, target: number) => {
-      if (roomName === props.room.name)
-        console.log('user ID: ' + target + ' is not admin anymore now!');
+      // if (roomName === props.room.name) console.log('user ID: ' + target + ' is not admin anymore now!');
     });
     socket.on('banUser', (roomName: string, target: number) => {
-      if (roomName === props.room.name)
-        console.log(target + ' has been banned!');
+      // if (roomName === props.room.name) console.log(target + ' has been banned!');
       if (target === user.id) props.cleanRoomLoginData();
     });
     socket.on('unbanUser', (roomName: string, target: number) => {
-      if (roomName === props.room.name)
-        console.log(target + ' has been unbanned!');
+      // if (roomName === props.room.name) console.log(target + ' has been unbanned!');
     });
     socket.on('muteUser', (roomName: string, target: number) => {
-      if (roomName === props.room.name)
-        console.log(target + ' has been muted!');
+      // if (roomName === props.room.name) console.log(target + ' has been muted!');
     });
     socket.on('unmuteUser', (roomName: string, target: number) => {
-      if (roomName === props.room.name)
-        console.log(target + ' has been unmuted!');
+      // if (roomName === props.room.name) console.log(target + ' has been unmuted!');
     });
 
-    // Clean listeners to unsubscribe all callbacks for these events
-    // before the component is unmounted
-    return () => {
-      socket.off('createMessage');
-      socket.off('typingMessage');
-      socket.off('changePassword');
-      socket.off('joinRoom');
-      socket.off('quitRoom');
-      socket.off('kickUser');
-      socket.off('adminUser');
-      socket.off('unadminUser');
-      socket.off('banUser');
-      socket.off('unbanUser');
-      socket.off('muteUser');
-      socket.off('unmuteUser');
-    };
-  }, []);
+  /*************************************************************
+   * Event listeners
+   **************************************************************/
+  // useEffect(() => {
+  //   // Activate listeners and subscribe to events as the component is mounted
+  //   socket.on(
+  //     'typingMessage',
+  //     (roomName: string, nick: string, isTyping: boolean) => {
+  //       roomName === props.room.name &&
+  //       isTyping &&
+  //       !statusUtils.isUserBlocked(user, undefined, nick)
+  //         ? setTypingDisplay(nick + ' is typing...')
+  //         : setTypingDisplay('');
+  //     }
+  //   );
+  //   socket.on('changePassword', (roomName: string, isDeleted: boolean) => {
+  //     if (roomName === props.room.name) {
+  //       const status = isDeleted ? 'deleted' : 'modified';
+  //       console.log('Password from [' + roomName + '] has been ' + status);
+  //     }
+  //   });
+  //   socket.on('joinRoom', (roomName: string, userId: number) => {
+  //     if (roomName === props.room.name)
+  //       console.log(
+  //         'user ID: ' + userId + ' joined chatroom [' + roomName + ']'
+  //       );
+  //   });
+  //   socket.on('quitRoom', (roomName: string, userId: number) => {
+  //     if (userId === user.id && roomName === props.room.name) {
+  //       props.cleanRoomLoginData();
+  //       console.log('user ID: ' + userId + ' quit room [' + roomName + ']');
+  //     }
+  //   });
+  //   socket.on('kickUser', (roomName: string, target: number) => {
+  //     if (roomName === props.room.name)
+  //       console.log(target + ' has been kicked!');
+  //     if (target === user.id) props.cleanRoomLoginData();
+  //   });
+  //   // User has made admin
+  //   socket.on('adminUser', (roomName: string, target: number) => {
+  //     if (roomName === props.room.name) console.log(target + ' is admin now!');
+  //   });
+  //   // User is not admin anymore
+  //   socket.on('unadminUser', (roomName: string, target: number) => {
+  //     if (roomName === props.room.name)
+  //       console.log('user ID: ' + target + ' is not admin anymore now!');
+  //   });
+  //   socket.on('banUser', (roomName: string, target: number) => {
+  //     if (roomName === props.room.name)
+  //       console.log(target + ' has been banned!');
+  //     if (target === user.id) props.cleanRoomLoginData();
+  //   });
+  //   socket.on('unbanUser', (roomName: string, target: number) => {
+  //     if (roomName === props.room.name)
+  //       console.log(target + ' has been unbanned!');
+  //   });
+  //   socket.on('muteUser', (roomName: string, target: number) => {
+  //     if (roomName === props.room.name)
+  //       console.log(target + ' has been muted!');
+  //   });
+  //   socket.on('unmuteUser', (roomName: string, target: number) => {
+  //     if (roomName === props.room.name)
+  //       console.log(target + ' has been unmuted!');
+  //   });
+
+  //   // Clean listeners to unsubscribe all callbacks for these events
+  //   // before the component is unmounted
+  //   return () => {
+  //     socket.off('createMessage');
+  //     socket.off('typingMessage');
+  //     socket.off('changePassword');
+  //     socket.off('joinRoom');
+  //     socket.off('quitRoom');
+  //     socket.off('kickUser');
+  //     socket.off('adminUser');
+  //     socket.off('unadminUser');
+  //     socket.off('banUser');
+  //     socket.off('unbanUser');
+  //     socket.off('muteUser');
+  //     socket.off('unmuteUser');
+  //   };
+  // }, []);
 
   /*************************************************************
    * Events
@@ -285,7 +335,7 @@ const ChatRoom = (props: ChatRoomProps) => {
             {messages.length === 0 ? (
               <div className="black">No Message</div>
             ) : (
-              <Stack className="message-area">
+              <Stack className="message-area" spacing={1}>
                 {' '}
                 {messages.map((msg, index) => (
                   <div key={index}>
