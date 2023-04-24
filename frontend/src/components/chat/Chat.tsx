@@ -116,27 +116,37 @@ const Chat = () => {
     errorAlert('Password cannot be empty');
   };
 
+  socket.on('connect', () => {
+    // console.log('Connected to websocket')
+  });
+  socket.on('createChatRoom', (roomName: string) => {
+    // console.log('Created new chat room [' + roomName + ']');
+  });
+  socket.on('exception', (res) => {
+    errorAlert(String(res.msg));
+  });
+
   /*************************************************************
    * Event listeners
    **************************************************************/
-  useEffect(() => {
-    // Activate listeners and subscribe to events as the component is mounted
-    socket.on('connect', () => console.log('Connected to websocket'));
-    socket.on('createChatRoom', (roomName: string) => {
-      console.log('Created new chat room [' + roomName + ']');
-    });
-    socket.on('exception', (res) => {
-      errorAlert(String(res.msg));
-    });
+  // useEffect(() => {
+  //   // Activate listeners and subscribe to events as the component is mounted
+  //   socket.on('connect', () => console.log('Connected to websocket'));
+  //   socket.on('createChatRoom', (roomName: string) => {
+  //     console.log('Created new chat room [' + roomName + ']');
+  //   });
+  //   socket.on('exception', (res) => {
+  //     errorAlert(String(res.msg));
+  //   });
 
-    // Clean listeners to unsubscribe all callbacks for these events
-    // before the component is unmounted
-    return () => {
-      // socket.off('connect');
-      socket.off('createChatRoom');
-      socket.off('exception');
-    };
-  }, []);
+  //   // Clean listeners to unsubscribe all callbacks for these events
+  //   // before the component is unmounted
+  //   return () => {
+  //     // socket.off('connect');
+  //     socket.off('createChatRoom');
+  //     socket.off('exception');
+  //   };
+  // }, []);
 
   // When clicking on the 'new' button to create a new chat room
   const onNewClick = () => {
