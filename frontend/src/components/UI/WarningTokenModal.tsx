@@ -92,13 +92,7 @@ const WarningTokenModal = ({
               sx={{ color: color.PONG_PINK, marginTop: '10px' }}
             />
             <Typography>{remainingSeconds} sec.</Typography>
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}
-            >
+            <div style={MUI.loadButtonBlock}>
               <LoadingButton
                 type="submit"
                 loading={load}
@@ -107,6 +101,7 @@ const WarningTokenModal = ({
                 variant="contained"
                 color="inherit"
                 onClick={() => logout()}
+                sx={{ minWidth: 142 }}
               >
                 Proceed
               </LoadingButton>

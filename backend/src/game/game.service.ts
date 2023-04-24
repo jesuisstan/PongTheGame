@@ -31,6 +31,26 @@ export class GameService {
     this._treat_queue(this.game_queue);
   }
 
+  private async _set_players_status(
+    socket: any[],
+    status: 'ONLINE' | 'PREPARING',
+  ) {
+    await this.prisma.user.updateMany({
+      where: {
+        OR: [{ id: socket[0].user.id }, { id: socket[1].user.id }],
+      },
+      data: { status: status },
+    });
+    this.websocket.broadcast('user_status', {
+      nickname: socket[0].user.nickname,
+      status: status,
+    });
+    this.websocket.broadcast('user_status', {
+      nickname: socket[1].user.nickname,
+      status: status,
+    });
+  }
+
   async create_invitation(
     socket: any,
     payload: any,
@@ -54,6 +74,8 @@ export class GameService {
       return { status: 406, reason: 'User blocked you' };
     if (user.status == 'PLAYING')
       return { status: 400, reason: 'User Already in game' };
+    if (user.status == 'PREPARING')
+      return { status: 400, reason: 'User is preparing to play' };
     const already_exist = await this.prisma.matchInvitation.findMany({
       where: {
         createdById: socket.user.id,
@@ -74,6 +96,7 @@ export class GameService {
     });
     const res = convert_invitation(socket, payload);
     this.websocket.send(invited_socket[0], 'invitation_game', res);
+    this._set_players_status([invited_socket[0], socket], 'PREPARING');
     return { status: 200, reason: 'Invitation send' };
   }
 
@@ -100,6 +123,16 @@ export class GameService {
         { obstacle: allInvit[i].obstacle, winScore: allInvit[i].winScore },
       );
       this.websocket.send(socket, 'invitation_game', res);
+      await this.prisma.user.updateMany({
+        where: {
+          id: socket[0].user.id,
+        },
+        data: { status: 'PREPARING' },
+      });
+      this.websocket.broadcast('user_status', {
+        nickname: socket[0].user.nickname,
+        status: 'PREPARING',
+      });
     }
   }
 
@@ -165,12 +198,13 @@ export class GameService {
       },
     });
     if (!invit) return { status: 404, reason: 'Invitation not found' };
+    this._set_players_status([inviteUserSocket[0], socket], 'ONLINE');
     this.websocket.send(inviteUserSocket[0], 'match_invitation_canceled', {});
     this._delete_user_invitations(socket.user.id);
     return { status: 200, reason: 'Success' };
   }
 
-  async delete_invitation(user: User) {
+  async delete_invitation(socket: any, user: User) {
     const invit: MatchInvitation | null =
       await this.prisma.matchInvitation.findUnique({
         where: {
@@ -183,6 +217,7 @@ export class GameService {
     ]);
     if (!inviteUserSocket[0]) return;
     this.websocket.send(inviteUserSocket[0], 'match_invitation_canceled', {});
+    this._set_players_status([inviteUserSocket[0], socket], 'ONLINE');
     this._delete_user_invitations(user.id);
   }
 
@@ -213,6 +248,7 @@ export class GameService {
         },
       });
     if (!invit) return;
+    this._set_players_status([socketUserCreate[0], socket], 'ONLINE');
     this._delete_user_invitations(user.id);
   }
 

@@ -40,20 +40,16 @@ const WarningLoginModal = ({
           sx={MUI.modalDialog}
         >
           <ModalClose sx={MUI.modalClose} />
-          <Typography sx={MUI.modalHeader}>Attention!</Typography>
+          <Typography sx={MUI.modalHeader}>Salut!</Typography>
           <Box sx={MUI.warningBoxStyle}>
             <Typography>
               You are not authorised yet.
               <br />
-              Please login to get access to chat and game pages.
+              Currently, you can browse only Home and Info pages.
+              <br />
+              Please login to get access to Chat and Game pages.
             </Typography>
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}
-            >
+            <div style={MUI.loadButtonBlock}>
               <LoadingButton
                 type="submit"
                 loading={load}
@@ -62,6 +58,7 @@ const WarningLoginModal = ({
                 variant="contained"
                 color="inherit"
                 onClick={handleDaccordClick}
+                sx={{ minWidth: 142 }}
               >
                 D'Accord
               </LoadingButton>
