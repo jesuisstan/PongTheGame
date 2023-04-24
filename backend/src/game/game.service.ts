@@ -248,7 +248,7 @@ export class GameService {
         },
       });
     if (!invit) return;
-    this._set_players_status([socketUserCreate[0], socket], 'PREPARING');
+    this._set_players_status([socketUserCreate[0], socket], 'ONLINE');
     this._delete_user_invitations(user.id);
   }
 
