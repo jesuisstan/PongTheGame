@@ -74,6 +74,10 @@
   align-items: center;
 }
 
+.friendLine:hover {
+  cursor: pointer;
+}
+
 .searchForm {
   display: flex;
   flex-direction: row;

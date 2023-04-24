@@ -20,7 +20,7 @@
   padding: 15px;
   height: calc(100vh - 56px);
   min-height: 650px;
-  background-color: rgba(245, 245, 245, 0.8);
+  background-color: rgb(245, 245, 245);
   display: flex;
   justify-content: center;
 }
@@ -211,16 +211,20 @@
 
 .msgBubble {
   min-width: 65px;
+  display: flex;
+  align-items: center;
 }
 .msgRowL {
   display: flex;
   justify-content: flex-start;
   color: black;
+  align-items: center;
 }
 .msgRowR {
   display: flex;
   justify-content: flex-end;
   color: black;
+  align-items: center;
 }
 .avatar {
   color: whitesmoke;
@@ -233,7 +237,6 @@
 .msgLeft {
   position: relative;
   margin-left: 10px;
-  margin-bottom: 10px;
   padding: 10px;
   background-color: rgb(253, 80, 135);
   max-width: 60vw;
@@ -266,7 +269,6 @@
 .msgRight {
   position: relative;
   margin-right: 10px;
-  margin-bottom: 10px;
   padding: 10px;
   background-color: #eed0f1;
   max-width: 60vw;

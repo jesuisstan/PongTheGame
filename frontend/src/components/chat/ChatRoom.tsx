@@ -285,7 +285,7 @@ const ChatRoom = (props: ChatRoomProps) => {
             {messages.length === 0 ? (
               <div className="black">No Message</div>
             ) : (
-              <Stack className="message-area">
+              <Stack className="message-area" spacing={1}>
                 {' '}
                 {messages.map((msg, index) => (
                   <div key={index}>
