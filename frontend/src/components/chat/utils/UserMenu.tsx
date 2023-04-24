@@ -129,18 +129,30 @@ const UserMenu = (props: UserMenuProps) => {
         aria-expanded={Boolean(anchorAvatar) ? 'true' : undefined}
         onClick={handleAClick}
       >
-        <AvatarBadge
-          nickname={props.member.nickName}
-          status={props.member.isOnline ? 'ONLINE' : 'OFFLINE'}
-          admin={statusUtils.checkIfAdmin(props.members, props.member.memberId)}
-          oper={statusUtils.checkIfOwner(
-            user.joinedChatRoom?.owner,
-            props.member.memberId
-          )}
-          avatar={props.member.avatar}
-          look={true}
-        />
-        <span style={{ color: 'black' }}>{props.member.nickName}</span>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            gap: '21px',
+            alignItems: 'center'
+          }}
+        >
+          <AvatarBadge
+            nickname={props.member.nickName}
+            status={props.member.isOnline ? 'ONLINE' : 'OFFLINE'}
+            admin={statusUtils.checkIfAdmin(
+              props.members,
+              props.member.memberId
+            )}
+            oper={statusUtils.checkIfOwner(
+              user.joinedChatRoom?.owner,
+              props.member.memberId
+            )}
+            avatar={props.member.avatar}
+            look={true}
+          />
+          <span style={{ color: 'black' }}>{props.member.nickName}</span>
+        </div>
       </Button>
       <Menu
         anchorEl={anchorAvatar}
