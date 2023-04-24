@@ -106,7 +106,7 @@ export class WebsocketsService {
       nickname: socket.user.nickname,
       status: 'OFFLINE',
     });
-    this.game.delete_invitation(socket.user);
+    this.game.delete_invitation(socket, socket.user);
   }
 
   send(client: any, event: string, data: any) {
