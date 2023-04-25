@@ -23,19 +23,14 @@ import * as MUI from '../UI/MUIstyles';
 **************************************************************/
 
 const Chat = () => {
-  /*************************************************************
-	 * Chat entrance
-	 
-	 * It is the entrance for chat rooms.
-	 * Users can create/join chat rooms.
-	************************************************************/
+
   /*************************************************************
    * States
    **************************************************************/
   // Fetching the socket from its context
   const socket = useContext(WebSocketContext);
-  // Fetching the user profile from its context
-  const { user, setUser } = useContext(UserContext);
+  // Fetching the user data from its context
+  const { user } = useContext(UserContext);
   // Array including all chat rooms
   const [chatRooms, setChatRooms] = useState<ChatRoomType[]>([]);
 
@@ -58,7 +53,7 @@ const Chat = () => {
   };
   findAllChatRooms();
 
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState<boolean>(false);
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -78,7 +73,7 @@ const Chat = () => {
     errorAlert('Room name cannot be empty');
   };
 
-  const [openP, setOpenPass] = React.useState(false);
+  const [openP, setOpenPass] = useState<boolean>(false);
   const handleClickOpenP = () => {
     setOpenPass(true);
   };
@@ -105,17 +100,17 @@ const Chat = () => {
       console.log('Created new chat room [' + roomName + ']');
     });
     socket.on('exception', (res) => {
-      console.log('ERROR: ' + res.msg);
+      console.error('ERROR: ' + res.msg);
     });
 
     // Clean listeners to unsubscribe all callbacks for these events
     // before the component is unmounted
     return () => {
-      // socket.off('connect');
+      socket.off('connect');
       socket.off('createChatRoom');
       socket.off('exception');
     };
-  }, []);
+  }, [socket]);
 
   // When clicking on the 'new' button to create a new chat room
   const onNewClick = () => {
@@ -167,7 +162,7 @@ const Chat = () => {
       });
     }
     // Notify that the user has clicked on a 'join' button
-    // Put this code AFTER the previous quitRoom, since it
+    // Put this code AFTER the previous quitRoom, since quitRoom
     // cleans clickedRoomToJoin
     setClickedRoomToJoin(roomName);
     handleClickOpenP();
@@ -178,7 +173,7 @@ const Chat = () => {
       joinRoom(roomName);
     }
   };
-  // Join a chatroom if no password has been set
+  // Join a chatroom
   const joinRoom = async (roomName: string) => {
     socket.emit(
       'joinRoom',
@@ -189,7 +184,7 @@ const Chat = () => {
       }
     );
   };
-  // Check if the password is right
+  // Check if the given password for joining a chat room is right
   const onPasswordSubmit = async () => {
     if (clickedRoomToJoin) {
       socket.emit(
@@ -242,7 +237,7 @@ const Chat = () => {
               <ListItem>
                 <ListItemText
                   primary={
-                    'No channel joined.'
+                    'No room joined.'
                   }
                   sx={{ color: 'white' }}
                 />
@@ -252,7 +247,7 @@ const Chat = () => {
         ) : (
           <Box>
             <List>
-              {/* Mapping chatroom array to retrieve all chatrooms with */}
+              {/* Mapping chatroom array to retrieve all chatrooms */}
               {chatRooms.map(
                 (room: ChatRoomType, index) =>
                   // Check if this isn't a private conversation of other users
@@ -333,7 +328,9 @@ const Chat = () => {
                       <ListItemText
                         tabIndex={-1}
                         primary={
-                          room.name[0] === '#' ? room.name.slice(1) : room.name
+                          room.name[0] === '#' ?
+                            room.name.slice(1).replace(/\//g, '').replace(user.nickname, '')
+                            : room.name
                           // Slicing the '#' character at position 0 which is
                           // used for private room names
                         }
@@ -447,9 +444,9 @@ const Chat = () => {
             />
           ) : (
             <div className="black">
-              <h2>Actually no room joined</h2>
+              <h2>Currently no room joined</h2>
               <p>To join a room click on the arrow on the left</p>
-              <p>Or add a new chan with the + button</p>
+              <p>Or add a new room with the + button</p>
             </div>
           )}
         </Box>

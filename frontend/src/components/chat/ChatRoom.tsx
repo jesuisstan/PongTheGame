@@ -27,9 +27,10 @@ interface ChatRoomProps {
 }
 
 const ChatRoom = (props: ChatRoomProps) => {
+	
   /*************************************************************
    * States
-   **************************************************************/
+  **************************************************************/
   const socket = useContext(WebSocketContext);
   const { user } = useContext(UserContext);
   // Array including all members
@@ -254,7 +255,7 @@ const ChatRoom = (props: ChatRoomProps) => {
 
 	/*************************************************************
 	 * Render HTML response
-	 **************************************************************/
+	**************************************************************/
 	return (
 		<div id="chatBox">
 			<div>
