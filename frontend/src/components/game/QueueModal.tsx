@@ -52,22 +52,23 @@ const QueueModal = (props: QueueModalProps) => {
           sx={modalDialogStyle}
         >
           <ModalClose sx={MUI.modalClose} />
-          <Typography sx={MUI.modalHeader}>
-            Waiting for the opponent...
-          </Typography>
+          <Typography sx={MUI.modalHeader}>Awaiting acceptance...</Typography>
           <Stack spacing={2} alignItems="center" justifyContent="center">
             <CircularProgress
               sx={{ color: color.PONG_PINK, marginTop: '10px' }}
             />
-            <LoadingButton
-              type="reset"
-              startIcon={<HighlightOffIcon />}
-              variant="contained"
-              color="inherit"
-              onClick={exitQueue}
-            >
-              cancel
-            </LoadingButton>
+            <div style={MUI.loadButtonBlock}>
+              <LoadingButton
+                type="reset"
+                startIcon={<HighlightOffIcon />}
+                variant="contained"
+                color="inherit"
+                onClick={exitQueue}
+                sx={{ minWidth: 142 }}
+              >
+                cancel
+              </LoadingButton>
+            </div>
           </Stack>
         </ModalDialog>
       </Modal>

@@ -84,6 +84,8 @@ export function training_state(player1: Profile, winScore: number) {
     },
     ball: {
       position: {
+        // x: Default_params.PADDLE_OFFSET + 10,
+        // y: 0,
         x: Default_params.GAME_WIDTH / 2,
         y: Default_params.GAME_HEIGHT / 2,
       },

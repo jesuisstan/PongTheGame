@@ -8,7 +8,7 @@ import ModalClose from '@mui/joy/ModalClose';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/joy/Typography';
 import Avatar from '@mui/material/Avatar';
-import WarningAmberIcon from '@mui/icons-material/WarningAmber';
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import * as MUI from '../UI/MUIstyles';
 import * as color from '../UI/colorsPong';
 import styles from './styles/ResultsModal.module.css';
@@ -51,7 +51,7 @@ const ResultsModal = ({
                   whiteSpace: 'pre'
                 }}
               >
-                <WarningAmberIcon
+                <ErrorOutlineIcon
                   fontSize="large"
                   sx={{ color: color.PONG_PINK }}
                 />

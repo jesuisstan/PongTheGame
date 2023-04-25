@@ -37,7 +37,7 @@ const Lobby = ({
             textTransform="uppercase"
             fontWeight="lg"
           >
-            Single mode
+            Solo
           </Typography>
           <Avatar
             src={require('../../../assets/singlePlay.jpg')}
@@ -65,7 +65,7 @@ const Lobby = ({
             textTransform="uppercase"
             fontWeight="lg"
           >
-            Random game
+            Random online game
           </Typography>
           <Avatar
             src={require('../../../assets/randomGame.jpg')}
@@ -95,7 +95,7 @@ const Lobby = ({
             textTransform="uppercase"
             fontWeight="lg"
           >
-            Custom game
+            Custom online game
           </Typography>
           <Avatar
             src={require('../../../assets/customGame.jpg')}

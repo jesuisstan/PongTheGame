@@ -24,7 +24,7 @@ export class MatchController {
     summary: 'Get the match history for the current user',
   })
   async mine(@SessionUser() user: User) {
-    return this.matches.getMatchHistory(user, 0, 50); //TODO change skip/take
+    return this.matches.getMatchHistory(user, 0, 50);
   }
 
   @Get('/:id')

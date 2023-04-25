@@ -78,8 +78,8 @@ const CountdownModal = (props: CountdownProps) => {
             </Typography>
             <br />
             <Typography>
-              ** If your leave the game page during the match, you receive
-              technical lose.
+              ** Leaving the game page during the match leads to a technical
+              loss!
             </Typography>
           </Typography>
         </ModalDialog>

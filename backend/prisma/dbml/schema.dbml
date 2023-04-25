@@ -140,6 +140,7 @@ Table ChatRoom {
 Enum StatusUser {
   ONLINE
   OFFLINE
+  PREPARING
   PLAYING
 }
 
