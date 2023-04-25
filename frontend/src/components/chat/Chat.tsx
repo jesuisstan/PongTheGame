@@ -102,6 +102,9 @@ const Chat = () => {
     socket.on('exception', (res) => {
       console.error('ERROR: ' + res.msg);
     });
+    socket.on('createMessage', () => {
+      console.log("Received new message!")
+    })
 
     // Clean listeners to unsubscribe all callbacks for these events
     // before the component is unmounted
@@ -329,10 +332,11 @@ const Chat = () => {
                         tabIndex={-1}
                         primary={
                           room.name[0] === '#' ?
+                              // Slicing the '#' character at position 0 which is
+                              // used for private room names, then remove the '/',
+                              // then remove the user's name, leaving us with the recipient's name only
                             room.name.slice(1).replace(/\//g, '').replace(user.nickname, '')
                             : room.name
-                          // Slicing the '#' character at position 0 which is
-                          // used for private room names
                         }
                         className="limitText white"
                         />

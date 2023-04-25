@@ -186,7 +186,6 @@ const ChatRoom = (props: ChatRoomProps) => {
 		// Clean listeners to unsubscribe all callbacks for these events
 		// before the component is unmounted
 		return () => {
-			socket.off('createMessage');
 			socket.off('typingMessage');
 			socket.off('changePassword');
 			socket.off('joinRoom');

@@ -34,18 +34,16 @@ export class ChatGateway {
   async createMessage(
     @MessageBody('roomName') roomName: string,
     @MessageBody('message') msg: MessageDto,
+    @ConnectedSocket() client: Socket,
   ): Promise<void> {
     // Create a message object using the create method from chat.service,
-    // but only is the user hasn't been muted
+    // but only if the user hasn't been muted
     if (msg) {
-      if (
-        msg.author.id &&
-        (await this.chatService.isUserMuted(roomName, msg.author.id)) === false
-      )
+      if (msg.author.id &&
+        (await this.chatService.isUserMuted(roomName, msg.author.id)) === false)
         await this.chatService.createMessage(roomName, msg);
       console.log('message emitted: ' + Object.entries(msg));
-      // Broadcast received message to all users
-      this.server.emit('createMessage');
+      client.broadcast.emit('createMessage');
     } else throw new WsException({ msg: 'createMessage: message is empty!' });
   }
 
