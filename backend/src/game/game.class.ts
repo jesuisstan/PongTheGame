@@ -35,7 +35,7 @@ export const Default_params = {
   DEFAULT_PADDLE_POSITION: 600 / 2 - 300 / 6 / 2,
   OBSTACLE_HEIGHT: 150,
   OBSTACLE_WIDTH: 10,
-  OBSTACLE_SPEED: 2,
+  OBSTACLE_SPEED: 1.5,
 };
 
 export class Game {
@@ -441,6 +441,16 @@ export class Game {
     );
     if (this.obstacle) {
       if (!this.game_state.obstacle) return;
+      this._check_ball_collide_paddle(
+        ball,
+        {
+          x:
+            this.game_state.obstacle.position.x - Default_params.OBSTACLE_WIDTH,
+          y: this.game_state.obstacle.position.y,
+        },
+        Default_params.OBSTACLE_WIDTH,
+        Default_params.OBSTACLE_HEIGHT,
+      );
       this._check_ball_collide_paddle(
         ball,
         this.game_state.obstacle.position,
