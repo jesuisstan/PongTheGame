@@ -21,20 +21,21 @@ import {
 export const Default_params = {
   GAME_WIDTH: 800,
   GAME_HEIGHT: 600,
-  PADDLE_MOVE_SPEED: 15,
+  PADDLE_MOVE_SPEED: 3,
   PADDLE_OFFSET: 20,
   PADDLE_BORDER: 1,
   PADDLE_HEIGHT: 600 / 6,
-  PADDLE_WIDTH: 20,
+  PADDLE_WIDTH: 5,
   BALL_RADIUS: 10,
-  BALL_DEFAULT_SPEED: 10,
-  BALL_SPEED_INCREASE: 0.6,
-  BALL_MAX_SPEED: 25,
+  // BALL_DEFAULT_SPEED: 10,
+  BALL_DEFAULT_SPEED: 2,
+  BALL_SPEED_INCREASE: 0.3,
+  BALL_MAX_SPEED: 3.5,
   BALL_PERTURBATOR: 0.2,
   DEFAULT_PADDLE_POSITION: 600 / 2 - 300 / 6 / 2,
   OBSTACLE_HEIGHT: 150,
   OBSTACLE_WIDTH: 10,
-  OBSTACLE_SPEED: 8,
+  OBSTACLE_SPEED: 2,
 };
 
 export class Game {
@@ -233,7 +234,7 @@ export class Game {
 
   private async _game() {
     while (this.status === Status.PLAYING) {
-      await this._wait(30);
+      await this._wait(5);
       const now = new Date();
       const timePlayed = now.getTime() - this.game_start_time.getTime();
       const timeInSeconds = Math.floor(timePlayed / 1000);
@@ -414,39 +415,37 @@ export class Game {
     if (norm === 0) return;
     ball.direction.x /= norm;
     ball.direction.y /= norm;
-    const ballRadius: number = this.game_state.gameInfos.ballRadius;
     //ball.position.x += ball.direction.x * ball.velocity;
-    ball.position.x += Math.round((ball.direction.x * 10) / 10) * 10;
+    // ball.position.x += Math.round((ball.direction.x * 10) / 10) * 10)
+    ball.position.x += ball.direction.x * ball.velocity;
     ball.position.y += ball.direction.y * ball.velocity;
-    this._check_ball_collide_wall(ball, ballRadius);
+
+    this._check_ball_collide_wall(ball);
     this._check_ball_collide_paddle(
       ball,
-      ballRadius,
       {
-        x: this.game_state.player1.paddle.x,
+        x: this.game_state.player1.paddle.x - Default_params.PADDLE_WIDTH,
         y: this.game_state.player1.paddle.y,
       },
       this.game_state.gameInfos.paddleWidth,
       this.game_state.gameInfos.paddleHeight,
-      true,
     );
     this._check_ball_collide_paddle(
       ball,
-      ballRadius,
-      this.game_state.player2.paddle,
+      {
+        x: this.game_state.player2.paddle.x - Default_params.BALL_RADIUS,
+        y: this.game_state.player2.paddle.y,
+      },
       this.game_state.gameInfos.paddleWidth,
       this.game_state.gameInfos.paddleHeight,
-      false,
     );
     if (this.obstacle) {
       if (!this.game_state.obstacle) return;
       this._check_ball_collide_paddle(
         ball,
-        ballRadius,
         this.game_state.obstacle.position,
         Default_params.OBSTACLE_WIDTH,
         Default_params.OBSTACLE_HEIGHT,
-        false,
       );
     }
   }
@@ -464,101 +463,79 @@ export class Game {
 
   private _check_ball_collide_paddle(
     ball: Ball,
-    ballRadius: number,
     paddle: Position,
     paddleWidth: number,
     paddleHeight: number,
-    isPlayer1: boolean,
   ) {
-    let paddleFrontUpCollideZone: any;
-    let paddleFrontMiddleCollideZone: any;
-    let paddleFrontDownCollideZone: any;
     if (ball.collidable) {
       const ballColide: any = {
-        x: ball.position.x - ballRadius,
-        y: ball.position.y - ballRadius,
-        width: ballRadius,
-        height: ballRadius,
+        x: ball.position.x - Default_params.BALL_RADIUS,
+        y: ball.position.y,
+        width: Default_params.BALL_RADIUS,
+        height: Default_params.BALL_RADIUS,
       };
-      if (isPlayer1) {
-        paddleFrontUpCollideZone = {
-          x: paddle.x + Default_params.PADDLE_WIDTH,
-          y: paddle.y,
-          width: ballRadius,
-          height: paddleHeight / 3,
-        };
-        paddleFrontMiddleCollideZone = {
-          x: paddle.x + Default_params.PADDLE_WIDTH,
-          y: paddle.y + paddleHeight / 3,
-          width: ballRadius,
-          height: paddleHeight / 3,
-        };
-        paddleFrontDownCollideZone = {
-          x: paddle.x + Default_params.PADDLE_WIDTH,
-          y: paddle.y + (paddleHeight / 3) * 2,
-          width: ballRadius,
-          height: paddleHeight / 3,
-        };
-      } else {
-        paddleFrontUpCollideZone = {
-          x: paddle.x - 2 * ballRadius,
-          y: paddle.y,
-          width: ballRadius,
-          height: paddleHeight / 3,
-        };
-        paddleFrontMiddleCollideZone = {
-          x: paddle.x - 2 * ballRadius,
-          y: paddle.y + paddleHeight / 3,
-          width: ballRadius,
-          height: paddleHeight / 3,
-        };
-        paddleFrontDownCollideZone = {
-          x: paddle.x - 2 * ballRadius,
-          y: paddle.y + (paddleHeight / 3) * 2,
-          width: ballRadius,
-          height: paddleHeight / 3,
-        };
-      }
-
+      const paddleFrontUpCollideZone: any = {
+        x: paddle.x,
+        y: paddle.y,
+        width: Default_params.BALL_RADIUS,
+        height: paddleHeight / 3,
+      };
+      const paddleFrontMiddleCollideZone: any = {
+        x: paddle.x,
+        y: paddle.y + paddleHeight / 3,
+        width: Default_params.BALL_RADIUS,
+        height: paddleHeight / 3,
+      };
+      const paddleFrontDownCollideZone: any = {
+        x: paddle.x,
+        y: paddle.y + (paddleHeight / 3) * 2,
+        width: Default_params.BALL_RADIUS,
+        height: paddleHeight / 3,
+      };
       const paddleTopCollideZone: any = {
         x: paddle.x,
-        y: paddle.y - ballRadius,
+        y: paddle.y,
         width: paddleWidth,
-        height: ballRadius,
+        height: Default_params.BALL_RADIUS,
       };
       const paddleBottomCollideZone: any = {
         x: paddle.x,
-        y: paddle.y + paddleHeight + ballRadius,
+        y: paddle.y + paddleHeight,
         width: paddleWidth,
-        height: ballRadius,
+        height: Default_params.BALL_RADIUS,
       };
       let res = false;
-
-      if (this._check_colide(ballColide, paddleFrontUpCollideZone)) {
+      if (this._check_colide(ballColide, paddleFrontUpCollideZone, false)) {
         ball.direction.x *= -1;
         ball.direction.y -= Default_params.BALL_PERTURBATOR;
         ball.velocity += Default_params.BALL_SPEED_INCREASE;
         this._disable_collision(ball);
         res = true;
-      } else if (this._check_colide(ballColide, paddleFrontMiddleCollideZone)) {
+      } else if (
+        this._check_colide(ballColide, paddleFrontMiddleCollideZone, false)
+      ) {
         ball.direction.x *= -1;
         ball.velocity += Default_params.BALL_SPEED_INCREASE;
         this._disable_collision(ball);
         res = true;
-      } else if (this._check_colide(ballColide, paddleFrontDownCollideZone)) {
+      } else if (
+        this._check_colide(ballColide, paddleFrontDownCollideZone, false)
+      ) {
         ball.direction.x *= -1;
         ball.direction.y += Default_params.BALL_PERTURBATOR;
         ball.velocity += Default_params.BALL_SPEED_INCREASE;
         this._disable_collision(ball);
         res = true;
-      } else if (this._check_colide(ballColide, paddleTopCollideZone)) {
+      } else if (this._check_colide(ballColide, paddleTopCollideZone, true)) {
         ball.direction.x *= -1;
         ball.direction.y *= -1;
         this._disable_collision(ball);
         res = true;
-      } else if (this._check_colide(ballColide, paddleBottomCollideZone)) {
+      } else if (
+        this._check_colide(ballColide, paddleBottomCollideZone, true)
+      ) {
         ball.direction.x *= -1;
-        ball.direction.y *= -1;
+        ball.direction.y += Default_params.BALL_PERTURBATOR;
         this._disable_collision(ball);
         res = true;
       }
@@ -589,7 +566,7 @@ export class Game {
     );
   }
 
-  private _check_colide(collide1: any, collide2: any) {
+  private _check_colide(collide1: any, collide2: any, isTopBot: boolean) {
     return (
       collide1.x < collide2.x + collide2.width &&
       collide1.x + collide1.width > collide2.x &&
@@ -598,46 +575,33 @@ export class Game {
     );
   }
 
-  private _check_ball_collide_wall(ball: Ball, ballRadius: number) {
-    if (ball.position.x < ballRadius) {
+  private _check_ball_collide_wall(ball: Ball) {
+    if (ball.position.x < Default_params.BALL_RADIUS) {
       this.game_state.player2.score++;
       this._reset_ball(ball);
-      // this._reset_both_paddle([
-      //   this.game_state.player1.paddle,
-      //   this.game_state.player2.paddle,
-      // ]);
       if (this.obstacle) this._reset_obstacle(this.game_state.obstacle);
     }
-    if (ball.position.x > this.game_state.gameInfos.width - ballRadius) {
+    if (
+      ball.position.x >
+      this.game_state.gameInfos.width - Default_params.BALL_RADIUS
+    ) {
       this.game_state.player1.score++;
       this._reset_ball(ball);
-      // this._reset_both_paddle([
-      //   this.game_state.player1.paddle,
-      //   this.game_state.player2.paddle,
-      // ]);
       if (this.obstacle) this._reset_obstacle(this.game_state.obstacle);
     }
-    if (ball.position.y < ballRadius) {
-      ball.position.y = ballRadius;
+    if (ball.position.y < Default_params.BALL_RADIUS) {
+      ball.position.y = Default_params.BALL_RADIUS;
       ball.direction.y *= -1;
     }
-    if (ball.position.y > this.game_state.gameInfos.height - ballRadius) {
-      ball.position.y = this.game_state.gameInfos.height - ballRadius;
+    if (
+      ball.position.y >
+      this.game_state.gameInfos.height - Default_params.BALL_RADIUS
+    ) {
+      ball.position.y =
+        this.game_state.gameInfos.height - Default_params.BALL_RADIUS;
       ball.direction.y *= -1;
     }
   }
-
-  // private _reset_both_paddle(paddle: Position[]) {
-  //   paddle[0].x = Default_params.PADDLE_OFFSET;
-  //   paddle[0].y =
-  //     Default_params.GAME_HEIGHT / 2 - Default_params.PADDLE_HEIGHT / 2;
-  //   paddle[1].x =
-  //     Default_params.GAME_WIDTH -
-  //     Default_params.PADDLE_OFFSET -
-  //     Default_params.PADDLE_WIDTH;
-  //   paddle[1].y =
-  //     Default_params.GAME_HEIGHT / 2 - Default_params.PADDLE_HEIGHT / 2;
-  // }
 
   private _reset_obstacle(Obstacle?: Obstacle) {
     if (!Obstacle) return;
