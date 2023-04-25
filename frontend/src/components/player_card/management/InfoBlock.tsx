@@ -130,7 +130,7 @@ const InfoBlock = ({ player }: { player: PlayerProfile }) => {
 
   const handleFriend = () => {
     if (isFriendOfUser) {
-      backendAPI.patch(`/friend/remove${player.nickname}`).then(
+      backendAPI.patch(`/friend/remove/${player.nickname}`).then(
         (response) => {
           setIsFriendOfUser(false);
         },
