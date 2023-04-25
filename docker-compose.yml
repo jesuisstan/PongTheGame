@@ -47,11 +47,9 @@ services:
     ports:
       - "${BACKEND_PORT}:${BACKEND_PORT}"
       - 5555:5555 # TODO remove is for prisma studio
-      - 9229:9229 # MEMO REMOVE
     env_file:
       - .env
     environment:
-      NEST_DEBUG : null # TODO REMOVE THIS ('true' break compilation on other machines)
       BACKEND_PORT: ${BACKEND_PORT}
       FRONTEND_URL: ${FRONTEND_URL}
       SESSION_SECRET: ${SESSION_SECRET}
