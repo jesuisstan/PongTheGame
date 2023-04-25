@@ -4,7 +4,6 @@ import Modal from '@mui/joy/Modal';
 import ModalDialog from '@mui/joy/ModalDialog';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import * as MUI from './MUIstyles';
 
@@ -18,11 +17,6 @@ const WarningConnectedModal = ({
   setOpen: Dispatch<SetStateAction<boolean>>;
 }) => {
   const [load, setLoad] = useState(false);
-
-  const handleDaccordClick = (): void => {
-    setLoad(true);
-    window.location.href = 'https://en.wikipedia.org/wiki/Pong';
-  };
 
   const handleLogoutClick = (): void => {
     setLoad(true);
@@ -39,29 +33,13 @@ const WarningConnectedModal = ({
           <Typography sx={MUI.modalHeader}>Attention!</Typography>
           <Box sx={MUI.warningBoxStyle}>
             <Typography>
-              Gaming session is already running in another tab or web browser.
+              A session is currently active in another tab,
               <br />
-              Please close this page and return to the previously opened one to
-              continue.
+              so please go back to it to continue.
             </Typography>
-            <div style={MUI.loadButtonBlock}>
-              <LoadingButton
-                type="submit"
-                loading={load}
-                endIcon={<ThumbUpOffAltIcon />}
-                loadingPosition="end"
-                variant="contained"
-                color="inherit"
-                onClick={handleDaccordClick}
-                sx={{ minWidth: 142 }}
-              >
-                D'Accord
-              </LoadingButton>
-            </div>
+
             <Typography>
-              Or just logout to get rid of this notification.
-              <br />
-              (this will end the session in current browser)
+              If this notification persists, logout* to remove it.
             </Typography>
             <div style={MUI.loadButtonBlock}>
               <LoadingButton
@@ -78,6 +56,16 @@ const WarningConnectedModal = ({
               </LoadingButton>
             </div>
           </Box>
+          <Typography
+            sx={{
+              textAlign: 'left',
+              fontSize: '14px',
+              paddingTop: '15px',
+              wordWrap: 'break-word'
+            }}
+          >
+            * this will end the session in current browser
+          </Typography>
         </ModalDialog>
       </Modal>
     </div>
