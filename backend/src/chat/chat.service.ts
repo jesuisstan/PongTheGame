@@ -406,10 +406,7 @@ export class ChatService {
       where: { id: userId },
       include: { blockedUsers: true, blockedBy: true }
     })
-    if (u)
-      console.log('yuseeer ' + u.id + ' blocked: ' + Object.values(u.blockedUsers) + ' by: ' + Object.values(u.blockedBy))
-      //await?
-    return await this.prisma.user.findUnique({
+    return this.prisma.user.findUnique({
       where: { id: userId },
       include: { blockedUsers: true, blockedBy: true }
     })

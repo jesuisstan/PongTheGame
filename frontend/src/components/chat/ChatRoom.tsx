@@ -79,7 +79,6 @@ const ChatRoom = (props: ChatRoomProps) => {
 			}
 		);
 	};
-	findBlockedBy();
 
 	// Get all messages from messages array in chat.service
 	// and fill the messages variable
@@ -90,10 +89,10 @@ const ChatRoom = (props: ChatRoomProps) => {
 			(response: Message[]) => {
 				// Array including all the messages, even the ones from
 				// blocked users/users who blocked the user
-				const messagesToFilter = response;
+				const messagesToFilter: Message[] = response;
 				for (let i = messagesToFilter.length - 1; i >= 0; --i) {
 					// First we filter the recipient's blocked users
-					let found = false;
+					let found: boolean = false;
 					for (const blockedUser in user.blockedUsers) {
 						if (
 							messagesToFilter[i].author.id === user.blockedUsers[blockedUser].id
@@ -105,6 +104,7 @@ const ChatRoom = (props: ChatRoomProps) => {
 				}
 					// Then we filter message by checking is the user is blocked by the author
 					if (found === false) {
+						findBlockedBy();
 						for (const usr in blockedBy) {
 							if (blockedBy[usr].id === messagesToFilter[i].author.id) {
 								messagesToFilter.splice(i, 1);
@@ -112,17 +112,6 @@ const ChatRoom = (props: ChatRoomProps) => {
 							}
 						}
 					}
-
-					// if (found === false) {
-					// 	for (const blockedUser in messagesToFilter[i].author.blockedUsers) {
-					// 		if (
-					// 			user.id === messagesToFilter[i].author.blockedUsers[blockedUser].id
-					// 		) {
-					// 			messagesToFilter.splice(i, 1);
-					// 			break;
-					// 		}
-					// 	}
-					// }
 				}
 				const filteredMessages = messagesToFilter;
 				setMessages(filteredMessages);
@@ -135,7 +124,7 @@ const ChatRoom = (props: ChatRoomProps) => {
 	/*************************************************************
 	* Event listeners
 	**************************************************************/
-		useEffect(() => {
+	useEffect(() => {
 		// Activate listeners and subscribe to events as the component is mounted
 		socket.on(
 			'typingMessage',
@@ -168,11 +157,9 @@ const ChatRoom = (props: ChatRoomProps) => {
 				console.log(target + ' has been kicked!');
 			if (target === user.id) props.cleanRoomLoginData();
 		});
-		// User has made admin
 		socket.on('adminUser', (roomName: string, target: number) => {
 			if (roomName === props.room.name) console.log(target + ' is admin now!');
 		});
-		// User is not admin anymore
 		socket.on('unadminUser', (roomName: string, target: number) => {
 			if (roomName === props.room.name)
 				console.log('user ID: ' + target + ' is not admin anymore now!');
@@ -211,7 +198,7 @@ const ChatRoom = (props: ChatRoomProps) => {
 			socket.off('muteUser');
 			socket.off('unmuteUser');
 		};
-	}, []);
+	}, [props, socket, user]);
 
 	/*************************************************************
 	 * Events
@@ -230,7 +217,7 @@ const ChatRoom = (props: ChatRoomProps) => {
 				nick: user.nickname,
 				isTyping: false
 			});
-		}, 2000);
+		}, 1500);
 	};
 
 	// Activated whenever the user is typing on the message input field
