@@ -123,7 +123,7 @@ const FriendsNoteModal = ({
             <Typography>* Friends' status refreshes automatically.</Typography>
             <br />
             <Typography>
-              ** To refrash Friends list use <RefreshIcon /> button.
+              ** To refresh Friends list use <RefreshIcon /> button.
             </Typography>
           </Typography>
         </ModalDialog>
