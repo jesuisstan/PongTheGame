@@ -28,9 +28,9 @@ export const Default_params = {
   PADDLE_WIDTH: 5,
   BALL_RADIUS: 10,
   // BALL_DEFAULT_SPEED: 10,
-  BALL_DEFAULT_SPEED: 1,
+  BALL_DEFAULT_SPEED: 2,
   BALL_SPEED_INCREASE: 0.3,
-  BALL_MAX_SPEED: 2.5,
+  BALL_MAX_SPEED: 3.5,
   BALL_PERTURBATOR: 0.2,
   DEFAULT_PADDLE_POSITION: 600 / 2 - 300 / 6 / 2,
   OBSTACLE_HEIGHT: 150,
@@ -535,7 +535,7 @@ export class Game {
         this._check_colide(ballColide, paddleBottomCollideZone, true)
       ) {
         ball.direction.x *= -1;
-        ball.direction.y *= -1;
+        ball.direction.y += Default_params.BALL_PERTURBATOR;
         this._disable_collision(ball);
         res = true;
       }
