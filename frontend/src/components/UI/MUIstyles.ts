@@ -57,7 +57,6 @@ export const burgerItem = {
   textTransform: 'uppercase',
   letterSpacing: '0.02857em',
   ':hover': {
-    transform: 'scale(1.2)',
     color: color.PONG_PINK
   }
 };
