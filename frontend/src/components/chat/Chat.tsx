@@ -112,6 +112,7 @@ const Chat = () => {
       socket.off('connect');
       socket.off('createChatRoom');
       socket.off('exception');
+      socket.off('createMessage');
     };
   }, [socket]);
 

@@ -21,16 +21,17 @@ export class ChatService {
     const room: ChatRoomDto | null = await this.getChatRoomByName(roomName);
     if (!room) throw new WsException({ msg: 'identify: unknown room name!' });
     // Do nothing if user is already identified
-    let found = false;
-    let foundModes = '';
+    let found: boolean = false;
+    let foundModes: string = '';
     for (let i = 0; i < room.members.length; ++i) {
       if (user.id === room.members[i].memberId) {
         found = true;
         foundModes = room.members[i].modes;
+        // Do nothing and return if user is already a member and is online
         if (room.members[i].isOnline === online) return;
       }
     }
-    if (found)
+    if (found) // user is already a member but not online
       await this.prisma.member.update({
         where: {
           memberId_chatRoomName: {
@@ -40,7 +41,7 @@ export class ChatService {
         },
         data: { isOnline: online, modes: foundModes + modes },
       });
-    else {
+    else { // User is not a member yet
       await this.prisma.member.create({
         data: {
           memberId: user.id,
@@ -82,7 +83,6 @@ export class ChatService {
     });
   }
 
-  // Create a new message object and push it to the messages array
   async createMessage(roomName: string, msg: MessageDto): Promise<void> {
     const room: ChatRoomDto | null = await this.getChatRoomByName(roomName);
     if (room) {
@@ -100,7 +100,7 @@ export class ChatService {
   async generateHash(password: string): Promise<string> {
     // We use salt rounds, which is the cost factor (how much time is used to
     // compute the hash => the more elevated, the more difficult is brute-forcing)
-    const saltRounds = 10;
+    const saltRounds: number = 10;
     return await bcrypt
       .hash(password, saltRounds)
       .then((res: string) => res)
@@ -110,7 +110,7 @@ export class ChatService {
   }
 
   // Create a new chat room object and push it to the database
-  // the creator will get admin privileges
+  // the creator will get owner privileges
   async createChatRoom(
     room: ChatRoomDto,
     user: User,
@@ -182,7 +182,7 @@ export class ChatService {
     });
   }
 
-  // Return all members from the chatroom
+  // Return all banned members from the chatroom
   async findAllBannedMembers(roomName: string): Promise<User[]> {
     const room: ChatRoomDto | null = await this.getChatRoomByName(roomName);
     if (room) return room.bannedUsers;
@@ -193,7 +193,7 @@ export class ChatService {
   }
 
   async isPasswordProtected(roomName: string) {
-    const room = await this.getChatRoomByName(roomName);
+    const room: ChatRoomDto | null = await this.getChatRoomByName(roomName);
     if (room) {
       return room.password && room.password !== '' ? true : false;
     } else
@@ -203,18 +203,17 @@ export class ChatService {
   async changePassword(roomName: string, newPassword: string): Promise<void> {
     const room: ChatRoomDto | null = await this.getChatRoomByName(roomName);
     if (room) {
-      // If a new password was given
       const oldModes = await this.prisma.chatRoom.findUnique({
         where: { name: roomName },
         select: { modes: true },
       });
       if (oldModes) {
         if (newPassword && newPassword !== '') {
+          newPassword = await this.generateHash(newPassword);
           // If the room wasn't in 'password protected' mode,
           // it gets it
-          newPassword = await this.generateHash(newPassword);
           // If 'p' mode already there, we keep the old modes
-          const newModes =
+          const newModes: string =
             oldModes.modes.search('p') !== -1
               ? oldModes.modes
               : oldModes.modes + 'p';
@@ -232,7 +231,7 @@ export class ChatService {
             data: { password: '' },
           }); // and we remove the 'password protected' mode
           if (oldModes.modes.search('p') !== -1) {
-            const modes = oldModes.modes.replace(/p/g, '');
+            const modes: string = oldModes.modes.replace(/p/g, '');
             await this.prisma.chatRoom.update({
               where: { name: roomName },
               data: { modes: modes },
@@ -248,7 +247,7 @@ export class ChatService {
     userId: number,
     target: number,
   ): Promise<boolean> {
-    const room = await this.getChatRoomByName(roomName);
+    const room: ChatRoomDto | null = await this.getChatRoomByName(roomName);
     if (room) {
       // If target is the owner, we stop here: cannot do anything against owners
       if (target === room.owner) return false;
@@ -269,15 +268,14 @@ export class ChatService {
     throw new WsException({ msg: 'hasUserPriv: unknown room name!' });
   }
 
+  // Look for mode in user's mode and add mode if not already there
   modifyModes(
     members: Member[],
     userId: number,
     mode: string,
     del: boolean,
   ): string {
-    let modes = '';
-    // Look for mode in user's mode
-    // Add mode if not already there
+    let modes: string = '';
     for (let i = 0; i < members.length; ++i) {
       if (members[i].memberId === userId) {
         modes = members[i].modes;
