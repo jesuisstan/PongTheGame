@@ -65,8 +65,7 @@ const UserMenu = (props: UserMenuProps) => {
 				res.joinedChatRoom = user.joinedChatRoom;
 				setUser(res)
 			})
-		console.log('UserId: ' + target + 'has been blocked!');
-		return;
+		console.log('UserId: ' + target + ' has been blocked!');
       } catch (err) { console.log ('ERROR: ' + err);}
     }
   }
@@ -86,11 +85,11 @@ const UserMenu = (props: UserMenuProps) => {
 					res.joinedChatRoom = user.joinedChatRoom; 
 					setUser(res);
 				});
-			console.log('UserId: ' + target + 'has been unblocked!');
+			console.log('UserId: ' + target + ' has been unblocked!');
 			return;
           }
         }
-      }catch (err) { console.log('ERROR: ' + err); }
+      } catch (err) { console.log('ERROR: ' + err); }
     }
   }
 

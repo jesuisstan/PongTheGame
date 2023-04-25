@@ -287,4 +287,11 @@ export class ChatGateway {
   ): Promise<User | null> {
     return this.chatService.updateBlockedUsers(userId, target, disconnect);
   }
+
+  @SubscribeMessage('findBlockedBy')
+  findBlockedBy(
+    @MessageBody('userId') userId: number,
+  ): Promise<User[] | null> {
+    return this.chatService.findBlockedBy(userId);
+  }
 }

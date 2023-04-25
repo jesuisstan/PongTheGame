@@ -162,9 +162,10 @@ export class ChatService {
     if (room)
       return await this.prisma.message.findMany({
         where: { chatRoomName: roomName },
-        select: {
-          author: { blockedUsers: true, blockedBy: true },
-          data: true, timestamp: true
+        include: {
+          author: { 
+            include: { blockedUsers: true, blockedBy: true }
+          },
         },
       });
     throw new WsException({ msg: 'findAllMessages: unknown room name!' });
@@ -401,8 +402,25 @@ export class ChatService {
         },
       });
     }
-    return this.prisma.user.findUnique({
+    var u= await this.prisma.user.findUnique({
       where: { id: userId },
-      include: { blockedUsers: true }})
+      include: { blockedUsers: true, blockedBy: true }
+    })
+    if (u)
+      console.log('yuseeer ' + u.id + ' blocked: ' + Object.values(u.blockedUsers) + ' by: ' + Object.values(u.blockedBy))
+      //await?
+    return await this.prisma.user.findUnique({
+      where: { id: userId },
+      include: { blockedUsers: true, blockedBy: true }
+    })
+  }
+
+  async findBlockedBy(userId: number)
+  : Promise<User[] | null> {
+    const res  = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { blockedBy: true }
+    });
+    return res ? res.blockedBy : null;
   }
 }

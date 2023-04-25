@@ -45,6 +45,8 @@ const ChatRoom = (props: ChatRoomProps) => {
   const [typingDisplay, setTypingDisplay] = useState<string>('');
   // Message input field value
   const [messageText, setMessageText] = useState<string>('');
+  // Users from whom the user is blockedd by
+  const [blockedBy, setBlockedBy] = useState<User[]>([]);
 
 	const findAllMembers = async () => {
 		socket.emit(
@@ -68,6 +70,17 @@ const ChatRoom = (props: ChatRoomProps) => {
 	};
 	findAllBanned();
 
+	const findBlockedBy = async () => {
+		socket.emit(
+			'findBlockedBy',
+			{ userId: user.id },
+			(response: User[]) => {
+				setBlockedBy(response);
+			}
+		);
+	};
+	findBlockedBy();
+
 	// Get all messages from messages array in chat.service
 	// and fill the messages variable
 	const findAllMessages = async () => {
@@ -89,16 +102,27 @@ const ChatRoom = (props: ChatRoomProps) => {
 							found = true;
 							break;
 						}
-					}
+				}
 					// Then we filter message by checking is the user is blocked by the author
 					if (found === false) {
-						for (const usr in user.blockedBy) {
-							if (user.blockedBy[usr].id === messagesToFilter[i].author.id) {
+						for (const usr in blockedBy) {
+							if (blockedBy[usr].id === messagesToFilter[i].author.id) {
 								messagesToFilter.splice(i, 1);
 								break;
 							}
 						}
 					}
+
+					// if (found === false) {
+					// 	for (const blockedUser in messagesToFilter[i].author.blockedUsers) {
+					// 		if (
+					// 			user.id === messagesToFilter[i].author.blockedUsers[blockedUser].id
+					// 		) {
+					// 			messagesToFilter.splice(i, 1);
+					// 			break;
+					// 		}
+					// 	}
+					// }
 				}
 				const filteredMessages = messagesToFilter;
 				setMessages(filteredMessages);
