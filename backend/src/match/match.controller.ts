@@ -11,7 +11,6 @@ import { User } from '@prisma/client';
 import { IsAuthenticatedGuard } from 'src/auth/auth.guard';
 import { SessionUser } from 'src/decorator/session-user.decorator';
 import { MatchService } from 'src/match/match.service';
-import { UserService } from 'src/user/user.service';
 
 @Controller('/match')
 @UseGuards(IsAuthenticatedGuard)

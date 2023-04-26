@@ -53,6 +53,49 @@ export class FriendService {
     this.achievement.getAchievement(user);
   }
 
+  async addFriendsById(user: User, id: number) {
+    const userToAdd: User | null = await this.prisma.user.findUnique({
+      where: {
+        id: id,
+      },
+    });
+    if (!userToAdd) throw new NotFoundException('User not found');
+    await this.prisma.user.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        friends: {
+          connect: {
+            id: id,
+          },
+        },
+      },
+    });
+    this.achievement.getAchievement(user);
+  }
+
+  async removeFriendsById(user: User, id: number) {
+    const userToRemove: User | null = await this.prisma.user.findUnique({
+      where: {
+        id: id,
+      },
+    });
+    if (!userToRemove) throw new NotFoundException('User not found');
+    await this.prisma.user.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        friends: {
+          disconnect: {
+            id: id,
+          },
+        },
+      },
+    });
+  }
+
   async removeFriendsByNickname(user: User, nickname: string) {
     const userToRemove: User | null = await this.prisma.user.findUnique({
       where: {

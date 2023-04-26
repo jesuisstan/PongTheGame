@@ -515,35 +515,29 @@ export class Game {
         height: Default_params.BALL_RADIUS,
       };
       let res = false;
-      if (this._check_colide(ballColide, paddleFrontUpCollideZone, false)) {
+      if (this._check_colide(ballColide, paddleFrontUpCollideZone)) {
         ball.direction.x *= -1;
         ball.direction.y -= Default_params.BALL_PERTURBATOR;
         ball.velocity += Default_params.BALL_SPEED_INCREASE;
         this._disable_collision(ball);
         res = true;
-      } else if (
-        this._check_colide(ballColide, paddleFrontMiddleCollideZone, false)
-      ) {
+      } else if (this._check_colide(ballColide, paddleFrontMiddleCollideZone)) {
         ball.direction.x *= -1;
         ball.velocity += Default_params.BALL_SPEED_INCREASE;
         this._disable_collision(ball);
         res = true;
-      } else if (
-        this._check_colide(ballColide, paddleFrontDownCollideZone, false)
-      ) {
+      } else if (this._check_colide(ballColide, paddleFrontDownCollideZone)) {
         ball.direction.x *= -1;
         ball.direction.y += Default_params.BALL_PERTURBATOR;
         ball.velocity += Default_params.BALL_SPEED_INCREASE;
         this._disable_collision(ball);
         res = true;
-      } else if (this._check_colide(ballColide, paddleTopCollideZone, true)) {
+      } else if (this._check_colide(ballColide, paddleTopCollideZone)) {
         ball.direction.x *= -1;
         ball.direction.y *= -1;
         this._disable_collision(ball);
         res = true;
-      } else if (
-        this._check_colide(ballColide, paddleBottomCollideZone, true)
-      ) {
+      } else if (this._check_colide(ballColide, paddleBottomCollideZone)) {
         ball.direction.x *= -1;
         ball.direction.y += Default_params.BALL_PERTURBATOR;
         this._disable_collision(ball);
@@ -576,7 +570,7 @@ export class Game {
     );
   }
 
-  private _check_colide(collide1: any, collide2: any, isTopBot: boolean) {
+  private _check_colide(collide1: any, collide2: any) {
     return (
       collide1.x < collide2.x + collide2.width &&
       collide1.x + collide1.width > collide2.x &&
