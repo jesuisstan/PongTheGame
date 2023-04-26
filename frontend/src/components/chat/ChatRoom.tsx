@@ -301,6 +301,12 @@ const ChatRoom = (props: ChatRoomProps) => {
       });
     // Reset input field value once sent
     setMessageText('');
+    // Reset scroll position
+    if (msgRef.current) {
+      const msgCur = msgRef.current;
+      if (msgCur.scrollHeight > msgCur.clientHeight)
+        msgCur.scrollTop = msgCur.scrollHeight - msgCur.clientHeight + scrollPosition;
+    }
   };
 
   // When clicking on the 'return' button
@@ -313,14 +319,22 @@ const ChatRoom = (props: ChatRoomProps) => {
   };
 
   const msgRef = useRef<HTMLDivElement>(null);
-  function scrollToBottom() {
+  const [scrollPosition, setScrollPosition] = useState<number>(0);
+
+  // useEffect(() => {
+  //   if (msgRef.current) {
+  //     const msgCur = msgRef.current;
+  //     if (msgCur.scrollHeight > msgCur.clientHeight)
+  //       msgCur.scrollTop = msgCur.scrollHeight - msgCur.clientHeight + scrollPosition;
+  //   }
+  // }, [msgRef, messages, scrollPosition]);
+
+  function handleScroll() {
     if (msgRef.current) {
-      msgRef.current.scrollTop = msgRef.current.scrollHeight;
+      const msgCur = msgRef.current;
+      setScrollPosition(msgCur.scrollTop);
     }
   }
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
 
   /*************************************************************
    * Render HTML response
@@ -356,7 +370,7 @@ const ChatRoom = (props: ChatRoomProps) => {
             {messages.length === 0 ? (
               <div className="black">No Message</div>
             ) : (
-              <Stack className="message-area" spacing={1} ref={msgRef}>
+              <Stack className="message-area" spacing={1} ref={msgRef} onScroll={handleScroll}>
                 {' '}
                 {messages.map((msg, index) => (
                   <div key={index}>
