@@ -213,18 +213,19 @@
   min-width: 65px;
   display: flex;
   align-items: center;
+  word-break: break-word;
 }
 .msgRowL {
   display: flex;
   justify-content: flex-start;
   color: black;
-  align-items: center;
+  align-items: flex-start;
 }
 .msgRowR {
   display: flex;
   justify-content: flex-end;
   color: black;
-  align-items: center;
+  align-items: flex-start;
 }
 .avatar {
   color: whitesmoke;
