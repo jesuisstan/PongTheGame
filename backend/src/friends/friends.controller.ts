@@ -1,11 +1,10 @@
 import {
   Controller,
   Get,
-  Req,
-  Res,
   UseGuards,
   Post,
   Body,
+  ParseIntPipe,
   Param,
   Patch,
 } from '@nestjs/common';
@@ -43,19 +42,19 @@ export class FriendsController {
     return this.friendsService.getFriendsFromNickname(nickname);
   }
 
-  @Post('add/:nickname')
+  @Post('add/:id')
   @ApiOperation({
     summary: 'Add friends',
-    parameters: [{ name: 'nickname', in: 'query' }],
+    parameters: [{ name: 'id', in: 'query' }],
   })
   @ApiResponse({ status: 401, description: 'Not authorized' })
   @ApiResponse({ status: 404, description: 'User not found' })
   @ApiResponse({ status: 200, description: 'Succes' })
   async addFriendsNickname(
     @SessionUser() user: User,
-    @Param('nickname') nickname: string,
+    @Param('id', ParseIntPipe) id: number,
   ) {
-    this.friendsService.addFriendsByNickname(user, nickname);
+    this.friendsService.addFriendsById(user, id);
   }
 
   @Post('add')
@@ -69,19 +68,19 @@ export class FriendsController {
     this.friendsService.addFriendsByNickname(user, addFriendDto.nickname);
   }
 
-  @Patch('remove/:nickname')
+  @Patch('remove/:id')
   @ApiOperation({
     summary: 'Remove friends',
-    parameters: [{ name: 'nickname', in: 'query' }],
+    parameters: [{ name: 'id', in: 'query' }],
   })
   @ApiResponse({ status: 401, description: 'Not authorized' })
   @ApiResponse({ status: 404, description: 'User not found' })
   @ApiResponse({ status: 200, description: 'Succes' })
-  async removeFriendByNickname(
+  async removeFriendByid(
     @SessionUser() user: User,
-    @Param('nickname') nickname: string,
+    @Param('id', ParseIntPipe) id: number,
   ) {
-    this.friendsService.removeFriendsByNickname(user, nickname);
+    this.friendsService.removeFriendsById(user, id);
   }
 
   @Patch('remove')

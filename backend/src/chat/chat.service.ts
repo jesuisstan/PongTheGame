@@ -21,8 +21,8 @@ export class ChatService {
     const room: ChatRoomDto | null = await this.getChatRoomByName(roomName);
     if (!room) throw new WsException({ msg: 'identify: unknown room name!' });
     // Do nothing if user is already identified
-    let found: boolean = false;
-    let foundModes: string = '';
+    let found = false;
+    let foundModes = '';
     for (let i = 0; i < room.members.length; ++i) {
       if (user.id === room.members[i].memberId) {
         found = true;
@@ -31,7 +31,8 @@ export class ChatService {
         if (room.members[i].isOnline === online) return;
       }
     }
-    if (found) // user is already a member but not online
+    if (found)
+      // user is already a member but not online
       await this.prisma.member.update({
         where: {
           memberId_chatRoomName: {
@@ -41,7 +42,8 @@ export class ChatService {
         },
         data: { isOnline: online, modes: foundModes + modes },
       });
-    else { // User is not a member yet
+    else {
+      // User is not a member yet
       await this.prisma.member.create({
         data: {
           memberId: user.id,
@@ -100,7 +102,7 @@ export class ChatService {
   async generateHash(password: string): Promise<string> {
     // We use salt rounds, which is the cost factor (how much time is used to
     // compute the hash => the more elevated, the more difficult is brute-forcing)
-    const saltRounds: number = 10;
+    const saltRounds = 10;
     return await bcrypt
       .hash(password, saltRounds)
       .then((res: string) => res)
@@ -163,8 +165,8 @@ export class ChatService {
       return await this.prisma.message.findMany({
         where: { chatRoomName: roomName },
         include: {
-          author: { 
-            include: { blockedUsers: true, blockedBy: true }
+          author: {
+            include: { blockedUsers: true, blockedBy: true },
           },
         },
       });
@@ -275,7 +277,7 @@ export class ChatService {
     mode: string,
     del: boolean,
   ): string {
-    let modes: string = '';
+    let modes = '';
     for (let i = 0; i < members.length; ++i) {
       if (members[i].memberId === userId) {
         modes = members[i].modes;
@@ -379,8 +381,11 @@ export class ChatService {
     } else throw new WsException({ msg: 'checkPassword: unknown room name!' });
   }
 
-  async updateBlockedUsers(userId: number, target: number, disconnect: boolean)
-    : Promise<User | null> {
+  async updateBlockedUsers(
+    userId: number,
+    target: number,
+    disconnect: boolean,
+  ): Promise<User | null> {
     if (disconnect) {
       await this.prisma.user.update({
         where: { id: userId },
@@ -400,21 +405,20 @@ export class ChatService {
         },
       });
     }
-    var u= await this.prisma.user.findUnique({
+    const u = await this.prisma.user.findUnique({
       where: { id: userId },
-      include: { blockedUsers: true, blockedBy: true }
-    })
+      include: { blockedUsers: true, blockedBy: true },
+    });
     return this.prisma.user.findUnique({
       where: { id: userId },
-      include: { blockedUsers: true, blockedBy: true }
-    })
+      include: { blockedUsers: true, blockedBy: true },
+    });
   }
 
-  async findBlockedBy(userId: number)
-  : Promise<User[] | null> {
-    const res  = await this.prisma.user.findUnique({
+  async findBlockedBy(userId: number): Promise<User[] | null> {
+    const res = await this.prisma.user.findUnique({
       where: { id: userId },
-      select: { blockedBy: true }
+      select: { blockedBy: true },
     });
     return res ? res.blockedBy : null;
   }

@@ -27,12 +27,12 @@ export class GameGateway {
   }
 
   @SubscribeMessage('match_training')
-  async training(socket: Socket, payload: any) {
+  async training(socket: Socket) {
     this.game.create_training_game(socket);
   }
 
   @SubscribeMessage('match_leave')
-  async leave(socket: Socket, payload: any) {
+  async leave(socket: Socket) {
     this.game.leave_game(socket);
   }
 
