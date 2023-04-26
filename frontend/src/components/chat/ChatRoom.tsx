@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useRef, useEffect, useState } from 'react';
 import { WebSocketContext } from '../../contexts/WebsocketContext';
 import { ArrowBackIosNew } from '@mui/icons-material';
 import {
@@ -10,7 +10,8 @@ import {
   Stack,
   TextField,
   Typography,
-  CircularProgress
+  CircularProgress,
+  autocompleteClasses
 } from '@mui/material';
 // personal components
 import { UserContext } from '../../contexts/UserContext';
@@ -311,6 +312,16 @@ const ChatRoom = (props: ChatRoomProps) => {
     props.cleanRoomLoginData();
   };
 
+  const msgRef = useRef<HTMLDivElement>(null);
+  function scrollToBottom() {
+    if (msgRef.current) {
+      msgRef.current.scrollTop = msgRef.current.scrollHeight;
+    }
+  }
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
   /*************************************************************
    * Render HTML response
    **************************************************************/
@@ -345,7 +356,7 @@ const ChatRoom = (props: ChatRoomProps) => {
             {messages.length === 0 ? (
               <div className="black">No Message</div>
             ) : (
-              <Stack className="message-area" spacing={1}>
+              <Stack className="message-area" spacing={1} ref={msgRef}>
                 {' '}
                 {messages.map((msg, index) => (
                   <div key={index}>
