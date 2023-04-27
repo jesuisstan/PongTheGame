@@ -54,6 +54,7 @@ const Chat = () => {
   const { user } = useContext(UserContext);
   // Array including all chat rooms
   const [chatRooms, setChatRooms] = useState<ChatRoomType[]>([]);
+  const [socketEvent, setSocketEvent] = useState(0);
 
   // Create chat room
   const [chatRoomCreateMode, setChatRoomCreateMode] = useState<boolean>(false);
@@ -74,7 +75,7 @@ const Chat = () => {
       });
     };
     findAllChatRooms();
-  }, []);
+  }, [socketEvent]);
 
   const [open, setOpen] = useState<boolean>(false);
   const handleClickOpen = () => {
@@ -112,30 +113,32 @@ const Chat = () => {
     errorAlert('Password cannot be empty');
   };
 
-  socket.on('connect', () => {
-    // console.log('Connected to websocket')
-  });
-  socket.on('createChatRoom', (roomName: string) => {
-    // console.log('Created new chat room [' + roomName + ']');
-  });
-  socket.on('exception', (res) => {
-    errorAlert(String(res.msg));
-  });
+  //socket.on('connect', () => {
+  //  // console.log('Connected to websocket')
+  //});
+  //socket.on('createChatRoom', (roomName: string) => {
+  //  // console.log('Created new chat room [' + roomName + ']');
+  //});
+  //socket.on('exception', (res) => {
+  //  errorAlert(String(res.msg));
+  //});
 
   /*************************************************************
    * Event listeners
    **************************************************************/
   useEffect(() => {
     // Activate listeners and subscribe to events as the component is mounted
-    socket.on('connect', () => console.log('Connected to websocket'));
+    socket.on('connect', () => {
+      //console.log('Connected to websocket');
+    });
     socket.on('createChatRoom', (roomName: string) => {
-      console.log('Created new chat room [' + roomName + ']');
+      setSocketEvent((prev) => prev + 1);
     });
     socket.on('exception', (res) => {
       errorAlert(String(res.msg));
     });
     socket.on('createMessage', () => {
-      console.log('Received new message!');
+      //console.log('Received new message!');
     });
 
     // Clean listeners to unsubscribe all callbacks for these events
