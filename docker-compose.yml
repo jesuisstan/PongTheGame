@@ -10,6 +10,11 @@ services:
         REACT_APP_URL_BACKEND: ${BACKEND_URL:?}
         REACT_APP_MAX_CHATROOM_NBR: ${MAX_CHATROOM_NBR:?}
         REACT_APP_MAX_CHATROOM_MEMBER_NBR: ${MAX_CHATROOM_MEMBER_NBR:?}
+    environment:
+      FRONTEND_URL: ${FRONTEND_URL:?}
+      REACT_APP_URL_BACKEND: ${BACKEND_URL:?}
+      REACT_APP_MAX_CHATROOM_NBR: ${MAX_CHATROOM_NBR:?}
+      REACT_APP_MAX_CHATROOM_MEMBER_NBR: ${MAX_CHATROOM_MEMBER_NBR:?}
     networks:
       - public
     restart: unless-stopped
@@ -37,6 +42,8 @@ services:
       INTRA42_CLIENT_SECRET: ${INTRA42_CLIENT_SECRET:?}
       GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID:?}
       GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET:?}
+    expose:
+      - 3000
     restart: unless-stopped
 
 # ---------------------------------------------------------------------------- #
