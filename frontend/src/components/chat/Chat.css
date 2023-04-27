@@ -20,7 +20,7 @@
   padding: 15px;
   height: calc(100vh - 56px);
   min-height: 650px;
-  background-color: rgba(255, 255, 255, 0.8);
+  background-color: rgb(245, 245, 245);
   display: flex;
   justify-content: center;
 }
@@ -148,7 +148,7 @@
 #send-msg {
   text-align: right;
   font-style: oblique;
-  color: rgb(15, 124, 196);
+  color: rgb(37, 120, 204);
 }
 
 #receive-msg {
@@ -177,7 +177,7 @@
 
 .limitText:hover {
   overflow: visible;
-  color: rgba(228, 98, 139, 0.91);
+  color: rgba(253, 80, 135, 0.91);
   background-color: rgba(0, 0, 0, 0.815);
   min-width: 101%;
   display: inline-flex;
@@ -211,19 +211,24 @@
 
 .msgBubble {
   min-width: 65px;
+  display: flex;
+  align-items: center;
+  word-break: break-word;
 }
 .msgRowL {
   display: flex;
   justify-content: flex-start;
   color: black;
+  align-items: flex-start;
 }
 .msgRowR {
   display: flex;
   justify-content: flex-end;
   color: black;
+  align-items: flex-start;
 }
 .avatar {
-  color: #fff;
+  color: whitesmoke;
   background-color: #6c576e;
   border-radius: 50%;
 }
@@ -233,12 +238,11 @@
 .msgLeft {
   position: relative;
   margin-left: 10px;
-  margin-bottom: 10px;
   padding: 10px;
-  background-color: rgb(237, 100, 146);
+  background-color: rgb(253, 80, 135);
   max-width: 60vw;
   text-align: left;
-  border: 1px, solid, #5885a1;
+  border: 1px, solid, rgb(37, 120, 204);
   border-radius: 10px;
 }
 .msgLeft::after {
@@ -266,7 +270,6 @@
 .msgRight {
   position: relative;
   margin-right: 10px;
-  margin-bottom: 10px;
   padding: 10px;
   background-color: #eed0f1;
   max-width: 60vw;
@@ -302,7 +305,7 @@
 }
 .msgTime {
   position: absolute;
-  font-size: 0.85em;
+  font-size: 0.65em;
   font-weight: 300;
   margin-top: 10px;
   bottom: -3px;
@@ -312,7 +315,7 @@
 /* ----------------- Color property ----------------- */
 
 .white {
-  color: white;
+  color: whitesmoke;
 }
 
 .black {

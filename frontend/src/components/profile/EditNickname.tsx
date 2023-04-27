@@ -9,6 +9,7 @@ import Modal from '@mui/joy/Modal';
 import ModalDialog from '@mui/joy/ModalDialog';
 import ModalClose from '@mui/joy/ModalClose';
 import Stack from '@mui/material/Stack';
+import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import errorAlert from '../UI/errorAlert';
 import backendAPI from '../../api/axios-instance';
@@ -98,31 +99,44 @@ const EditNickname = ({
           <form style={{ marginTop: '10px' }} onSubmit={handleSubmit}>
             <Stack spacing={2}>
               <FormControl>
-                <FormLabel sx={{ color: 'black' }}>
-                  3 - 10 characters:
-                </FormLabel>
-                <TextField
-                  autoFocus
-                  required
-                  value={text}
-                  inputProps={{
-                    minLength: 3,
-                    maxLength: 10
+                <Box
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
                   }}
-                  helperText={error} // error message
-                  error={!!error} // set to true to change the border/helperText color to red
-                  onChange={handleTextInput}
-                />
+                >
+                  <FormLabel sx={{ color: 'black' }}>
+                    3 - 10 characters:
+                  </FormLabel>
+                </Box>
+                <div style={MUI.loadButtonBlock}>
+                  <TextField
+                    autoFocus
+                    required
+                    value={text}
+                    inputProps={{
+                      minLength: 3,
+                      maxLength: 10
+                    }}
+                    helperText={error} // error message
+                    error={!!error} // set to true to change the border/helperText color to red
+                    onChange={handleTextInput}
+                  />
+                </div>
               </FormControl>
-              <LoadingButton
-                type="submit"
-                loading={load}
-                startIcon={<SaveIcon />}
-                variant="contained"
-                color="inherit"
-              >
-                {buttonText}
-              </LoadingButton>
+              <div style={MUI.loadButtonBlock}>
+                <LoadingButton
+                  type="submit"
+                  loading={load}
+                  startIcon={<SaveIcon />}
+                  variant="contained"
+                  color="inherit"
+                  sx={{ minWidth: 142 }}
+                >
+                  {buttonText}
+                </LoadingButton>
+              </div>
             </Stack>
           </form>
         </ModalDialog>

@@ -1,75 +1,73 @@
 import { useState, SetStateAction, Dispatch } from 'react';
 import LoadingButton from '@mui/lab/LoadingButton';
+import { useNavigate } from 'react-router-dom';
 import Modal from '@mui/joy/Modal';
 import ModalDialog from '@mui/joy/ModalDialog';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import LoginIcon from '@mui/icons-material/Login';
+import ModalClose from '@mui/joy/ModalClose';
 import * as MUI from './MUIstyles';
 
-const URL_LOGOUT = `${process.env.REACT_APP_URL_BACKEND}/auth/logout`;
-
-const WarningConnectedModal = ({
+const WarningLoginModal = ({
   open,
   setOpen
 }: {
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
 }) => {
+  const navigate = useNavigate();
   const [load, setLoad] = useState(false);
 
-  const handleLogoutClick = (): void => {
+  const handleDaccordClick = (): void => {
     setLoad(true);
-    window.location.href = URL_LOGOUT;
+    setOpen(false);
+    navigate('/login');
   };
 
   return (
     <div>
-      <Modal sx={{ color: 'black' }} open={open}>
+      <Modal
+        sx={{ color: 'black' }}
+        open={open}
+        onClose={() => {
+          setLoad(false);
+          setOpen(false);
+        }}
+      >
         <ModalDialog
           aria-labelledby="basic-modal-dialog-title"
           sx={MUI.modalDialog}
         >
-          <Typography sx={MUI.modalHeader}>Attention!</Typography>
+          <ModalClose sx={MUI.modalClose} />
+          <Typography sx={MUI.modalHeader}>Salut!</Typography>
           <Box sx={MUI.warningBoxStyle}>
             <Typography>
-              A session is currently active in another tab,
+              You are not authorised yet.
               <br />
-              so please go back to it to continue.
-            </Typography>
-
-            <Typography>
-              If this notification persists, logout* to remove it.
+              Currently, you can browse only Home and Info pages.
+              <br />
+              Please login to get access to Chat and Game pages.
             </Typography>
             <div style={MUI.loadButtonBlock}>
               <LoadingButton
                 type="submit"
                 loading={load}
-                endIcon={<ExitToAppIcon />}
+                endIcon={<LoginIcon />}
                 loadingPosition="end"
                 variant="contained"
                 color="inherit"
-                onClick={handleLogoutClick}
+                onClick={handleDaccordClick}
                 sx={{ minWidth: 142 }}
               >
-                Logout
+                D'Accord
               </LoadingButton>
             </div>
           </Box>
-          <Typography
-            sx={{
-              textAlign: 'left',
-              fontSize: '14px',
-              paddingTop: '15px',
-              wordWrap: 'break-word'
-            }}
-          >
-            * this will end the session in current browser
-          </Typography>
         </ModalDialog>
       </Modal>
     </div>
   );
 };
 
-export default WarningConnectedModal;
+export default WarningLoginModal;

@@ -43,7 +43,7 @@ const PlayerCard = () => {
       },
       (error) => {
         if (error.response?.status === 404) {
-          errorAlert('Player with such a nickname was not found');
+          errorAlert(`Player ${playerNickname} was not found`);
         } else {
           errorAlert('Something went wrong');
         }
@@ -63,7 +63,7 @@ const PlayerCard = () => {
       <div className={styles.playerCard}>
         <InfoBlock player={player} />
         <DeviderPong />
-        <FriendsBlock player={player} socketEvent={socketEvent} />
+        <FriendsBlock socketEvent={socketEvent} />
         <DeviderPong />
         {user.nickname === player.nickname && (
           <BlackListBlock socketEvent={socketEvent} />

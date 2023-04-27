@@ -219,13 +219,7 @@ const InvitationSendModal = ({
                 >
                   Send invitation and wait for response:
                 </Typography>
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}
-                >
+                <div style={MUI.loadButtonBlock}>
                   <LoadingButton
                     type="submit"
                     title={`Invite ${invitee} to play game`}
@@ -241,7 +235,7 @@ const InvitationSendModal = ({
                     variant="contained"
                     color="inherit"
                     disabled={disabledButton}
-                    sx={{ minWidth: '130px' }}
+                    sx={{ minWidth: 142 }}
                   >
                     {buttonText}
                   </LoadingButton>

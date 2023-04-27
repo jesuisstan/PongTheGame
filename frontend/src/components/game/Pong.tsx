@@ -61,19 +61,17 @@ const Pong = (props: GameProps) => {
     drawState(args, canvasRef);
   };
 
+  window.addEventListener('keydown', onKeyPressRef.current);
+  window.addEventListener('keyup', onKeyReleaseRef.current);
+
   useEffect(() => {
     const intervalId = setInterval(() => {
       const playPong = () => {
         socket.on('match_game_state', (args) => {
           expandTheGame(args);
 
-          window.addEventListener('keydown', onKeyPressRef.current);
-          window.addEventListener('keyup', onKeyReleaseRef.current);
-
           if (args.status === 'ended' || args.status === 'aborted') {
             setGameStatus(GameStatus.ENDED);
-            window.removeEventListener('keydown', onKeyPressRef.current);
-            window.removeEventListener('keyup', onKeyReleaseRef.current);
           }
         });
       };

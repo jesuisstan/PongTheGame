@@ -34,9 +34,10 @@ export class ChatGateway {
   async createMessage(
     @MessageBody('roomName') roomName: string,
     @MessageBody('message') msg: MessageDto,
+    @ConnectedSocket() client: Socket,
   ): Promise<void> {
     // Create a message object using the create method from chat.service,
-    // but only is the user hasn't been muted
+    // but only if the user hasn't been muted
     if (msg) {
       if (
         msg.author.id &&
@@ -44,8 +45,7 @@ export class ChatGateway {
       )
         await this.chatService.createMessage(roomName, msg);
       console.log('message emitted: ' + Object.entries(msg));
-      // Broadcast received message to all users
-      this.server.emit('createMessage');
+      client.broadcast.emit('createMessage');
     } else throw new WsException({ msg: 'createMessage: message is empty!' });
   }
 
@@ -98,7 +98,7 @@ export class ChatGateway {
     await this.chatService.createChatRoom(room, user1, avatar, user2Id);
     if (!user2Id) {
       console.log('chatRoom emitted: ' + Object.entries(room));
-      // Broadcast newly created room to all users
+      // Broadcast newly created room name to all users
       this.server.emit('createChatRoom', room.name);
     }
     return 0;
@@ -202,6 +202,7 @@ export class ChatGateway {
     this.server.emit('changePassword', roomName, isDeleted);
   }
 
+  // Check user's privileges
   @SubscribeMessage('hasUserPriv')
   async hasUserPriv(
     @MessageBody('roomName') roomName: string,
@@ -221,19 +222,20 @@ export class ChatGateway {
     @MessageBody('off') off: boolean,
   ): Promise<void> {
     // First, check if the user has the admin rights
-    if ((await this.hasUserPriv(roomName, userId, target)) === false)
+    if (
+      (await this.chatService.hasUserPriv(roomName, userId, target)) === false
+    )
       throw new WsException({
-        msg: "muteUser: user doesn't have enough privileges!",
+        msg: "toggleMemberMode: user doesn't have enough privileges!",
       });
     const room: ChatRoomDto | null = await this.chatService.getChatRoomByName(
       roomName,
     );
     if (room) {
-      // Send the first character of the mode name; ex: mute => 'm'
       const modes: string = await this.chatService.modifyModes(
         room.members,
         target,
-        mode[0],
+        mode[0], // Send the first character of the mode name; ex: mute => 'm'
         off,
       );
       // Save the new modes
@@ -253,7 +255,9 @@ export class ChatGateway {
   ): Promise<void> {
     const event: string = (off ? 'un' : '') + 'banUser';
     // First, check if the user has the admin rights
-    if ((await this.hasUserPriv(roomName, userId, target)) === false)
+    if (
+      (await this.chatService.hasUserPriv(roomName, userId, target)) === false
+    )
       throw new WsException({
         msg: event + ": user doesn't have enough privileges!!",
       });
@@ -271,7 +275,9 @@ export class ChatGateway {
     @MessageBody('target') target: number,
   ): Promise<void> {
     // First, check if the user has the admin rights
-    if ((await this.hasUserPriv(roomName, userId, target)) === false)
+    if (
+      (await this.chatService.hasUserPriv(roomName, userId, target)) === false
+    )
       throw new WsException({
         msg: "kickUser: user doesn't have enough privileges!!",
       });
@@ -280,33 +286,16 @@ export class ChatGateway {
   }
 
   @SubscribeMessage('updateBlockedUsers')
-  async updateBlockedUsers(
+  updateBlockedUsers(
     @MessageBody('userId') userId: number,
     @MessageBody('target') target: number,
     @MessageBody('disconnect') disconnect: boolean,
   ): Promise<User | null> {
-    if (disconnect) {
-      await this.prisma.user.update({
-        where: { id: userId },
-        data: {
-          blockedUsers: {
-            disconnect: { id: target },
-          },
-        },
-      });
-    } else {
-      await this.prisma.user.update({
-        where: { id: userId },
-        data: {
-          blockedUsers: {
-            connect: { id: target },
-          },
-        },
-      });
-    }
-    return this.prisma.user.findUnique({
-      where: { id: userId },
-      include: { blockedUsers: true },
-    });
+    return this.chatService.updateBlockedUsers(userId, target, disconnect);
+  }
+
+  @SubscribeMessage('findBlockedBy')
+  findBlockedBy(@MessageBody('userId') userId: number): Promise<User[] | null> {
+    return this.chatService.findBlockedBy(userId);
   }
 }

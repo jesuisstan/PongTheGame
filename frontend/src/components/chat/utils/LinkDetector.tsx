@@ -25,8 +25,11 @@ const LinkDetector: React.FC<LinkDetectorProps> = ({ children }) => {
     return <a href="https://www.youtube.com/watch?v=L8U-Fisq3Yk" target="_blank" rel="noopener noreferrer" className='link'>
       {typeof children === 'string' && children.replace(/::code/i, 'haha')}</a>;
   }
-  const isLink = typeof children === 'string' && /^https?:\/\//.test(children);
-  if (isLink) {
+  const isLink = typeof children === 'string' && (/^https?:\/\//.test(children) || /^www\./.test(children));
+  if (isLink )
+    if (/^www\./.test(children)) {
+      return <a href={`https://${children}`} target="_blank" rel="noopener noreferrer" className='link'>{children}</a>;
+    } else {
     return <a href={children as string} target="_blank" rel="noopener noreferrer" className='link'>{children}</a>;
   } else {
     return <span>{children}</span>;

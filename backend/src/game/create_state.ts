@@ -84,6 +84,8 @@ export function training_state(player1: Profile, winScore: number) {
     },
     ball: {
       position: {
+        // x: Default_params.PADDLE_OFFSET + 10,
+        // y: 0,
         x: Default_params.GAME_WIDTH / 2,
         y: Default_params.GAME_HEIGHT / 2,
       },
@@ -191,7 +193,6 @@ export function convert_state_to_sendable(
         paddleWidth: state.gameInfos.paddleWidth,
         paddleHeight: state.gameInfos.paddleHeight,
         ballRadius: state.gameInfos.ballRadius,
-        time: Default_params.GAME_TIME - timeInSeconds,
         winScore: state.gameInfos.winScore,
       },
       player1: {

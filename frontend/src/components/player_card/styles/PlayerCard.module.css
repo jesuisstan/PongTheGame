@@ -71,6 +71,11 @@
   display: flex;
   flex-direction: row;
   gap: 21px;
+  align-items: center;
+}
+
+.friendLine:hover {
+  cursor: pointer;
 }
 
 .searchForm {

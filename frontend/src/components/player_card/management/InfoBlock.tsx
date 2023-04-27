@@ -43,7 +43,7 @@ const InfoBlock = ({ player }: { player: PlayerProfile }) => {
           let userFriendsList: PlayerProfile[] = response.data.friends;
           let isFriend = userFriendsList.find(
             (friend) => friend.nickname === player.nickname
-          );  
+          );
           if (isFriend) {
             setIsFriendOfUser(true);
           } else {
@@ -67,62 +67,70 @@ const InfoBlock = ({ player }: { player: PlayerProfile }) => {
     }
   }, [player, user]);
 
-
   const onBlockClick = (target: number) => {
     if (user.id !== target) {
       // Check if target is not already blocked
       try {
-        for (let i=0; i < user.blockedUsers.length; ++i)
+        for (let i = 0; i < user.blockedUsers.length; ++i)
           if (user.blockedUsers[i].id === target) return;
-          socket.emit('updateBlockedUsers', {
-          userId: user.id,
-          target: target,
-          disconnect: false,
-          }, (res: User) => {
-				res.joinedChatRoom = user.joinedChatRoom;
-				setUser(res)
-			})
-		console.log('UserId: ' + target + 'has been blocked!');
-		return;
-      } catch (err) { console.log ('ERROR: ' + err);}
+        socket.emit(
+          'updateBlockedUsers',
+          {
+            userId: user.id,
+            target: target,
+            disconnect: false
+          },
+          (res: User) => {
+            res.joinedChatRoom = user.joinedChatRoom;
+            setUser(res);
+          }
+        );
+        return;
+      } catch (err) {
+        errorAlert('Could not block this player. Try again');
+      }
     }
-  }
+  };
 
-  const onUnBlockClick = (target: number)=> {
+  const onUnBlockClick = (target: number) => {
     if (user.id !== target) {
-
       try {
-        for (let i=0; i < user.blockedUsers.length; ++i) {
+        for (let i = 0; i < user.blockedUsers.length; ++i) {
           if (user.blockedUsers[i].id === target) {
-            socket.emit('updateBlockedUsers', {
-              userId: user.id,
-              target: target,
-              disconnect: true,
-            }, (res: User) => {
-					res.joinedChatRoom = user.joinedChatRoom; 
-					setUser(res);
-				});
-			console.log('UserId: ' + target + 'has been unblocked!');
-			return;
+            socket.emit(
+              'updateBlockedUsers',
+              {
+                userId: user.id,
+                target: target,
+                disconnect: true
+              },
+              (res: User) => {
+                res.joinedChatRoom = user.joinedChatRoom;
+                setUser(res);
+              }
+            );
+            return;
           }
         }
-      }catch (err) { console.log('ERROR: ' + err); }
+      } catch (err) {
+        errorAlert('Could not unblock this player. Try again');
+      }
     }
-  }
+  };
 
   const handleBlock = () => {
     if (isBlocked) {
-		onUnBlockClick(player.id)
-		setIsBlocked(false);
+      onUnBlockClick(player.id);
+      setIsBlocked(false);
     } else {
-		onBlockClick(player.id)
-		setIsBlocked(true);
-	}
+      onBlockClick(player.id);
+      setIsBlocked(true);
+    }
   };
 
   const handleFriend = () => {
     if (isFriendOfUser) {
-      backendAPI.patch(`/friend/remove${player.nickname}`).then(
+      backendAPI.patch(`/friend/remove/${player.id}`).then(
         (response) => {
           setIsFriendOfUser(false);
         },
@@ -131,7 +139,7 @@ const InfoBlock = ({ player }: { player: PlayerProfile }) => {
         }
       );
     } else {
-      backendAPI.post(`/friend/add/${player.nickname}`).then(
+      backendAPI.post(`/friend/add/${player.id}`).then(
         (response) => {
           setIsFriendOfUser(true);
         },
@@ -160,7 +168,7 @@ const InfoBlock = ({ player }: { player: PlayerProfile }) => {
           src={player.avatar}
           alt=""
           variant="circular"
-          sx={{ width: 200, height: 200 }}
+          sx={{ width: 150, height: 150 }}
         />
       </BadgePong>
       <div>

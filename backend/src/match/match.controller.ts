@@ -11,7 +11,6 @@ import { User } from '@prisma/client';
 import { IsAuthenticatedGuard } from 'src/auth/auth.guard';
 import { SessionUser } from 'src/decorator/session-user.decorator';
 import { MatchService } from 'src/match/match.service';
-import { UserService } from 'src/user/user.service';
 
 @Controller('/match')
 @UseGuards(IsAuthenticatedGuard)
@@ -24,7 +23,7 @@ export class MatchController {
     summary: 'Get the match history for the current user',
   })
   async mine(@SessionUser() user: User) {
-    return this.matches.getMatchHistory(user, 0, 50); //TODO change skip/take
+    return this.matches.getMatchHistory(user, 0, 50);
   }
 
   @Get('/:id')

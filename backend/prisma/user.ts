@@ -1,4 +1,4 @@
-import { Achievement, Prisma } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import { prisma } from './seed';
 
 export async function insert_AI() {

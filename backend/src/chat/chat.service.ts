@@ -27,10 +27,12 @@ export class ChatService {
       if (user.id === room.members[i].memberId) {
         found = true;
         foundModes = room.members[i].modes;
+        // Do nothing and return if user is already a member and is online
         if (room.members[i].isOnline === online) return;
       }
     }
     if (found)
+      // user is already a member but not online
       await this.prisma.member.update({
         where: {
           memberId_chatRoomName: {
@@ -41,6 +43,7 @@ export class ChatService {
         data: { isOnline: online, modes: foundModes + modes },
       });
     else {
+      // User is not a member yet
       await this.prisma.member.create({
         data: {
           memberId: user.id,
@@ -82,7 +85,6 @@ export class ChatService {
     });
   }
 
-  // Create a new message object and push it to the messages array
   async createMessage(roomName: string, msg: MessageDto): Promise<void> {
     const room: ChatRoomDto | null = await this.getChatRoomByName(roomName);
     if (room) {
@@ -110,7 +112,7 @@ export class ChatService {
   }
 
   // Create a new chat room object and push it to the database
-  // the creator will get admin privileges
+  // the creator will get owner privileges
   async createChatRoom(
     room: ChatRoomDto,
     user: User,
@@ -162,7 +164,11 @@ export class ChatService {
     if (room)
       return await this.prisma.message.findMany({
         where: { chatRoomName: roomName },
-        select: { author: true, data: true, timestamp: true },
+        include: {
+          author: {
+            include: { blockedUsers: true, blockedBy: true },
+          },
+        },
       });
     throw new WsException({ msg: 'findAllMessages: unknown room name!' });
   }
@@ -178,7 +184,7 @@ export class ChatService {
     });
   }
 
-  // Return all members from the chatroom
+  // Return all banned members from the chatroom
   async findAllBannedMembers(roomName: string): Promise<User[]> {
     const room: ChatRoomDto | null = await this.getChatRoomByName(roomName);
     if (room) return room.bannedUsers;
@@ -189,7 +195,7 @@ export class ChatService {
   }
 
   async isPasswordProtected(roomName: string) {
-    const room = await this.getChatRoomByName(roomName);
+    const room: ChatRoomDto | null = await this.getChatRoomByName(roomName);
     if (room) {
       return room.password && room.password !== '' ? true : false;
     } else
@@ -199,18 +205,17 @@ export class ChatService {
   async changePassword(roomName: string, newPassword: string): Promise<void> {
     const room: ChatRoomDto | null = await this.getChatRoomByName(roomName);
     if (room) {
-      // If a new password was given
       const oldModes = await this.prisma.chatRoom.findUnique({
         where: { name: roomName },
         select: { modes: true },
       });
       if (oldModes) {
         if (newPassword && newPassword !== '') {
+          newPassword = await this.generateHash(newPassword);
           // If the room wasn't in 'password protected' mode,
           // it gets it
-          newPassword = await this.generateHash(newPassword);
           // If 'p' mode already there, we keep the old modes
-          const newModes =
+          const newModes: string =
             oldModes.modes.search('p') !== -1
               ? oldModes.modes
               : oldModes.modes + 'p';
@@ -228,7 +233,7 @@ export class ChatService {
             data: { password: '' },
           }); // and we remove the 'password protected' mode
           if (oldModes.modes.search('p') !== -1) {
-            const modes = oldModes.modes.replace(/p/g, '');
+            const modes: string = oldModes.modes.replace(/p/g, '');
             await this.prisma.chatRoom.update({
               where: { name: roomName },
               data: { modes: modes },
@@ -244,7 +249,7 @@ export class ChatService {
     userId: number,
     target: number,
   ): Promise<boolean> {
-    const room = await this.getChatRoomByName(roomName);
+    const room: ChatRoomDto | null = await this.getChatRoomByName(roomName);
     if (room) {
       // If target is the owner, we stop here: cannot do anything against owners
       if (target === room.owner) return false;
@@ -265,6 +270,7 @@ export class ChatService {
     throw new WsException({ msg: 'hasUserPriv: unknown room name!' });
   }
 
+  // Look for mode in user's mode and add mode if not already there
   modifyModes(
     members: Member[],
     userId: number,
@@ -272,8 +278,6 @@ export class ChatService {
     del: boolean,
   ): string {
     let modes = '';
-    // Look for mode in user's mode
-    // Add mode if not already there
     for (let i = 0; i < members.length; ++i) {
       if (members[i].memberId === userId) {
         modes = members[i].modes;
@@ -375,5 +379,47 @@ export class ChatService {
       // bcrypt will hash the given pwd then compared it to the stored hashed pwd
       return await bcrypt.compare(password, room.password);
     } else throw new WsException({ msg: 'checkPassword: unknown room name!' });
+  }
+
+  async updateBlockedUsers(
+    userId: number,
+    target: number,
+    disconnect: boolean,
+  ): Promise<User | null> {
+    if (disconnect) {
+      await this.prisma.user.update({
+        where: { id: userId },
+        data: {
+          blockedUsers: {
+            disconnect: { id: target },
+          },
+        },
+      });
+    } else {
+      await this.prisma.user.update({
+        where: { id: userId },
+        data: {
+          blockedUsers: {
+            connect: { id: target },
+          },
+        },
+      });
+    }
+    const u = await this.prisma.user.findUnique({
+      where: { id: userId },
+      include: { blockedUsers: true, blockedBy: true },
+    });
+    return this.prisma.user.findUnique({
+      where: { id: userId },
+      include: { blockedUsers: true, blockedBy: true },
+    });
+  }
+
+  async findBlockedBy(userId: number): Promise<User[] | null> {
+    const res = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { blockedBy: true },
+    });
+    return res ? res.blockedBy : null;
   }
 }

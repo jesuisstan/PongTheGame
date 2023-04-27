@@ -103,12 +103,6 @@ const InvitationReceivedModal = ({
                     }
                   }}
                   title={invitation.from.nickname}
-                  onClick={() =>
-                    window.open(
-                      `/players/${invitation.from.nickname}`,
-                      '_blank'
-                    )
-                  }
                 />
                 Player {invitation.from.nickname}
               </div>
@@ -143,7 +137,7 @@ const InvitationReceivedModal = ({
                 justifyContent: 'center'
               }}
             >
-              <div>
+              <div style={MUI.loadButtonBlock}>
                 <LoadingButton
                   type="submit"
                   loading={loadingDecline}
@@ -151,13 +145,13 @@ const InvitationReceivedModal = ({
                   variant="contained"
                   color="inherit"
                   loadingPosition="start"
-                  sx={{ minWidth: '120px' }}
+                  sx={{ minWidth: 142 }}
                   onClick={() => declineInvitation()}
                 >
                   Decline
                 </LoadingButton>
               </div>
-              <div>
+              <div style={MUI.loadButtonBlock}>
                 <LoadingButton
                   type="submit"
                   title="Proceed to game"
@@ -166,7 +160,7 @@ const InvitationReceivedModal = ({
                   variant="contained"
                   color="inherit"
                   loadingPosition="start"
-                  sx={{ minWidth: '120px' }}
+                  sx={{ minWidth: 142 }}
                   onClick={() => acceptInvitation()}
                   disabled={!invitation.from.nickname ? true : false}
                 >
