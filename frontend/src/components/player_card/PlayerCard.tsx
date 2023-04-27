@@ -43,7 +43,7 @@ const PlayerCard = () => {
       },
       (error) => {
         if (error.response?.status === 404) {
-          errorAlert('Player with such a nickname was not found');
+          errorAlert(`Player ${playerNickname} was not found`);
         } else {
           errorAlert('Something went wrong');
         }
