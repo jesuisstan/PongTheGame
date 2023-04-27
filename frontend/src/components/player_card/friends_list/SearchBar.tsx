@@ -31,7 +31,7 @@ const SearchBar = () => {
 
     if (searchValue !== '') {
       try {
-        const response = await backendAPI.get(`/user/${searchValue}`);
+        await backendAPI.get(`/user/${searchValue}`);
         navigate(`/players/${searchValue}`);
       } catch (error) {
         const err = error as AxiosError<any>;

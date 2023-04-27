@@ -20,7 +20,6 @@ import { User } from '../../../types/User';
 import { WebSocketContext } from '../../../contexts/WebsocketContext';
 import { useNavigate } from 'react-router-dom';
 import errorAlert from '../../UI/errorAlert';
-import { AxiosError } from 'axios';
 
 interface UserMenuProps {
   bannedUsers: User[];
