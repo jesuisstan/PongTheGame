@@ -110,6 +110,7 @@ function setupCors(app: NestExpressApplication, config: ConfigService<Config>) {
     case 'production':
       app.set('trust proxy', 1);
       app.setGlobalPrefix('/api');
+      break;
   }
 }
 
