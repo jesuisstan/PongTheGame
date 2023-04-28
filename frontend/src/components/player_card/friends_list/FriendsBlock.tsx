@@ -15,11 +15,7 @@ import * as color from '../../UI/colorsPong';
 import styles from '../styles/PlayerCard.module.css';
 import NotePong from '../../UI/NotePong';
 
-const FriendsBlock = ({
-  socketEvent
-}: {
-  socketEvent: number;
-}) => {
+const FriendsBlock = ({ socketEvent }: { socketEvent: number }) => {
   const navigate = useNavigate();
   const { user } = useContext(UserContext);
   const [friendsList, setFriendsList] = useState<PlayerProfile[]>([]);
@@ -40,6 +36,23 @@ const FriendsBlock = ({
   useEffect(() => {
     fetchFriendsList();
   }, [socketEvent, playerNickname]);
+
+  const onFriendClickHandler = (nickname: string) => {
+    backendAPI.get(`/user/${nickname}`).then(
+      (response) => {
+        navigate(`/players/${nickname}`);
+      },
+      (error) => {
+        if (error.response?.status === 404) {
+          errorAlert(
+            `Player ${playerNickname} was not found or he has changed his nickname. Refresh your Friends List`
+          );
+        } else {
+          errorAlert('Something went wrong');
+        }
+      }
+    );
+  };
 
   return (
     <div className={styles.friendsBlock}>
@@ -65,7 +78,7 @@ const FriendsBlock = ({
               <div
                 className={styles.friendLine}
                 key={item.id}
-                onClick={() => navigate(`/players/${item.nickname}`)}
+                onClick={() => onFriendClickHandler(item.nickname)}
               >
                 <BadgePong player={item}>
                   <Avatar

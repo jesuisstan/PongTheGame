@@ -35,7 +35,7 @@ interface SettingMenuProps {
 
 const SettingMenu = (setting: SettingMenuProps) => {
   const socket = useContext(WebSocketContext);
-  const { user, setUser } = useContext(UserContext);
+  const { user } = useContext(UserContext);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   // Modify password
   const [openChangePwd, setOpenChangePwd] = useState(false);

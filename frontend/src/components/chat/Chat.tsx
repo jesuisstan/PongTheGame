@@ -45,7 +45,6 @@ import * as color from '../UI/colorsPong';
 **************************************************************/
 
 const Chat = () => {
-
   /*************************************************************
    * States
    **************************************************************/
@@ -55,6 +54,7 @@ const Chat = () => {
   const { user } = useContext(UserContext);
   // Array including all chat rooms
   const [chatRooms, setChatRooms] = useState<ChatRoomType[]>([]);
+  const [socketEvent, setSocketEvent] = useState(0);
 
   // Create chat room
   const [chatRoomCreateMode, setChatRoomCreateMode] = useState<boolean>(false);
@@ -68,12 +68,14 @@ const Chat = () => {
   const [isPasswordRight, setIsPasswordRight] = useState<boolean>(false);
   const [clickedRoomToJoin, setClickedRoomToJoin] = useState<string>('');
 
-  const findAllChatRooms = async () => {
-    socket.emit('findAllChatRooms', {}, (response: ChatRoomType[]) => {
-      setChatRooms(response);
-    });
-  };
-  findAllChatRooms();
+  useEffect(() => {
+    const findAllChatRooms = async () => {
+      socket.emit('findAllChatRooms', {}, (response: ChatRoomType[]) => {
+        setChatRooms(response);
+      });
+    };
+    findAllChatRooms();
+  }, [socketEvent]);
 
   const [open, setOpen] = useState<boolean>(false);
   const handleClickOpen = () => {
@@ -111,31 +113,33 @@ const Chat = () => {
     errorAlert('Password cannot be empty');
   };
 
-  socket.on('connect', () => {
-    // console.log('Connected to websocket')
-  });
-  socket.on('createChatRoom', (roomName: string) => {
-    // console.log('Created new chat room [' + roomName + ']');
-  });
-  socket.on('exception', (res) => {
-    errorAlert(String(res.msg));
-  });
+  //socket.on('connect', () => {
+  //  // console.log('Connected to websocket')
+  //});
+  //socket.on('createChatRoom', (roomName: string) => {
+  //  // console.log('Created new chat room [' + roomName + ']');
+  //});
+  //socket.on('exception', (res) => {
+  //  errorAlert(String(res.msg));
+  //});
 
   /*************************************************************
    * Event listeners
    **************************************************************/
   useEffect(() => {
     // Activate listeners and subscribe to events as the component is mounted
-    socket.on('connect', () => console.log('Connected to websocket'));
+    socket.on('connect', () => {
+      //console.log('Connected to websocket');
+    });
     socket.on('createChatRoom', (roomName: string) => {
-      console.log('Created new chat room [' + roomName + ']');
+      setSocketEvent((prev) => prev + 1);
     });
     socket.on('exception', (res) => {
-      console.error('ERROR: ' + res.msg);
+      errorAlert(String(res.msg));
     });
     socket.on('createMessage', () => {
-      console.log("Received new message!")
-    })
+      //console.log('Received new message!');
+    });
 
     // Clean listeners to unsubscribe all callbacks for these events
     // before the component is unmounted
@@ -376,12 +380,15 @@ const Chat = () => {
                         <ListItemText
                           tabIndex={-1}
                           primary={
-                            room.name[0] === '#' ?
-                            // Slicing the '#' character at position 0 which is
-                            // used for private room names, then remove the '/',
-                            // then remove the user's name, leaving us with the recipient's name only
-                            room.name.slice(1).replace(/\//g, '').replace(user.nickname, '')
-                            : room.name
+                            room.name[0] === '#'
+                              ? // Slicing the '#' character at position 0 which is
+                                // used for private room names, then remove the '/',
+                                // then remove the user's name, leaving us with the recipient's name only
+                                room.name
+                                  .slice(1)
+                                  .replace(/\//g, '')
+                                  .replace(user.nickname, '')
+                              : room.name
                           }
                           className="limitText white"
                         />
