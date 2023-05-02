@@ -6,11 +6,11 @@ services:
     environment:
       SERVER_NAME: ${SERVER_NAME:?}
     ports:
-      - "${FRONTEND_PORT?:}:3000"
+      - "${FRONTEND_PORT:?}:3000"
     networks:
       - private
     healthcheck:
-      test: curl -fsSL http://localhost:3000/healthcheck
+      test: curl -fsSL http://localhost:${FRONTEND_PORT:?}/healthcheck
       interval: 10s
       timeout: 50s
       retries: 40

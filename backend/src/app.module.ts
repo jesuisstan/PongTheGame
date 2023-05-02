@@ -1,8 +1,14 @@
-import { Module } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AchivementModule } from 'src/achievement/achievement.module';
 import { AuthModule } from 'src/auth/auth.module';
 import { AvatarModule } from 'src/avatar/avatar.module';
+import { LoggerMiddleware } from 'src/logger.middleware';
 import { MatchModule } from 'src/match/match.module';
 import { PrismaModule } from 'src/prisma/prisma.module';
 import { StatusController } from 'src/status/status.controller';
@@ -30,7 +36,16 @@ import { WebsocketsModule } from './websockets/websockets.module';
     WebsocketsModule,
     StatsModule,
   ],
-  providers: [],
+  providers: [LoggerMiddleware],
   controllers: [StatusController],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    console.log('AAAAAAAAAAAAAAAAAAAAAAAAA');
+
+    consumer.apply(LoggerMiddleware).forRoutes({
+      path: '*',
+      method: RequestMethod.ALL,
+    });
+  }
+}

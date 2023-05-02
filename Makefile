@@ -5,7 +5,7 @@ COMPOSE := docker compose -f docker-compose.yml -f docker-compose.dev.yml
 all up:
 	$(COMPOSE) up -d --build
 
-build down ps:
+build down ps restart start:
 	$(COMPOSE) $@ $(c)
 
 logs:
