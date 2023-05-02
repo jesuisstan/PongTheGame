@@ -135,7 +135,16 @@ const ChatRoom = (props: ChatRoomProps) => {
     socket.on(
     'typingMessage',
     (roomName: string, nick: string, isTyping: boolean) => {
-      roomName === props.room.name &&
+		// First check if the user who is typing has not blocked the user
+		findBlockedBy();
+		var isBlocked = false;
+		for (const usr in blockedBy) {
+			if (blockedBy[usr].nickname === nick) {
+				isBlocked = true;
+				break;
+			}
+		}
+      isBlocked === false && roomName === props.room.name &&
       isTyping &&
       !statusUtils.isUserBlocked(user, undefined, nick)
         ? setTypingDisplay(nick + ' is typing...')
