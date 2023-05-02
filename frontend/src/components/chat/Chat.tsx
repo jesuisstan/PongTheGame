@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useState } from 'react';
 import * as React from 'react';
 import {
   Box,
@@ -68,14 +68,17 @@ const Chat = () => {
   const [isPasswordRight, setIsPasswordRight] = useState<boolean>(false);
   const [clickedRoomToJoin, setClickedRoomToJoin] = useState<string>('');
 
-  useEffect(() => {
-    const findAllChatRooms = async () => {
-      socket.emit('findAllChatRooms', {}, (response: ChatRoomType[]) => {
-        setChatRooms(response);
-      });
-    };
-    findAllChatRooms();
-  }, [socketEvent]);
+  const findAllChatRooms = async () => {
+    socket.emit('findAllChatRooms', {}, (response: ChatRoomType[]) => {
+      setChatRooms(response);
+    });
+  };
+
+  // useEffect(() => {
+    
+  // }, [socketEvent]);
+  
+  findAllChatRooms();
 
   const [open, setOpen] = useState<boolean>(false);
   const handleClickOpen = () => {
@@ -123,33 +126,35 @@ const Chat = () => {
   //  errorAlert(String(res.msg));
   //});
 
+  socket.on('connect', () => {
+    //console.log('Connected to websocket');
+  });
+  socket.on('createChatRoom', (roomName: string) => {
+    setSocketEvent((prev) => prev + 1);
+  });
+  socket.on('exception', (res) => {
+    errorAlert(String(res.msg));
+  });
+  socket.on('createMessage', () => {
+    //console.log('Received new message!');
+  });
+
   /*************************************************************
    * Event listeners
    **************************************************************/
-  useEffect(() => {
-    // Activate listeners and subscribe to events as the component is mounted
-    socket.on('connect', () => {
-      //console.log('Connected to websocket');
-    });
-    socket.on('createChatRoom', (roomName: string) => {
-      setSocketEvent((prev) => prev + 1);
-    });
-    socket.on('exception', (res) => {
-      errorAlert(String(res.msg));
-    });
-    socket.on('createMessage', () => {
-      //console.log('Received new message!');
-    });
+  // useEffect(() => {
+  //   // Activate listeners and subscribe to events as the component is mounted
 
-    // Clean listeners to unsubscribe all callbacks for these events
-    // before the component is unmounted
-    return () => {
-      socket.off('connect');
-      socket.off('createChatRoom');
-      socket.off('exception');
-      socket.off('createMessage');
-    };
-  }, [socket]);
+
+  //   // Clean listeners to unsubscribe all callbacks for these events
+  //   // before the component is unmounted
+  //   return () => {
+  //     socket.off('connect');
+  //     socket.off('createChatRoom');
+  //     socket.off('exception');
+  //     socket.off('createMessage');
+  //   };
+  // }, [socket]);
 
   // When clicking on the 'new' button to create a new chat room
   const onNewClick = () => {

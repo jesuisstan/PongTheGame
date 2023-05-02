@@ -170,7 +170,7 @@
   margin-left: -35px;
   width: 100%;
   max-width: 100px;
-  overflow: hidden;
+  /* overflow: hidden; */
   text-overflow: ellipsis;
   white-space: nowrap;
 }
