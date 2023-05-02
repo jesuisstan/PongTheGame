@@ -169,10 +169,10 @@ const ChatRoom = (props: ChatRoomProps) => {
     // });
 
     socket.on('changePassword', (roomName: string, isDeleted: boolean) => {
-      if (roomName === props.room.name) {
+      // if (roomName === props.room.name) {
         // const status = isDeleted ? 'deleted' : 'modified';
         // console.log('Password from [' + roomName + '] has been ' + status);
-      }
+      // }
     });
 
     socket.on('joinRoom', (roomName: string, userId: number) => {
