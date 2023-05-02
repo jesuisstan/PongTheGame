@@ -2,25 +2,25 @@ services:
 
 # ---------------------------------------------------------------------------- #
 
-  # frontend:
-  #   container_name: frontend
-  #   build:
-  #     args:
-  #       FRONTEND_URL: ${FRONTEND_URL:?}
-  #       REACT_APP_URL_BACKEND: ${BACKEND_URL:?}
-  #       REACT_APP_MAX_CHATROOM_NBR: ${MAX_CHATROOM_NBR:?}
-  #       REACT_APP_MAX_CHATROOM_MEMBER_NBR: ${MAX_CHATROOM_MEMBER_NBR:?}
-  #   environment:
-  #     FRONTEND_URL: ${FRONTEND_URL:?}
-  #     REACT_APP_URL_BACKEND: ${BACKEND_URL:?}
-  #     REACT_APP_MAX_CHATROOM_NBR: ${MAX_CHATROOM_NBR:?}
-  #     REACT_APP_MAX_CHATROOM_MEMBER_NBR: ${MAX_CHATROOM_MEMBER_NBR:?}
-  #   networks:
-  #     - public
-  #   restart: unless-stopped
-  #   depends_on:
-  #     backend:
-  #       condition: service_healthy
+  frontend:
+    container_name: frontend
+    build:
+      args:
+        FRONTEND_URL: ${FRONTEND_URL:?}
+        REACT_APP_URL_BACKEND: ${BACKEND_URL:?}
+        REACT_APP_MAX_CHATROOM_NBR: ${MAX_CHATROOM_NBR:?}
+        REACT_APP_MAX_CHATROOM_MEMBER_NBR: ${MAX_CHATROOM_MEMBER_NBR:?}
+    environment:
+      FRONTEND_URL: ${FRONTEND_URL:?}
+      REACT_APP_URL_BACKEND: ${BACKEND_URL:?}
+      REACT_APP_MAX_CHATROOM_NBR: ${MAX_CHATROOM_NBR:?}
+      REACT_APP_MAX_CHATROOM_MEMBER_NBR: ${MAX_CHATROOM_MEMBER_NBR:?}
+    networks:
+      - public
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
 
 # ---------------------------------------------------------------------------- #
 
@@ -79,8 +79,8 @@ services:
         condition: service_healthy
       backend:
         condition: service_healthy
-      # frontend:
-      #   condition: service_healthy
+      frontend:
+        condition: service_healthy
 
 # ---------------------------------------------------------------------------- #
 

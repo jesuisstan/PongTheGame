@@ -1,19 +1,19 @@
 services:
-  # frontend:
-  #   build:
-  #     context: ./frontend
-  #     dockerfile: Dockerfile.dev
-  #   ports:
-  #     - "${FRONTEND_PORT:?}:3000"
-  #   volumes:
-  #     - ./frontend:/frontend
-  #     - frontend_node_modules:/frontend/node_modules/
-  #   healthcheck:
-  #     test: curl -fsSL http://localhost:${FRONTEND_PORT:?}/
-  #     interval: 10s
-  #     timeout: 50s
-  #     retries: 40
-  #     start_period: 2s
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    ports:
+      - "${FRONTEND_PORT:?}:3000"
+    volumes:
+      - ./frontend:/frontend
+      - frontend_node_modules:/frontend/node_modules/
+    healthcheck:
+      test: curl -fsSL http://localhost:${FRONTEND_PORT:?}/
+      interval: 10s
+      timeout: 50s
+      retries: 40
+      start_period: 2s
 
   backend:
     build:
