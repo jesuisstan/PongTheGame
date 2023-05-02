@@ -15,8 +15,6 @@ export class LoggerMiddleware implements NestMiddleware {
     const { ip, method, path: url } = request;
     const userAgent = request.get('user-agent') || '';
 
-    this.logger.log('zzzz');
-
     response.on('close', () => {
       const { statusCode } = response;
       const contentLength = response.get('content-length');
@@ -26,7 +24,6 @@ export class LoggerMiddleware implements NestMiddleware {
       );
     });
 
-    response.end();
-    // next();
+    next();
   }
 }

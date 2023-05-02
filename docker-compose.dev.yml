@@ -29,7 +29,7 @@ services:
       - private
       - public
     healthcheck:
-      test: curl -fsSL http://localhost:${BACKEND_PORT:?}/healthcheck
+      test: curl -fsSL http://localhost:3000/healthcheck
       interval: 10s
       timeout: 50s
       retries: 40
