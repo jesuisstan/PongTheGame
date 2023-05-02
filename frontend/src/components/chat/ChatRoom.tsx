@@ -1,4 +1,4 @@
-import { useContext, useRef, useEffect, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { WebSocketContext } from '../../contexts/WebsocketContext';
 import { ArrowBackIosNew } from '@mui/icons-material';
 import {
@@ -10,8 +10,7 @@ import {
   Stack,
   TextField,
   Typography,
-  CircularProgress,
-  autocompleteClasses
+  CircularProgress
 } from '@mui/material';
 // personal components
 import { UserContext } from '../../contexts/UserContext';
@@ -310,13 +309,16 @@ const ChatRoom = (props: ChatRoomProps) => {
       });
     // Reset input field value once sent
     setMessageText('');
-    // Reset scroll position
-    if (msgRef.current) {
-      const msgCur = msgRef.current;
-      if (msgCur.scrollHeight > msgCur.clientHeight)
-        msgCur.scrollTop = msgCur.scrollHeight - msgCur.clientHeight + scrollPosition;
-    }
   };
+  const msgRef = useRef<HTMLDivElement>(null);
+
+  function scrollToBottom() {
+    if (msgRef.current) msgRef.current.scrollTop = msgRef.current.scrollHeight;
+  }
+  // Scroll to bottom of chat box when a new message is sent
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   // When clicking on the 'return' button
   const onReturnClick = async () => {
@@ -326,24 +328,6 @@ const ChatRoom = (props: ChatRoomProps) => {
     });
     props.cleanRoomLoginData();
   };
-
-  const msgRef = useRef<HTMLDivElement>(null);
-  const [scrollPosition, setScrollPosition] = useState<number>(0);
-
-  // useEffect(() => {
-  //   if (msgRef.current) {
-  //     const msgCur = msgRef.current;
-  //     if (msgCur.scrollHeight > msgCur.clientHeight)
-  //       msgCur.scrollTop = msgCur.scrollHeight - msgCur.clientHeight + scrollPosition;
-  //   }
-  // }, [msgRef, messages, scrollPosition]);
-
-  function handleScroll() {
-    if (msgRef.current) {
-      const msgCur = msgRef.current;
-      setScrollPosition(msgCur.scrollTop);
-    }
-  }
 
   /*************************************************************
    * Render HTML response
@@ -379,7 +363,7 @@ const ChatRoom = (props: ChatRoomProps) => {
             {messages.length === 0 ? (
               <div className="black">No Message</div>
             ) : (
-              <Stack className="message-area" spacing={1} ref={msgRef} onScroll={handleScroll}>
+              <Stack className="message-area" spacing={1} ref={msgRef}>
                 {' '}
                 {messages.map((msg, index) => (
                   <div key={index}>
