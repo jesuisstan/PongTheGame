@@ -5,6 +5,6 @@ import { WebsocketsModule } from 'src/websockets/websockets.module';
 
 @Module({
   providers: [ChatGateway, ChatService],
-  imports : [WebsocketsModule]
+  imports: [WebsocketsModule],
 })
 export class ChatModule {}
