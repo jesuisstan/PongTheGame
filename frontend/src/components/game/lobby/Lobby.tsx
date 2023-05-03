@@ -118,7 +118,7 @@ const Lobby = ({
             textTransform="uppercase"
             fontWeight="lg"
           >
-            Statistics
+            Player Vault
           </Typography>
           <Avatar
             src={require('../../../assets/trophy.jpg')}
@@ -129,7 +129,7 @@ const Lobby = ({
           <Typography>Check your results and achievements</Typography>
           <div>
             <ButtonPong
-              text="Stats"
+              text="Proceed"
               title="Go to player profile"
               onClick={() => navigate(`/players/${user.nickname}`)}
               endIcon={<ArrowForwardIosIcon />}
