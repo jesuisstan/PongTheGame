@@ -44,6 +44,10 @@
   height: 42px;
 }
 
+.logo:hover {
+  cursor: pointer
+}
+
 .burger {
   color: whitesmoke;
   font-weight: 500;

@@ -45,8 +45,6 @@ const WarningLoginModal = ({
             <Typography>
               You are not authorised yet.
               <br />
-              Currently, you can browse only Home and Info pages.
-              <br />
               Please login to get access to Chat and Game pages.
             </Typography>
             <div style={MUI.loadButtonBlock}>
