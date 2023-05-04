@@ -26,7 +26,7 @@ const AppRoutes = () => {
         socket.emit('match_spectate_leave');
       }
     }
-  }, [location, socket, user]);
+  }, [location, user]);
 
   return (
     <Routes>
@@ -57,4 +57,3 @@ const AppRoutes = () => {
 };
 
 export default AppRoutes;
-// THe only problem i just need to know if the player is on game
