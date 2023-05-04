@@ -26,6 +26,7 @@ const Profile = () => {
   const [modalNicknameOpen, setModalNicknameOpen] = useState(false);
   const [modalAvatarOpen, setModalAvatarOpen] = useState(false);
   const [modal2faOpen, setModal2faOpen] = useState(false);
+  const [qrCodeUrl, setQrCodeUrl] = useState('');
   const [matchHistory, setMatchHistory] = useState<MatchHistory>({
     played: '-',
     wins: '-',
@@ -35,7 +36,10 @@ const Profile = () => {
   const toggleTfa = () => {
     if (user.totpSecret?.verified) {
       return backendAPI.delete('/auth/totp').then(
-        (response) => setUser(response.data),
+        (response) => {
+          setUser(response.data);
+          setQrCodeUrl('');
+        },
         (error) => errorAlert('Something went wrong')
       );
     } else setModal2faOpen(true);
@@ -131,7 +135,12 @@ const Profile = () => {
                 startIcon={<SecurityIcon />}
                 onClick={toggleTfa}
               />
-              <Enable2fa open={modal2faOpen} setOpen={setModal2faOpen} />
+              <Enable2fa
+                open={modal2faOpen}
+                setOpen={setModal2faOpen}
+                qrCodeUrl={qrCodeUrl}
+                setQrCodeUrl={setQrCodeUrl}
+              />
             </div>
           </div>
         </div>
