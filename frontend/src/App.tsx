@@ -58,20 +58,25 @@ const App = () => {
   });
 
   useEffect(() => {
-    backendAPI.get('/auth/getuser').then(
-      (response) => {
-        setUser(response.data);
-      },
-      (error) => {
-        if (error.response?.status === 400) {
-          setOpenVerify2fa(true);
-        } else if (error.response?.status === 401) {
-          setOpenWarningLogin(true);
-        } else {
-          errorAlert('Something went wrong while logging in');
+    if (localStorage.getItem('logStatus')) {
+      backendAPI.get('/auth/getuser').then(
+        (response) => {
+          setUser(response.data);
+          localStorage.setItem('logStatus', 'true');
+        },
+        (error) => {
+          if (error.response?.status === 400) {
+            setOpenVerify2fa(true);
+          } else if (error.response?.status === 401) {
+            localStorage.removeItem('logStatus');
+            setOpenWarningLogin(true);
+          } else {
+            localStorage.removeItem('logStatus');
+            errorAlert('Something went wrong while logging in');
+          }
         }
-      }
-    );
+      );
+    }
   }, []);
 
   useEffect(() => {

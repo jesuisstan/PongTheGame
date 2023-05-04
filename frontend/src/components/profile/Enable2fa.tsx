@@ -20,18 +20,22 @@ import styles from './styles/Profile.module.css';
 
 const Enable2fa = ({
   open,
-  setOpen
+  setOpen,
+  qrCodeUrl,
+  setQrCodeUrl
 }: {
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
+  qrCodeUrl: string;
+  setQrCodeUrl: Dispatch<SetStateAction<string>>;
 }) => {
   const { setUser } = useContext(UserContext);
   const [loadSubmit, setLoadSubmit] = useState(false);
   const [loadCreateQr, setLoadCreateQr] = useState(false);
   const [buttonText, setButtonText] = useState('Submit');
-  const [qrCodeUrl, setQrCodeUrl] = useState('');
   const [text, setText] = useState('');
   const [error, setError] = useState('');
+  const [disabled, setDisabled] = useState(true);
 
   const createQRcode = () => {
     return backendAPI.post('/auth/totp').then(
@@ -46,6 +50,7 @@ const Enable2fa = ({
     setLoadCreateQr(true);
     await createQRcode();
     setLoadCreateQr(false);
+    setDisabled(false);
   };
 
   const handleTextInput = (event: any) => {
@@ -72,20 +77,23 @@ const Enable2fa = ({
   };
 
   const submitCode = async () => {
-    return backendAPI.post('/auth/totp/activate', { token: text }).then(
-      (response) => {
-        verifyCurrentUser();
-        setButtonText('Done ✔️');
-      },
-      (error) => {
-        setButtonText('Failed ❌');
-        if (error?.response?.status === 400) {
-          setTimeout(() => errorAlert('Invalid code'), 500);
-        } else {
-          setTimeout(() => errorAlert('Something went wrong'), 500);
+    if (!disabled) {
+      return backendAPI.post('/auth/totp/activate', { token: text }).then(
+        (response) => {
+          verifyCurrentUser();
+          setButtonText('Done ✔️');
+          setDisabled(true);
+        },
+        (error) => {
+          setButtonText('Failed ❌');
+          if (error?.response?.status === 400) {
+            setTimeout(() => errorAlert('Invalid code'), 500);
+          } else {
+            setTimeout(() => errorAlert('Something went wrong'), 500);
+          }
         }
-      }
-    );
+      );
+    }
   };
 
   const handleSubmit = async (event: any) => {
@@ -105,7 +113,9 @@ const Enable2fa = ({
         sx={{ color: 'black' }}
         open={open}
         onClose={(event, reason) => {
-          if (event && reason === 'closeClick') setOpen(false);
+          if (event && reason === 'closeClick') {
+            setOpen(false);
+          }
         }}
       >
         <ModalDialog
@@ -170,7 +180,10 @@ const Enable2fa = ({
                 </Typography>
               </Stack>
               <div>
-                <Typography component="h3" sx={{ color: color.PONG_BLUE, textAlign: 'center' }}>
+                <Typography
+                  component="h3"
+                  sx={{ color: color.PONG_BLUE, textAlign: 'center' }}
+                >
                   Scan QR Code:
                 </Typography>
                 <div className={styles.QRbox}>
@@ -184,7 +197,7 @@ const Enable2fa = ({
                         onClick={showQRcode}
                         sx={{ minWidth: 142 }}
                       >
-                        Show QR Code
+                        Create QR Code
                       </LoadingButton>
                     </div>
                   ) : (
@@ -193,7 +206,10 @@ const Enable2fa = ({
                 </div>
               </div>
               <div>
-                <Typography component="h3" sx={{ color: color.PONG_BLUE, textAlign: 'center' }}>
+                <Typography
+                  component="h3"
+                  sx={{ color: color.PONG_BLUE, textAlign: 'center' }}
+                >
                   Verify Code:
                 </Typography>
               </div>
@@ -217,6 +233,7 @@ const Enable2fa = ({
               </div>
               <div style={MUI.loadButtonBlock}>
                 <LoadingButton
+                  disabled={disabled}
                   type="submit"
                   loading={loadSubmit}
                   startIcon={<SaveIcon />}

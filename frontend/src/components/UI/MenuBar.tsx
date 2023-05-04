@@ -44,6 +44,7 @@ const MenuBar = () => {
 
   const authenticate = () => {
     if (user.provider) {
+      localStorage.removeItem('logStatus')
       window.location.href = URL_LOGOUT;
     } else {
       handleCloseUserMenu('/login');

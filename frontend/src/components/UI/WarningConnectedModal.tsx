@@ -20,6 +20,7 @@ const WarningConnectedModal = ({
 
   const handleLogoutClick = (): void => {
     setLoad(true);
+    localStorage.removeItem('logStatus');
     window.location.href = URL_LOGOUT;
   };
 
@@ -39,7 +40,7 @@ const WarningConnectedModal = ({
             </Typography>
 
             <Typography>
-              If this notification persists, logout* to remove it.
+              If this notification persists, relogin* to remove it.
             </Typography>
             <div style={MUI.loadButtonBlock}>
               <LoadingButton
@@ -52,7 +53,7 @@ const WarningConnectedModal = ({
                 onClick={handleLogoutClick}
                 sx={{ minWidth: 142 }}
               >
-                Logout
+                Relogin
               </LoadingButton>
             </div>
           </Box>
