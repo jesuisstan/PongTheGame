@@ -23,8 +23,16 @@ const Pong = (props: GameProps) => {
   const onKeyPress = (event: KeyboardEvent) => {
     keyHandler(event, 'press');
   };
-  const onKeyReleaseRef = useRef(onKeyRelease);
-  const onKeyPressRef = useRef(onKeyPress);
+
+  useEffect(() => {
+    window.addEventListener('keydown', onKeyPress);
+    window.addEventListener('keyup', onKeyRelease);
+
+    return () => {
+      window.removeEventListener('keydown', onKeyPress);
+      window.removeEventListener('keyup', onKeyRelease);
+    };
+  }, []);
 
   const keyHandler = (event: KeyboardEvent, action: string) => {
     switch (event.key) {
@@ -60,9 +68,6 @@ const Pong = (props: GameProps) => {
     }
     drawState(args, canvasRef);
   };
-
-  window.addEventListener('keydown', onKeyPressRef.current);
-  window.addEventListener('keyup', onKeyReleaseRef.current);
 
   useEffect(() => {
     const intervalId = setInterval(() => {

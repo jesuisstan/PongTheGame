@@ -58,6 +58,7 @@ const WarningTokenModal = ({
   };
 
   const logout = () => {
+    localStorage.removeItem('logStatus');
     if (user.provider) {
       window.location.href = URL_LOGOUT;
     }

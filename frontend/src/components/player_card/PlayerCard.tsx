@@ -58,7 +58,7 @@ const PlayerCard = () => {
   ) : (
     <div className={styles.basicCard}>
       <div className={styles.header}>
-        <h5>Player statistics</h5>
+        <h5>Player Vault</h5>
       </div>
       <div className={styles.playerCard}>
         <InfoBlock player={player} />

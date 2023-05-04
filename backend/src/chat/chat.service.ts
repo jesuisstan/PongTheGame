@@ -5,10 +5,14 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
 import { Member } from './entities/chat.entity';
 import { User } from '@prisma/client';
+import { WebsocketsService } from 'src/websockets/websockets.service';
 
 @Injectable()
 export class ChatService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly websocket: WebsocketsService,
+  ) {}
 
   async identify(
     roomName: string,
@@ -96,6 +100,33 @@ export class ChatService {
           chatRoomName: roomName,
         },
       });
+      const test = await this.prisma.chatRoom.findUnique({
+        where: {
+          name: roomName,
+        },
+        select: {
+          members: {
+            select: {
+              memberId: true,
+            },
+            where: {
+              member: {
+                status: 'ONLINE',
+              },
+            },
+          },
+        },
+      });
+      if (!test) return;
+      for (let i = 0; i < test.members.length; i++) {
+        const socket: any = this.websocket.getSockets([
+          test.members[i].memberId,
+        ]);
+        console.log(
+          socket[0].user.nickname + ' ' + socket[0].user.status + ' ' + i,
+        );
+        if (socket) this.websocket.send(socket[0], 'messageEvent', msg);
+      }
     } else throw new WsException({ msg: 'createMessage: unknown room name!' });
   }
 

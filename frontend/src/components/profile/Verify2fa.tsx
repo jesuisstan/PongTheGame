@@ -59,6 +59,7 @@ const Verify2fa = ({
         setButtonText('Done ✔️');
         setText('');
         setError('');
+        localStorage.setItem('logStatus', 'true');
         setTimeout(() => {
           setOpen(false);
           setButtonText('Submit');
@@ -87,6 +88,7 @@ const Verify2fa = ({
         open={open}
         onClose={(event, reason) => {
           if (event && reason === 'closeClick') {
+            localStorage.removeItem('logStatus');
             setOpen(false);
           }
         }}

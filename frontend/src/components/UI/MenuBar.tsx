@@ -45,6 +45,7 @@ const MenuBar = () => {
 
   const authenticate = () => {
     if (user.provider) {
+      localStorage.removeItem('logStatus')
       window.location.href = URL_LOGOUT;
     } else {
       handleCloseUserMenu('/login');
@@ -89,7 +90,7 @@ const MenuBar = () => {
                 disabled={user.provider ? false : true}
                 onClick={() => handleCloseUserMenu(`/players/${user.nickname}`)}
               >
-                Statistics
+                Vault
               </MenuItem>
               <MenuItem onClick={() => authenticate()}>
                 {user.provider ? 'Logout' : 'Login'}
@@ -113,9 +114,6 @@ const MenuBar = () => {
               <Button variant="text">
                 <NavLink to="game">Game</NavLink>
               </Button>
-              <Button variant="text">
-                <NavLink to="about">Info</NavLink>
-              </Button>
             </>
           )}
         </div>
@@ -124,6 +122,7 @@ const MenuBar = () => {
             src={require('../../assets/gameLogo.png')}
             alt=""
             className={styles.logo}
+            onClick={() => navigate('/about')}
           />
         </div>
       </nav>
@@ -144,7 +143,7 @@ const MenuBar = () => {
             <ListItemText primary="Game" sx={MUI.burgerItem} />
           </ListItem>
           <ListItem onClick={() => navigate('/about')}>
-            <ListItemText primary="Info" sx={MUI.burgerItem} />
+            <ListItemText primary="About" sx={MUI.burgerItem} />
           </ListItem>
         </List>
       </Drawer>

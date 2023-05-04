@@ -21,13 +21,12 @@ import {
 export const Default_params = {
   GAME_WIDTH: 800,
   GAME_HEIGHT: 600,
-  PADDLE_MOVE_SPEED: 3,
+  PADDLE_MOVE_SPEED: 2,
   PADDLE_OFFSET: 20,
   PADDLE_BORDER: 1,
   PADDLE_HEIGHT: 600 / 6,
   PADDLE_WIDTH: 5,
   BALL_RADIUS: 10,
-  // BALL_DEFAULT_SPEED: 10,
   BALL_DEFAULT_SPEED: 2,
   BALL_SPEED_INCREASE: 0.3,
   BALL_MAX_SPEED: 3.5,
@@ -216,7 +215,10 @@ export class Game {
     const targetY =
       this.game_state.ball.position.y - Default_params.PADDLE_HEIGHT / 2;
     const dy = targetY - paddle2YCenter;
-    const paddleSpeed = dy * speedMultiplier;
+    let paddleSpeed = dy * speedMultiplier;
+
+    // Limit paddle speed to a maximum of 4
+    paddleSpeed = Math.min(paddleSpeed, Default_params.PADDLE_MOVE_SPEED);
 
     this.game_state.player2.paddle.y += paddleSpeed;
 
