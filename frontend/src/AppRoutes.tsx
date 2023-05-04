@@ -26,7 +26,7 @@ const AppRoutes = () => {
         socket.emit('match_spectate_leave');
       }
     }
-  }, [location, socket, user]);
+  }, [location, user]);
 
   return (
     <Routes>
