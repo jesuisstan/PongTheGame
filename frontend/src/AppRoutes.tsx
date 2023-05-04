@@ -57,4 +57,3 @@ const AppRoutes = () => {
 };
 
 export default AppRoutes;
-// THe only problem i just need to know if the player is on game
