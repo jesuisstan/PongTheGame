@@ -73,7 +73,7 @@ const FriendsBlock = ({ socketEvent }: { socketEvent: number }) => {
             gap: '21px'
           }}
         >
-          {friendsList.length ? (
+          {friendsList?.length ? (
             friendsList.map((item) => (
               <div
                 className={styles.friendLine}

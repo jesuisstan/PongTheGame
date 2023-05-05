@@ -132,6 +132,7 @@ const InfoBlock = ({ player }: { player: PlayerProfile }) => {
     if (isFriendOfUser) {
       backendAPI.patch(`/friend/remove/${player.id}`).then(
         (response) => {
+          console.log(response)
           setIsFriendOfUser(false);
         },
         (error) => {
