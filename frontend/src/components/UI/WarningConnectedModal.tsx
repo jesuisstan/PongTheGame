@@ -60,16 +60,6 @@ const WarningConnectedModal = ({
               </LoadingButton>
             </div>
           </Box>
-          {/*<Typography
-            sx={{
-              textAlign: 'left',
-              fontSize: '14px',
-              paddingTop: '15px',
-              wordWrap: 'break-word'
-            }}
-          >
-            * this will end the session in current browser
-          </Typography>*/}
         </ModalDialog>
       </Modal>
     </div>
