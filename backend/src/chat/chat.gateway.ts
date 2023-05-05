@@ -39,10 +39,8 @@ export class ChatGateway {
     // Create a message object using the create method from chat.service,
     // but only if the user hasn't been muted
     if (msg) {
-      if (
-        msg.author.id &&
-        (await this.chatService.isUserMuted(roomName, msg.author.id)) === false
-      )
+      if (msg.author.id &&
+        (await this.chatService.isUserMuted(roomName, msg.author.id)) === false)
         await this.chatService.createMessage(roomName, msg);
       console.log('message emitted: ' + Object.entries(msg));
       client.broadcast.emit('createMessage');
@@ -222,9 +220,7 @@ export class ChatGateway {
     @MessageBody('off') off: boolean,
   ): Promise<void> {
     // First, check if the user has the admin rights
-    if (
-      (await this.chatService.hasUserPriv(roomName, userId, target)) === false
-    )
+    if (await this.chatService.hasUserPriv(roomName, userId, target) === false)
       throw new WsException({
         msg: "toggleMemberMode: user doesn't have enough privileges!",
       });
@@ -255,9 +251,7 @@ export class ChatGateway {
   ): Promise<void> {
     const event: string = (off ? 'un' : '') + 'banUser';
     // First, check if the user has the admin rights
-    if (
-      (await this.chatService.hasUserPriv(roomName, userId, target)) === false
-    )
+    if (await this.chatService.hasUserPriv(roomName, userId, target) === false)
       throw new WsException({
         msg: event + ": user doesn't have enough privileges!!",
       });
@@ -275,9 +269,7 @@ export class ChatGateway {
     @MessageBody('target') target: number,
   ): Promise<void> {
     // First, check if the user has the admin rights
-    if (
-      (await this.chatService.hasUserPriv(roomName, userId, target)) === false
-    )
+    if (await this.chatService.hasUserPriv(roomName, userId, target) === false)
       throw new WsException({
         msg: "kickUser: user doesn't have enough privileges!!",
       });
@@ -295,7 +287,9 @@ export class ChatGateway {
   }
 
   @SubscribeMessage('findBlockedBy')
-  findBlockedBy(@MessageBody('userId') userId: number): Promise<User[] | null> {
+  findBlockedBy(
+    @MessageBody('userId') userId: number,
+  ): Promise<User[] | null> {
     return this.chatService.findBlockedBy(userId);
   }
 }
