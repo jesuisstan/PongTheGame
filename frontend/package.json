@@ -38,6 +38,7 @@
   },
   "scripts": {
     "lint": "eslint \"{src,api,assets,components,pages,profile,UI}/**/*.tsx\" --fix",
+    "lint:check": "eslint \"{src,api,assets,components,pages,profile,UI}/**/*.tsx\"",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
