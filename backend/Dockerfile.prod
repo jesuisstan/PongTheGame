@@ -24,5 +24,7 @@ RUN \
 ENTRYPOINT \
 	# migrate the database schema if changed
 	yarn prisma migrate deploy && \
+	# seed the database
+	yarn prisma db seed && \
 	# start the app in production mode
 	yarn start:prod
