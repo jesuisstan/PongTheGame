@@ -76,7 +76,6 @@ const UserMenu = (props: UserMenuProps) => {
             setUser(res);
           }
         );
-		console.log('UserId: ' + target + ' has been blocked!');
       } catch (err) {
         errorAlert(String(err));
       }
@@ -101,7 +100,6 @@ const UserMenu = (props: UserMenuProps) => {
                 setUser(res);
               }
             );
-			console.log('UserId: ' + target + ' has been unblocked!');
           }
         }
       } catch (err) {

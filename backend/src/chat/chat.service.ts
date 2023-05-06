@@ -137,7 +137,6 @@ export class ChatService {
           bannedUsers: {},
         },
       });
-      console.log('created room: ' + Object.entries(r));
       // If it is a private conversation
       if (user2Id) {
         user.avatar &&

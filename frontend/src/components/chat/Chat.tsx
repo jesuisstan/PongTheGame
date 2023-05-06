@@ -112,10 +112,8 @@ const Chat = () => {
   };
 
   socket.on('connect', () => {
-    // console.log('Connected to websocket')
   });
   socket.on('createChatRoom', (roomName: string) => {
-    // console.log('Created new chat room [' + roomName + ']');
   });
   socket.on('exception', (res) => {
     errorAlert(String(res.msg));
@@ -126,16 +124,12 @@ const Chat = () => {
    **************************************************************/
   useEffect(() => {
     // Activate listeners and subscribe to events as the component is mounted
-    socket.on('connect', () => console.log('Connected to websocket'));
-    socket.on('createChatRoom', (roomName: string) => {
-      console.log('Created new chat room [' + roomName + ']');
-    });
+    socket.on('connect', () => {});
+    socket.on('createChatRoom', (roomName: string) => {});
     socket.on('exception', (res) => {
       console.error('ERROR: ' + res.msg);
     });
-    socket.on('createMessage', () => {
-      console.log("Received new message!")
-    })
+    socket.on('createMessage', () => {})
 
     // Clean listeners to unsubscribe all callbacks for these events
     // before the component is unmounted
@@ -258,7 +252,6 @@ const Chat = () => {
     setIsPasswordRight(false);
   };
 
-  console.log("chat render");
   /*************************************************************
    * Render HTML response
    **************************************************************/

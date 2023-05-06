@@ -143,42 +143,32 @@ const ChatRoom = (props: ChatRoomProps) => {
     socket.on('changePassword', (roomName: string, isDeleted: boolean) => {
       if (roomName === props.room.name) {
         const status = isDeleted ? 'deleted' : 'modified';
-        // console.log('Password from [' + roomName + '] has been ' + status);
       }
     });
     socket.on('joinRoom', (roomName: string, userId: number) => {
-      // if (roomName === props.room.name) console.log('user ID: ' + userId + ' joined chatroom [' + roomName + ']');
     });
     socket.on('quitRoom', (roomName: string, userId: number) => {
       if (userId === user.id && roomName === props.room.name) {
         props.cleanRoomLoginData();
-        // console.log('user ID: ' + userId + ' quit room [' + roomName + ']');
       }
     });
     socket.on('kickUser', (roomName: string, target: number) => {
-      // if (roomName === props.room.name) console.log(target + ' has been kicked!');
       if (target === user.id) props.cleanRoomLoginData();
     });
     // User has made admin
     socket.on('adminUser', (roomName: string, target: number) => {
-      // if (roomName === props.room.name) console.log(target + ' is admin now!');
     });
     // User is not admin anymore
     socket.on('unadminUser', (roomName: string, target: number) => {
-      // if (roomName === props.room.name) console.log('user ID: ' + target + ' is not admin anymore now!');
     });
     socket.on('banUser', (roomName: string, target: number) => {
-      // if (roomName === props.room.name) console.log(target + ' has been banned!');
       if (target === user.id) props.cleanRoomLoginData();
     });
     socket.on('unbanUser', (roomName: string, target: number) => {
-      // if (roomName === props.room.name) console.log(target + ' has been unbanned!');
     });
     socket.on('muteUser', (roomName: string, target: number) => {
-      // if (roomName === props.room.name) console.log(target + ' has been muted!');
     });
     socket.on('unmuteUser', (roomName: string, target: number) => {
-      // if (roomName === props.room.name) console.log(target + ' has been unmuted!');
     });
 
 	/*************************************************************
@@ -194,53 +184,16 @@ const ChatRoom = (props: ChatRoomProps) => {
 					: setTypingDisplay('');
 			}
 		);
-		socket.on('changePassword', (roomName: string, isDeleted: boolean) => {
-			if (roomName === props.room.name) {
-				const status = isDeleted ? 'deleted' : 'modified';
-				console.log('Password from [' + roomName + '] has been ' + status);
-			}
-		});
-		socket.on('joinRoom', (roomName: string, userId: number) => {
-			if (roomName === props.room.name)
-				console.log(
-					'user ID: ' + userId + ' joined chatroom [' + roomName + ']'
-				);
-		});
-		socket.on('quitRoom', (roomName: string, userId: number) => {
-			if (userId === user.id && roomName === props.room.name) {
-				props.cleanRoomLoginData();
-				console.log('user ID: ' + userId + ' quit room [' + roomName + ']');
-			}
-		});
-		socket.on('kickUser', (roomName: string, target: number) => {
-			if (roomName === props.room.name)
-				console.log(target + ' has been kicked!');
-			if (target === user.id) props.cleanRoomLoginData();
-		});
-		socket.on('adminUser', (roomName: string, target: number) => {
-			if (roomName === props.room.name) console.log(target + ' is admin now!');
-		});
-		socket.on('unadminUser', (roomName: string, target: number) => {
-			if (roomName === props.room.name)
-				console.log('user ID: ' + target + ' is not admin anymore now!');
-		});
-		socket.on('banUser', (roomName: string, target: number) => {
-			if (roomName === props.room.name)
-				console.log(target + ' has been banned!');
-			if (target === user.id) props.cleanRoomLoginData();
-		});
-		socket.on('unbanUser', (roomName: string, target: number) => {
-			if (roomName === props.room.name)
-				console.log(target + ' has been unbanned!');
-		});
-		socket.on('muteUser', (roomName: string, target: number) => {
-			if (roomName === props.room.name)
-				console.log(target + ' has been muted!');
-		});
-		socket.on('unmuteUser', (roomName: string, target: number) => {
-			if (roomName === props.room.name)
-				console.log(target + ' has been unmuted!');
-		});
+		socket.on('changePassword', (roomName: string, isDeleted: boolean) => {});
+		socket.on('joinRoom', (roomName: string, userId: number) => {});
+		socket.on('quitRoom', (roomName: string, userId: number) => { if (userId === user.id && roomName === props.room.name) props.cleanRoomLoginData();	});
+		socket.on('kickUser', (roomName: string, target: number) => { if (target === user.id) props.cleanRoomLoginData(); });
+		socket.on('adminUser', (roomName: string, target: number) => {});
+		socket.on('unadminUser', (roomName: string, target: number) => {});
+		socket.on('banUser', (roomName: string, target: number) => { if (target === user.id) props.cleanRoomLoginData();});
+		socket.on('unbanUser', (roomName: string, target: number) => {});
+		socket.on('muteUser', (roomName: string, target: number) => {});
+		socket.on('unmuteUser', (roomName: string, target: number) => {});
 
 		// Clean listeners to unsubscribe all callbacks for these events
 		// before the component is unmounted

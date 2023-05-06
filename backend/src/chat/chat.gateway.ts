@@ -44,7 +44,6 @@ export class ChatGateway {
         (await this.chatService.isUserMuted(roomName, msg.author.id)) === false
       )
         await this.chatService.createMessage(roomName, msg);
-      console.log('message emitted: ' + Object.entries(msg));
       client.broadcast.emit('createMessage');
     } else throw new WsException({ msg: 'createMessage: message is empty!' });
   }
@@ -96,11 +95,8 @@ export class ChatGateway {
     if (user2Id) room.modes = 'i';
     // Create a chat room and set user as admin
     await this.chatService.createChatRoom(room, user1, avatar, user2Id);
-    if (!user2Id) {
-      console.log('chatRoom emitted: ' + Object.entries(room));
-      // Broadcast newly created room name to all users
-      this.server.emit('createChatRoom', room.name);
-    }
+    // Broadcast newly created room name to all users
+    if (!user2Id) { this.server.emit('createChatRoom', room.name); }
     return 0;
   }
 
