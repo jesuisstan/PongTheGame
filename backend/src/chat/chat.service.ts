@@ -125,7 +125,7 @@ export class ChatService {
         ? await this.generateHash(room.password)
         : '';
       // Save room to the database
-      const r = await this.prisma.chatRoom.create({
+      await this.prisma.chatRoom.create({
         data: {
           name: room.name,
           owner: user.id,
@@ -404,7 +404,7 @@ export class ChatService {
         },
       });
     }
-    const u = await this.prisma.user.findUnique({
+    await this.prisma.user.findUnique({
       where: { id: userId },
       include: { blockedUsers: true, blockedBy: true },
     });

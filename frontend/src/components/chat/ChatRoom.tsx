@@ -140,13 +140,8 @@ const ChatRoom = (props: ChatRoomProps) => {
         ? setTypingDisplay(nick + ' is typing...')
         : setTypingDisplay('');
     });
-    socket.on('changePassword', (roomName: string, isDeleted: boolean) => {
-      if (roomName === props.room.name) {
-        const status = isDeleted ? 'deleted' : 'modified';
-      }
-    });
-    socket.on('joinRoom', (roomName: string, userId: number) => {
-    });
+    socket.on('changePassword', (roomName: string, isDeleted: boolean) => { });
+    socket.on('joinRoom', (roomName: string, userId: number) => {});
     socket.on('quitRoom', (roomName: string, userId: number) => {
       if (userId === user.id && roomName === props.room.name) {
         props.cleanRoomLoginData();
@@ -156,20 +151,15 @@ const ChatRoom = (props: ChatRoomProps) => {
       if (target === user.id) props.cleanRoomLoginData();
     });
     // User has made admin
-    socket.on('adminUser', (roomName: string, target: number) => {
-    });
+    socket.on('adminUser', (roomName: string, target: number) => {});
     // User is not admin anymore
-    socket.on('unadminUser', (roomName: string, target: number) => {
-    });
+    socket.on('unadminUser', (roomName: string, target: number) => {});
     socket.on('banUser', (roomName: string, target: number) => {
       if (target === user.id) props.cleanRoomLoginData();
     });
-    socket.on('unbanUser', (roomName: string, target: number) => {
-    });
-    socket.on('muteUser', (roomName: string, target: number) => {
-    });
-    socket.on('unmuteUser', (roomName: string, target: number) => {
-    });
+    socket.on('unbanUser', (roomName: string, target: number) => {});
+    socket.on('muteUser', (roomName: string, target: number) => {});
+    socket.on('unmuteUser', (roomName: string, target: number) => {});
 
 	/*************************************************************
 	* Event listeners

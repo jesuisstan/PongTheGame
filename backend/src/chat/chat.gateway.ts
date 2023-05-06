@@ -96,7 +96,9 @@ export class ChatGateway {
     // Create a chat room and set user as admin
     await this.chatService.createChatRoom(room, user1, avatar, user2Id);
     // Broadcast newly created room name to all users
-    if (!user2Id) { this.server.emit('createChatRoom', room.name); }
+    if (!user2Id) {
+      this.server.emit('createChatRoom', room.name);
+    }
     return 0;
   }
 
