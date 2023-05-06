@@ -180,7 +180,12 @@ const Chat = () => {
   };
   // Handle value changes of the input fields during new chatroom creatmessagesToFiltere mode
   const onValueChange = (type: string, value: string) => {
-    if (type === 'name') setNewChatRoomName(value);
+    if (type === 'name') {
+      if (value.match(/^[A-Za-z0-9_-]*$/))
+        setNewChatRoomName(value);
+      else
+        errorAlert("Allowed characters: A-Z _ a-z - 0-9");
+    }
     if (type === 'password') setChatRoomPassword(value);
   };
   // When clicking on a room name to join it

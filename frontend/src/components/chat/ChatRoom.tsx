@@ -247,7 +247,7 @@ const ChatRoom = (props: ChatRoomProps) => {
         roomName: props.room.name,
         message: {
           author: user,
-          data: messageText,
+          data: messageText.trim(),
           timestamp: new Date()
         }
       });
@@ -362,7 +362,7 @@ const ChatRoom = (props: ChatRoomProps) => {
                   multiline={false}
                   onChange={(e: any) => onTyping(e.target.value)}
                   onKeyPress={(ev) => {
-                    if (ev.key === 'Enter') {
+                    if (ev.key === 'Enter'  && messageText.trim().length > 0) {
                       onFormSubmit(ev);
                     }
                   }}
