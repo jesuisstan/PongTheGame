@@ -6,11 +6,6 @@ import { NextFunction, Request, Response } from 'express';
 export class LoggerMiddleware implements NestMiddleware {
   private readonly logger = new Logger('HTTP');
 
-  constructor() {
-    this.logger.error('nique nestjs');
-    console.log('JSP');
-  }
-
   use(request: Request, response: Response, next: NextFunction): void {
     const { ip, method, path: url } = request;
     const userAgent = request.get('user-agent') || '';
