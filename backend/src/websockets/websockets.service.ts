@@ -64,7 +64,6 @@ export class WebsocketsService {
       this.sockets.push(socket);
       this.game.send_all_invitation(socket);
     } catch (e) {
-      console.log(e); // Triger with expiration NORMAL
       this.send(socket, 'error_socket', {
         message: 'Server got a problem need to be relog',
       });

@@ -5,14 +5,10 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
 import { Member } from './entities/chat.entity';
 import { User } from '@prisma/client';
-import { WebsocketsService } from 'src/websockets/websockets.service';
 
 @Injectable()
 export class ChatService {
-  constructor(
-    private readonly prisma: PrismaService,
-    private readonly websocket: WebsocketsService,
-  ) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   async identify(
     roomName: string,
@@ -100,33 +96,6 @@ export class ChatService {
           chatRoomName: roomName,
         },
       });
-      const test = await this.prisma.chatRoom.findUnique({
-        where: {
-          name: roomName,
-        },
-        select: {
-          members: {
-            select: {
-              memberId: true,
-            },
-            where: {
-              member: {
-                status: 'ONLINE',
-              },
-            },
-          },
-        },
-      });
-      if (!test) return;
-      for (let i = 0; i < test.members.length; i++) {
-        const socket: any = this.websocket.getSockets([
-          test.members[i].memberId,
-        ]);
-        console.log(
-          socket[0].user.nickname + ' ' + socket[0].user.status + ' ' + i,
-        );
-        if (socket) this.websocket.send(socket[0], 'messageEvent', msg);
-      }
     } else throw new WsException({ msg: 'createMessage: unknown room name!' });
   }
 
@@ -156,7 +125,7 @@ export class ChatService {
         ? await this.generateHash(room.password)
         : '';
       // Save room to the database
-      const r = await this.prisma.chatRoom.create({
+      await this.prisma.chatRoom.create({
         data: {
           name: room.name,
           owner: user.id,
@@ -168,7 +137,6 @@ export class ChatService {
           bannedUsers: {},
         },
       });
-      console.log('created room: ' + Object.entries(r));
       // If it is a private conversation
       if (user2Id) {
         user.avatar &&
@@ -436,7 +404,7 @@ export class ChatService {
         },
       });
     }
-    const u = await this.prisma.user.findUnique({
+    await this.prisma.user.findUnique({
       where: { id: userId },
       include: { blockedUsers: true, blockedBy: true },
     });

@@ -161,13 +161,13 @@ Enum MatchState {
   Finished
 }
 
-Ref: Statistique.userId > User.id
+Ref: Statistique.userId > User.id [delete: Cascade]
 
-Ref: TotpSecret.userId - User.id
+Ref: TotpSecret.userId - User.id [delete: Cascade]
 
-Ref: UserAchivement.userId > User.id
+Ref: UserAchivement.userId > User.id [delete: Cascade]
 
-Ref: UserAchivement.achievementId > Achievements.id
+Ref: UserAchivement.achievementId > Achievements.id [delete: Cascade]
 
 Ref: MatchEntry.userId > User.id [delete: Cascade]
 

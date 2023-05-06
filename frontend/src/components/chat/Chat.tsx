@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import * as React from 'react';
 import {
   Box,
@@ -45,6 +45,7 @@ import * as color from '../UI/colorsPong';
 **************************************************************/
 
 const Chat = () => {
+
   /*************************************************************
    * States
    **************************************************************/
@@ -54,7 +55,6 @@ const Chat = () => {
   const { user } = useContext(UserContext);
   // Array including all chat rooms
   const [chatRooms, setChatRooms] = useState<ChatRoomType[]>([]);
-  const [socketEvent, setSocketEvent] = useState(0);
 
   // Create chat room
   const [chatRoomCreateMode, setChatRoomCreateMode] = useState<boolean>(false);
@@ -73,11 +73,6 @@ const Chat = () => {
       setChatRooms(response);
     });
   };
-
-  // useEffect(() => {
-    
-  // }, [socketEvent]);
-  
   findAllChatRooms();
 
   const [open, setOpen] = useState<boolean>(false);
@@ -116,45 +111,35 @@ const Chat = () => {
     errorAlert('Password cannot be empty');
   };
 
-  //socket.on('connect', () => {
-  //  // console.log('Connected to websocket')
-  //});
-  //socket.on('createChatRoom', (roomName: string) => {
-  //  // console.log('Created new chat room [' + roomName + ']');
-  //});
-  //socket.on('exception', (res) => {
-  //  errorAlert(String(res.msg));
-  //});
-
   socket.on('connect', () => {
-    //console.log('Connected to websocket');
   });
   socket.on('createChatRoom', (roomName: string) => {
-    setSocketEvent((prev) => prev + 1);
   });
   socket.on('exception', (res) => {
     errorAlert(String(res.msg));
-  });
-  socket.on('createMessage', () => {
-    //console.log('Received new message!');
   });
 
   /*************************************************************
    * Event listeners
    **************************************************************/
-  // useEffect(() => {
-  //   // Activate listeners and subscribe to events as the component is mounted
+  useEffect(() => {
+    // Activate listeners and subscribe to events as the component is mounted
+    socket.on('connect', () => {});
+    socket.on('createChatRoom', (roomName: string) => {});
+    socket.on('exception', (res) => {
+      console.error('ERROR: ' + res.msg);
+    });
+    socket.on('createMessage', () => {})
 
-
-  //   // Clean listeners to unsubscribe all callbacks for these events
-  //   // before the component is unmounted
-  //   return () => {
-  //     socket.off('connect');
-  //     socket.off('createChatRoom');
-  //     socket.off('exception');
-  //     socket.off('createMessage');
-  //   };
-  // }, [socket]);
+    // Clean listeners to unsubscribe all callbacks for these events
+    // before the component is unmounted
+    return () => {
+      socket.off('connect');
+      socket.off('createChatRoom');
+      socket.off('exception');
+      socket.off('createMessage');
+    };
+  }, [socket]);
 
   // When clicking on the 'new' button to create a new chat room
   const onNewClick = () => {
@@ -195,7 +180,12 @@ const Chat = () => {
   };
   // Handle value changes of the input fields during new chatroom creatmessagesToFiltere mode
   const onValueChange = (type: string, value: string) => {
-    if (type === 'name') setNewChatRoomName(value);
+    if (type === 'name') {
+      if (value.match(/^[A-Za-z0-9_-]*$/))
+        setNewChatRoomName(value);
+      else
+        errorAlert("Allowed characters: A-Z _ a-z - 0-9");
+    }
     if (type === 'password') setChatRoomPassword(value);
   };
   // When clicking on a room name to join it
@@ -270,7 +260,7 @@ const Chat = () => {
   /*************************************************************
    * Render HTML response
    **************************************************************/
-  return !user.provider ? (
+  return !user.provider || (user.provider && !user.nickname) ? (
     <PleaseLogin />
   ) : (
     <Box id="basicCard">
@@ -385,15 +375,12 @@ const Chat = () => {
                         <ListItemText
                           tabIndex={-1}
                           primary={
-                            room.name[0] === '#'
-                              ? // Slicing the '#' character at position 0 which is
-                                // used for private room names, then remove the '/',
-                                // then remove the user's name, leaving us with the recipient's name only
-                                room.name
-                                  .slice(1)
-                                  .replace(/\//g, '')
-                                  .replace(user.nickname, '')
-                              : room.name
+                            room.name[0] === '#' ?
+                            // Slicing the '#' character at position 0 which is
+                            // used for private room names, then remove the '/',
+                            // then remove the user's name, leaving us with the recipient's name only
+                            room.name.slice(1).replace(/\//g, '').replace(user.nickname, '')
+                            : room.name
                           }
                           className="limitText white"
                         />
