@@ -1,6 +1,6 @@
-# Trancendence [![Backend](https://github.com/benjaminbrassart/transcendence/actions/workflows/backend.yml/badge.svg?branch=master)](https://github.com/benjaminbrassart/transcendence/actions/workflows/backend.yml)
+# Trancendence [![Backend](https://github.com/benjaminbrassart/transcendence/actions/workflows/backend.yml/badge.svg?branch=master)](https://github.com/benjaminbrassart/transcendence/actions/workflows/backend.yml)  [![Frontend](https://github.com/benjaminbrassart/transcendence/actions/workflows/frontend.yml/badge.svg?branch=master)](https://github.com/benjaminbrassart/transcendence/actions/workflows/frontend.yml)
 
-This is a 42 school's first web project.
+This is a 42 school's first web project and last project of the common core.
 
 :warning: **Warning**: It is educational project.
 
