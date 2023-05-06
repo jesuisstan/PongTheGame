@@ -7,12 +7,12 @@ const URL_AUTH_GITHUB = `${backendUrl}/auth/github`;
 
 const Login = () => {
   const ecole42Auth = () => {
-    localStorage.setItem('logStatus', 'true')
+    localStorage.setItem('logStatus', 'true');
     window.location.href = URL_AUTH_42;
   };
 
   const githubAuth = () => {
-    localStorage.setItem('logStatus', 'true')
+    localStorage.setItem('logStatus', 'true');
     window.location.href = URL_AUTH_GITHUB;
   };
 

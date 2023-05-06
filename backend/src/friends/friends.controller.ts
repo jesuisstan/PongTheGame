@@ -3,10 +3,13 @@ import {
   Get,
   UseGuards,
   Post,
+  Put,
   Body,
   ParseIntPipe,
   Param,
   Patch,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { User } from '@prisma/client';
@@ -68,7 +71,8 @@ export class FriendsController {
     this.friendsService.addFriendsByNickname(user, addFriendDto.nickname);
   }
 
-  @Patch('remove/:id')
+  @Post('remove/:id')
+  @UsePipes(ValidationPipe)
   @ApiOperation({
     summary: 'Remove friends',
     parameters: [{ name: 'id', in: 'query' }],

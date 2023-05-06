@@ -45,7 +45,7 @@ model Stats {
   id      Int  @id @default(autoincrement())
   nb_game Int  @default(0)
   nb_win  Int  @default(0)
-  User    User @relation(fields: [userId], references: [id])
+  User    User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId  Int  @unique
 
   @@map("Statistique")
@@ -65,7 +65,7 @@ model TotpSecret {
 
   // User
   userId Int?  @unique
-  user   User? @relation(fields: [userId], references: [id])
+  user   User? @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 enum Role {
@@ -85,9 +85,9 @@ model Achievement {
 }
 
 model UserAchivement {
-  user          User        @relation(fields: [userId], references: [id])
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId        Int
-  achievement   Achievement @relation(fields: [achievementId], references: [id])
+  achievement   Achievement @relation(fields: [achievementId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   achievementId Int
 
   @@id([userId, achievementId])

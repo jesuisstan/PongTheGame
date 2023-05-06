@@ -327,7 +327,7 @@
 }
 
 .link {
-  color: #000000;
+  /* color: #000000; */
   text-decoration: underline;
 }
 .link:hover {

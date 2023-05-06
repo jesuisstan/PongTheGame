@@ -59,7 +59,7 @@ const UserMenu = (props: UserMenuProps) => {
 
   // When clicking on the 'block' button to block a user
   const onBlockClick = (target: number) => {
-    if (user.id !== target) {
+    if (user?.id !== target) {
       // Check if target is not already blocked
       try {
         for (let i = 0; i < user.blockedUsers.length; ++i)
@@ -76,7 +76,6 @@ const UserMenu = (props: UserMenuProps) => {
             setUser(res);
           }
         );
-		console.log('UserId: ' + target + ' has been blocked!');
       } catch (err) {
         errorAlert(String(err));
       }
@@ -101,7 +100,6 @@ const UserMenu = (props: UserMenuProps) => {
                 setUser(res);
               }
             );
-			console.log('UserId: ' + target + ' has been unblocked!');
           }
         }
       } catch (err) {

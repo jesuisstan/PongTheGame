@@ -21,7 +21,7 @@ jobs:
         working-directory: ./backend
 
   lint:
-    name: 'Lint'
+    name: 'Backend Lint'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -32,3 +32,4 @@ jobs:
       - name: ESLint
         run: yarn lint:check
         working-directory: ./backend
+

@@ -1,3 +1,11 @@
+# Trancendence [![Backend](https://github.com/benjaminbrassart/transcendence/actions/workflows/backend.yml/badge.svg?branch=master)](https://github.com/benjaminbrassart/transcendence/actions/workflows/backend.yml)  [![Frontend](https://github.com/benjaminbrassart/transcendence/actions/workflows/frontend.yml/badge.svg?branch=master)](https://github.com/benjaminbrassart/transcendence/actions/workflows/frontend.yml)
+
+This is a 42 school's first web project and last project of the common core.
+
+:warning: **Warning**: It is educational project.
+
+:warning: **Warning**: You can take inspiration from it but please don't copy / paste what you don't understand.
+
 ## Description
 
 This project is about creating a single-page application website for the mighty Pong contest!

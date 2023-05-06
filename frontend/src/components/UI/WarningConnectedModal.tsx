@@ -40,7 +40,10 @@ const WarningConnectedModal = ({
             </Typography>
 
             <Typography>
-              If this notification persists, relogin* to remove it.
+              If this notification persists, you have exceeded the number of
+              logins per session.
+              <br />
+              Logout and return back 30 seconds later.
             </Typography>
             <div style={MUI.loadButtonBlock}>
               <LoadingButton
@@ -53,20 +56,10 @@ const WarningConnectedModal = ({
                 onClick={handleLogoutClick}
                 sx={{ minWidth: 142 }}
               >
-                Relogin
+                Logout
               </LoadingButton>
             </div>
           </Box>
-          <Typography
-            sx={{
-              textAlign: 'left',
-              fontSize: '14px',
-              paddingTop: '15px',
-              wordWrap: 'break-word'
-            }}
-          >
-            * this will end the session in current browser
-          </Typography>
         </ModalDialog>
       </Modal>
     </div>
