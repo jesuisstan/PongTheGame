@@ -30,7 +30,6 @@ services:
     env_file:
       - .env
     environment:
-      NEST_DEBUG: true # TODO REMOVE THIS ('true' break compilation on other machines)
       FRONTEND_URL: ${FRONTEND_URL:?}
       BACKEND_URL: ${FRONTEND_URL:?}/api
       SESSION_SECRET: ${SESSION_SECRET:?}
