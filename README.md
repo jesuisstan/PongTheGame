@@ -107,3 +107,5 @@ JWT_SECRET=
 MAX_CHATROOM_NBR=30
 MAX_CHATROOM_MEMBER_NBR=100
 ```
+
+For detailed setup instuctions, please read `doc/setup-production.md`
