@@ -18,7 +18,7 @@ cd transcendence
 cp .env.production.example .env
 ```
 
-4. Make sure you have a domain name (a local network DNS will do)
+4. Make sure you have a domain name (an IP address or a local hostname will do), and copy it into `.env`.
 
 5. Create a 42 intra application [here](https://profile.intra.42.fr/oauth/applications). Fill out the form. For the `Redirect URI` field, put `http://{hostname[:port]}/api/auth/42/callback`, with `{hostname}` being the hostname of your machine (i.e., `example.com`).
 
