@@ -1,0 +1,15 @@
+FROM node:18-alpine
+
+ENV NODE_ENV development
+
+RUN apk add --no-cache curl && yarn global add http-server
+
+WORKDIR /backend
+
+ENTRYPOINT \
+	yarn install --production=false --frozen-lockfile --non-interactive && \
+	yarn prisma db push && \
+	yarn prisma db seed && \
+	yarn start:debug
+
+# ENTRYPOINT $(yarn global bin)/http-server -p 3000 -a 0.0.0.0 -i true

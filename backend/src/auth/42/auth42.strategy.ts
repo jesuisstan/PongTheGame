@@ -9,18 +9,21 @@ import { Config } from 'src/config.interface';
 @Injectable()
 export class Auth42Strategy extends PassportStrategy(Strategy, '42') {
   constructor(
-    readonly config: ConfigService<Config>,
+    config: ConfigService<Config>,
     private readonly auth: SessionService,
   ) {
+    const clientId = config.getOrThrow<string>('INTRA42_CLIENT_ID');
+    const secret = config.getOrThrow<string>('INTRA42_CLIENT_SECRET');
+    const backendUrl = config.getOrThrow<string>('BACKEND_URL');
+    const callbackUrl = `${backendUrl}/auth/42/callback`;
+
     super({
-      clientID: config.getOrThrow('INTRA42_CLIENT_ID'),
-      clientSecret: config.getOrThrow('INTRA42_CLIENT_SECRET'),
-      callbackURL: config.getOrThrow('INTRA42_CALLBACK_URL'),
+      clientID: clientId,
+      clientSecret: secret,
+      callbackURL: callbackUrl,
       state: true,
       profileFields: {
-        id: function (obj) {
-          return String(obj.id);
-        },
+        id: (obj: any) => obj.id.toString(),
         username: 'login',
         displayName: 'displayname',
         'name.familyName': 'last_name',

@@ -1,0 +1,65 @@
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    ports:
+      - "${FRONTEND_PORT:?}:3000"
+    volumes:
+      - ./frontend:/frontend
+      - frontend_node_modules:/frontend/node_modules/
+    environment:
+      REACT_APP_URL_BACKEND: ${BACKEND_URL:?}
+    healthcheck:
+      test: curl -fsSL http://localhost:3000
+      interval: 10s
+      timeout: 50s
+      retries: 40
+      start_period: 2s
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    ports:
+      - "${BACKEND_PORT:?}:3000"
+      - "9229:9229"
+    volumes:
+      - ./backend:/backend
+      - backend_node_modules:/backend/node_modules/
+    networks:
+      - private
+      - public
+    healthcheck:
+      test: curl -fsSL http://localhost:3000/healthcheck
+      interval: 10s
+      timeout: 50s
+      retries: 40
+      start_period: 2s
+
+  database:
+    ports:
+      - 5432:5432
+
+  prisma-studio:
+    container_name: prisma-studio
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.prisma-studio
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:?}:${POSTGRES_PASSWORD:?}@database:5432/pong?schema=public
+    ports:
+      - 5555:5555
+    volumes:
+      - ./backend:/backend:ro
+      - /dev/null:/backend/prisma/.env:ro
+      - backend_node_modules:/backend/node_modules/:ro
+    networks:
+      - private
+    depends_on:
+      backend:
+        condition: service_healthy
+
+volumes:
+  frontend_node_modules: {}
+  backend_node_modules: {}

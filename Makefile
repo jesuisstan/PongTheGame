@@ -1,22 +1,20 @@
-# Use 'docker compose' if you are using the plugin,
-# otherwise use 'docker-compose'
-COMPOSE = docker compose
-# COMPOSE = sudo docker-compose
+COMPOSE := docker compose -f docker-compose.yml -f docker-compose.dev.yml
 
-.PHONY: all build up clean fclean re
+.PHONY: all up build clean fclean re down logs ps hc-logs
 
-all: up
-
-# Build/rebuild an image
-build:
-	$(COMPOSE) build
-
-# Shut down containers if up, build all images and run detached containers
-up:
-	# sudo chmod 777 /etc/hosts
-	# sudo echo "127.0.0.1 transcendance.fr" >> /etc/hosts
-	# sudo echo "127.0.0.1 www.transcendance.fr" >> /etc/hosts
+all up:
 	$(COMPOSE) up -d --build
+
+build down ps restart start:
+	$(COMPOSE) $@ $(c)
+
+logs:
+	$(COMPOSE) logs $(c) --follow
+
+# healthcheck logs
+# pipe to jq for pretty printing and colors
+hc-logs:
+	@docker inspect --format "{{json .State.Health }}" $(c) | python3 -mjson.tool
 
 # Clone .env file from the private Github repository, copy it to the root directory
 # then remove the cloned directory
@@ -32,7 +30,6 @@ envrep:
 
 # Shut all containers down and delete them
 clean:
-	@echo "\033[33mCleaning...\033[0m"
 	$(COMPOSE) down -v --rmi all --remove-orphans 2> /dev/null
 
 # Clean and delete all unused volumes, containers, networks and images

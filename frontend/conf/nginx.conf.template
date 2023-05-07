@@ -1,0 +1,25 @@
+server {
+	server_name ${SERVER_NAME};
+
+	listen 3000 default_server;
+	listen [::]:3000 default_server;
+
+	root /frontend;
+
+	location ~ /(api|socket.io) {
+		proxy_pass http://backend:3000;
+	}
+
+	location = /healthcheck {
+		access_log off;
+		error_log off;
+		log_not_found off;
+
+		add_header Content-Type text/plain;
+		return 200 "up and running";
+	}
+
+	location / {
+		error_page 404 =200 /index.html;
+	}
+}

@@ -1,4 +1,4 @@
-import { Profile } from 'passport';
+import { Profile } from 'index';
 import {
   Strategy as OAuth2Strategy,
   StrategyOptions as OAuth2StrategyOptions,

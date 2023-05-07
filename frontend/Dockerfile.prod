@@ -1,0 +1,41 @@
+FROM node:18-alpine AS build
+
+ARG SERVER_NAME
+ARG FRONTEND_URL
+ARG REACT_APP_URL_BACKEND
+ARG REACT_APP_MAX_CHATROOM_NBR
+ARG REACT_APP_MAX_CHATROOM_MEMBER_NBR
+
+ENV NODE_ENV=production \
+    SERVER_NAME=${SERVER_NAME} \
+    FRONTEND_URL=${FRONTEND_URL} \
+    REACT_APP_URL_BACKEND=${REACT_APP_URL_BACKEND} \
+    REACT_APP_MAX_CHATROOM_NBR=${REACT_APP_MAX_CHATROOM_NBR} \
+    REACT_APP_MAX_CHATROOM_MEMBER_NBR=${REACT_APP_MAX_CHATROOM_MEMBER_NBR}
+
+WORKDIR /frontend
+
+COPY package.json package-lock.json ./
+
+RUN npm install --production=false
+
+COPY public ./public
+COPY src ./src
+COPY tsconfig.json ./tsconfig.json
+
+RUN npm run build
+
+FROM nginx:1.24.0-alpine
+
+WORKDIR /frontend
+
+RUN apk add --no-cache curl
+
+COPY --from=build /frontend/build/ /frontend/
+
+# nginx conf stuff
+# COPY conf/nginx.conf /tmp/nginx-default.conf
+
+COPY conf/nginx.conf.template /etc/nginx/templates/default.conf.template
+
+# RUN envsubst < /tmp/nginx-default.conf > /etc/nginx/conf.d/default.conf

@@ -10,12 +10,19 @@
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./",
-    "incremental": true,
+    "rootDir": "src",
+    "incremental": false,
+    "noEmit": false,
     "skipLibCheck": true,
     "strictNullChecks": true,
     "noImplicitAny": true,
     "strictBindCallApply": true,
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
+  },
+  "include": ["src", "*.d.ts"],
+  "watchOptions": {
+    "watchFile": "fixedpollinginterval",
+    "watchDirectory": "fixedpollinginterval",
   }
 }

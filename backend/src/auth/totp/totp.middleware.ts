@@ -4,6 +4,7 @@ import {
   NestMiddleware,
   UnauthorizedException,
 } from '@nestjs/common';
+import { User } from '@prisma/client';
 import { Request, Response } from 'express';
 import { TotpService } from 'src/auth/totp/totp.service';
 import { UserService } from 'src/user/user.service';
@@ -20,7 +21,7 @@ export class TotpMiddleware implements NestMiddleware<Request, Response> {
   async use(req: Request, res: Response, next: (error?: Error) => void) {
     if (req.user === undefined) throw new UnauthorizedException();
 
-    const user = await this.users.findUserById(req.user.id);
+    const user = await this.users.findUserById((req.user as User).id);
 
     if (user === null) throw new UnauthorizedException();
 
