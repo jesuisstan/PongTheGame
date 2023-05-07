@@ -30,6 +30,8 @@ services:
     networks:
       - private
       - public
+    environment:
+      BACKEND_URL: ${BACKEND_URL:?}
     healthcheck:
       test: curl -fsSL http://localhost:3000/healthcheck
       interval: 10s
