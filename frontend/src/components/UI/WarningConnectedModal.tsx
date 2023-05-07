@@ -6,8 +6,9 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import * as MUI from './MUIstyles';
+import { backendUrl } from '../../api/axios-instance';
 
-const URL_LOGOUT = `${process.env.REACT_APP_URL_BACKEND}/auth/logout`;
+const URL_LOGOUT = `${backendUrl}/auth/logout`;
 
 const WarningConnectedModal = ({
   open,

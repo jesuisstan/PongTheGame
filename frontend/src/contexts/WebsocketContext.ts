@@ -20,11 +20,11 @@ const opts = {
   }
 };
 
-// // Create a new websocket connected to the backend
+// Create a new websocket connected to the backend
 export const socket =
   process.env.NODE_ENV === 'development'
-    ? io(process.env.REACT_APP_URL_BACKEND, opts)
-    : io(opts);
+    ? io(process.env.REACT_APP_URL_BACKEND, opts) // dev => ${backend}/socket.io
+    : io(opts); // prod => ${frontend}/socket.io (nginx) -> ${backend}/socket.io
 
 // Define context with the previous socket
 export const WebSocketContext = createContext<Socket>(socket);
