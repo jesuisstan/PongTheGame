@@ -20,11 +20,11 @@ cp .env.production.example .env
 
 4. Make sure you have a domain name (a local network DNS will do)
 
-5. Create a 42 intra application [here](https://profile.intra.42.fr/oauth/applications). Fill out the form. For the `Redirect URI` field, put `http://{hostname}/api/auth/42`, with `{hostname}` being the hostname of your machine (i.e., `example.com`).
+5. Create a 42 intra application [here](https://profile.intra.42.fr/oauth/applications). Fill out the form. For the `Redirect URI` field, put `http://{hostname[:port]}/api/auth/42/callback`, with `{hostname}` being the hostname of your machine (i.e., `example.com`).
 
 6. Copy the 42 credentials into `.env`.
 
-7. Create a Github application [here](https://github.com/settings/applications/new). Fill out the form. For the `Authorization callback URL`, put `http://{hostname}/api/github/auth`, with `{hostname}` being the hostname of your machine (i.e., `example.com`).
+7. Create a Github application [here](https://github.com/settings/applications/new). Fill out the form. For the `Authorization callback URL`, put `http://{hostname[:port]}/api/auth/github/callback`, with `{hostname}` being the hostname of your machine (i.e., `example.com`).
 
 8. Copy the Github credentials into `.env`.
 
