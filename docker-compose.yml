@@ -31,7 +31,6 @@ services:
       - .env
     environment:
       FRONTEND_URL: ${FRONTEND_URL:?}
-      BACKEND_URL: ${FRONTEND_URL:?}/api
       SESSION_SECRET: ${SESSION_SECRET:?}
       JWT_SECRET: ${JWT_SECRET:?}
       DATABASE_URL: postgresql://${POSTGRES_USER:?}:${POSTGRES_PASSWORD:?}@database:5432/pong?schema=public

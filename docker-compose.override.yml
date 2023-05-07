@@ -24,6 +24,8 @@ services:
       - "3000"
     networks:
       - private
+    environment:
+      BACKEND_URL: ${FRONTEND_URL:?}/api
     healthcheck:
       test: curl -fsSL http://localhost:3000/api/healthcheck
       interval: 10s
