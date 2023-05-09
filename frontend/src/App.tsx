@@ -91,11 +91,11 @@ const App = () => {
         setOpenInvitation(true);
       }
     };
-    
+
     const handleMatchSpecChangeState = (args: any) => {
       setGameStatus('lobby');
     };
-  
+
     const handleErrorSocket = (args: any) => {
       if (args.message === 'You are already connected') {
         setOpenWarningConnected(true);
@@ -103,18 +103,18 @@ const App = () => {
         setOpenWarningToken(true);
       }
     };
-    
+
     socket.on('invitation_game', handleInvitation);
     socket.on('match_spec_change_state', handleMatchSpecChangeState);
     socket.on('error_socket', handleErrorSocket);
-  
+
     return () => {
       socket.off('invitation_game', handleInvitation);
       socket.off('match_spec_change_state', handleMatchSpecChangeState);
       socket.off('error_socket', handleErrorSocket);
       socket.disconnect();
     };
-  }, []); 
+  }, []);
 
   return (
     <WebSocketContext.Provider value={socket}>

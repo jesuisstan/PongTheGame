@@ -50,7 +50,7 @@ const InfoNoteModal = ({
                 <Typography sx={{ fontWeight: 'Bold' }}>
                   Block / Unblock
                 </Typography>
-                : to avoid unnecessary messages or invitations from this player.
+                : to avoid unwanted invitations from this player.
               </Typography>
               <Typography>
                 <Typography sx={{ fontWeight: 'Bold' }}>Invite*</Typography>: to

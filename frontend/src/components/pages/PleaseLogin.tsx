@@ -18,7 +18,7 @@ const PleaseLogin = () => {
   useEffect(() => {
     setTimeout(() => {
       setLoading(false);
-    }, 2200);
+    }, 1000);
   }, []);
 
   return loading ? (

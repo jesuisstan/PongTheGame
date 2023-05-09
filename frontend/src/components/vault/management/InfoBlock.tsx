@@ -5,7 +5,7 @@ import { PlayerProfile } from '../../../types/PlayerProfile';
 import { WebSocketContext } from '../../../contexts/WebsocketContext';
 import { GameStatusContext } from '../../../contexts/GameStatusContext';
 import { GameStatus } from '../../game/game.interface';
-import { isUserBlocked } from '../../chat/utils/statusFunctions';
+import { isUserBlocked } from '../utils/statusFunctions';
 import InvitationSendModal from '../../game/invitation/InvitationSendModal';
 import ButtonPong from '../../UI/ButtonPong';
 import BadgePong from '../../UI/BadgePong';
@@ -132,7 +132,7 @@ const InfoBlock = ({ player }: { player: PlayerProfile }) => {
     if (isFriendOfUser) {
       backendAPI.post(`/friend/remove/${player.id}`).then(
         (response) => {
-          console.log(response)
+          console.log(response);
           setIsFriendOfUser(false);
         },
         (error) => {

@@ -4,7 +4,7 @@
   align-self: center;
   display: flex;
   flex-direction: column;
-  justify-content:space-between;
+  justify-content: space-between;
   overflow: auto;
   background-image: url('../../../assets/homePage.jpg');
   background-size: cover;

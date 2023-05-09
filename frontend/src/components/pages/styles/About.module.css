@@ -51,22 +51,6 @@
   transition: transform 0.5s ease-out, background-color 0.5s ease-out;
 }
 
-.barbara {
-  background: left/contain content-box border-box no-repeat
-    url('https://avatars.githubusercontent.com/u/55756205?v=4') whitesmoke;
-  display: flex;
-  flex-direction: column;
-  min-width: 200px;
-  min-height: 165px;
-  width: 600px;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-  padding: 1rem;
-  text-align: right;
-  color: black;
-  border-radius: 4px;
-  transition: transform 0.5s ease-out, background-color 0.5s ease-out;
-}
-
 .florian {
   background: right/contain content-box border-box no-repeat
     url('https://avatars.githubusercontent.com/u/49709897?v=4') whitesmoke;
@@ -84,7 +68,7 @@
 }
 
 .stan {
-  background: left/contain content-box border-box no-repeat
+  background: right/contain content-box border-box no-repeat
     url('https://avatars.githubusercontent.com/u/82715902?v=4') whitesmoke;
   display: flex;
   flex-direction: column;
@@ -94,24 +78,8 @@
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
   padding: 1rem;
   border-radius: 4px;
-  text-align: right;
-  color: black;
-  transition: transform 0.5s ease-out, background-color 0.5s ease-out;
-}
-
-.daisuke {
-  background: right/contain content-box border-box no-repeat
-    url('https://avatars.githubusercontent.com/u/65622360?v=4') whitesmoke;
-  display: flex;
-  flex-direction: column;
-  min-width: 200px;
-  min-height: 165px;
-  width: 600px;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-  padding: 1rem;
-  border-radius: 4px;
-  color: black;
   text-align: left;
+  color: black;
   transition: transform 0.5s ease-out, background-color 0.5s ease-out;
 }
 
@@ -131,8 +99,6 @@
 }
 
 .benjamin:hover,
-.barbara:hover,
-.daisuke:hover,
 .stan:hover,
 .florian:hover,
 .special:hover {
@@ -142,7 +108,7 @@
 
 @media (max-width: 660px) {
   .group {
-    margin-top: -310px;
+    margin-top: -210px;
     margin-bottom: -300px;
     transform: scale(0.55);
   }

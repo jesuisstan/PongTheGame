@@ -131,7 +131,7 @@ const Lobby = ({
             <ButtonPong
               text="Proceed"
               title="Go to player profile"
-              onClick={() => navigate(`/players/${user.nickname}`)}
+              onClick={() => navigate(`/vault/${user.nickname}`)}
               endIcon={<ArrowForwardIosIcon />}
             />
           </div>

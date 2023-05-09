@@ -7,11 +7,10 @@ import Home from './components/pages/Home';
 import About from './components/pages/About';
 import Login from './components/profile/Login';
 import Profile from './components/profile/Profile';
-import Chat from './components/chat/Chat';
 import Game from './components/game/Game';
 import NotFound from './components/pages/NotFound';
 import PleaseLogin from './components/pages/PleaseLogin';
-import PlayerCard from './components/player_card/PlayerCard';
+import PlayerCard from './components/vault/PlayerCard';
 import './App.css';
 
 const AppRoutes = () => {
@@ -36,15 +35,17 @@ const AppRoutes = () => {
           path="login"
           element={!user.provider ? <Login /> : <Navigate to="/profile" />}
         />
-        <Route path="chat" element={<Chat />} />
         <Route path="game" element={<Game />} />
         <Route path="about" element={<About />} />
         <Route
           path="profile"
           element={user.provider ? <Profile /> : <PleaseLogin />}
         />
-        <Route path="players/*">
-          <Route path="" element={<NotFound />} />
+        <Route path="vault/*">
+          <Route
+            path=""
+            element={user.provider ? <NotFound /> : <PleaseLogin />}
+          />
           <Route
             path=":playerNickname"
             element={user.provider ? <PlayerCard /> : <PleaseLogin />}

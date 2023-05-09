@@ -45,7 +45,7 @@ const MenuBar = () => {
 
   const authenticate = () => {
     if (user.provider) {
-      localStorage.removeItem('logStatus')
+      localStorage.removeItem('logStatus');
       window.location.href = URL_LOGOUT;
     } else {
       handleCloseUserMenu('/login');
@@ -88,7 +88,7 @@ const MenuBar = () => {
               </MenuItem>
               <MenuItem
                 disabled={user.provider ? false : true}
-                onClick={() => handleCloseUserMenu(`/players/${user.nickname}`)}
+                onClick={() => handleCloseUserMenu(`/vault/${user.nickname}`)}
               >
                 Vault
               </MenuItem>
@@ -109,7 +109,7 @@ const MenuBar = () => {
                 <NavLink to=".">Home</NavLink>
               </Button>
               <Button variant="text">
-                <NavLink to="chat">Chat</NavLink>
+                <NavLink to={`/vault/${user.nickname}`}>Vault</NavLink>
               </Button>
               <Button variant="text">
                 <NavLink to="game">Game</NavLink>
@@ -136,8 +136,8 @@ const MenuBar = () => {
           <ListItem onClick={() => navigate('/')}>
             <ListItemText primary="Home" sx={MUI.burgerItem} />
           </ListItem>
-          <ListItem onClick={() => navigate('/chat')}>
-            <ListItemText primary="Chat" sx={MUI.burgerItem} />
+          <ListItem onClick={() => navigate(`/vault/${user.nickname}`)}>
+            <ListItemText primary="Vault" sx={MUI.burgerItem} />
           </ListItem>
           <ListItem onClick={() => navigate('/game')}>
             <ListItemText primary="Game" sx={MUI.burgerItem} />

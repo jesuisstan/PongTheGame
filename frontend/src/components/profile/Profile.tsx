@@ -201,7 +201,7 @@ const Profile = () => {
               <ButtonPong
                 text="Full stats"
                 title="Proceed to Player Vault"
-                onClick={() => navigate(`/players/${user.nickname}`)}
+                onClick={() => navigate(`/vault/${user.nickname}`)}
                 endIcon={<ArrowForwardIosIcon />}
               />
             </div>

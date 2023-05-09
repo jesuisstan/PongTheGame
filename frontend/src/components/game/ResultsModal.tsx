@@ -81,7 +81,7 @@ const ResultsModal = ({
                 onClick={() => {
                   if (gameResult?.winner?.name) {
                     setOpen(false);
-                    navigate(`/players/${gameResult.winner.name}`);
+                    navigate(`/vault/${gameResult.winner.name}`);
                   }
                 }}
               />
@@ -100,7 +100,7 @@ const ResultsModal = ({
                 onClick={() => {
                   if (gameResult?.loser?.name) {
                     setOpen(false);
-                    navigate(`/players/${gameResult.loser.name}`);
+                    navigate(`/vault/${gameResult.loser.name}`);
                   }
                 }}
               />

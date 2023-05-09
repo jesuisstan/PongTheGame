@@ -10,11 +10,11 @@ const avatarStyle = {
   transition: 'transform 0.3s ease-out',
   ':hover': {
     cursor: 'pointer',
-    transform: 'scale(1.03)',
+    transform: 'scale(1.03)'
   }
 };
 
-const Home = () => {
+const About = () => {
   return (
     <div className={styles.basicCard}>
       <div className={styles.group}>
@@ -37,53 +37,35 @@ const Home = () => {
             style={{ display: 'flex', flexDirection: 'column', gap: '21px' }}
           >
             <Peer
+              style={styles.stan}
+              firstName="Stanislav"
+              lastName="Krivtsoff"
+              description="Sitôt dit, sitôt fait ⚡"
+              intraNickname="acaren"
+              role="Frontend: the entire front of this site + Game customization"
+              github="https://github.com/jesuisstan"
+            />
+            <Peer
               style={styles.benjamin}
               firstName="Benjamin"
               lastName="Brassart"
-              description="I need a coffee"
+              description="I need coffee"
               intraNickname="bbrassar"
-              role="Backend: authentication, 2FA, avatar upload"
+              role="Backend: auth, profile management + Docker compose"
               github="https://github.com/benjaminbrassart"
-            />
-            <Peer
-              style={styles.barbara}
-              firstName="Barbara"
-              lastName="Cano"
-              description="We did it!"
-              intraNickname="bcano"
-              role="Frontend: chat, teammate card template"
-              github="https://github.com/BarbaraC12"
-            />
-            <Peer
-              style={styles.florian}
-              firstName="Florian"
-              lastName="Catinaud"
-              description="An asshole with a Keyboard"
-              intraNickname="fcatinau"
-              role="Backend: Game, Friends, Achievements & Stats"
-              github="https://github.com/Balgor18"
             />
           </div>
           <div
             style={{ display: 'flex', flexDirection: 'column', gap: '21px' }}
           >
             <Peer
-              style={styles.stan}
-              firstName="Stanislav"
-              lastName="Krivtsoff"
-              description="Sitôt dit, sitôt fait ⚡"
-              intraNickname="acaren"
-              role="Frontend: the entire frontend except for the Chat page"
-              github="https://github.com/jesuisstan"
-            />
-            <Peer
-              style={styles.daisuke}
-              firstName="Daisuke"
-              lastName="Tanigawa"
-              description="I agree with everything that Stan says"
-              intraNickname="dtanigaw"
-              role="Backend: chat. Docker-compose"
-              github="https://github.com/daisvke"
+              style={styles.florian}
+              firstName="Florian"
+              lastName="Catinaud"
+              description="An asshole with a keyboard"
+              intraNickname="fcatinau"
+              role="Backend: Game, Friends, Achievements & players' stats"
+              github="https://github.com/Balgor18"
             />
             <div className={styles.special}>
               <Stack spacing={2}>
@@ -145,4 +127,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default About;

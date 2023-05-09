@@ -1,38 +1,58 @@
 import { useContext, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { UserContext } from '../../../contexts/UserContext';
-import { User } from '../../../types/User';
+import { PlayerProfile } from '../../../types/PlayerProfile';
+import SearchBar from './SearchBar';
 import BadgePong from '../../UI/BadgePong';
-import BlackNoteModal from './BlackNoteModal';
-import NotePong from '../../UI/NotePong';
 import backendAPI from '../../../api/axios-instance';
 import errorAlert from '../../UI/errorAlert';
+import FriendsNoteModal from './FriendsNoteModal';
 import Typography from '@mui/joy/Typography';
 import Avatar from '@mui/material/Avatar';
 import IconButton from '@mui/material/IconButton';
 import LoopIcon from '@mui/icons-material/Loop';
 import * as color from '../../UI/colorsPong';
 import styles from '../styles/PlayerCard.module.css';
+import NotePong from '../../UI/NotePong';
 
-const BlackListBlock = ({ socketEvent }: { socketEvent: number }) => {
+const FriendsBlock = ({ socketEvent }: { socketEvent: number }) => {
   const navigate = useNavigate();
-  const { user, setUser } = useContext(UserContext);
+  const { user } = useContext(UserContext);
+  const [friendsList, setFriendsList] = useState<PlayerProfile[]>([]);
   const [open, setOpen] = useState(false);
+  let { playerNickname } = useParams();
 
-  const fetchBlackList = () => {
-    backendAPI.get('/auth/getuser').then(
-      (response: { data: User }) => {
-        setUser(response.data);
+  const fetchFriendsList = () => {
+    backendAPI.get(`/friend/${playerNickname}`).then(
+      (response) => {
+        setFriendsList(response.data.friends);
       },
-      () => {
-        errorAlert('Failed to get Black List');
+      (error) => {
+        errorAlert(`Failed to get ${playerNickname}'s friends list`);
       }
     );
   };
 
   useEffect(() => {
-    fetchBlackList();
-  }, [socketEvent]);
+    fetchFriendsList();
+  }, [socketEvent, playerNickname]);
+
+  const onFriendClickHandler = (nickname: string) => {
+    backendAPI.get(`/user/${nickname}`).then(
+      (response) => {
+        navigate(`/vault/${nickname}`);
+      },
+      (error) => {
+        if (error.response?.status === 404) {
+          errorAlert(
+            `Player ${playerNickname} was not found or he has changed his nickname. Refresh your Friends List`
+          );
+        } else {
+          errorAlert('Something went wrong');
+        }
+      }
+    );
+  };
 
   return (
     <div className={styles.friendsBlock}>
@@ -42,9 +62,10 @@ const BlackListBlock = ({ socketEvent }: { socketEvent: number }) => {
         textTransform="uppercase"
         fontWeight="lg"
       >
-        Black list
+        Following
       </Typography>
       <div>
+        {user.nickname === playerNickname && <SearchBar />}
         <div
           style={{
             display: 'flex',
@@ -52,12 +73,12 @@ const BlackListBlock = ({ socketEvent }: { socketEvent: number }) => {
             gap: '21px'
           }}
         >
-          {user.blockedUsers.length ? (
-            user.blockedUsers.map((item) => (
+          {friendsList?.length ? (
+            friendsList.map((item) => (
               <div
-                key={item.id}
                 className={styles.friendLine}
-                onClick={() => navigate(`/players/${item.nickname}`)}
+                key={item.id}
+                onClick={() => onFriendClickHandler(item.nickname)}
               >
                 <BadgePong player={item}>
                   <Avatar
@@ -84,14 +105,13 @@ const BlackListBlock = ({ socketEvent }: { socketEvent: number }) => {
           )}
         </div>
       </div>
-
       <div>
-        <BlackNoteModal open={open} setOpen={setOpen} />
+        <FriendsNoteModal open={open} setOpen={setOpen} player={user} />
         <NotePong setOpen={setOpen} />
         <IconButton
           color="primary"
           title={'Refresh the list'}
-          onClick={() => fetchBlackList()}
+          onClick={() => fetchFriendsList()}
         >
           <LoopIcon
             fontSize="large"
@@ -108,4 +128,4 @@ const BlackListBlock = ({ socketEvent }: { socketEvent: number }) => {
   );
 };
 
-export default BlackListBlock;
+export default FriendsBlock;

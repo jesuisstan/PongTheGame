@@ -7,7 +7,7 @@ const Footer: React.FC = () => {
         <p className={styles.copyright}>
           PongTheGame © 2023 | École 42 ft_trancendence project |{' '}
           <a
-            href="https://github.com/benjaminbrassart/transcendence"
+            href="https://github.com/jesuisstan/PongTheGame"
             className={styles.footerLink}
           >
             @github

@@ -30,9 +30,9 @@ const Game = () => {
     setGameResult(args);
   });
 
-  socket.on("match_abort_during_begin", (args) => {
+  socket.on('match_abort_during_begin', (args) => {
     setGameStatus(GameStatus.ENDED);
-  })
+  });
 
   socket.on('match_spectate', (args) => {
     if (args.status && args.status === 'success')

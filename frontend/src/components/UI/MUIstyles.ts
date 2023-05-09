@@ -50,7 +50,7 @@ export const warningBoxStyle = {
   alignItems: 'center',
   justifyContent: 'center',
   paddingTop: '11px',
-  textAlign: 'center',
+  textAlign: 'center'
 };
 
 export const burgerItem = {
@@ -67,4 +67,4 @@ export const loadButtonBlock = {
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center'
-}
+};

@@ -19,7 +19,7 @@ const Login = () => {
   return (
     <div className={styles.loginCard}>
       <div className={styles.wrapper}>
-        <div className={styles.left}>Choose your Login Method</div>
+        <div className={styles.left}>Choose Login Method</div>
         <DeviderPong />
         <div className={styles.right}>
           <div className={styles.loginButtonGithub} onClick={githubAuth}>
