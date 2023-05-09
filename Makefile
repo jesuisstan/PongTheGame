@@ -19,14 +19,10 @@ hc-logs:
 # Clone .env file from the private Github repository, copy it to the root directory
 # then remove the cloned directory
 env:
-	rm -rf ft_transcendance_env
-	git clone git@github.com:daisvke/ft_transcendance_env.git
-	cp ft_transcendance_env/.env .
-	rm -rf ft_transcendance_env
-
-# Get the private Github repository containing the .env file
-envrep:
-	git clone git@github.com:daisvke/ft_transcendance_env.git
+	rm -rf pong_env
+	git clone git@github.com:jesuisstan/pong_env.git
+	cp pong_env/.env .
+	rm -rf pong_env
 
 # Shut all containers down and delete them
 clean:
@@ -35,6 +31,8 @@ clean:
 # Clean and delete all unused volumes, containers, networks and images
 fclean: clean
 	docker system prune --volumes --all --force 2> /dev/null
-	# sudo docker system prune --volumes --all --force 2> /dev/null
+	rm -rf ./backend/dist
+	rm -rf ./backend/node_modules
+	rm -rf ./frontend/node_modules
 
 re: fclean all

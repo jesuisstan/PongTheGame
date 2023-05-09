@@ -1,8 +1,0 @@
-{
-  "jest.jestCommandLine": "npx yarn test",
-  "[typescript]": {
-    "editor.insertSpaces": true,
-    "editor.tabSize": 2
-  },
-  "typescript.preferences.importModuleSpecifier": "non-relative"
-}
