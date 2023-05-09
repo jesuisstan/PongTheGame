@@ -1,6 +1,6 @@
 import { useContext, useState } from 'react';
 import { UserContext } from '../../../contexts/UserContext';
-import { isUserBlocked } from '../../chat/utils/statusFunctions';
+import { isUserBlocked } from '../../vault/utils/statusFunctions';
 import InvitationSendModal from '../invitation/InvitationSendModal';
 import errorAlert from '../../UI/errorAlert';
 import IconButton from '@mui/material/IconButton';

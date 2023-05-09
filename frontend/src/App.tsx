@@ -7,7 +7,7 @@ import { WebSocketContext } from './contexts/WebsocketContext';
 import { GameResultContext } from './contexts/GameResultContext';
 import { GameStatusContext } from './contexts/GameStatusContext';
 import { GameResult, GameStatus } from './components/game/game.interface';
-import { isUserBlocked } from './components/chat/utils/statusFunctions';
+import { isUserBlocked } from './components/vault/utils/statusFunctions';
 import AppRoutes from './AppRoutes';
 import Verify2fa from './components/profile/Verify2fa';
 import InvitationReceivedModal from './components/game/invitation/InvitationReceivedModal';
@@ -35,13 +35,11 @@ const App = () => {
     nickname: '',
     profileId: '',
     provider: '',
-    role: '',
     status: 'OFFLINE',
     totpSecret: null,
     username: '',
     blockedUsers: [],
     blockedBy: [],
-    joinedChatRoom: undefined
   });
 
   const [gameStatus, setGameStatus] = useState('lobby');

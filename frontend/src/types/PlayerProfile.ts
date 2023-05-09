@@ -4,7 +4,6 @@ export type PlayerProfile = {
   nickname: string;
   profileId: string;
   provider: string;
-  role: string;
   status: string;
   username: string;
 };

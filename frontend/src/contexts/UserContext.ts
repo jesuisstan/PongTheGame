@@ -13,13 +13,11 @@ export const UserContext = createContext<UserContextData>({
     nickname: '',
     profileId: '',
     provider: '',
-    role: '',
     status: 'OFFLINE',
     totpSecret: null,
     username: '',
     blockedUsers: [],
     blockedBy: [],
-    joinedChatRoom: undefined
   },
   setUser: (user) => {}
 });

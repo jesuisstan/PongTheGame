@@ -25,7 +25,6 @@ const PlayerCard = () => {
     nickname: '',
     profileId: '',
     provider: '',
-    role: '',
     status: 'OFFLINE',
     username: ''
   });

@@ -18,11 +18,11 @@
     "noImplicitAny": true,
     "strictBindCallApply": true,
     "forceConsistentCasingInFileNames": true,
-    "noFallthroughCasesInSwitch": true,
+    "noFallthroughCasesInSwitch": true
   },
   "include": ["src", "*.d.ts"],
   "watchOptions": {
     "watchFile": "fixedpollinginterval",
-    "watchDirectory": "fixedpollinginterval",
+    "watchDirectory": "fixedpollinginterval"
   }
 }

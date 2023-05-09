@@ -81,7 +81,6 @@ const InfoBlock = ({ player }: { player: PlayerProfile }) => {
             disconnect: false
           },
           (res: User) => {
-            res.joinedChatRoom = user.joinedChatRoom;
             setUser(res);
           }
         );
@@ -105,7 +104,6 @@ const InfoBlock = ({ player }: { player: PlayerProfile }) => {
                 disconnect: true
               },
               (res: User) => {
-                res.joinedChatRoom = user.joinedChatRoom;
                 setUser(res);
               }
             );
