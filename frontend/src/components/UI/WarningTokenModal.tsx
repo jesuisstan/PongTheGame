@@ -16,8 +16,9 @@ import Box from '@mui/material/Box';
 import { CircularProgress } from '@mui/material';
 import * as MUI from './MUIstyles';
 import * as color from './colorsPong';
+import { backendUrl } from '../../api/axios-instance';
 
-const URL_LOGOUT = `${process.env.REACT_APP_URL_BACKEND}/auth/logout`;
+const URL_LOGOUT = `${backendUrl}/auth/logout`;
 const TIME: number = 10;
 
 const WarningTokenModal = ({
@@ -58,6 +59,7 @@ const WarningTokenModal = ({
   };
 
   const logout = () => {
+    localStorage.removeItem('logStatus');
     if (user.provider) {
       window.location.href = URL_LOGOUT;
     }

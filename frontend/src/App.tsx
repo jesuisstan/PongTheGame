@@ -58,24 +58,30 @@ const App = () => {
   });
 
   useEffect(() => {
-    backendAPI.get('/auth/getuser').then(
-      (response) => {
-        setUser(response.data);
-      },
-      (error) => {
-        if (error.response?.status === 400) {
-          setOpenVerify2fa(true);
-        } else if (error.response?.status === 401) {
-          setOpenWarningLogin(true);
-        } else {
-          errorAlert('Something went wrong while logging in');
+    if (localStorage.getItem('logStatus')) {
+      backendAPI.get('/auth/getuser').then(
+        (response) => {
+          setUser(response.data);
+          localStorage.setItem('logStatus', 'true');
+        },
+        (error) => {
+          if (error.response?.status === 400) {
+            setOpenVerify2fa(true);
+          } else if (error.response?.status === 401) {
+            localStorage.removeItem('logStatus');
+            setOpenWarningLogin(true);
+          } else {
+            localStorage.removeItem('logStatus');
+            errorAlert('Something went wrong while logging in');
+          }
         }
-      }
-    );
+      );
+    }
   }, []);
 
   useEffect(() => {
-    socket.on('invitation_game', (args) => {
+    // Setup socket event listeners
+    const handleInvitation = (args: any) => {
       if (isUserBlocked(user, null, args.from.nickname)) {
         socket.emit('match_invitation_refused', {
           nickname: args.from.nickname
@@ -84,20 +90,31 @@ const App = () => {
         setInvitation(args);
         setOpenInvitation(true);
       }
-    });
-
-    socket.on('match_spec_change_state', (args) => {
+    };
+    
+    const handleMatchSpecChangeState = (args: any) => {
       setGameStatus('lobby');
-    });
-
-    socket.on('error_socket', (args) => {
+    };
+  
+    const handleErrorSocket = (args: any) => {
       if (args.message === 'You are already connected') {
         setOpenWarningConnected(true);
       } else {
         setOpenWarningToken(true);
       }
-    });
-  }, []);
+    };
+    
+    socket.on('invitation_game', handleInvitation);
+    socket.on('match_spec_change_state', handleMatchSpecChangeState);
+    socket.on('error_socket', handleErrorSocket);
+  
+    return () => {
+      socket.off('invitation_game', handleInvitation);
+      socket.off('match_spec_change_state', handleMatchSpecChangeState);
+      socket.off('error_socket', handleErrorSocket);
+      socket.disconnect();
+    };
+  }, []); 
 
   return (
     <WebSocketContext.Provider value={socket}>

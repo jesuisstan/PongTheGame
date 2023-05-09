@@ -1,15 +1,30 @@
-import { io, Socket } from 'socket.io-client';
 import { createContext } from 'react';
+import { io, Socket } from 'socket.io-client';
 
 function get_cookie_access_token() {
   const cookies: string[] = document.cookie.split('=');
   if (cookies[0] !== 'access_token') return null;
-  return cookies[1];
+  const token = cookies[1];
+  try {
+    const payload = JSON.parse(window.atob(token.split('.')[1]));
+    if (Date.now() >= payload.exp * 1000) return null; // check if the token is expired
+    return token;
+  } catch (e) {
+    return null;
+  }
 }
 
-// Create a new websocket connected to the backend port
-export const socket = io(process.env.REACT_APP_URL_BACKEND, {
-  auth: { token: get_cookie_access_token() }
-});
+const opts = {
+  auth: {
+    token: get_cookie_access_token()
+  }
+};
+
+// Create a new websocket connected to the backend
+export const socket =
+  process.env.NODE_ENV === 'development'
+    ? io(process.env.REACT_APP_URL_BACKEND, opts) // dev => ${backend}/socket.io
+    : io(opts); // prod => ${frontend}/socket.io (nginx) -> ${backend}/socket.io
+
 // Define context with the previous socket
 export const WebSocketContext = createContext<Socket>(socket);

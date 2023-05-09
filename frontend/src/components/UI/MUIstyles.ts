@@ -1,3 +1,4 @@
+import { cursorTo } from 'readline';
 import * as color from '../UI/colorsPong';
 
 export const modalDialog = {
@@ -57,7 +58,8 @@ export const burgerItem = {
   textTransform: 'uppercase',
   letterSpacing: '0.02857em',
   ':hover': {
-    color: color.PONG_PINK
+    color: color.PONG_PINK,
+    cursor: 'pointer'
   }
 };
 

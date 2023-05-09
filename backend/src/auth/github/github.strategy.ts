@@ -9,13 +9,18 @@ import { Config } from 'src/config.interface';
 @Injectable()
 export class GithubStrategy extends PassportStrategy(Strategy, 'github') {
   constructor(
-    readonly config: ConfigService<Config>,
+    config: ConfigService<Config>,
     private readonly auth: SessionService,
   ) {
+    const clientId = config.getOrThrow<string>('GITHUB_CLIENT_ID');
+    const secret = config.getOrThrow<string>('GITHUB_CLIENT_SECRET');
+    const backendUrl = config.getOrThrow<string>('BACKEND_URL');
+    const callbackUrl = `${backendUrl}/auth/github/callback`;
+
     super({
-      clientID: config.getOrThrow('GITHUB_CLIENT_ID'),
-      clientSecret: config.getOrThrow('GITHUB_CLIENT_SECRET'),
-      callbackURL: config.getOrThrow('GITHUB_CALLBACK_URL'),
+      clientID: clientId,
+      clientSecret: secret,
+      callbackURL: callbackUrl,
     } as StrategyOptions);
   }
 

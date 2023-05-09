@@ -6,8 +6,9 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import * as MUI from './MUIstyles';
+import { backendUrl } from '../../api/axios-instance';
 
-const URL_LOGOUT = `${process.env.REACT_APP_URL_BACKEND}/auth/logout`;
+const URL_LOGOUT = `${backendUrl}/auth/logout`;
 
 const WarningConnectedModal = ({
   open,
@@ -20,6 +21,7 @@ const WarningConnectedModal = ({
 
   const handleLogoutClick = (): void => {
     setLoad(true);
+    localStorage.removeItem('logStatus');
     window.location.href = URL_LOGOUT;
   };
 
@@ -39,7 +41,10 @@ const WarningConnectedModal = ({
             </Typography>
 
             <Typography>
-              If this notification persists, logout* to remove it.
+              If this notification persists, you have exceeded the number of
+              logins per session.
+              <br />
+              Logout and return back 30 seconds later.
             </Typography>
             <div style={MUI.loadButtonBlock}>
               <LoadingButton
@@ -56,16 +61,6 @@ const WarningConnectedModal = ({
               </LoadingButton>
             </div>
           </Box>
-          <Typography
-            sx={{
-              textAlign: 'left',
-              fontSize: '14px',
-              paddingTop: '15px',
-              wordWrap: 'break-word'
-            }}
-          >
-            * this will end the session in current browser
-          </Typography>
         </ModalDialog>
       </Modal>
     </div>

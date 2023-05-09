@@ -9,7 +9,7 @@ import * as ExpressSession from 'express-session';
 import helmet from 'helmet';
 import * as passport from 'passport';
 import { AppModule } from 'src/app.module';
-import { Config } from 'src/config.interface';
+import { Config, NodeEnv } from 'src/config.interface';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { convertTime } from 'src/utils/time';
 import { SocketAdapter } from './chat/socketAdapter';
@@ -27,6 +27,7 @@ async function bootstrap() {
 
   setupSwagger(app);
   setupSession(app, config, prisma);
+  setupCors(app, config);
 
   app.use(helmet());
 
@@ -36,12 +37,7 @@ async function bootstrap() {
     }),
   );
 
-  app.enableCors({
-    credentials: true,
-    origin: config.getOrThrow('FRONTEND_URL'),
-  });
-
-  await app.listen(config.getOrThrow('BACKEND_PORT'));
+  await app.listen(3000);
 }
 
 function setupSwagger(app: NestExpressApplication) {
@@ -99,6 +95,23 @@ function setupSession(
   app.use(cookieParser());
   app.use(passport.initialize());
   app.use(passport.session());
+}
+
+function setupCors(app: NestExpressApplication, config: ConfigService<Config>) {
+  const env = config.getOrThrow<NodeEnv>('NODE_ENV');
+
+  switch (env) {
+    case 'development':
+      app.enableCors({
+        credentials: true,
+        origin: config.getOrThrow('FRONTEND_URL'),
+      });
+      break;
+    case 'production':
+      app.set('trust proxy', 1);
+      app.setGlobalPrefix('/api');
+      break;
+  }
 }
 
 bootstrap();

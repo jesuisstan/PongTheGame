@@ -170,7 +170,7 @@
   margin-left: -35px;
   width: 100%;
   max-width: 100px;
-  overflow: hidden;
+  /* overflow: hidden; */
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -224,7 +224,7 @@
 .msgRowR {
   display: flex;
   justify-content: flex-end;
-  color: black;
+  color: whitesmoke;
   align-items: flex-start;
 }
 .avatar {
@@ -271,7 +271,7 @@
   position: relative;
   margin-right: 10px;
   padding: 10px;
-  background-color: #eed0f1;
+  background-color: black;
   max-width: 60vw;
   text-align: right;
   border: 1px, solid, #6c576e;
@@ -327,7 +327,7 @@
 }
 
 .link {
-  color: #000000;
+  /* color: #000000; */
   text-decoration: underline;
 }
 .link:hover {
