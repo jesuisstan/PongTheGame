@@ -1,9 +1,5 @@
-/.env
-/.env.production
-/.env.development
 /private
 /database
-/ft_transcendence_env
 yarn-error.log
 yarn-debug.log
 /package.json
