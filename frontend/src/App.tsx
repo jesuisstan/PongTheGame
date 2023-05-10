@@ -39,7 +39,7 @@ const App = () => {
     totpSecret: null,
     username: '',
     blockedUsers: [],
-    blockedBy: [],
+    blockedBy: []
   });
 
   const [gameStatus, setGameStatus] = useState('lobby');

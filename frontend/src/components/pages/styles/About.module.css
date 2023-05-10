@@ -88,13 +88,14 @@
   display: flex;
   flex-direction: column;
   min-width: 200px;
-  min-height: 165px;
+  min-height: 231px;
   width: 600px;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
   padding: 1rem;
   border-radius: 4px;
   color: black;
   text-align: center;
+  justify-content: center;
   transition: transform 0.5s ease-out, background-color 0.5s ease-out;
 }
 
@@ -108,7 +109,7 @@
 
 @media (max-width: 660px) {
   .group {
-    margin-top: -210px;
+    margin-top: -250px;
     margin-bottom: -300px;
     transform: scale(0.55);
   }

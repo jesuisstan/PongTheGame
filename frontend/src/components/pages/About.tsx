@@ -42,7 +42,9 @@ const About = () => {
               lastName="Krivtsoff"
               description="Sitôt dit, sitôt fait ⚡"
               intraNickname="acaren"
-              role="Frontend: the entire front of this site + Game customization"
+              duty="Frontend: the entire front of this site"
+              duty2="Backend: AI & Obstacle move and physics"
+              duty3="QA: bugs & undefined behavior hunting"
               github="https://github.com/jesuisstan"
             />
             <Peer
@@ -51,7 +53,9 @@ const About = () => {
               lastName="Brassart"
               description="I need coffee"
               intraNickname="bbrassar"
-              role="Backend: auth, profile management + Docker compose"
+              duty="Backend: authentication & 2-Step Verification "
+              duty2="Backend: profile customization"
+              duty3="DevOps: Docker compose & Makefile"
               github="https://github.com/benjaminbrassart"
             />
           </div>
@@ -64,7 +68,9 @@ const About = () => {
               lastName="Catinaud"
               description="An asshole with a keyboard"
               intraNickname="fcatinau"
-              role="Backend: Game, Friends, Achievements & players' stats"
+              duty="Backend: socket system, endpoints"
+              duty2="Backend: Prisma database"
+              duty3="Backend: Game, Friends system, Match history"
               github="https://github.com/Balgor18"
             />
             <div className={styles.special}>

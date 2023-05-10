@@ -8,7 +8,9 @@ interface IMateProps {
   lastName: string;
   description: string;
   intraNickname: string;
-  role: string;
+  duty: string;
+  duty2?: string;
+  duty3?: string;
   github: string;
 }
 
@@ -28,7 +30,9 @@ const Peer = (props: IMateProps) => {
           </Typography>
           <Typography id="basic-list-demo">{props.description}</Typography>
           <Typography id="basic-list-demo">Location: Paris, France</Typography>
-          <Typography id="basic-list-demo">{props.role}</Typography>
+          <Typography id="basic-list-demo">{props.duty}</Typography>
+          <Typography id="basic-list-demo">{props.duty2}</Typography>
+          <Typography id="basic-list-demo">{props.duty3}</Typography>
           <div>
             <ButtonPong
               text="To github"
