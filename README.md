@@ -59,7 +59,7 @@ docker compose up --build
 docker system prune --volumes --all --force
 ```
 
-### To run the app in the development mode
+### To run the app in development mode
 1. Modify .env file into the root directory of the App\
 (follow the detailed setup instuction in `doc/setup_development.md`)
 3. Run cmd:
