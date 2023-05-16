@@ -53,6 +53,10 @@ https://github.com/jesuisstan/PongTheGame/assets/82715902/d8a503aa-360a-4b1d-8ad
 ```sh
 docker compose up --build
 ```
+3. To clean up the System of all files created by PongTheGame use cmd:
+```sh
+docker system prune --volumes --all --force 2> /dev/null
+```
 
 ### To run the app in the development mode
 1. Modify .env file into the root directory of the App (follow the detailed setup instuction in `doc/setup_development.md`
