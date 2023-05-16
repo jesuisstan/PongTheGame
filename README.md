@@ -33,7 +33,8 @@ https://github.com/jesuisstan/PongTheGame/assets/82715902/80ea5a0b-d21b-4473-a37
 
 Users are also able to spectate other players' games:
 
-https://github.com/jesuisstan/PongTheGame/assets/82715902/d7e8f5e0-5468-47cf-80dd-fecc0b28123a
+https://github.com/jesuisstan/PongTheGame/assets/82715902/1dbf71fd-4cd9-492f-80e0-2778bd6e4dc4
+
 
 Game itself is a canvas game and it is also responsive:
 
@@ -41,9 +42,7 @@ https://github.com/jesuisstan/PongTheGame/assets/82715902/d8a503aa-360a-4b1d-8ad
 
 
 ## Setup
-
-### Foreword
-
+For detailed setup instuctions, please read `doc/setup-production.md`\
 There are 2 environments available: production and development. Each have a .env.example file which contains all the variables
 needed for the services to start properly.
 
@@ -72,74 +71,9 @@ make clean                  # stop and remove containers, volumes, networks and 
 make fclean                 # remove everything created by docker (be careful, uses `docker system prune`)
 ```
 
-Example .env for development
-
-```sh
-# .env.development
-
-FRONTEND_PORT=3000
-FRONTEND_URL=http://localhost:${FRONTEND_PORT}
-BACKEND_PORT=3080
-BACKEND_URL=http://localhost:${BACKEND_PORT}
-
-# postgres user data, does not really matter since the database is self-contained
-POSTGRES_USER=
-POSTGRES_PASSWORD=
-
-# 42 oauth application credentials, get them here https://profile.intra.42.fr/oauth/applications
-INTRA42_CLIENT_ID=
-INTRA42_CLIENT_SECRET=
-
-# github oauth application credentials, get them here https://github.com/settings/developers
-GITHUB_CLIENT_ID=
-GITHUB_CLIENT_SECRET=
-
-# session secret, can be anything
-SESSION_SECRET=
-
-# secret for 2fa, must be a RFC 4648 base32 string
-# https://en.wikipedia.org/w/index.php?title=Base32&oldid=1148232062#RFC_4648_Base32_alphabet
-TOTP_SECRET=
-
-# secret for jwt session tokens, can be anything
-JWT_SECRET=
-
-# integers
-MAX_CHATROOM_NBR=30
-MAX_CHATROOM_MEMBER_NBR=100
-```
 
 ### Production
 
 Use `docker compose` to interact with the production services.
 
-```sh
-# .env.production
 
-# the server name used by nginx, for example "transcendence.bbrassar.fr"
-SERVER_NAME=
-
-FRONTEND_PORT=3000
-FRONTEND_URL=http://${SERVER_NAME}:${FRONTEND_PORT}
-
-# There is no BACKEND_URL environment variable because the backend is served by nginx, accessible at ${FRONTEND_URL}/api
-
-# everything else is the same as dev envrionment
-POSTGRES_USER=
-POSTGRES_PASSWORD=
-
-INTRA42_CLIENT_ID=
-INTRA42_CLIENT_SECRET=
-
-GITHUB_CLIENT_ID=
-GITHUB_CLIENT_SECRET=
-
-SESSION_SECRET=
-TOTP_SECRET=
-JWT_SECRET=
-
-MAX_CHATROOM_NBR=30
-MAX_CHATROOM_MEMBER_NBR=100
-```
-
-For detailed setup instuctions, please read `doc/setup-production.md`
