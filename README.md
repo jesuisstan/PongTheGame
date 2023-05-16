@@ -55,7 +55,7 @@ docker compose up --build
 ```
 3. To clean up the System of all files created by PongTheGame use cmd:
 ```sh
-docker system prune --volumes --all --force 2> /dev/null
+docker system prune --volumes --all --force
 ```
 
 ### To run the app in the development mode
