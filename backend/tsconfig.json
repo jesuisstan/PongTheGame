@@ -21,7 +21,6 @@
     "noFallthroughCasesInSwitch": true
   },
   "include": ["src", "*.d.ts"],
-  "exclude": ["node_modules", "test", "dist", "app.e2e-spec.ts", "prisma"],
   "watchOptions": {
     "watchFile": "fixedpollinginterval",
     "watchDirectory": "fixedpollinginterval"
