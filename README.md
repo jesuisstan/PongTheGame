@@ -48,8 +48,9 @@ https://github.com/jesuisstan/PongTheGame/assets/82715902/d8a503aa-360a-4b1d-8ad
 
 ## How to use
 ### To run the production build of the app
-1. Modify .env file into the root directory of the App (follow the detailed setup instuction in `doc/setup_production.md`)
-2. Run cmd:
+1. Modify .env file into the root directory of the App\
+(follow the detailed setup instuction in `doc/setup_production.md`)
+3. Run cmd:
 ```sh
 docker compose up --build
 ```
@@ -59,8 +60,9 @@ docker system prune --volumes --all --force
 ```
 
 ### To run the app in the development mode
-1. Modify .env file into the root directory of the App (follow the detailed setup instuction in `doc/setup_development.md`)
-2. Run cmd:
+1. Modify .env file into the root directory of the App\
+(follow the detailed setup instuction in `doc/setup_development.md`)
+3. Run cmd:
 ```sh
 make
 ```
