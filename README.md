@@ -64,3 +64,11 @@ docker system prune --volumes --all --force
 ```sh
 make
 ```
+3. To clean up the System of all files created by PongTheGame use cmd:
+```sh
+make fclean
+```
+or
+```sh
+docker-compose down --rmi all --volumes --remove-orphans
+```
