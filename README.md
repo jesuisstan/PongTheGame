@@ -44,6 +44,7 @@ https://github.com/jesuisstan/PongTheGame/assets/82715902/d8a503aa-360a-4b1d-8ad
 
 ## Requirements
 - installed Docker
+- installed Makefile (for the development mode)
 
 ## How to use
 ### To run the production build of the app
