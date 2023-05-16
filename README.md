@@ -41,39 +41,20 @@ Game itself is a canvas game and it is also responsive:
 https://github.com/jesuisstan/PongTheGame/assets/82715902/d8a503aa-360a-4b1d-8ade-54756e813fd7
 
 
-## Setup
-For detailed setup instuctions, please read `doc/setup-production.md`\
-There are 2 environments available: production and development. Each have a .env.example file which contains all the variables
-needed for the services to start properly.
 
-To use a specific environment (when deploying on a server, for example), copy the `.env.$environment.example` to `.env`.
-To use both environment (when testing deployment on the development machine), copy the `.env.$environment.example` to `.env.$environment`. Switch between environment using the `setenv.sh` script like this: `./setenv.sh [dev|prod]`. `.env` will be symlinked to either `.env.development` or `.env.production`.
+## Requirements
+- installed Docker
 
-### Development
-
-Because of the configuration merging, essentially everything in development uses the Makefile to interact with docker compose. In fact, the Makefile uses the command `docker compose -f docker-compose.yml -f docker-compose.dev.yml` to override the production configuration.
-
+## How to use
+### To run the production build of the app
+1. Modify .env file into the root directory of the App (follow the detailed setup instuction in `doc/setup_production.md`\
+2. Run cmd:
 ```sh
-make                        # build and start
-
-make build [c=container]    # build a container (all if `c` not specified)
-
-make down [c=container]     # stop and remove a container (all if `c` not specified)
-
-make ps [c=container]       # show the status of a container (all if `c` not specified)
-
-make logs [c=container]     # show the logs of a container (all if `c` not specified)
-
-make hc-logs c=container    # show the healthcheck logs of a container
-
-make clean                  # stop and remove containers, volumes, networks and images
-
-make fclean                 # remove everything created by docker (be careful, uses `docker system prune`)
+docker compose up --build
 ```
 
-
-### Production
-
-Use `docker compose` to interact with the production services.
-
-
+### To run the production build of the app
+1. Modify .env file into the root directory of the App (follow the detailed setup instuction in `doc/setup_production.md`\
+2. Run cmd:
+```make
+```
