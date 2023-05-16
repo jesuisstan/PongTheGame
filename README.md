@@ -1,18 +1,18 @@
-# Trancendence [![Backend](https://github.com/benjaminbrassart/transcendence/actions/workflows/backend.yml/badge.svg?branch=master)](https://github.com/benjaminbrassart/transcendence/actions/workflows/backend.yml)  [![Frontend](https://github.com/benjaminbrassart/transcendence/actions/workflows/frontend.yml/badge.svg?branch=master)](https://github.com/benjaminbrassart/transcendence/actions/workflows/frontend.yml)
+# PongTheGame App
 
-This is a 42 school's first web project and last project of the common core.
+This project is about creating a website for the mighty Ping Pong contest.
+It is based on the final team-project "ft_transcendence" of Ecole 42 Common Сore educational program.
+PongTheGame App:
+- includes user account and a real-time multiplayer online game,
+- uses a PostgreSQL database,
+- Backend is written in NestJS, Frontend - with React TypeScript.
 
-:warning: **Warning**: It is educational project.
+## Demonstration
+PongTheGame is a single-page Web App with responsive design
+https://github.com/jesuisstan/PongTheGame/assets/82715902/8c937127-335b-44e3-ab50-dfe0bcc16894
 
-:warning: **Warning**: You can take inspiration from it but please don't copy / paste what you don't understand.
 
-## Description
 
-This project is about creating a single-page application website for the mighty Pong contest!
-
-It includes a user interface, a chat, and a real-time multiplayer online game.
-
-It uses docker compose, TypeScript, React (frontend), nestjs (backend), prisma (ORM) and postgres (database).
 
 ## Setup
 
