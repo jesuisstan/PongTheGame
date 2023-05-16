@@ -3,10 +3,10 @@ COMPOSE := docker compose -f docker-compose.yml -f docker-compose.dev.yml
 .PHONY: all up build clean fclean re down logs ps hc-logs
 
 all up:
-	sudo $(COMPOSE) up -d --build
+	$(COMPOSE) up -d --build
 
 build down ps restart start:
-	sudo $(COMPOSE) $@ $(c)
+	$(COMPOSE) $@ $(c)
 
 logs:
 	$(COMPOSE) logs $(c) --follow
