@@ -1,6 +1,6 @@
 # PongTheGame App
-This project is about creating a website for the mighty Ping Pong contest.
-It is based on the final team-project "ft_transcendence" of Ecole 42 Common Сore educational program.
+This project is about creating a website for the mighty Ping Pong contest.\
+It is based on the final team-project "ft_transcendence" of Ecole 42 Common Сore educational program.\
 PongTheGame App:
 - includes user account and a real-time multiplayer online game;
 - uses a PostgreSQL database;
