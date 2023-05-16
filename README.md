@@ -54,7 +54,7 @@ docker compose up --build
 ```
 
 ### To run the production build of the app
-1. Modify .env file into the root directory of the App (follow the detailed setup instuction in `doc/setup_production.md`\
+1. Modify .env file into the root directory of the App (follow the detailed setup instuction in `doc/setup_development.md`\
 2. Run cmd:
 ```make
 ```
