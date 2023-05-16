@@ -77,4 +77,7 @@ make fclean
 or
 ```sh
 docker-compose down --rmi all --volumes --remove-orphans
+rm -rf ./backend/dist
+rm -rf ./backend/node_modules
+rm -rf ./frontend/node_modules
 ```
