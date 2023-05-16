@@ -5,4 +5,6 @@ yarn-debug.log
 /package.json
 /package-lock.json
 /node_modules
+/dist
 /yarn.lock
+./.env
