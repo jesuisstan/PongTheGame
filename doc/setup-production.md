@@ -1,12 +1,12 @@
 # Production setup instructions
 
-1. Clone the repository
+1. Clone the repository:
 
 ```sh
-git clone https://github.com/benjaminbrassart/transcendence.git
+git clone https://github.com/jesuisstan/PongTheGame.git
 ```
 
-2. `cd` into it
+2. Enter the cloned repository folder:
 
 ```sh
 cd transcendence
@@ -18,13 +18,15 @@ cd transcendence
 cp .env.production.example .env
 ```
 
-4. Make sure you have a domain name (an IP address or a local hostname will do), and copy it into `.env`.
+4. Adjust SERVER_NAME and FRONTEND_PORT into `.env` file (an IP address or a local hostname works) if requied to you.
 
-5. Create a 42 intra application [here](https://profile.intra.42.fr/oauth/applications). Fill out the form. For the `Redirect URI` field, put `http://{hostname[:port]}/api/auth/42/callback`, with `{hostname}` being the hostname of your machine (i.e., `example.com`).
+5. If you have an Ecole 42 account and prefer to login with it, create a 42 intra application [here](https://profile.intra.42.fr/oauth/applications/new) or modify existing [here](https://profile.intra.42.fr/oauth/applications).\
+Fill out the form. For the `Redirect URI` field, input `http://{hostname[:port]}/api/auth/42/callback`, with `{hostname}` being the hostname of your machine (i.e., `http://localhost:3000/api/auth/42/callback`).
 
 6. Copy the 42 credentials into `.env`.
 
-7. Create a Github application [here](https://github.com/settings/applications/new). Fill out the form. For the `Authorization callback URL`, put `http://{hostname[:port]}/api/auth/github/callback`, with `{hostname}` being the hostname of your machine (i.e., `example.com`).
+7. If you prefer to login with Github, create a new Github application [here](https://github.com/settings/applications/new) or modify existing [here](https://github.com/settings/apps).\
+Fill out the form. For the `Authorization callback URL`, input `http://{hostname[:port]}/api/auth/github/callback`, with `{hostname}` being the hostname of your machine (i.e., `(http://localhost:3000/api/auth/github/callback)`).
 
 8. Copy the Github credentials into `.env`.
 
@@ -33,7 +35,7 @@ Your .env file should look like this:
 ```sh
 SERVER_NAME=localhost
 
-FRONTEND_PORT=80
+FRONTEND_PORT=3000
 FRONTEND_URL=http://${SERVER_NAME}
 
 POSTGRES_USER=pg
@@ -50,4 +52,3 @@ TOTP_SECRET=HELLOWORLD666
 JWT_SECRET=helloWorld
 
 ```
-9. Run cmd `docker compose up --build`
