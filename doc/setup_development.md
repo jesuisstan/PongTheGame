@@ -1,4 +1,4 @@
-# Production setup instructions
+# Development mode setup instructions
 
 1. Clone the repository:
 
