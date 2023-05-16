@@ -36,7 +36,7 @@ const FriendsNoteModal = ({
               gap: '10px'
             }}
           >
-            <Typography>Friends status:</Typography>
+            <Typography>Players status:</Typography>
             <div
               style={{
                 display: 'flex',
@@ -120,10 +120,10 @@ const FriendsNoteModal = ({
               wordWrap: 'break-word'
             }}
           >
-            <Typography>* Friends' status refreshes automatically.</Typography>
+            <Typography>* Players status refreshes automatically.</Typography>
             <br />
             <Typography>
-              ** To refresh Friends list use <RefreshIcon /> button.
+              ** To refresh Following list use <RefreshIcon /> button.
             </Typography>
           </Typography>
         </ModalDialog>
