@@ -54,7 +54,8 @@ https://github.com/jesuisstan/PongTheGame/assets/82715902/d8a503aa-360a-4b1d-8ad
 ```sh
 docker compose up --build
 ```
-3. To clean up the System of all files created by PongTheGame use cmd:
+3. Open http://{SERVER_NAME}:{FRONTEND_PORT} to play Pong The Game in your browser.
+4. To clean up the System of all files created by PongTheGame use cmd:
 ```sh
 docker system prune --volumes --all --force
 ```
@@ -70,7 +71,8 @@ or
 ```sh
 docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build
 ```
-3. To clean up the System of all files created by PongTheGame use cmd:
+3. Open http://{SERVER_NAME}:{FRONTEND_PORT} to play Pong The Game in your browser.
+4. To clean up the System of all files created by PongTheGame use cmd:
 ```sh
 make fclean
 ```
