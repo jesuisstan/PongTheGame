@@ -1,11 +1,12 @@
 # PongTheGame App
 This project is about creating a website for the mighty Ping Pong contest.\
-The game is available on http://64.227.74.128:3000/ \
 It is based on the final team-project "ft_transcendence" of Ecole 42 Common Сore educational program.\
 PongTheGame App:
 - includes user account and a real-time multiplayer online game;
 - uses a PostgreSQL database;
 - Backend is written in NestJS, Frontend - with React TypeScript.
+
+The game is available on http://64.227.74.128:3000/
 
 ## Demonstration
 PongTheGame is a single-page Web App with responsive design:
