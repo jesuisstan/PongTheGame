@@ -1,5 +1,6 @@
 # PongTheGame App
 This project is about creating a website for the mighty Ping Pong contest.\
+The game is available on http://64.227.74.128:3000/ \
 It is based on the final team-project "ft_transcendence" of Ecole 42 Common Сore educational program.\
 PongTheGame App:
 - includes user account and a real-time multiplayer online game;
@@ -47,7 +48,9 @@ https://github.com/jesuisstan/PongTheGame/assets/82715902/d8a503aa-360a-4b1d-8ad
 - installed Makefile (for the development mode)
 
 ## How to use
-### To run the production build of the app
+### To try Pong the Game:
+Just proceed to site http://64.227.74.128:3000/
+### To run the production build of the app on your computer:
 1. Modify .env file into the root directory of the App\
 (follow the detailed setup instuction in `doc/setup_production.md`)
 3. Run cmd:
@@ -60,7 +63,7 @@ docker compose up --build
 docker system prune --volumes --all --force
 ```
 
-### To run the app in development mode
+### To run the app in development mode on your computer:
 1. Modify .env file into the root directory of the App\
 (follow the detailed setup instuction in `doc/setup_development.md`)
 3. Run cmd:
