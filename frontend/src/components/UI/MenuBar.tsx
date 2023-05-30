@@ -56,12 +56,39 @@ const MenuBar = () => {
     <div>
       <nav className={styles.navibar}>
         <div className={styles.left}>
+          <img
+            src={require('../../assets/gameLogo.png')}
+            alt=""
+            className={styles.logo}
+            onClick={() => navigate('/about')}
+          />
+        </div>
+        <div className={styles.center}>
+          {isSmallScreen ? (
+            <IconButton color="inherit" onClick={handleDrawerToggle}>
+              <MenuIcon style={{ fill: color.PONG_WHITE }} />
+            </IconButton>
+          ) : (
+            <>
+              <Button variant="text">
+                <NavLink to=".">Home</NavLink>
+              </Button>
+              <Button variant="text">
+                <NavLink to={`/vault/${user.nickname}`}>Vault</NavLink>
+              </Button>
+              <Button variant="text">
+                <NavLink to="game">Game</NavLink>
+              </Button>
+            </>
+          )}
+        </div>
+        <div className={styles.right}>
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open profile menu">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <MoreVertIcon style={{ fill: color.PONG_WHITE }} />
-                <Avatar alt="" src={user.avatar} />
                 <div className={styles.nickname}>{user.nickname}</div>
+                <Avatar alt="" src={user.avatar} />
+                <MoreVertIcon style={{ fill: color.PONG_WHITE }} />
               </IconButton>
             </Tooltip>
             <Menu
@@ -70,7 +97,7 @@ const MenuBar = () => {
               anchorEl={anchorElUser}
               anchorOrigin={{
                 vertical: 'top',
-                horizontal: 'left'
+                horizontal: 'center'
               }}
               keepMounted
               transformOrigin={{
@@ -97,33 +124,6 @@ const MenuBar = () => {
               </MenuItem>
             </Menu>
           </Box>
-        </div>
-        <div className={styles.center}>
-          {isSmallScreen ? (
-            <IconButton color="inherit" onClick={handleDrawerToggle}>
-              <MenuIcon style={{ fill: color.PONG_WHITE }} />
-            </IconButton>
-          ) : (
-            <>
-              <Button variant="text">
-                <NavLink to=".">Home</NavLink>
-              </Button>
-              <Button variant="text">
-                <NavLink to={`/vault/${user.nickname}`}>Vault</NavLink>
-              </Button>
-              <Button variant="text">
-                <NavLink to="game">Game</NavLink>
-              </Button>
-            </>
-          )}
-        </div>
-        <div className={styles.right}>
-          <img
-            src={require('../../assets/gameLogo.png')}
-            alt=""
-            className={styles.logo}
-            onClick={() => navigate('/about')}
-          />
         </div>
       </nav>
       <Drawer

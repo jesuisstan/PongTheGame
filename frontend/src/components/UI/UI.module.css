@@ -45,10 +45,6 @@
   cursor: pointer
 }
 
-.logo:hover {
-  cursor: pointer;
-}
-
 .burger {
   color: whitesmoke;
   font-weight: 500;
@@ -57,7 +53,7 @@
 }
 
 .nickname {
-  margin-left: 21px;
+  margin-right: 21px;
   color: whitesmoke;
   font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
   line-height: 1.75;
@@ -91,4 +87,13 @@
 .footerLink:link,
 .footerLink:visited {
   font-size: 10px;
+}
+
+@media (width <= 600px) {
+  .left {
+    padding-left: 21px;
+  }
+  .right {
+    padding-right: 21px;
+  }
 }

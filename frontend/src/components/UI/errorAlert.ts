@@ -11,7 +11,7 @@ const errorAlert = (text: string) => {
     text: text,
     showCloseButton: true,
     color: color.PONG_WHITE,
-    background: 'rgba(0, 0, 0, 0.9)'
+    background: 'rgba(0, 0, 0, 0.95)'
   });
 };
 
