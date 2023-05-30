@@ -6,7 +6,7 @@ PongTheGame App:
 - uses a PostgreSQL database;
 - Backend is written in NestJS, Frontend - with React TypeScript.
 
-The game is available on http://64.227.74.128:3000/
+The game is available on http://pongthegame.rocks (or [direct IP address](http://64.227.74.128:3000/))
 
 ## Demonstration
 PongTheGame is a single-page Web App with responsive design:
@@ -50,7 +50,7 @@ https://github.com/jesuisstan/PongTheGame/assets/82715902/d8a503aa-360a-4b1d-8ad
 
 ## How to use
 ### To try Pong the Game:
-Just proceed to site http://64.227.74.128:3000/
+Just proceed to the site http://pongthegame.rocks
 ### To run the production build of the app on your computer:
 1. Modify .env file into the root directory of the App\
 (follow the detailed setup instuction in `doc/setup_production.md`)
@@ -58,7 +58,7 @@ Just proceed to site http://64.227.74.128:3000/
 ```sh
 docker compose up --build
 ```
-3. Open http://{SERVER_NAME}:{FRONTEND_PORT} to play Pong The Game in your browser.
+3. Open http://SERVER_NAME:FRONTEND_PORT to play Pong The Game in your browser.
 4. To clean up the System of all files created by PongTheGame use cmd:
 ```sh
 docker system prune --volumes --all --force
@@ -75,7 +75,7 @@ or
 ```sh
 docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build
 ```
-3. Open http://{SERVER_NAME}:{FRONTEND_PORT} to play Pong The Game in your browser.
+3. Open http://SERVER_NAME:FRONTEND_PORT to play Pong The Game in your browser.
 4. To clean up the System of all files created by PongTheGame use cmd:
 ```sh
 make fclean
