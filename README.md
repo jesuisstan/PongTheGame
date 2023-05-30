@@ -6,7 +6,7 @@ PongTheGame App:
 - uses a PostgreSQL database;
 - Backend is written in NestJS, Frontend - with React TypeScript.
 
-The game is available on http://pongthegame.rocks (or [direct IP address](http://64.227.74.128:3000/))
+The game is available on http://pongthegame.rocks (or [direct IP address](http://209.38.216.33:3000/))
 
 ## Demonstration
 PongTheGame is a single-page Web App with responsive design:
