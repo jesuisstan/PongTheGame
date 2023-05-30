@@ -9,6 +9,8 @@ const Footer: React.FC = () => {
           <a
             href="https://github.com/jesuisstan/PongTheGame"
             className={styles.footerLink}
+            target="_blank"
+            rel="noopener noreferrer"
           >
             @github
           </a>
