@@ -23,7 +23,7 @@ const EditNickname = ({
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
 }) => {
-  const { setUser } = useContext(UserContext);
+  const { user, setUser } = useContext(UserContext);
   const [text, setText] = useState('');
   const [error, setError] = useState('');
   const [load, setLoad] = useState(false);
@@ -94,7 +94,7 @@ const EditNickname = ({
           aria-labelledby="basic-modal-dialog-title"
           sx={MUI.modalDialog}
         >
-          <ModalClose sx={MUI.modalClose} />
+          {user.nickname && <ModalClose sx={MUI.modalClose} />}
           <Typography sx={MUI.modalHeader}>Modifying nickname</Typography>
           <form style={{ marginTop: '10px' }} onSubmit={handleSubmit}>
             <Stack spacing={2}>
