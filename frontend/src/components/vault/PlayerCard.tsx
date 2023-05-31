@@ -57,7 +57,7 @@ const PlayerCard = () => {
   ) : (
     <div className={styles.basicCard}>
       <div className={styles.header}>
-        <h5>{playerNickname}'s Vault</h5>
+        <h5>Vault of {playerNickname}</h5>
       </div>
       <div className={styles.playerCard}>
         <InfoBlock player={player} />
