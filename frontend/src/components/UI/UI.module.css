@@ -18,6 +18,7 @@
   display: flex;
   align-items: center;
   justify-content: flex-start;
+  transition: padding-left 0.5s ease-in-out;
 }
 
 .right {
@@ -28,6 +29,7 @@
   align-items: center;
   justify-content: flex-end;
   gap: 21px;
+  transition: padding-right 0.5s ease-in-out;
 }
 
 .center {
@@ -43,13 +45,6 @@
   width: 189px;
   height: 42px;
   cursor: pointer
-}
-
-.burger {
-  color: whitesmoke;
-  font-weight: 500;
-  font-size: 1.5rem;
-  padding-right: 10px;
 }
 
 .nickname {
@@ -91,9 +86,12 @@
 
 @media (width <= 600px) {
   .left {
-    padding-left: 21px;
+    padding-left: 10px;
+    padding-right: 10px;
   }
   .right {
-    padding-right: 21px;
+    padding-right: 10px;
+    padding-left: 10px;
+    gap: 15px;
   }
 }

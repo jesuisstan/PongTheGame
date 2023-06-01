@@ -44,7 +44,7 @@ const About = () => {
               intraNickname="acaren"
               duty="Frontend: the entire front of this site"
               duty2="Backend: AI & Obstacle move and physics"
-              duty3="QA: bugs & undefined behavior hunting"
+              duty3="DevOps: deploying DO server & applying DNS"
               github="https://github.com/jesuisstan"
             />
             <Peer
