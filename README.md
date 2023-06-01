@@ -11,19 +11,19 @@ The game is available on http://pongthegame.rocks (or [direct IP address](http:/
 ## Demonstration
 PongTheGame is a single-page Web App with responsive design:
 
-https://github.com/jesuisstan/PongTheGame/assets/82715902/8c937127-335b-44e3-ab50-dfe0bcc16894
+https://github.com/jesuisstan/PongTheGame/assets/82715902/25a46f33-e990-446a-8c26-8897e02cecf0
 
 
 PongTheGame provides user interface:
 - Any user is able to login using the OAuth system of 42 intranet or Github;
 - Users are able to choose unique nicknames, delete and upload avatars, enable two-factor authentication and check their match history and achievement.
 
-https://github.com/jesuisstan/PongTheGame/assets/82715902/fdbb12f8-a3a0-4a64-a0e9-93943ef22c46
+https://github.com/jesuisstan/PongTheGame/assets/82715902/f9e22f90-c868-44c8-81ba-8f6a326e540f
 
 
 PongTheGame allowes users to train with Artificial Intelligence:
 
-https://github.com/jesuisstan/PongTheGame/assets/82715902/6f4bdbe1-0070-4788-a183-f29267375c12
+https://github.com/jesuisstan/PongTheGame/assets/82715902/dce63131-be80-46ef-9d02-8828c5fbc414
 
 
 But the main purpose of this website is to play Ping Pong versus other players.\
@@ -40,13 +40,13 @@ https://github.com/jesuisstan/PongTheGame/assets/82715902/1dbf71fd-4cd9-492f-80e
 
 Game itself is a canvas game and it is also responsive:
 
-https://github.com/jesuisstan/PongTheGame/assets/82715902/d8a503aa-360a-4b1d-8ade-54756e813fd7
-
+https://github.com/jesuisstan/PongTheGame/assets/82715902/42b01978-19e3-4416-9425-04e8c959a6cd
 
 
 ## Requirements
-- installed [Docker](https://docs.docker.com/engine/install/) 
-- installed Makefile (for the development mode)
+- Internet
+- installed [Docker](https://docs.docker.com/engine/install/) (to run production build on your machine)
+- installed Makefile (to run in development mode)
 
 ## How to use
 ### To try Pong the Game:
