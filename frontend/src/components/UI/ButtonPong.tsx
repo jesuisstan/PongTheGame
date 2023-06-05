@@ -26,6 +26,7 @@ const ButtonPong = ({
         backgroundColor: !inversedColors ? 'black' : color.PONG_PINK,
         fontWeight: 'Bold',
         border: '0.5px solid transparent',
+        borderRadius: '90px',
         ':hover': {
           transitionDuration: '0.5s',
           backgroundColor: !inversedColors ? color.PONG_PINK : 'black',

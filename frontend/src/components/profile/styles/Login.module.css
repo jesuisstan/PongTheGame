@@ -14,7 +14,7 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  border-radius: 4px;
+  border-radius: 45px;
   background-color: rgba(0, 0, 0, 0.35);
   padding: 10px;
 }
@@ -25,14 +25,14 @@
   display: flex;
   align-items: center;
   cursor: pointer;
-  font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
+  font-family: 'Montserrat', 'Roboto', 'Helvetica', 'Arial', sans-serif;
   font-weight: 500;
   font-size: 0.875rem;
   line-height: 1.75;
   letter-spacing: 0.02857em;
   text-transform: uppercase;
   min-width: 64px;
-  border-radius: 4px;
+  border-radius: 90px;
   padding: 13px 16px;
   background-color: rgba(0, 185, 188, 0.801);
 }
@@ -50,14 +50,14 @@
   display: flex;
   align-items: center;
   cursor: pointer;
-  font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
+  font-family: 'Montserrat', 'Roboto', 'Helvetica', 'Arial', sans-serif;
   font-weight: 500;
   font-size: 0.875rem;
   line-height: 1.75;
   letter-spacing: 0.02857em;
   text-transform: uppercase;
   min-width: 64px;
-  border-radius: 4px;
+  border-radius: 90px;
   padding: 13px 16px;
   background-color: #24292fd0;
 }
@@ -77,7 +77,7 @@
   flex: 1;
   padding: 10px;
   color: whitesmoke;
-  font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
+  font-family: 'Montserrat', 'Roboto', 'Helvetica', 'Arial', sans-serif;
   font-weight: 500;
   font-size: 1.2rem;
   line-height: 1.75;

@@ -14,7 +14,7 @@ import Typography from '@mui/joy/Typography';
 import Avatar from '@mui/material/Avatar';
 import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import CreateIcon from '@mui/icons-material/Create';
+import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SecurityIcon from '@mui/icons-material/Security';
 import * as color from '../UI/colorsPong';
@@ -165,9 +165,9 @@ const Profile = () => {
             <div className={styles.bottom}>
               <div>
                 <ButtonPong
-                  text="Change nickname"
-                  title="Modify nickname"
-                  startIcon={<CreateIcon />}
+                  text="Change"
+                  title="Change nickname"
+                  startIcon={<DriveFileRenameOutlineIcon />}
                   onClick={() => setModalNicknameOpen(true)}
                 />
                 <EditNickname

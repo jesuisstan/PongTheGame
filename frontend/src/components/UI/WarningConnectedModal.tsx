@@ -55,7 +55,7 @@ const WarningConnectedModal = ({
                 variant="contained"
                 color="inherit"
                 onClick={handleLogoutClick}
-                sx={{ minWidth: 142 }}
+                sx={{ minWidth: 142, borderRadius: '90px' }}
               >
                 Logout
               </LoadingButton>

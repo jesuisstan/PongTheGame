@@ -64,7 +64,7 @@ const QueueModal = (props: QueueModalProps) => {
                 variant="contained"
                 color="inherit"
                 onClick={exitQueue}
-                sx={{ minWidth: 142 }}
+                sx={{ minWidth: 142, borderRadius: '90px' }}
               >
                 cancel
               </LoadingButton>

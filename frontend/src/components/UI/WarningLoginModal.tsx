@@ -56,7 +56,7 @@ const WarningLoginModal = ({
                 variant="contained"
                 color="inherit"
                 onClick={handleDaccordClick}
-                sx={{ minWidth: 142 }}
+                sx={{ minWidth: 142, borderRadius: '90px' }}
               >
                 D'Accord
               </LoadingButton>

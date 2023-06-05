@@ -103,7 +103,7 @@ const WarningTokenModal = ({
                 variant="contained"
                 color="inherit"
                 onClick={() => logout()}
-                sx={{ minWidth: 142 }}
+                sx={{ minWidth: 142, borderRadius: '90px' }}
               >
                 Proceed
               </LoadingButton>

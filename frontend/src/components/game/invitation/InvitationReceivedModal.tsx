@@ -145,7 +145,7 @@ const InvitationReceivedModal = ({
                   variant="contained"
                   color="inherit"
                   loadingPosition="start"
-                  sx={{ minWidth: 142 }}
+                  sx={{ minWidth: 142, borderRadius: '90px' }}
                   onClick={() => declineInvitation()}
                 >
                   Decline
@@ -160,7 +160,7 @@ const InvitationReceivedModal = ({
                   variant="contained"
                   color="inherit"
                   loadingPosition="start"
-                  sx={{ minWidth: 142 }}
+                  sx={{ minWidth: 142, borderRadius: '90px' }}
                   onClick={() => acceptInvitation()}
                   disabled={!invitation.from.nickname ? true : false}
                 >

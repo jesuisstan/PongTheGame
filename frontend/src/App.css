@@ -1,6 +1,6 @@
 .App {
   text-align: center;
-  font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
+  font-family: 'Montserrat', 'Roboto', 'Helvetica', 'Arial', sans-serif;
   font-weight: 500;
   line-height: 1.75;
   letter-spacing: 0.02857em;
@@ -14,7 +14,7 @@
 a {
   color: whitesmoke;
   text-decoration: none;
-  font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
+  font-family: 'Montserrat', 'Roboto', 'Helvetica', 'Arial', sans-serif;
   font-weight: 500;
   font-size: 1.2rem;
   line-height: 1.75;
@@ -29,7 +29,7 @@ a:hover {
 h5 {
   font-size: large;
   text-transform: uppercase;
-  font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
+  font-family: 'Montserrat', 'Roboto', 'Helvetica', 'Arial', sans-serif;
   font-weight: 500;
   line-height: 1.75;
   letter-spacing: 0.02857em;

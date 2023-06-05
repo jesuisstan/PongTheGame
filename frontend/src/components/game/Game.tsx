@@ -57,9 +57,7 @@ const Game = () => {
     setGameStatus(GameStatus.LOBBY);
   };
 
-  return !user.provider || (user.provider && !user.nickname) ? (
-    <PleaseLogin />
-  ) : (
+  return  (
     <div className={styles.parent}>
       <div className={styles.canvasBlock}>
         {gameStatus === GameStatus.LOBBY && (
@@ -87,3 +85,8 @@ const Game = () => {
 };
 
 export default Game;
+
+
+//return !user.provider || (user.provider && !user.nickname) ? (
+//  <PleaseLogin />
+//) : (

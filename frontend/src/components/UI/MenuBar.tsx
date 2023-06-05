@@ -60,7 +60,7 @@ const MenuBar = () => {
             src={require('../../assets/gameLogo.png')}
             alt=""
             className={styles.logo}
-            onClick={() => navigate('/about')}
+            onClick={() => navigate('.')}
           />
         </div>
         <div className={styles.center}>
@@ -71,13 +71,13 @@ const MenuBar = () => {
           ) : (
             <>
               <Button variant="text">
-                <NavLink to=".">Home</NavLink>
+                <NavLink to="game">Play</NavLink>
               </Button>
               <Button variant="text">
                 <NavLink to={`/vault/${user.nickname}`}>Vault</NavLink>
               </Button>
               <Button variant="text">
-                <NavLink to="game">Game</NavLink>
+                <NavLink to="/about">About</NavLink>
               </Button>
             </>
           )}
@@ -136,11 +136,11 @@ const MenuBar = () => {
           <ListItem onClick={() => navigate('/')}>
             <ListItemText primary="Home" sx={MUI.burgerItem} />
           </ListItem>
+          <ListItem onClick={() => navigate('/game')}>
+            <ListItemText primary="Play" sx={MUI.burgerItem} />
+          </ListItem>
           <ListItem onClick={() => navigate(`/vault/${user.nickname}`)}>
             <ListItemText primary="Vault" sx={MUI.burgerItem} />
-          </ListItem>
-          <ListItem onClick={() => navigate('/game')}>
-            <ListItemText primary="Game" sx={MUI.burgerItem} />
           </ListItem>
           <ListItem onClick={() => navigate('/about')}>
             <ListItemText primary="About" sx={MUI.burgerItem} />

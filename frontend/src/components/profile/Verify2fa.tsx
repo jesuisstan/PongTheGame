@@ -140,7 +140,7 @@ const Verify2fa = ({
                   variant="contained"
                   color="inherit"
                   disabled={!buttonClickable}
-                  sx={{ minWidth: 142 }}
+                  sx={{ minWidth: 142, borderRadius: '90px' }}
                 >
                   {buttonText}
                 </LoadingButton>

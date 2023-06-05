@@ -132,7 +132,7 @@ const EditNickname = ({
                   startIcon={<SaveIcon />}
                   variant="contained"
                   color="inherit"
-                  sx={{ minWidth: 142 }}
+                  sx={{ minWidth: 142, borderRadius: '90px' }}
                 >
                   {buttonText}
                 </LoadingButton>

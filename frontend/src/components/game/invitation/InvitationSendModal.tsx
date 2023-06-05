@@ -235,7 +235,7 @@ const InvitationSendModal = ({
                     variant="contained"
                     color="inherit"
                     disabled={disabledButton}
-                    sx={{ minWidth: 142 }}
+                    sx={{ minWidth: 142, borderRadius: '90px' }}
                   >
                     {buttonText}
                   </LoadingButton>

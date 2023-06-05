@@ -195,7 +195,7 @@ const Enable2fa = ({
                         color="inherit"
                         loading={loadCreateQr}
                         onClick={showQRcode}
-                        sx={{ minWidth: 142 }}
+                        sx={{ minWidth: 142, borderRadius: '90px' }}
                       >
                         Create QR Code
                       </LoadingButton>
@@ -239,7 +239,7 @@ const Enable2fa = ({
                   startIcon={<SaveIcon />}
                   variant="contained"
                   color="inherit"
-                  sx={{ minWidth: 142 }}
+                  sx={{ minWidth: 142, borderRadius: '90px' }}
                 >
                   {buttonText}
                 </LoadingButton>
