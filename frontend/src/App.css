@@ -30,7 +30,8 @@ h5 {
   font-size: large;
   text-transform: uppercase;
   font-family: 'Montserrat', 'Roboto', 'Helvetica', 'Arial', sans-serif;
-  font-weight: 500;
+  font-weight: bold;
+  color: black;
   line-height: 1.75;
   letter-spacing: 0.02857em;
 }
@@ -42,7 +43,6 @@ h5 {
 
 .active {
   color: rgb(253, 80, 135);
-  font-weight: bold;
 }
 
 .swal2-container.swal2-backdrop-show,

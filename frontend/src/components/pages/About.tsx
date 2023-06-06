@@ -20,16 +20,7 @@ const About = () => {
       <div className={styles.group}>
         <div className={styles.header}>
           <h5>
-            We, being faithful to the original{' '}
-            <a
-              href="https://en.wikipedia.org/wiki/Pong"
-              target="_blank"
-              rel="noreferrer"
-              title="Proceed to Original Pong wiki"
-            >
-              Pong (1972)
-            </a>
-            , are:
+            We, being faithful to the original Pong (1972), are:
           </h5>
         </div>
         <div className={styles.aboutCards}>
@@ -74,13 +65,13 @@ const About = () => {
               github="https://github.com/Balgor18"
             />
             <div className={styles.special}>
-              <Stack spacing={2}>
+              <Stack spacing={4}>
                 <Typography
                   id="basic-list-demo"
                   variant="h3"
                   fontSize={21}
                   textTransform="uppercase"
-                  fontWeight="lg"
+                  fontWeight="bold"
                 >
                   Special thanks to:
                 </Typography>

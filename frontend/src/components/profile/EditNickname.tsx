@@ -95,7 +95,8 @@ const EditNickname = ({
           sx={MUI.modalDialog}
         >
           {user.nickname && <ModalClose sx={MUI.modalClose} />}
-          <Typography sx={MUI.modalHeader}>Modifying nickname</Typography>
+          {!user.nickname && <Typography sx={MUI.modalHeader}>Create nickname</Typography>}
+          {user.nickname && <Typography sx={MUI.modalHeader}>Change nickname</Typography>}
           <form style={{ marginTop: '10px' }} onSubmit={handleSubmit}>
             <Stack spacing={2}>
               <FormControl>

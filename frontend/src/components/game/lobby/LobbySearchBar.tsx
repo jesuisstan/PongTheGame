@@ -68,6 +68,11 @@ const LobbySearchBar = () => {
                     color: color.PONG_WHITE
                   }
                 }}
+                InputLabelProps={{
+                  style: {
+                    color: 'rgba(245, 245, 245, 0.5)' // Updated
+                  }
+                }}
                 error={!!error}
                 helperText={error}
                 onChange={handleTextInput}
@@ -77,7 +82,7 @@ const LobbySearchBar = () => {
               <SearchIcon
                 fontSize="medium"
                 sx={{
-                  color: 'black',
+                  color: color.PONG_WHITE,
                   '&:hover': {
                     color: color.PONG_PINK
                   }

@@ -124,7 +124,7 @@ const Enable2fa = ({
         >
           <ModalClose sx={MUI.modalClose} />
           <Typography id="basic-modal-dialog-title" sx={MUI.modalHeader}>
-            Setting up 2-Step Verification
+            Set up 2-Step Verification
           </Typography>
           <form onSubmit={handleSubmit}>
             <Stack spacing={2}>

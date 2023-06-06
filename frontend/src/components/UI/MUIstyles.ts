@@ -7,7 +7,7 @@ export const modalDialog = {
   minWidth: '300px',
   border: '0px solid #000',
   bgcolor: color.PONG_WHITE,
-  borderRadius: '45px',
+  borderRadius: '4px',
   paddingBottom: '30px'
 };
 

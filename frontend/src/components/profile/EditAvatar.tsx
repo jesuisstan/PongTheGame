@@ -78,7 +78,7 @@ const EditAvatar = ({
           sx={MUI.modalDialog}
         >
           <ModalClose sx={MUI.modalClose} />
-          <Typography sx={MUI.modalHeader}>Modifying avatar</Typography>
+          <Typography sx={MUI.modalHeader}>Change avatar</Typography>
           <form style={{ marginTop: '10px' }} onSubmit={handleSubmit}>
             <Stack spacing={2}>
               <Box
