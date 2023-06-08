@@ -8,6 +8,7 @@ const avatarStyle = {
   width: 121,
   height: 121,
   transition: 'transform 0.3s ease-out',
+  border: '2px solid black',
   ':hover': {
     cursor: 'pointer',
     transform: 'scale(1.03)'
@@ -85,30 +86,30 @@ const About = () => {
                   }}
                 >
                   <Avatar
-                    variant="square"
+                    variant="rounded"
                     alt=""
                     src={require('../../assets/ecole42.png')}
-                    sx={avatarStyle}
+                    sx={{...avatarStyle, boxSizing: 'border-box'}}
                     title="Proceed to École 42"
                     onClick={() => {
                       window.open('https://42.fr/en/homepage/');
                     }}
                   />
                   <Avatar
-                    variant="square"
+                    variant="rounded"
                     alt=""
                     src={require('../../assets/allan.jpg')}
-                    sx={avatarStyle}
+                    sx={{...avatarStyle, boxSizing: 'border-box', padding: '2px'}}
                     title="Proceed to Original Pong creator wiki"
                     onClick={() => {
                       window.open('https://en.wikipedia.org/wiki/Allan_Alcorn');
                     }}
                   />
                   <Avatar
-                    variant="square"
+                    variant="rounded"
                     alt=""
                     src={require('../../assets/atari.png')}
-                    sx={avatarStyle}
+                    sx={{...avatarStyle, boxSizing: 'border-box'}}
                     title="Proceed to Atari wiki"
                     onClick={() => {
                       window.open('https://en.wikipedia.org/wiki/Atari,_Inc.');
